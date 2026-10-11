@@ -44,7 +44,7 @@ covered.
 ## What FCNY owns after handoff
 
 - The Cloudflare account (must be created under an FCNY-controlled email so it
-  is transferable, see issue #35) and the `CF_API_TOKEN` /
+  is transferable, see issue #35) and the `CLOUDFLARE_API_TOKEN` /
   `CLOUDFLARE_ACCOUNT_ID` secrets it issues.
 - The GitHub repository and its org settings.
 - The Google Sheet and the Apps Script project bound to it (ADR 0002).
