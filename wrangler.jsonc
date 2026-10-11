@@ -1,0 +1,9 @@
+{
+  // Deploys the built SPA as a static-asset Worker (no server code).
+  "name": "ai-sprint-recommender",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  }
+}
