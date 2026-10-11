@@ -24,11 +24,11 @@ A **Google Apps Script web app** is bound to the Sheet:
 
 ## Options weighed
 
-| Option | Outcome | Why |
-| --- | --- | --- |
-| **Apps Script web app** | **Chosen** | Zero infrastructure, zero spend, FCNY already owns the Sheet, catalog edits propagate with no sync step |
-| Cloudflare Worker + KV/D1, synced from the Sheet | Rejected for now | More control and proper JSON APIs, but adds a moving part, a sync job, and a second place data lives. The revisit trigger below covers it |
-| Google Sheets API called directly from the browser | Rejected | Requires an API key shipped in client code and exposes the Sheet to whoever extracts the key. Violates the data rules (AC-2.3) |
+| Option                                             | Outcome          | Why                                                                                                                                       |
+| -------------------------------------------------- | ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Apps Script web app**                            | **Chosen**       | Zero infrastructure, zero spend, FCNY already owns the Sheet, catalog edits propagate with no sync step                                   |
+| Cloudflare Worker + KV/D1, synced from the Sheet   | Rejected for now | More control and proper JSON APIs, but adds a moving part, a sync job, and a second place data lives. The revisit trigger below covers it |
+| Google Sheets API called directly from the browser | Rejected         | Requires an API key shipped in client code and exposes the Sheet to whoever extracts the key. Violates the data rules (AC-2.3)            |
 
 ## Known wrinkle: CORS
 

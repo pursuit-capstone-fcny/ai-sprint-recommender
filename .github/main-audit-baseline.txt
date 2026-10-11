@@ -1,0 +1,4 @@
+# Commits allowed on main without an associated PR (the main-audit workflow
+# skips these). By convention this file starts empty: the initial push that
+# introduced the workflow IS the baseline. Add a commit SHA here only with
+# team sign-off recorded in its ADR or issue.

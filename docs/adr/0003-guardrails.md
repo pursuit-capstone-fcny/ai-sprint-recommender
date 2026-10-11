@@ -33,12 +33,12 @@ edit agent settings. CI and the main audit are what actually hold.
 
 ## Options weighed
 
-| Option | Outcome | Why |
-| --- | --- | --- |
-| **Hooks + agent settings + CI + main audit** | **Chosen** | $0, works today, layers fail independently |
-| Pay for GitHub Team ($4/user/month) for branch protection and rulesets | Rejected for now | Violates the no-new-spend constraint. Revisit trigger below |
-| No guardrails; trust convention | Rejected | Agents will push to `main` the first week without a hard block |
-| CODEOWNERS + required reviews | Not available | Requires paid GitHub features on private repos |
+| Option                                                                 | Outcome          | Why                                                            |
+| ---------------------------------------------------------------------- | ---------------- | -------------------------------------------------------------- |
+| **Hooks + agent settings + CI + main audit**                           | **Chosen**       | $0, works today, layers fail independently                     |
+| Pay for GitHub Team ($4/user/month) for branch protection and rulesets | Rejected for now | Violates the no-new-spend constraint. Revisit trigger below    |
+| No guardrails; trust convention                                        | Rejected         | Agents will push to `main` the first week without a hard block |
+| CODEOWNERS + required reviews                                          | Not available    | Requires paid GitHub features on private repos                 |
 
 ## Open questions from the team thread (proposed answers, pending approval)
 

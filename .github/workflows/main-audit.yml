@@ -1,0 +1,51 @@
+name: Main audit
+
+# GitHub Free has no branch protection. This flags any commit that landed on
+# main without going through a merged PR. Local hooks and agent settings try
+# to prevent those pushes; this workflow catches what slips through.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+concurrency:
+  group: main-audit-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+
+      - name: Flag commits on main that did not come through a PR
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          BEFORE="${{ github.event.before }}"
+          if [[ "$BEFORE" =~ ^0+$ ]]; then
+            echo "Initial push of main; recorded as the audit baseline."
+            exit 0
+          fi
+
+          fail=0
+          for sha in $(git rev-list "$BEFORE..${{ github.sha }}"); do
+            if grep -q "^$sha\$" .github/main-audit-baseline.txt; then
+              echo "$sha: in baseline, skipping"
+              continue
+            fi
+            prs=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${sha}/pulls" --jq 'length')
+            if [ "$prs" = "0" ]; then
+              echo "::error::Commit $sha on main has no associated PR (direct push)"
+              fail=1
+            else
+              echo "$sha: arrived via PR, ok"
+            fi
+          done
+          exit $fail

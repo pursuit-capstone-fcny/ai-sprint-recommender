@@ -1,0 +1,14 @@
+title = "ai-sprint-recommender secret and data-rules scan"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "zoom-link"
+description = "Zoom meeting or personal link (banned by the data rules in AGENTS.md)"
+regex = '''https://[a-zA-Z0-9.-]*zoom\.(us|com|gov)/[^\s"')<]+'''
+tags = ["data-rules"]
+
+[allowlist]
+description = "This config only contains patterns, not links"
+paths = ['''(^|/)\.?gitleaks\.toml$''']

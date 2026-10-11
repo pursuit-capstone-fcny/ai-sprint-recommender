@@ -8,6 +8,7 @@ coverage/
 .env
 .env.*
 !.env.example
+*.local
 
 # OS / editor
 .DS_Store
