@@ -25,15 +25,15 @@ server-side rendering requirements, no budget for new spend.
 
 ## Options weighed
 
-| Option | Outcome | Why |
-| --- | --- | --- |
-| Next.js on Vercel | Rejected | Best-in-class Next.js hosting, but $20/seat/month (the free Hobby tier forbids commercial use) and per-seat billing grows with the team. SSR machinery we would not use |
-| Next.js on Cloudflare via vinext | Rejected | Flat $5/month, but vinext is a beta adapter and Next.js is the least-supported framework on Cloudflare |
-| React Router v8 (framework mode) on Cloudflare | Rejected | GA-supported, but framework mode implies SSR; our ranking runs in the browser and the backend is Apps Script, so the SSR layer would be dead weight. The Cloudflare Vite plugin also does not support SPA mode in framework mode |
-| **React Router v8 (library) + Vite SPA on Cloudflare Workers** | **Chosen** | Free, GA-supported static asset hosting, matches the app shape exactly, React Router v8 is Cloudflare's current default guide |
-| Cloudflare Pages | Rejected | Works for static sites, but Cloudflare positions Workers static assets as the path for new projects; Pages is in maintenance mode |
-| npm | Rejected | Works, but slower installs and hoisted `node_modules` that hides phantom dependencies |
-| pnpm | Chosen | Faster installs, strict dependency resolution (phantom imports fail at build time), one shared on-disk store. Cost: each contributor installs pnpm once, and CI uses `pnpm/action-setup` |
+| Option                                                         | Outcome    | Why                                                                                                                                                                                                                              |
+| -------------------------------------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Next.js on Vercel                                              | Rejected   | Best-in-class Next.js hosting, but $20/seat/month (the free Hobby tier forbids commercial use) and per-seat billing grows with the team. SSR machinery we would not use                                                          |
+| Next.js on Cloudflare via vinext                               | Rejected   | Flat $5/month, but vinext is a beta adapter and Next.js is the least-supported framework on Cloudflare                                                                                                                           |
+| React Router v8 (framework mode) on Cloudflare                 | Rejected   | GA-supported, but framework mode implies SSR; our ranking runs in the browser and the backend is Apps Script, so the SSR layer would be dead weight. The Cloudflare Vite plugin also does not support SPA mode in framework mode |
+| **React Router v8 (library) + Vite SPA on Cloudflare Workers** | **Chosen** | Free, GA-supported static asset hosting, matches the app shape exactly, React Router v8 is Cloudflare's current default guide                                                                                                    |
+| Cloudflare Pages                                               | Rejected   | Works for static sites, but Cloudflare positions Workers static assets as the path for new projects; Pages is in maintenance mode                                                                                                |
+| npm                                                            | Rejected   | Works, but slower installs and hoisted `node_modules` that hides phantom dependencies                                                                                                                                            |
+| pnpm                                                           | Chosen     | Faster installs, strict dependency resolution (phantom imports fail at build time), one shared on-disk store. Cost: each contributor installs pnpm once, and CI uses `pnpm/action-setup`                                         |
 
 ## Cost
 

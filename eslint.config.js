@@ -1,7 +1,8 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import tseslint from 'typescript-eslint'
+import js from '@eslint/js';
+import globals from 'globals';
+import jsxA11y from 'eslint-plugin-jsx-a11y';
+import reactHooks from 'eslint-plugin-react-hooks';
+import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
   { ignores: ['dist', 'coverage'] },
@@ -20,4 +21,8 @@ export default tseslint.config(
       'react-hooks/exhaustive-deps': 'warn',
     },
   },
-)
+  {
+    ...jsxA11y.flatConfigs.recommended,
+    files: ['**/*.{tsx,jsx}'],
+  },
+);
