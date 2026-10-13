@@ -1,22 +1,37 @@
-# Spec: <feature name>
+# Change Proposal: <feature name>
 
-- **Issue:** #
-- **PR:** #
-- **Status:** draft | in review | done
+Owner:
+Status: Draft | Review | Approved
+Date:
+Issue: #
 
-## Acceptance criteria
+## Problem
 
-Write each criterion as Given/When/Then. Copy this block per criterion and
-number them (AC-1, AC-2, ...).
+- What is broken, missing, or changing?
 
-### AC-1: <criterion name>
+## Goal
 
-- **Given** <initial state>
-- **When** <action happens>
-- **Then** <observable outcome>
+- What user or system behavior must be true after this ships?
 
-### AC-2: <criterion name>
+## Non-goals
 
-- **Given** ...
-- **When** ...
-- **Then** ...
+- What is explicitly out of scope for this change?
+
+## Acceptance Criteria
+
+Keep the issue's AC ids (AC-<issue>.<n>) so test names can reference them.
+Compact one-line Given/When/Then is preferred; split a criterion into
+multiple bullets only when one line cannot hold it.
+
+- AC-<issue>.<n> <name>: Given <initial state>, When <action>, Then <observable outcome>.
+
+## Open Questions
+
+- [ ] ...
+
+## Evidence Required
+
+- Test:
+- Log or metric:
+- Manual check:
+- Rollback signal:
