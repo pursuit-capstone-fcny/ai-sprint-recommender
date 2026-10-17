@@ -9,6 +9,9 @@ concurrency:
 
 jobs:
   preview:
+    # Dependabot runs get only Dependabot secrets, so wrangler has no token.
+    # Its PRs bump dependencies and have no UI to preview.
+    if: github.event.pull_request.user.login != 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
