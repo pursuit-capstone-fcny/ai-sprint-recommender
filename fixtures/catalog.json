@@ -142,5 +142,16 @@
     "addedAt": "2026-10-01",
     "status": "active",
     "isStartHere": false
+  },
+  {
+    "youtubeId": "fx14BdgtNtn",
+    "title": "[Fixture] Budget Tracking in Notion",
+    "description": "A fictional demo adapting the same budget tracker into a Notion database for teams that prefer Notion.",
+    "functionAreas": ["Operations"],
+    "tasks": ["budget tracking"],
+    "tools": ["Notion"],
+    "addedAt": "2026-09-11",
+    "status": "active",
+    "isStartHere": false
   }
 ]
