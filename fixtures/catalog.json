@@ -1,0 +1,146 @@
+[
+  {
+    "youtubeId": "fx01GrntRpt",
+    "title": "[Fixture] Grant Report Writing with ChatGPT",
+    "description": "A fictional walkthrough of turning program notes into a first-draft grant report with ChatGPT.",
+    "functionAreas": ["Fundraising"],
+    "tasks": ["grant reports"],
+    "tools": ["ChatGPT"],
+    "addedAt": "2026-09-01",
+    "status": "active",
+    "isStartHere": true
+  },
+  {
+    "youtubeId": "fx02DonrEml",
+    "title": "[Fixture] Donor Thank-You Emails with Copilot",
+    "description": "Fictional templates and prompts for warm, personalized donor thank-you emails using Copilot.",
+    "functionAreas": ["Fundraising"],
+    "tasks": ["donor emails"],
+    "tools": ["Copilot"],
+    "addedAt": "2026-09-05",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx03BdgtXls",
+    "title": "[Fixture] Budget Tracking in Excel",
+    "description": "A fictional demo building a monthly program budget tracker in Excel with formulas explained step by step.",
+    "functionAreas": ["Operations"],
+    "tasks": ["budget tracking"],
+    "tools": ["Excel"],
+    "addedAt": "2026-09-10",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx04BdgtSht",
+    "title": "[Fixture] Budget Tracking in Google Sheets",
+    "description": "The same fictional budget tracker rebuilt in Google Sheets for teams without Excel.",
+    "functionAreas": ["Operations"],
+    "tasks": ["budget tracking"],
+    "tools": ["Sheets"],
+    "addedAt": "2026-09-10",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx05VolOnbd",
+    "title": "[Fixture] Volunteer Onboarding with Claude",
+    "description": "A fictional guide to drafting a volunteer welcome packet with Claude.",
+    "functionAreas": ["Programs & Direct Service"],
+    "tasks": ["volunteer onboarding"],
+    "tools": ["Claude"],
+    "addedAt": "2026-09-12",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx06ImpctRp",
+    "title": "[Fixture] Impact Reporting with Gemini",
+    "description": "A fictional demo turning raw program metrics into a one-page impact summary with Gemini.",
+    "functionAreas": ["Programs & Direct Service"],
+    "tasks": ["impact reporting"],
+    "tools": ["Gemini"],
+    "addedAt": "2026-09-15",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx07BrdDeck",
+    "title": "[Fixture] Board Deck Design with Claude",
+    "description": "A fictional walkthrough designing a clean board presentation deck with Claude.",
+    "functionAreas": ["Leadership"],
+    "tasks": ["board presentations"],
+    "tools": ["Claude"],
+    "addedAt": "2026-09-18",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx08StratPl",
+    "title": "[Fixture] Strategic Planning Prompts with ChatGPT",
+    "description": "A fictional demo using ChatGPT to pressure-test a strategic plan before a board meeting.",
+    "functionAreas": ["Leadership"],
+    "tasks": ["strategic planning"],
+    "tools": ["ChatGPT"],
+    "addedAt": "2026-09-20",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx09IntroCt",
+    "title": "[Fixture] Quick Intro to the Sprint Catalog",
+    "description": "A fictional two-minute orientation to what's in the Sprint video catalog.",
+    "functionAreas": [],
+    "tasks": [],
+    "tools": [],
+    "addedAt": "2026-09-22",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx10CrmClup",
+    "title": "[Fixture] Legacy CRM Cleanup with ChatGPT",
+    "description": "A fictional, older walkthrough of CRM cleanup steps, kept for reference only.",
+    "functionAreas": ["Operations"],
+    "tasks": ["CRM cleanup"],
+    "tools": ["ChatGPT"],
+    "addedAt": "2026-01-10",
+    "status": "retired",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx11EvntPln",
+    "title": "[Fixture] Event Planning Checklists with Gemini",
+    "description": "A fictional set of checklists for planning a community event from kickoff to day-of, using Gemini.",
+    "functionAreas": ["Programs & Direct Service"],
+    "tasks": ["event planning"],
+    "tools": ["Gemini"],
+    "addedAt": "2026-09-25",
+    "status": "active",
+    "isStartHere": false
+  },
+  {
+    "youtubeId": "fx12NewsLtr",
+    "title": "[Fixture] Email Newsletters with Copilot",
+    "description": "A fictional demo drafting a monthly newsletter section with Copilot, useful for both fundraising and ops updates.",
+    "functionAreas": ["Fundraising", "Operations"],
+    "tasks": ["email newsletters"],
+    "tools": ["Copilot"],
+    "addedAt": "2026-09-28",
+    "status": "active",
+    "isStartHere": false,
+    "durationSeconds": 240
+  },
+  {
+    "youtubeId": "fx13GrntTrk",
+    "title": "[Fixture] Grant Tracking in Sheets",
+    "description": "A fictional demo tracking grant deadlines and amounts in a shared Google Sheet.",
+    "functionAreas": ["Fundraising"],
+    "tasks": ["grant tracking"],
+    "tools": ["Sheets"],
+    "addedAt": "2026-10-01",
+    "status": "active",
+    "isStartHere": false
+  }
+]
