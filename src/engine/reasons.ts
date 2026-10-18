@@ -79,8 +79,9 @@ export function buildReason(
         matchType: 'fallback',
       };
     }
+    const toolPart = match.toolTier === 'none' ? '' : `, ${toolClause(match)}`;
     return {
-      reason: `No ${profile.functionArea} video on this yet. This one's from ${videoAreaLabel(video)}, ${toolClause(match)}.`,
+      reason: `No ${profile.functionArea} video on this yet. This one's from ${videoAreaLabel(video)}${toolPart}.`,
       matchType: 'fallback',
     };
   }

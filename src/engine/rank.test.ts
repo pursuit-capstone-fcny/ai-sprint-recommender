@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import catalogFixtureRaw from '../../fixtures/catalog.json';
 import { CatalogItemSchema } from '../contracts/catalogItem';
 import type { CatalogItem } from '../contracts/catalogItem';
+import { FUNCTION_AREAS } from '../contracts/functionAreas';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { rank } from './rank';
@@ -307,6 +308,26 @@ describe('rank', () => {
     ];
     for (const p of profiles) {
       expect(rank(fixtureCatalog, p).length).toBeGreaterThan(0);
+    }
+  });
+
+  it('no reason ever mentions an undefined tool', () => {
+    const areas: (string | null)[] = [...FUNCTION_AREAS, null];
+    const extras: Partial<IntakeProfile>[] = [
+      {},
+      { goalWords: ['grant', 'reports'] },
+      { tools: ['ChatGPT'] },
+      { goalWords: ['zzznonsense'], tools: ['NoSuchTool'] },
+    ];
+    for (const functionArea of areas) {
+      for (const extra of extras) {
+        const p = profile({ functionArea, ...extra });
+        for (const match of rank(fixtureCatalog, p, {
+          topN: fixtureCatalog.length,
+        })) {
+          expect(match.reason).not.toContain('undefined');
+        }
+      }
     }
   });
 });
