@@ -68,7 +68,7 @@ lockfile; recheck the advisory before adding deployment automation.
 
 ## Designated test Sheet
 
-Use [AI Video Library for INTEGRATION](https://docs.google.com/spreadsheets/d/19oEtn6wLq_2Svr_axMuFb9H0llNcqdR7Fsxcn3VOa6w/edit).
+Use [the test copy of AI Video Library for INTEGRATION](https://docs.google.com/spreadsheets/d/1UO6Biq_clsL8kqmHyBN2qChJ8nbLSwclY_Jdg499xHY/edit).
 The source is `First 10  -Tag Review!A1:O11`. Its ten videos are marked live on
 YouTube, but the proposed tags still need review. The test import does not change
 those review statuses or imply approval for production. `Date Shared` is not an
@@ -87,9 +87,10 @@ which is absent from the production bundle. It:
 - Pins the Sheet ID in Script Properties, records `CATALOG_ENVIRONMENT=test`
   and leaves `CATALOG_PUBLIC_ENABLED=false`.
 
-After obtaining Editor access, open the Sheet's **Extensions → Apps Script**.
+Open the Sheet's **Extensions → Apps Script**.
 Inspect any existing project before replacing code. Put the test bundle in
-`Code.gs`, use the generated manifest, save, and run `initializeTestCatalog`
+`Catalog.gs`, preserve unrelated files and manifest settings, add the generated
+manifest's scopes, save, and run `initializeTestCatalog`
 from the editor. Review the new tabs before setting `CATALOG_PUBLIC_ENABLED`
 to `true` for the authorized public test data. A partial setup failure leaves
 access disabled; inspect any newly created tabs before retrying.
@@ -106,10 +107,12 @@ duration. Also test in a signed-out browser, then edit a test title and retire
 a test row, verify a new version within five minutes, and restore both cells.
 This command does not prove browser CORS or #16 POST support.
 
-Deployment status on October 20, 2026: the supplied Sheet is view-only for the
-available browser account, and the connected Drive account returned permission
-denied on the test-tab setup. No tabs, bound project or deployment were created.
-The setup bundle is ready; Editor access is required to continue.
+Deployment status on October 20, 2026: the test copy is editable by
+`jason.zeng151@gmail.com`. Its [bound project](https://script.google.com/home/projects/144EKtE55YFjUMCvgH0PBOr7-58qYChjXL8oBjVXrnZFIBi337CyuINW-/edit)
+contains the test bundle in `Catalog.gs`; the copied formatting script in
+`Code.gs` is preserved. The manifest requests the Sheets scope. Google
+authorization is pending at its unverified-app warning. The initializer has
+not run, no catalog tabs or deployment exist, and public access remains disabled.
 
 ## Site configuration and remaining acceptance
 
@@ -119,8 +122,8 @@ The setup bundle is ready; Editor access is required to continue.
 - Set `CATALOG_PRODUCTION_URL` to the FCNY production `/exec` URL. Production
   requires a remote catalog and shows an unavailable state if none is configured.
   Local development uses `.env.example` as a guide.
-- AC-9.5 still needs real bound projects, deployment ownership, isolation and
-  fixed-ID verification. No Google resources have been provisioned by this PR.
+- AC-9.5 still needs the test deployment, a separate FCNY production project,
+  isolation and fixed-ID verification.
 - AC-9.8 still needs signed-out GET from preview and production, plus POST when
   #16 is implemented. Edit and retire test rows, reload within five minutes,
   and verify preview writes never reach production. Unit tests do not prove
