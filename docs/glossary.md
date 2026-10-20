@@ -1,18 +1,38 @@
 # Glossary
 
-<!-- TODO(Jason): paste the planning doc's Glossary tab here (AC-2.10).
-The terms below are seeded from the issues; confirm names, definitions,
-and ID formats against the planning doc and delete this comment. -->
+The approved [catalog spec](specs/009-serve-catalog.md) defines the public data
+contract. Catalog items are videos, identified by `youtubeId`.
 
-Canonical terms and ID formats. Code, specs, PRs, and comments use these
-names exactly.
+| Term           | Definition                                                                    | ID format                                                        |
+| -------------- | ----------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| Sprint         | FCNY's AI Sprint program and its video library                                | n/a                                                              |
+| Catalog item   | Public metadata for one video                                                 | 11-character YouTube ID, letters, digits, `_` or `-`             |
+| Catalog        | Validated active items and canonical matching configuration served by `doGet` | `schemaVersion: 1`; `catalogVersion: sha256:<64 hex characters>` |
+| Usage event    | Search, impression or click defined by spec #16                               | UUID `eventId`, `sessionId` and `searchId`                       |
+| Recommendation | An ordered catalog item selected for a visitor                                | Existing `youtubeId`                                             |
+| Fixture        | Fictional public catalog data checked into the repo for tests                 | Same contract as the public catalog                              |
+| Preview        | A PR deployment using isolated test data and configuration                    | Hosting-generated URL                                            |
 
-| Term           | Definition                                                                       | ID format |
-| -------------- | -------------------------------------------------------------------------------- | --------- |
-| Sprint         | A bounded work period the recommender ranks work into                            | TBD       |
-| Catalog item   | A piece of work that can be recommended; the unit the engine ranks               | TBD       |
-| Catalog        | The full set of catalog items served by the Apps Script `doGet`                  | n/a       |
-| Usage event    | A record that a person viewed or acted on a recommendation, appended by `doPost` | TBD       |
-| Recommendation | The engine's ranked output shown to the user                                     | n/a       |
-| Fixture        | A checked-in catalog file with public fields only, used in tests                 | n/a       |
-| Preview        | The per-PR Cloudflare deployment used to review UI changes                       | n/a       |
+## Public catalog fields
+
+| Field                             | Type and rule                                               |
+| --------------------------------- | ----------------------------------------------------------- |
+| `youtubeId`                       | Unique 11-character YouTube ID; derive URLs from this value |
+| `title`, `description`            | Trimmed, nonblank strings                                   |
+| `functionAreas`, `tasks`, `tools` | Arrays of canonical dictionary tags; may be empty           |
+| `addedAt`                         | Valid ISO upload date `YYYY-MM-DD`, or `null` if unknown    |
+| `lengthSeconds`                   | Positive integer, or `null` if unknown                      |
+| `status`                          | `active` or `retired`; only active rows are served          |
+| `startHere`                       | Boolean                                                     |
+
+Private Sheet columns are excluded. Duplicate IDs exclude every copy, even if
+one copy is retired or invalid. Diagnostics contain tab, row, field and a
+generated reason, never cell contents.
+
+The dictionary has `functionArea`, `task` and `tool` categories. Synonyms map an
+alias directly to a canonical target in one category. Adjacent tools name a
+source tool, related tool and applicable canonical task; the relationship is
+directional.
+
+This records the approved contract, not approval to publish FCNY's data. The
+public-field and anonymous-access decisions in #8 remain deployment requirements.

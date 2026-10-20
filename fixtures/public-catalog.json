@@ -1,0 +1,71 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "youtubeId": "fx01GrntRpt",
+      "title": "[Fixture] Grant reports",
+      "description": "Fictional public metadata for catalog contract tests.",
+      "functionAreas": ["Fundraising"],
+      "tasks": ["grant reports"],
+      "tools": ["ChatGPT"],
+      "addedAt": "2026-09-01",
+      "lengthSeconds": 240,
+      "status": "active",
+      "startHere": true
+    },
+    {
+      "youtubeId": "fx03BdgtXls",
+      "title": "[Fixture] Budget tracking",
+      "description": "Fictional public metadata for catalog contract tests.",
+      "functionAreas": ["Operations"],
+      "tasks": ["budget tracking"],
+      "tools": ["Excel"],
+      "addedAt": "2026-09-10",
+      "lengthSeconds": 300,
+      "status": "active",
+      "startHere": false
+    },
+    {
+      "youtubeId": "fx04BdgtSht",
+      "title": "[Fixture] Budget sheet",
+      "description": "Fictional public metadata for catalog contract tests.",
+      "functionAreas": ["Operations"],
+      "tasks": ["budget tracking"],
+      "tools": ["Sheets"],
+      "addedAt": null,
+      "lengthSeconds": null,
+      "status": "active",
+      "startHere": false
+    },
+    {
+      "youtubeId": "fx09IntroCt",
+      "title": "[Fixture] Start here",
+      "description": "Fictional public metadata for catalog contract tests.",
+      "functionAreas": [],
+      "tasks": [],
+      "tools": [],
+      "addedAt": null,
+      "lengthSeconds": null,
+      "status": "active",
+      "startHere": true
+    }
+  ],
+  "functionAreas": ["Fundraising", "Operations"],
+  "tools": ["ChatGPT", "Sheets", "Excel", "Claude"],
+  "tasks": ["grant reports", "budget tracking"],
+  "synonyms": [
+    {
+      "alias": "grant reporting",
+      "category": "task",
+      "target": "grant reports"
+    }
+  ],
+  "adjacentTools": [
+    {
+      "source": "Excel",
+      "related": "Sheets",
+      "task": "budget tracking"
+    }
+  ],
+  "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+}
