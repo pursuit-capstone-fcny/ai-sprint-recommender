@@ -18,3 +18,7 @@ coverage/
 
 # Logs
 *.log
+
+# Local Apps Script targets and login credentials
+.clasp*.json
+.clasprc*.json
