@@ -102,32 +102,30 @@ repository variable `CATALOG_TEST_URL` to the verified `/exec` URL, then rebuild
 the preview. Production continues using its separate variable and FCNY project.
 
 `pnpm check:catalog <test-exec-url>` verifies an unauthenticated GET, redirect,
-JSON content type and the shared contract, reporting only counts, version and
-duration. Also test in a signed-out browser, then edit a test title and retire
+JSON content type, the shared contract and absence of extra fields, reporting
+only counts, version and duration. Also test in a signed-out browser, then edit a test title and retire
 a test row, verify a new version within five minutes, and restore both cells.
 This command does not prove browser CORS or #16 POST support.
 
-Deployment status on October 20, 2026: the test copy is editable by
-`jason.zeng151@gmail.com`. Its [bound project](https://script.google.com/home/projects/144EKtE55YFjUMCvgH0PBOr7-58qYChjXL8oBjVXrnZFIBi337CyuINW-/edit)
-contains the test bundle in `Catalog.gs`; the copied formatting script in
-`Code.gs` is preserved. The manifest requests the Sheets scope. Google
-authorization is pending at its unverified-app warning. The initializer has
-not run, no catalog tabs or deployment exist, and public access remains disabled.
+The test deployment is live as of October 20, 2026, and `CATALOG_TEST_URL` is set.
+See [deployment details and verification](test-deployment.md). The test copy
+contains ten active videos; the original tracker, proposed tags and approval
+statuses are unchanged.
 
 ## Site configuration and remaining acceptance
 
-- Set repository variable `CATALOG_TEST_URL` to the test web app's `/exec` URL.
-  Preview builds use it. Until configured, previews explicitly use the fictional
-  fixture and display "Demo catalog".
+- Preview builds use `CATALOG_TEST_URL`, currently set to the test deployment.
+  If it is removed, previews explicitly use the fictional fixture and display
+  "Demo catalog".
 - Set `CATALOG_PRODUCTION_URL` to the FCNY production `/exec` URL. Production
   requires a remote catalog and shows an unavailable state if none is configured.
   Local development uses `.env.example` as a guide.
-- AC-9.5 still needs the test deployment, a separate FCNY production project,
-  isolation and fixed-ID verification.
-- AC-9.8 still needs signed-out GET from preview and production, plus POST when
-  #16 is implemented. Edit and retire test rows, reload within five minutes,
-  and verify preview writes never reach production. Unit tests do not prove
-  Google cross-origin access. Use the ADR-0002 proxy fallback if access fails.
+- AC-9.5 still needs clasp automation and a separate FCNY production project
+  with production isolation and fixed-ID verification. The test deployment
+  retained its ID when updated from version 1 to version 2 through Google's UI.
+- AC-9.8 GET, browser access and edit/retirement freshness pass on preview.
+  Production GET and #16 POST remain unverified. Once #16 exists, verify preview
+  writes never reach production. Use the ADR-0002 proxy fallback if access fails.
 - ContentService redirects JSON. Error envelopes (`CATALOG_DISABLED`,
   `CATALOG_BUSY`, `CATALOG_INVALID_CONFIG`, `CATALOG_UNAVAILABLE`) produce the
   page's failure state; `items: []` is a valid empty catalog.

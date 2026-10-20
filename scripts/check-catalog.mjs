@@ -1,4 +1,5 @@
 import { parsePublicCatalog } from '../src/contracts/publicCatalog.ts';
+import { isDeepStrictEqual } from 'node:util';
 
 try {
   const [input, ...extra] = process.argv.slice(2);
@@ -34,7 +35,10 @@ try {
   }
   let catalog;
   try {
-    catalog = parsePublicCatalog(await response.json());
+    const payload = await response.json();
+    catalog = parsePublicCatalog(payload);
+    // Parsing strips unknown fields; deployment checks must also catch leaks.
+    if (!isDeepStrictEqual(payload, catalog)) throw new Error();
   } catch {
     throw new Error(
       'The response failed the public catalog contract. Check Problems and Script Properties.',
