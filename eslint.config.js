@@ -13,7 +13,7 @@ export default tseslint.config(
     languageOptions: { globals: globals.node },
   },
   {
-    files: ['apps-script/index.ts'],
+    files: ['apps-script/index.ts', 'apps-script/test-setup.ts'],
     languageOptions: {
       globals: {
         PropertiesService: 'readonly',

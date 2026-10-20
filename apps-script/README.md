@@ -66,6 +66,51 @@ Clasp automation remains open. As of October 20, 2026, clasp 3.4.1 pulls
 There is no patched braces release. Clasp has not been added to the dependency
 lockfile; recheck the advisory before adding deployment automation.
 
+## Designated test Sheet
+
+Use [AI Video Library for INTEGRATION](https://docs.google.com/spreadsheets/d/19oEtn6wLq_2Svr_axMuFb9H0llNcqdR7Fsxcn3VOa6w/edit).
+The source is `First 10  -Tag Review!A1:O11`. Its ten videos are marked live on
+YouTube, but the proposed tags still need review. The test import does not change
+those review statuses or imply approval for production. `Date Shared` is not an
+upload date; imported upload dates and lengths remain unknown.
+
+Run `pnpm build:apps-script:test` to produce `build/apps-script-test/Code.js`
+and `appsscript.json`. This separate bundle includes `initializeTestCatalog`,
+which is absent from the production bundle. It:
+
+- Runs only in a script bound to the designated test Sheet and rejects an
+  existing configuration for another environment.
+- Validates all imported public data before creating `Catalog`, `Dictionary`,
+  `Synonyms`, `Adjacent tools` and `Problems`.
+- Refuses to overwrite existing setup tabs. Original tracker and review tabs
+  are not edited. Mapping tabs start with headers until mappings are approved.
+- Pins the Sheet ID in Script Properties, records `CATALOG_ENVIRONMENT=test`
+  and leaves `CATALOG_PUBLIC_ENABLED=false`.
+
+After obtaining Editor access, open the Sheet's **Extensions → Apps Script**.
+Inspect any existing project before replacing code. Put the test bundle in
+`Code.gs`, use the generated manifest, save, and run `initializeTestCatalog`
+from the editor. Review the new tabs before setting `CATALOG_PUBLIC_ENABLED`
+to `true` for the authorized public test data. A partial setup failure leaves
+access disabled; inspect any newly created tabs before retrying.
+
+Deploy as a web app that executes as the test owner and permits anonymous
+access. Record the script ID, deployment ID and `/exec` URL. Subsequent releases
+must update this deployment to a new version, retaining its ID. Set the GitHub
+repository variable `CATALOG_TEST_URL` to the verified `/exec` URL, then rebuild
+the preview. Production continues using its separate variable and FCNY project.
+
+`pnpm check:catalog <test-exec-url>` verifies an unauthenticated GET, redirect,
+JSON content type and the shared contract, reporting only counts, version and
+duration. Also test in a signed-out browser, then edit a test title and retire
+a test row, verify a new version within five minutes, and restore both cells.
+This command does not prove browser CORS or #16 POST support.
+
+Deployment status on October 20, 2026: the supplied Sheet is view-only for the
+available browser account, and the connected Drive account returned permission
+denied on the test-tab setup. No tabs, bound project or deployment were created.
+The setup bundle is ready; Editor access is required to continue.
+
 ## Site configuration and remaining acceptance
 
 - Set repository variable `CATALOG_TEST_URL` to the test web app's `/exec` URL.

@@ -9,14 +9,16 @@
   "packageManager": "pnpm@12.9.1",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build && pnpm build:apps-script",
+    "build": "tsc --noEmit && vite build && pnpm build:apps-script && pnpm build:apps-script:test",
     "build:apps-script": "node scripts/build-apps-script.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
-    "prepare": "husky"
+    "prepare": "husky",
+    "build:apps-script:test": "node scripts/build-apps-script.mjs --test",
+    "check:catalog": "node scripts/check-catalog.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",
