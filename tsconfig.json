@@ -16,5 +16,11 @@
     "types": ["vite/client", "node"],
     "resolveJsonModule": true
   },
-  "include": ["src", "apps-script", "vite.config.ts", "eslint.config.js"]
+  "include": [
+    "src",
+    "fixtures",
+    "apps-script",
+    "vite.config.ts",
+    "eslint.config.js"
+  ]
 }
