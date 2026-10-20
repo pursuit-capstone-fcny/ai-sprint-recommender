@@ -49,9 +49,11 @@ on the validated catalog; connecting them to the engine remains #12.
 
 ## Build and deployment prerequisites
 
-`pnpm build:apps-script` bundles Zod and exposes a global `doGet` in
+`pnpm build:apps-script` bundles Zod and exposes the global entry points in
 `build/apps-script/Code.js`, with the manifest beside it. `pnpm build` also checks
-this artifact.
+this artifact. Alongside `doGet`, the #16 backend adds `doPost` and editor-only
+usage initialization/purge functions. Logging is disabled by default; see
+[usage backend configuration](usage-README.md).
 
 Use separate bound Apps Script projects and sanitized Sheets for test and
 production. Production must belong to FCNY. Set `CATALOG_SPREADSHEET_ID`

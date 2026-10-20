@@ -10,9 +10,13 @@ const directory = testBuild ? 'build/apps-script-test' : 'build/apps-script';
 const entryPoints = testBuild
   ? ['apps-script/test-entry.ts']
   : ['apps-script/index.ts'];
-const exportedFunctions = testBuild
-  ? ['doGet', 'initializeTestCatalog']
-  : ['doGet'];
+const exportedFunctions = [
+  'doGet',
+  'doPost',
+  'initializeUsageLog',
+  'purgeUsageLog',
+];
+if (testBuild) exportedFunctions.push('initializeTestCatalog');
 await mkdir(directory, { recursive: true });
 await build({
   entryPoints,
@@ -24,7 +28,7 @@ await build({
   target: 'es2020',
   footer: {
     js: exportedFunctions
-      .map((name) => `function ${name}() { return CatalogApp.${name}(); }`)
+      .map((name) => `function ${name}(e) { return CatalogApp.${name}(e); }`)
       .join('\n'),
   },
 });
@@ -36,6 +40,10 @@ runInNewContext(await readFile(`${directory}/Code.js`, 'utf8'), context, {
 for (const name of exportedFunctions)
   assert.equal(typeof context[name], 'function');
 if (!testBuild) assert.equal(context.initializeTestCatalog, undefined);
+// A callable wrapper that drops the POST event would reject every real request.
+const request = { postData: { type: 'text/plain', contents: '{}' } };
+context.CatalogApp = { doPost: (event) => event };
+assert.equal(context.doPost(request), request);
 console.log(
   `Apps Script bundle built at ${directory}; ${exportedFunctions.join(', ')} available.`,
 );
