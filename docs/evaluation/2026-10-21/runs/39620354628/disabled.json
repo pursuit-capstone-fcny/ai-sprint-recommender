@@ -1,0 +1,16 @@
+{
+  "confirmed": true,
+  "paidCalls": 0,
+  "attempts": [
+    {
+      "checkedAt": "2026-10-21T14:54:00.023Z",
+      "status": 400,
+      "reason": "unavailable"
+    },
+    {
+      "checkedAt": "2026-10-21T14:54:01.121Z",
+      "status": 200,
+      "reason": "disabled"
+    }
+  ]
+}

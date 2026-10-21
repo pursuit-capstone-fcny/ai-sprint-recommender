@@ -122,9 +122,9 @@ jobs:
           DIAGNOSE_FORMAT: ${{ github.event.label.name == 'diagnose-llm-test' }}
         run: |
           if [ "$DIAGNOSE_FORMAT" = 'true' ]; then
-            node scripts/run-live-evaluation.mjs --diagnose-format --baseline docs/evaluation/2026-10-21/runs/39619325524/report.json
+            node scripts/run-live-evaluation.mjs --diagnose-format --baseline docs/evaluation/2026-10-21/runs/39620354628/report.json
           else
-            node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39619325524/report.json
+            node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39620354628/report.json
           fi
 
       - name: Allow one minute for browser verification within the same budget

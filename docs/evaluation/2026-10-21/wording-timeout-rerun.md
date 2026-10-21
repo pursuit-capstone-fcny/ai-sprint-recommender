@@ -117,4 +117,35 @@ The next three fresh trials and same four regression probes reserve at most
 amount. No budget reset, paid retry, new labels or production changes. Preserve
 all V5 evidence regardless of the outcome.
 
-V6 results pending.
+## V6 results
+
+[Run 39620354628](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39620354628)
+tested `331a00d`. Rules stayed **8/10**; LLM trials scored **7/10, 9/10 and
+6/10**, with zero benchmark fallbacks. Both wording probes scored **0/3**;
+the single browser Fundraising request also scored **0/3**. Medium effort did
+not establish an improvement. [Saved comparison](runs/39620354628/report.md).
+
+All 34 calls have measured diagnostics, no request timed out, and all catalog
+warmup phases completed. Benchmark median/p95/max latency was **1.450/2.541/
+2.764 seconds**. Benchmark and probes cost **$0.061722 + $0.008227 = $0.069949**.
+The browser call retains its **$0.006256** maximum unknown reservation.
+Conservative cumulative accounting is now **$0.576153**, leaving **$0.423847**
+for recorded requests. All 15 deployed synthetic checks passed, test shutdown
+was confirmed and the synthetic Worker was removed. Production is unchanged.
+
+## Final controlled input-order comparison
+
+V7 moves the complete catalog before the function area, goal and tools in the
+user JSON message. It preserves V5 system text, V6 medium effort, disabled
+thinking, catalog order, metadata, output schema and all caps. The provider
+receives roughly 20,200 input tokens per request. Anthropic's [long-context
+guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices)
+recommends placing long data before the query. Whether that ordering explains
+these misses remains a hypothesis, not an established cause.
+
+One final three-trial run and the same four probes reserve at most
+**$0.212704**. There will be no additional paid browser submission. Planning
+allowance is **$0.35**, below the conservative remaining balance. Preserve all
+results, labels and prior failures; retain the original ledger and expiry.
+
+V7 results pending.

@@ -1,0 +1,11 @@
+{
+  "scope": "Single rendered browser submission, separate from benchmark and automated probes",
+  "inputSource": "held-out-fundraising-02",
+  "recommendationEngine": "llm",
+  "displayedIds": ["QblW0rArEME", "tAhSI5nok0s", "jm9ZaKY1taA"],
+  "approvedHits": 0,
+  "paidAttempts": 1,
+  "actualCostMicrodollars": null,
+  "maximumReservationMicrodollars": 6256,
+  "note": "Outside diagnostic tail; retain full reservation. No retry."
+}

@@ -1,0 +1,414 @@
+{
+  "scope": "Deployed Worker with isolated synthetic dependencies; not live Anthropic safety evidence.",
+  "worker": "https://ai-sprint-recommender-failure-test.jason-zeng151.workers.dev",
+  "checkedAt": "2026-10-21T14:51:39.297Z",
+  "paidProviderCalls": 0,
+  "sheetMutations": 0,
+  "checks": [
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "success",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "success",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac",
+        "youtubeIdCount": 1,
+        "allIdsKnown": true,
+        "youtubeIds": ["fx03BdgtXls"]
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:31.976Z",
+          "httpStatus": 404
+        },
+        {
+          "attempt": 2,
+          "startedAt": "2026-10-21T14:51:34.163Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "default-off",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 0,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "disabled"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.311Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "kill-switch",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 0,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "disabled"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.338Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "empty-catalog",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "insufficient-results",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:0cbc569b7cdff55b566d21ea8d89b47c68a363adfd1b3e08ca834bbe72e7d89c"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.380Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "retired-catalog",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "unavailable",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.427Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "catalog-description-injection",
+      "status": 200,
+      "providerAborted": false,
+      "catalogTextIsUntrustedData": true,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:7c9617b977706c7d91f3126c57084f7deb448770c492d35a669c031cf0b10f9d"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.452Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "unknown-id",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.495Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "duplicate-id",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.569Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "provider-error",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "provider-error",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.590Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "timeout",
+      "status": 200,
+      "providerAborted": true,
+      "serverLatencyMs": 4500,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "timeout",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:34.614Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "budget-exhausted",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 0,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "budget-exhausted",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:39.154Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "rate-limited",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 0,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "rate-limited",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:39.174Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "oversized-output",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:39.205Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "oversized-input",
+      "status": 400,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 0,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "unavailable",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:39.227Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    },
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "catalog-too-large",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 0,
+        "reservations": 0
+      },
+      "result": {
+        "outcome": "fallback",
+        "reason": "catalog-too-large",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v6",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac"
+      },
+      "attempts": [
+        {
+          "attempt": 1,
+          "startedAt": "2026-10-21T14:51:39.278Z",
+          "httpStatus": 200
+        }
+      ],
+      "passed": true
+    }
+  ]
+}
