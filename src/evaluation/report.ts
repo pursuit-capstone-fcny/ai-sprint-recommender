@@ -44,6 +44,23 @@ export const DiagnosticsSchema = z
       outputTokens: z.number().int().nonnegative().optional(),
       costMicrodollars: z.number().int().nonnegative().optional(),
       reservedMicrodollars: z.number().int().nonnegative().optional(),
+      validationFailure: z
+        .enum([
+          'max-tokens',
+          'refusal',
+          'stop-reason',
+          'content',
+          'json',
+          'schema',
+          'duplicate',
+          'out-of-range',
+        ])
+        .optional(),
+      contentBlockCount: z.number().int().min(0).max(100).optional(),
+      selectionCount: z.number().int().min(0).max(100).optional(),
+      invalidSelectionCount: z.number().int().min(0).max(100).optional(),
+      duplicateCount: z.number().int().min(0).max(100).optional(),
+      outOfRangeCount: z.number().int().min(0).max(100).optional(),
       catalogVersion: z.string().optional(),
       modelVersion: z.string().optional(),
       promptVersion: z.string().optional(),

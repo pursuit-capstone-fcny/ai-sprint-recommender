@@ -1,0 +1,143 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "8c379726-8178-4580-a4d0-49159c842ad4",
+    "status": 200,
+    "latencyMs": 4667,
+    "diagnostic": {
+      "requestId": "8c379726-8178-4580-a4d0-49159c842ad4",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 4473,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  },
+  {
+    "trial": 1,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "6658dd54-18ae-4894-a768-a61fc428bb02",
+    "status": 400,
+    "latencyMs": 59,
+    "diagnostic": {
+      "requestId": "6658dd54-18ae-4894-a768-a61fc428bb02",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 6,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "a9038850-0391-48b9-817b-3a3040e965c7",
+    "status": 200,
+    "latencyMs": 4409,
+    "diagnostic": {
+      "requestId": "a9038850-0391-48b9-817b-3a3040e965c7",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 4386,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "3011bb24-0b42-44ed-b984-9839b4513ee1",
+    "status": 400,
+    "latencyMs": 34,
+    "diagnostic": {
+      "requestId": "3011bb24-0b42-44ed-b984-9839b4513ee1",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 14,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  },
+  {
+    "trial": 3,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "72a2f5d3-252e-4ae1-9a00-0f99abab3738",
+    "status": 200,
+    "latencyMs": 3891,
+    "diagnostic": {
+      "requestId": "72a2f5d3-252e-4ae1-9a00-0f99abab3738",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 3869,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  },
+  {
+    "trial": 3,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "780d741d-f96e-4617-b67a-9668bf0f20bf",
+    "status": 400,
+    "latencyMs": 45,
+    "diagnostic": {
+      "requestId": "780d741d-f96e-4617-b67a-9668bf0f20bf",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 6,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  }
+]

@@ -24,6 +24,23 @@ const DiagnosticSchema = z.strictObject({
   outputTokens: count.optional(),
   costMicrodollars: count.optional(),
   reservedMicrodollars: count.optional(),
+  validationFailure: z
+    .enum([
+      'max-tokens',
+      'refusal',
+      'stop-reason',
+      'content',
+      'json',
+      'schema',
+      'duplicate',
+      'out-of-range',
+    ])
+    .optional(),
+  contentBlockCount: z.number().int().min(0).max(100).optional(),
+  selectionCount: z.number().int().min(0).max(100).optional(),
+  invalidSelectionCount: z.number().int().min(0).max(100).optional(),
+  duplicateCount: z.number().int().min(0).max(100).optional(),
+  outOfRangeCount: z.number().int().min(0).max(100).optional(),
   catalogVersion: z
     .string()
     .regex(/^sha256:[a-f0-9]{64}$/)

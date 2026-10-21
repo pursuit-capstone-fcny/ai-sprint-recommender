@@ -20,7 +20,7 @@ jobs:
     if: >-
       github.event.pull_request.number == 76 &&
       github.event.pull_request.head.repo.full_name == github.repository &&
-      (github.event.label.name == 'deploy-llm-test' || github.event.label.name == 'evaluate-llm-test')
+      (github.event.label.name == 'deploy-llm-test' || github.event.label.name == 'evaluate-llm-test' || github.event.label.name == 'diagnose-llm-test')
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
@@ -80,7 +80,7 @@ jobs:
 
       - name: Enable approved test candidate
         id: enable
-        if: github.event.label.name == 'evaluate-llm-test'
+        if: github.event.label.name != 'deploy-llm-test'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -115,11 +115,17 @@ jobs:
           pnpm exec wrangler deploy --config wrangler.evaluation.json --var LLM_ENABLED:true --secrets-file "$RUNNER_TEMP/anthropic-test-secrets.json"
 
       - name: Run approved trials and collect sanitized diagnostics
-        if: github.event.label.name == 'evaluate-llm-test'
+        if: github.event.label.name != 'deploy-llm-test'
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39553320172/report.json
+          DIAGNOSE_FORMAT: ${{ github.event.label.name == 'diagnose-llm-test' }}
+        run: |
+          if [ "$DIAGNOSE_FORMAT" = 'true' ]; then
+            node scripts/run-live-evaluation.mjs --diagnose-format --baseline docs/evaluation/2026-10-21/runs/39553320172/report.json
+          else
+            node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39553320172/report.json
+          fi
 
       - name: Allow one minute for browser verification within the same budget
         if: github.event.label.name == 'evaluate-llm-test'

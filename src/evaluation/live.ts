@@ -108,6 +108,95 @@ export const LiveApprovalSchema = z
     (value) => value.maxRequestMicrodollars * 30 <= value.allowanceMicrodollars,
   );
 
+export async function warmCatalog(
+  benchmark: Benchmark,
+  approval: z.infer<typeof LiveApprovalSchema>,
+  fetcher: typeof fetch,
+  saveWarmups: (rows: Warmup[]) => Promise<void>,
+  trial: number,
+): Promise<Warmup[]> {
+  const warmups: Warmup[] = [];
+  const wrongVersion = `sha256:${(benchmark.catalog.catalogVersion === `sha256:${'0'.repeat(64)}` ? 'f' : '0').repeat(64)}`;
+  // Version mismatch fetches and validates the trusted catalog before provider dispatch.
+  // A cold Apps Script fetch can exceed the server deadline. Retry only this
+  // unpaid load up to three times; invalid area is a second pre-provider gate.
+  let warmup: Warmup | undefined;
+  for (let attempt = 1; attempt <= 3; attempt++) {
+    warmup = {
+      trial,
+      phase: 'catalog-load',
+      attempt,
+      ...(await requestRecommendation(
+        approval.endpoint,
+        {
+          functionArea: '__evaluation_invalid_area__',
+          goal: '',
+          tools: [],
+          catalogVersion: wrongVersion,
+        },
+        fetcher,
+        10_000,
+        200,
+      )),
+    };
+    warmups.push(warmup);
+    await saveWarmups(warmups);
+    if (
+      warmup.response.outcome !== 'fallback' ||
+      warmup.response.reason !== 'timeout'
+    )
+      break;
+  }
+  if (
+    !warmup ||
+    !warmup.requestId ||
+    warmup.response.outcome !== 'fallback' ||
+    warmup.response.reason !== 'catalog-mismatch' ||
+    warmup.response.catalogVersion !== benchmark.catalog.catalogVersion ||
+    warmup.response.modelVersion !== approval.modelVersion ||
+    warmup.response.promptVersion !== approval.promptVersion
+  ) {
+    throw new Error(
+      'Catalog warmup did not confirm the approved catalog and configuration. No trial retry was attempted.',
+    );
+  }
+  // A canonical-area rejection happens after reading the catalog and before reservation.
+  // This proves the deployed cache is fast enough without spending a provider call.
+  const cacheCheck: Warmup = {
+    trial,
+    phase: 'cache-check',
+    ...(await requestRecommendation(
+      approval.endpoint,
+      {
+        functionArea: '__evaluation_invalid_area__',
+        goal: '',
+        tools: [],
+        catalogVersion: benchmark.catalog.catalogVersion,
+      },
+      fetcher,
+      10_000,
+      400,
+    )),
+  };
+  warmups.push(cacheCheck);
+  await saveWarmups(warmups);
+  if (
+    !cacheCheck.requestId ||
+    cacheCheck.status !== 400 ||
+    cacheCheck.latencyMs >= 1_000 ||
+    cacheCheck.response.outcome !== 'fallback' ||
+    cacheCheck.response.reason !== 'unavailable' ||
+    cacheCheck.response.catalogVersion !== benchmark.catalog.catalogVersion ||
+    cacheCheck.response.modelVersion !== approval.modelVersion ||
+    cacheCheck.response.promptVersion !== approval.promptVersion
+  ) {
+    throw new Error(
+      'Catalog cache check failed or took at least one second. No trial retry was attempted.',
+    );
+  }
+  return warmups;
+}
+
 // No provider credentials: this exercises only the approved preview endpoint.
 // Server limits remain authoritative. Reserve room for all thirty requests first.
 export async function runLiveTrials(
@@ -128,85 +217,15 @@ export async function runLiveTrials(
     throw new Error('Live approval does not match this benchmark.');
   const trials: Trials['trials'] = [];
   const warmups: Warmup[] = [];
-  const wrongVersion = `sha256:${(benchmark.catalog.catalogVersion === `sha256:${'0'.repeat(64)}` ? 'f' : '0').repeat(64)}`;
   for (let index = 0; index < 3; index += 1) {
-    // Version mismatch fetches and validates the trusted catalog before provider dispatch.
-    // A cold Apps Script fetch can exceed the server deadline. Retry only this
-    // unpaid load up to three times; invalid area is a second pre-provider gate.
-    let warmup: Warmup | undefined;
-    for (let attempt = 1; attempt <= 3; attempt++) {
-      warmup = {
-        trial: index + 1,
-        phase: 'catalog-load',
-        attempt,
-        ...(await requestRecommendation(
-          approval.endpoint,
-          {
-            functionArea: '__evaluation_invalid_area__',
-            goal: '',
-            tools: [],
-            catalogVersion: wrongVersion,
-          },
-          fetcher,
-          10_000,
-          200,
-        )),
-      };
-      warmups.push(warmup);
-      await saveWarmups(warmups);
-      if (
-        warmup.response.outcome !== 'fallback' ||
-        warmup.response.reason !== 'timeout'
-      )
-        break;
-    }
-    if (
-      !warmup ||
-      !warmup.requestId ||
-      warmup.response.outcome !== 'fallback' ||
-      warmup.response.reason !== 'catalog-mismatch' ||
-      warmup.response.catalogVersion !== benchmark.catalog.catalogVersion ||
-      warmup.response.modelVersion !== approval.modelVersion ||
-      warmup.response.promptVersion !== approval.promptVersion
-    ) {
-      throw new Error(
-        'Catalog warmup did not confirm the approved catalog and configuration. No trial retry was attempted.',
-      );
-    }
-    // A canonical-area rejection happens after reading the catalog and before reservation.
-    // This proves the deployed cache is fast enough without spending a provider call.
-    const cacheCheck: Warmup = {
-      trial: index + 1,
-      phase: 'cache-check',
-      ...(await requestRecommendation(
-        approval.endpoint,
-        {
-          functionArea: '__evaluation_invalid_area__',
-          goal: '',
-          tools: [],
-          catalogVersion: benchmark.catalog.catalogVersion,
-        },
-        fetcher,
-        10_000,
-        400,
-      )),
-    };
-    warmups.push(cacheCheck);
-    await saveWarmups(warmups);
-    if (
-      !cacheCheck.requestId ||
-      cacheCheck.status !== 400 ||
-      cacheCheck.latencyMs >= 1_000 ||
-      cacheCheck.response.outcome !== 'fallback' ||
-      cacheCheck.response.reason !== 'unavailable' ||
-      cacheCheck.response.catalogVersion !== benchmark.catalog.catalogVersion ||
-      cacheCheck.response.modelVersion !== approval.modelVersion ||
-      cacheCheck.response.promptVersion !== approval.promptVersion
-    ) {
-      throw new Error(
-        'Catalog cache check failed or took at least one second. No trial retry was attempted.',
-      );
-    }
+    const loaded = await warmCatalog(
+      benchmark,
+      approval,
+      fetcher,
+      async (rows) => saveWarmups([...warmups, ...rows]),
+      index + 1,
+    );
+    warmups.push(...loaded);
     const trial: Trials['trials'][number] = {
       startedAt: new Date().toISOString(),
       calls: [],

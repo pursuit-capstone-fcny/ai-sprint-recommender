@@ -18,6 +18,33 @@ const diagnostic = {
   modelVersion: 'claude-haiku-5-5',
   promptVersion: 'catalog-rank-v2',
 };
+
+it('retains bounded validation categories without raw provider text', () => {
+  const invalid = {
+    ...diagnostic,
+    outcome: 'invalid-response',
+    validationFailure: 'duplicate',
+    selectionCount: 10,
+    duplicateCount: 2,
+    rawOutput: 'PRIVATE_PROVIDER_TEXT',
+  };
+  const rows = diagnosticsFromEnvelope(envelope(invalid));
+  expect(rows).toHaveLength(1);
+  expect(rows[0]).toMatchObject({
+    validationFailure: 'duplicate',
+    selectionCount: 10,
+    duplicateCount: 2,
+  });
+  expect(JSON.stringify(rows)).not.toContain('PRIVATE');
+  expect(
+    diagnosticsFromEnvelope(
+      envelope({ ...invalid, validationFailure: 'PRIVATE_REASON' }),
+    ),
+  ).toEqual([]);
+  expect(
+    diagnosticsFromEnvelope(envelope({ ...invalid, duplicateCount: 101 })),
+  ).toEqual([]);
+});
 function envelope(candidate = diagnostic) {
   return {
     event: {

@@ -39,7 +39,28 @@ more precisely and avoid fragile copying of video IDs. Rules matching will
 distinguish specific task evidence from a single common shared word. Generic
 regression tests must justify these changes independently of benchmark labels.
 
-Results and the exact candidate revision will be added after the live run.
+## V3 results
+
+[Run 39608680366](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39608680366)
+evaluated `9911a6d`, Haiku 5.5 and `catalog-rank-v3` against the frozen labels.
+Rules improved from 3/10 to **8/10**. LLM trials scored **4/10, 3/10 and
+3/10**, with **18 invalid-response fallbacks**. The LLM quality gate failed.
+The [comparison](runs/39608680366/report.md) preserves every result.
+
+The 30 benchmark calls cost $0.049185; four separate probes cost $0.006530.
+The measured total is **$0.055715**, from reported usage and approved prices,
+not a billing export. Benchmark median/p95 latency was 1.305/2.050 seconds.
+All 34 calls have matching diagnostics. The separate single browser submission
+fell back to Standard matching and was not retried. Its cost is unknown and
+bounded by its $0.006256 maximum reservation, outside the measured 34 calls.
+The workflow confirmed shutdown afterward.
+
+Before another full trial, two synthetic format probes may diagnose rejected
+output. They use the existing budget ledger and reserve at most $0.012512.
+Only fixed validation categories and bounded counts may be recorded, never
+raw provider text. These probes are not benchmark trials. The planning
+allowance is now $0.60; the original $1 cap and expiry remain unchanged.
+
 Neither this request nor a better score approves production enablement or
 substitutes for Ali/Eliot's final review.
 

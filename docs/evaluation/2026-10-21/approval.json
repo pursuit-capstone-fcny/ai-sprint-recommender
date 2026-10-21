@@ -9,6 +9,6 @@
   "runtimeDecision": "docs/evaluation/2026-10-21/test-decision.md; docs/evaluation/2026-10-21/quality-rerun.md",
   "privacyDecision": "docs/evaluation/2026-10-21/test-decision.md",
   "budgetDecision": "docs/evaluation/2026-10-21/quality-rerun.md; wrangler.evaluation.json",
-  "allowanceMicrodollars": 700000,
+  "allowanceMicrodollars": 600000,
   "maxRequestMicrodollars": 6256
 }
