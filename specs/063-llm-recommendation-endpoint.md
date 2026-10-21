@@ -19,6 +19,13 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   request is assembled, then that text stays in the untrusted data message.
   The full catalog is retained with bounded title/description fields. It falls
   back if its conservative token bound exceeds the limit; no shortlist is made.
+- Given an explicit goal, when prompt `catalog-rank-v3` ranks the catalog, then
+  it prioritizes help with the requested task and deliverable over broad area
+  or tool overlap. It uses area and tools when the goal is blank.
+- Given a provider request, when candidates are encoded, then every catalog
+  item has a numeric position constrained by a schema enum. The server maps
+  valid positions to the same trusted snapshot's IDs. Duplicate, noninteger,
+  out-of-range, oversized or malformed selections reject the whole result.
 - Given sufficient rate, concurrency and spend allowance, when a call is
   dispatched, then its maximum configured input/output cost has already been
   reserved in one Durable Object storage transaction. Concurrent reservations
