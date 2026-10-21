@@ -12,7 +12,12 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test candidate
 
-`catalog-rank-v5` ranks the requested activity, output and audience or
+`catalog-rank-v6` is a test candidate that changes only Haiku 5.5 effort from
+`low` to `medium`. Thinking stays disabled; v5's prompt text, catalog, output
+schema and all runtime caps stay unchanged. Relevance and latency improvements
+are unproven until #19 evaluates this configuration.
+
+V5 ranks the requested activity, output and audience or
 counterparty ahead of general AI guidance. It keeps v4's slots, full catalog,
 model and effort unchanged.
 
@@ -46,7 +51,7 @@ production diagnostics.
 
 When `LLM_MODEL` is
 `claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to
-`low`, keeping the output allowance available for ranked IDs. Unexpected
+`medium`, keeping the output allowance available for ranked IDs. Unexpected
 thinking blocks still reject the result. The browser's five-second limit is
 unchanged.
 
@@ -58,6 +63,9 @@ or less. Larger prompts use a higher price tier. These are candidate settings,
 not approval to enable calls or spend. The
 [thinking configuration reference](https://platform.claude.com/docs/en/build-with-claude/thinking-troubleshooting)
 permits disabled thinking at effort `high` or below for this model.
+The [effort reference](https://platform.claude.com/docs/en/build-with-claude/effort)
+confirms that effort also applies when thinking is disabled. Medium can use
+more tokens than low; the existing token, spend and deadline limits still apply.
 
 ## Request and response
 
