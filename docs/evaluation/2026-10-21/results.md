@@ -35,6 +35,9 @@ quality of those model answers.
 
 ## Cost and evidence
 
+Costs below use provider-reported tokens and the approved prices; they are not
+an Anthropic billing export.
+
 - Benchmark: 505,707 input tokens, 3,818 output tokens, **$0.052492**.
 - Two held-out paraphrases, nonsense and goal injection: **$0.006944**.
 - Second run measured total: **$0.059436**, with all 34 request IDs joined to
@@ -78,7 +81,12 @@ deployed synthetic checks and mocked browser behavior. Goal injection returned
 only active IDs; nonsense returned no IDs and selected standard matching.
 These individual probes do not establish general injection resistance.
 
+All 15 isolated failure checks passed on Cloudflare, including a 5,000 ms
+server timeout and no provider dispatch for blocked requests. The temporary
+Worker was removed. Final validation passed 410 tests, typecheck, lint and
+build; CI and preview deployment passed on the tested revision.
+
 Production requires improved relevance, Ali/Eliot's semantic and weak-profile
-review, the completed failure record, a production volume/budget decision and
+review, a production volume/budget decision and
 the #23 demo evidence. The test site is configured but provider calls are off
 at rest. Production LLM calls and logging remain disabled.

@@ -41,9 +41,30 @@ and labels. It completed all 34 requests and collected matching diagnostics.
 See the [saved probes](runs/39553320172/probes.json),
 [warmups](runs/39553320172/warmups.json) and [comparison](runs/39553320172/report.md).
 
+## Deployed synthetic checks
+
+[Run 39554453626](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39554453626)
+tested revision `4954c88ccddd720adb0bdb1731626570609cc153` in a separate Worker.
+All **15 checks passed**. Its provider, catalog and budget dependencies were
+fixed synthetic stubs. The shared Sheet and real Anthropic API were never
+called. The workflow deleted the temporary Worker afterward.
+
+- Default-off, kill switch, empty/retired catalogs, oversized input/catalog,
+  exhausted budget and rate limits prevented provider dispatch.
+- Unknown, duplicate and excessive IDs, plus an injected catalog description
+  paired with a fabricated provider ID, caused complete invalid-response
+  fallback. The description remained untrusted user-message data.
+- Provider errors fell back. The server deadline fired at **5,000 ms** and
+  aborted the synthetic provider.
+- A successful control returned a known catalog ID.
+
+The [saved report](runs/39554453626/failure-checks.json) records each outcome
+and dispatch count. These are deployed handler checks, not a claim about
+Anthropic's general resistance to injected catalog prose.
+
 ## Deterministic coverage
 
-Pre-run validation passed 391 tests across Vitest and the tail-parser suite.
+Final combined validation passed 410 tests, typecheck, lint and build.
 These tests use synthetic fixtures, spies or mocked transport; they are not
 deployed-provider checks.
 
@@ -60,14 +81,11 @@ deployed-provider checks.
 
 ## Still required
 
-- Deployed isolated-fixture checks for invalid IDs, empty/retired catalogs,
-  provider failures, missing limits, exhausted budgets and blocked-call dispatch
-  counts. Never mutate the shared tracker Sheet for these checks.
-- Catalog-description injection at the deployed validation boundary. Live
-  model resilience to arbitrary injected catalog text is not established by
-  the goal-injection probe.
-- Rendered browser success/failure demonstration, five-second fallback, latest
-  submission behavior and the rules-only switch on the deployed test site.
+- Live model resilience to arbitrary injected catalog text remains unproven.
+  The deployed check establishes that an invented ID cannot cross validation.
+- A rendered browser AI-success demonstration for #23. Rules fallback was
+  demonstrated on the deployed test site; deadline and latest-submission
+  rendering remain covered by deterministic browser tests.
 - Three passing relevance trials and a passing rules benchmark;
   Ali/Eliot review of semantic examples, weakest profiles and held-out wording;
   owner enablement decision and #23 demo evidence.

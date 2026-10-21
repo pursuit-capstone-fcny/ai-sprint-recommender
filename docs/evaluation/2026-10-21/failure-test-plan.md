@@ -1,7 +1,8 @@
 # Evaluation failure checks
 
-Status: Live evaluation attempted; see [recorded results](failure-results.md).
-Unverified cases remain open. These checks are separate from the ten relevance
+Status: Live evaluation and 15 deployed synthetic checks recorded in
+[failure-results.md](failure-results.md). Evidence limits remain explicit.
+These checks are separate from the ten relevance
 profiles and never increase its denominator. Keep production LLM and production
 logging disabled.
 
