@@ -249,6 +249,46 @@ describe('AC-19.2–4 comparable trial reports', () => {
       renderReport(report, { ...report, benchmarkFingerprint: '0'.repeat(64) }),
     ).toThrow('identical');
   });
+  it('keeps measured fallback cost complete without counting it as LLM relevance', () => {
+    const trials = structuredClone(mockTrials);
+    const call = trials.trials[0].calls[0];
+    call.requestId = randomUUID();
+    call.response = { outcome: 'fallback', reason: 'invalid-response' };
+    const diagnostics: Diagnostics = [
+      {
+        requestId: call.requestId,
+        environment: 'test',
+        outcome: 'invalid-response',
+        latencyMs: 20,
+        inputTokens: 10,
+        outputTokens: 5,
+        costMicrodollars: 50,
+        catalogVersion: benchmark.catalog.catalogVersion,
+        modelVersion: trials.modelVersion,
+        promptVersion: trials.promptVersion,
+      },
+    ];
+    expect(
+      evaluate(benchmark, { sourceRevision, trials, diagnostics }).llm[0]
+        .profiles[0],
+    ).toMatchObject({
+      metricsComplete: true,
+      costMicrodollars: 50,
+      passed: false,
+      engine: 'rules',
+    });
+    diagnostics[0].outcome = 'success';
+    expect(
+      evaluate(benchmark, { sourceRevision, trials, diagnostics }).llm[0]
+        .profiles[0].metricsComplete,
+    ).toBe(false);
+    diagnostics[0].outcome = 'invalid-response';
+    delete diagnostics[0].costMicrodollars;
+    expect(
+      evaluate(benchmark, { sourceRevision, trials, diagnostics }).llm[0]
+        .profiles[0].metricsComplete,
+    ).toBe(false);
+  });
 });
 
 describe('AC-19.5–6 manual live checks are opt-in', () => {

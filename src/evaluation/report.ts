@@ -134,7 +134,8 @@ export function evaluate(
         const metric = call.requestId ? metrics.get(call.requestId) : undefined;
         const complete =
           metric !== undefined &&
-          metric.outcome === 'success' &&
+          metric.outcome ===
+            (response.outcome === 'success' ? 'success' : response.reason) &&
           metric.catalogVersion === benchmark.catalog.catalogVersion &&
           metric.modelVersion === trials.modelVersion &&
           metric.promptVersion === trials.promptVersion &&
