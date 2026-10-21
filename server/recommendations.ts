@@ -47,6 +47,7 @@ interface Dependencies {
   provider?: Provider;
   budget?: Budget;
   catalogCache?: CatalogCache;
+  waitUntil?: (task: Promise<unknown>) => void;
   diagnostic?: (entry: Diagnostic) => void;
   clientKey?: () => Promise<string>;
 }
@@ -56,6 +57,8 @@ const headers = {
   'content-type': 'application/json',
   'x-content-type-options': 'nosniff',
 };
+// Leave time for the response to reach the browser's unchanged five-second limit.
+export const SERVER_DEADLINE_MS = RECOMMENDATION_DEADLINE_MS - 500;
 
 function testExpired(env: WorkerEnv): boolean {
   if (env.LLM_ENVIRONMENT !== 'test' || env.LLM_TEST_EXPIRES_AT === undefined)
@@ -91,7 +94,7 @@ export async function recommend(
   deps: Dependencies = {},
 ): Promise<Response> {
   const started = Date.now();
-  const deadline = started + RECOMMENDATION_DEADLINE_MS;
+  const deadline = started + SERVER_DEADLINE_MS;
   const requestId = crypto.randomUUID();
   const abort = new AbortController();
   const diagnostic: Diagnostic = {
@@ -170,6 +173,7 @@ export async function recommend(
         signal: abort.signal,
         fetcher,
         cache: deps.catalogCache ?? defaultCatalogCache(),
+        waitUntil: deps.waitUntil,
       });
     } catch {
       return fallback(
@@ -282,7 +286,7 @@ export async function recommend(
     timer = setTimeout(() => {
       abort.abort();
       resolve(fallback('timeout'));
-    }, RECOMMENDATION_DEADLINE_MS);
+    }, SERVER_DEADLINE_MS);
   });
   const result = await Promise.race([
     execute().catch(() =>

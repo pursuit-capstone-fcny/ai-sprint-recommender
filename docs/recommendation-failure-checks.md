@@ -18,7 +18,7 @@ node scripts/verify-failure-worker.mjs
 ```
 
 The verifier calls the fixed test hostname and checks exact result shapes,
-fallback reasons, catalog/provider/reservation counts, and the five-second
+fallback reasons, catalog/provider/reservation counts, and the 4.5-second
 timeout with provider cancellation. It writes the report to
 `build/evaluation/failure-checks/report.json`. A failed run writes `failure.json`
 with the scenario, phase, HTTP status, fixed failure category, allowlisted

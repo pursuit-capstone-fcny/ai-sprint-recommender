@@ -27,7 +27,7 @@ export function verifyFailureCase(expected, actual) {
   const versions =
     expected.reason === 'disabled'
       ? {}
-      : { modelVersion: 'fixture-model', promptVersion: 'catalog-rank-v4' };
+      : { modelVersion: 'fixture-model', promptVersion: 'catalog-rank-v5' };
   const expectsCatalogVersion =
     expected.catalogReads && expected.name !== 'retired-catalog';
   const catalogVersion = expectsCatalogVersion
@@ -48,8 +48,8 @@ export function verifyFailureCase(expected, actual) {
   assert.equal(actual.providerAborted, expected.name === 'timeout');
   if (expected.name === 'timeout')
     assert(
-      actual.serverLatencyMs >= 4_950 && actual.serverLatencyMs <= 6_000,
-      'Five-second server deadline must fire',
+      actual.serverLatencyMs >= 4_450 && actual.serverLatencyMs <= 5_500,
+      'Server deadline must fire at 4.5 seconds',
     );
   if (expected.name === 'catalog-description-injection')
     assert.equal(actual.catalogTextIsUntrustedData, true);

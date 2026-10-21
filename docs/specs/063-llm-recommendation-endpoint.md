@@ -43,7 +43,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.5 Bounded failure and cost
   - Given an anonymous endpoint, concurrent requests or provider errors
   - When traffic reaches configured limits
-  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a five-second server deadline and no paid retries
+  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a 4.5-second server deadline inside the browser's five-second limit and no paid retries
 - AC-63.6 Privacy and diagnostics
   - Given successful, rejected or failed calls
   - When diagnostics are recorded
