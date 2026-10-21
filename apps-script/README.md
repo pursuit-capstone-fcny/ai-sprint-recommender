@@ -124,10 +124,11 @@ statuses are unchanged.
   Local development uses `.env.example` as a guide.
 - AC-9.5 still needs clasp automation and a separate FCNY production project
   with production isolation and fixed-ID verification. The test deployment
-  retained its ID when updated from version 1 to version 2 through Google's UI.
+  retained its ID through version 3 updates in Google's UI.
 - AC-9.8 GET, browser access and edit/retirement freshness pass on preview.
-  Production GET and #16 POST remain unverified. Once #16 exists, verify preview
-  writes never reach production. Use the ADR-0002 proxy fallback if access fails.
+  Test #16 POST and browser search/impression/click writes pass against the private
+  test Sheet. Production GET remains unverified and production logging stays
+  disabled. Use the ADR-0002 proxy fallback if access fails.
 - ContentService redirects JSON. Error envelopes (`CATALOG_DISABLED`,
   `CATALOG_BUSY`, `CATALOG_INVALID_CONFIG`, `CATALOG_UNAVAILABLE`) produce the
   page's failure state; `items: []` is a valid empty catalog.
