@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "status": "approved-initial-evaluation-client-review-pending",
+  "benchmarkId": "fcny-89-proposed-v1",
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "scoring": "Separate qualitative check; never included in the ten-profile denominator. Inherit the original profile labels without adding or relabeling videos.",
+  "profiles": [
+    {
+      "id": "held-out-operations-01",
+      "sourceProfileId": "operations-01",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "We have piles of participant comments. Help me spot the recurring messages and explain them clearly to our program lead.",
+        "tools": ["Claude"]
+      }
+    },
+    {
+      "id": "held-out-fundraising-02",
+      "sourceProfileId": "fundraising-02",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "I want a practice partner before meeting a prospective supporter, plus a sense of what they might challenge us on.",
+        "tools": ["ChatGPT"]
+      }
+    }
+  ]
+}

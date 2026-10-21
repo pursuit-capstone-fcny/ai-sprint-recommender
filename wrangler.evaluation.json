@@ -1,0 +1,46 @@
+{
+  "name": "ai-sprint-recommender-llm-test",
+  "main": "server/enabled-worker.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+    "not_found_handling": "single-page-application"
+  },
+  "vars": {
+    "LLM_ENABLED": "false",
+    "LLM_APPROVALS_RECORDED": "true",
+    "LLM_ENVIRONMENT": "test",
+    "LLM_MODEL": "claude-haiku-5-5",
+    "LLM_CATALOG_URL": "https://script.google.com/macros/s/AKfycbz-MZXRuXo997pUlBO_bZa3ClUAp-vZSOHbpszXcHJ7N6BtqCdeGi4CNXUxWy39pTev/exec",
+    "LLM_MAX_INPUT_TOKENS": "60000",
+    "LLM_MAX_OUTPUT_TOKENS": "512",
+    "LLM_REQUESTS_PER_MINUTE": "60",
+    "LLM_CLIENT_REQUESTS_PER_MINUTE": "60",
+    "LLM_MAX_CONCURRENCY": "2",
+    "LLM_DAILY_MICRODOLLARS": "1000000",
+    "LLM_MONTHLY_MICRODOLLARS": "1000000",
+    "LLM_INPUT_MICRODOLLARS_PER_MILLION": "100000",
+    "LLM_OUTPUT_MICRODOLLARS_PER_MILLION": "500000",
+    "LLM_DIAGNOSTICS_ENABLED": "true",
+    "LLM_TEST_EXPIRES_AT": "2026-10-22T00:00:00Z"
+  },
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "RECOMMENDATION_BUDGET",
+        "class_name": "RecommendationBudget"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "recommendation-budget-v1",
+      "new_sqlite_classes": ["RecommendationBudget"]
+    }
+  ],
+  "observability": {
+    "enabled": false
+  }
+}

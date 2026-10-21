@@ -5,10 +5,16 @@ the browser. Missing slots count as misses. A profile passes with two ideal or
 good picks; a run passes with eight of ten profiles. Rules fallback picks never
 count as an LLM pass. Each of the three LLM trials must pass separately.
 
-The checked-in benchmark is **draft fictional data**, not FCNY relevance
+The default CI benchmark is **draft fictional data**, not FCNY relevance
 evidence. Its labels have not been reviewed. Issue #7 still needs ten approved
 synthetic profiles and ideal/good video IDs with reasons. Do not edit labels to
 raise a candidate's score.
+
+The separate [October 21 evaluation](evaluation/2026-10-21/test-decision.md)
+uses Jason's approved initial benchmark against the frozen 89-video catalog.
+Its metadata-based labels and $1 test allowance do not replace Ali/Eliot's
+final review. The label-triggered test workflow captures sanitized diagnostics,
+then disables paid calls. It does not run in ordinary PR CI.
 
 ## CI and local checks
 

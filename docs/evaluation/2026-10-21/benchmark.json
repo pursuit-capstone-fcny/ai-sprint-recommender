@@ -1,0 +1,1444 @@
+{
+  "schemaVersion": 1,
+  "id": "fcny-89-proposed-v1",
+  "approval": {
+    "status": "approved",
+    "approvedBy": "Jason",
+    "approvedAt": "2026-10-21",
+    "evidence": "docs/evaluation/2026-10-21/test-decision.md; initial metadata-based benchmark approved in Codex chat on 2026-10-21; final Ali/Eliot review pending"
+  },
+  "catalog": {
+    "schemaVersion": 1,
+    "items": [
+      {
+        "youtubeId": "6d2bKhdmqqA",
+        "title": "Placeholder AI Guidelines",
+        "description": "Don't wait months for a formal AI policy. Your staff need guidance now. This video walks through six practical principles nonprofits can send to all staff right away, covering what's encouraged, what's off-limits, and how to handle AI use internally and externally.",
+        "functionAreas": ["Leadership", "Operations"],
+        "tasks": [
+          "AI policy drafting",
+          "policy implementation",
+          "workplace guidance",
+          "staff AI adoption",
+          "governance"
+        ],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "i22v2xwT6k4",
+        "title": "AI Peer Learning Groups",
+        "description": "An overview of how to build an AI learning team inside your organization. A small, diverse group of staff commits to practicing AI on real work for one to two hours a week, then meets monthly to share what worked and what did not. Over a few months the group builds practical examples that can be shared across the organization. The video covers who should be on the team, what tools they need, and how to keep people engaged.",
+        "functionAreas": ["Operations", "Leadership"],
+        "tasks": [
+          "team learning",
+          "peer learning",
+          "internal training",
+          "staff engagement",
+          "capacity building"
+        ],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "4LMIC-v5xZ0",
+        "title": "How to Build a Project Folder in ChatGPT",
+        "description": "ChatGPT's Projects feature lets you build a dedicated workspace for a specific topic, complete with uploaded documents and custom instructions. This demo walks through setting one up for operations and quality management, from what to upload to how to write instructions that shape the responses. The presenter shows a working example where the project uses internal agency documents to generate staff checklists tied to program standards.",
+        "functionAreas": ["Operations", "Programs & Client Services"],
+        "tasks": [
+          "workspace setup",
+          "document organization",
+          "staff checklists",
+          "quality management",
+          "prompt instructions"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "description": "When different staff members write public-facing content, keeping a consistent voice is hard. This demo shows a Custom GPT built to solve that problem, drawing only from the organization's own documents and asking clarifying questions before producing anything. The presenter walks through the setup and ends with a live example: a printed handout that typically takes 45 minutes to write, done in five.",
+        "functionAreas": ["Communications"],
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "UdWR8KKxVDU",
+        "title": "Creating a Custom GPT for FAQ",
+        "description": "What if staff could get answers to common questions without waiting on anyone? The Director of any education nonprofit shows how to build a Custom GPT for internal FAQ, walking through the full process from picking the right documents to setting the tone and testing before sharing. The video covers what works, what to avoid like sensitive data and open web access, and why keeping the content current matters as much as the setup.",
+        "functionAreas": ["Operations"],
+        "tasks": [
+          "internal FAQ",
+          "knowledge management",
+          "custom GPT setup",
+          "information retrieval",
+          "staff questions"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "description": "Build custom GPTs trained on your organization's language, framing guidelines, and existing materials to generate first drafts of op-eds, press releases, and public-facing content. This demo shows the setup process and how detailed instructions lead to better, more on-brand results.",
+        "functionAreas": ["Communications"],
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "DNfFMZxAI-0",
+        "title": "Build Your Own Lesson Planning Tool",
+        "description": "What would it look like to have an AI walk teachers through lesson planning step by step? This demo from an education nonprofit shows how they built a Custom GPT that asks clarifying questions, checks in before moving forward, and pulls everything into one document at the end. The video covers how they wrote the instructions and attached their own curriculum materials to make it work.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [
+          "lesson planning",
+          "curriculum development",
+          "instructional design",
+          "custom GPT setup",
+          "teacher support"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "description": "Build a custom GPT trained on your organization's brand voice, mission language, and past content to generate social media posts and blog copy on demand. This demo shows the setup process and how to refine the instructions to get consistent, on-brand results.",
+        "functionAreas": ["Communications"],
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "nBAaIIz9QFg",
+        "title": "Build a Custom AI Assistant for Staff Training",
+        "description": "What if staff could practice difficult conversations on their own schedule, without needing a colleague to play the other side? This demo shows a custom GPT built to simulate high-stakes workplace scenarios through voice mode, including pitching skeptical employer partners and practicing job interviews. The GPT is loaded with organizational training materials and talking points, stays in character throughout the exchange, and closes with specific, granular feedback on what could have been said differently.",
+        "functionAreas": ["Operations", "Leadership"],
+        "tasks": [
+          "staff training",
+          "interview practice",
+          "roleplay simulation",
+          "voice mode",
+          "performance feedback"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "_9QqyTbwisc",
+        "title": "Build a Fundraising Assistant with Custom GPT",
+        "description": "See how one nonprofit built a suite of Custom GPTs for its fundraising and communications teams, each loaded with the organization's own documents and trained on its language. The demo highlights two: one that answers staff questions using a 130-page internal guide, and a writing assistant that has logged over 500 conversations. The presenter also shares an honest take on what makes these tools hard to get right.",
+        "functionAreas": ["Fundraising", "Communications"],
+        "tasks": [
+          "fundraising copy",
+          "fundraising support",
+          "internal guide Q&A",
+          "custom GPT setup",
+          "document querying"
+        ],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Z8yOypmasGg",
+        "title": "Turn a Repeated Task into a Reusable Claude Skill",
+        "description": "Have a resource page or any complex task that constantly needs updates? Have Claude turn this recurring task into a repeatable \"Claude Skill\" to save time for every new update! Ditch long form prompts and train Claude how to remember every detailed step with just a few words.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "rKn6KASMk50",
+        "title": "Build an AI Agent for Accessible Course Content",
+        "description": "Demonstrates an agent the team built in Microsoft Copilot Studio to make course material more accessible for students who work with their Office of Accessibility. The agent generates a personalized syllabus for each student, adapted to their focus, learning level, and specific accessibility needs. Travis walks through setting up the agent and writing its core instructions, grounding it in real syllabi and accessibility best practices, and then runs a live test that produces a one week syllabus and an accessible Word document.",
+        "functionAreas": ["Operations", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "maR3ZerQIJU",
+        "title": "Automate Email Attachments with Google Workspace Studio",
+        "description": "Watch Laura Roan demonstrate a flow she built in Google Workspace Studio that takes an email from someone inside her organization and files the attachments into a Google Drive folder and logs each one in a searchable inventory. The video walks through how the flow is triggered by an incoming email, pulls out attachments and Google Drive links, and files them automatically; how AI is used to tag each file with the sender, date, and keywords in a Google Sheet; and a practical tip for building your own workflow: take a screenshot when you get stuck and ask Gemini for help.",
+        "functionAreas": ["Operations", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["Gemini"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "wxJVc1q_nnY",
+        "title": "Use Coding as an Adoption Tool",
+        "description": "Learn how individuals without a coding background can use Claude to write code, automate everyday tasks, and build useful tools for their workflows.The video walks through how to prompt Claude to write the code and then run it in Google Apps Script to publish a live form; how to get clear, step-by-step instructions from Claude so anyone can follow along; and a bonus tip for using NotebookLM to organize SOPs so staff can ask questions instead of reading through the entire document.",
+        "functionAreas": ["Operations", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["NotebookLM"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Fz_zl467-QU",
+        "title": "Build an Activity Idea Generator for Lesson Planning (with Playlab)",
+        "description": "The Director of Internships & Career Success demonstrates a tool she built in Playlab to help staff come up with activity ideas for their lessons. The tool draws directly on the organization's own curriculum and teaching approach, so the ideas it suggests fit how the team actually works. The video walks through how to set up the tool so staff can enter the lesson, audience, and goals to generate activity ideas; how to add your own materials as references so suggestions stay on brand and on mission; and how grounding the tool in real curriculum helped hesitant staff start using AI",
+        "functionAreas": ["Operations", "Programs & Client Services"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "_pM0ua51qRI",
+        "title": "Quickly Find Unique Values in Spreadsheets with CHatGPT",
+        "description": "Ever needed a headcount from messy data, like how many unique students showed up across a whole season of events? This demo shows how to use ChatGPT to find the total number of unique names across several spreadsheets at once. Instead of cleaning duplicates by hand or hunting for the right formula, you can drop the sheets into ChatGPT and get the count in seconds. It is a handy shortcut anytime you need to pull a clear number from a big, messy data set, whether for reporting, grant applications, or tracking participation.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "zTcrktnmv48",
+        "title": "Build Evaluation Forms Automatically with AI",
+        "description": "This demo shows how generative AI can streamline administrative and program management tasks by turning a feedback rubric into a fully working Google Form. From a simple prompt, AI writes the Google Apps Script code that builds the form automatically, including the evaluation criteria, rating scales, instructions, and open-ended feedback questions. The result is a ready-to-use form for collecting consistent evaluations, so staff spend less time building forms and more time on program delivery and supporting participants.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "1yBNcKEISP0",
+        "title": "Using AI to Build & Understand Spreadsheet Formulas",
+        "description": "This demo shows how to use AI as a helper for spreadsheet work. It covers asking AI to build a formula from a plain description, explain what an existing formula does, and fix one that is broken. A useful approach for anyone who wants to spend less time on trial and error in Excel or Google Sheets",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "5vR5cPnqT-Q",
+        "title": "Generate Meeting Minutes with ChatGPT",
+        "description": "This demo shows how to turn a meeting transcript into formal, ready-to-share minutes using ChatGPT. It walks through building a structured prompt that sets the context, role, format, and task, then having AI produce organized minutes with decisions, an action items table, and a downloadable Word document. A practical way to cut the time spent writing up recurring meetings",
+        "functionAreas": ["Operations", "Communications"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "description": "Tracking volunteer hours by hand takes time, especially when names are spelled differently across a large dataset. This demo shows how a single ChatGPT prompt can generate a formula that adds up hours by name and handles spelling variations automatically. Two rounds of prompting, one working formula, and a note at the end on how the same approach can grow with your needs.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "description": "When a website security upgrade broke dozens of pages, the director of digital media at a college used ChatGPT to fix it without bringing in a developer. The video walks through that process error by error, showing how the whole upgrade got done on time without outside help.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "AjI2GF1b6zo",
+        "title": "Build an HR Policy Bot with Perplexity",
+        "description": "Build a custom AI bot that answers staff HR questions using your own policy documents, and use the GUARDRAILS framework to control exactly how it responds when it hits a question it can't answer. Works in Perplexity, ChatGPT, Claude, and other major platforms.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "cwCVpchJHB4",
+        "title": "Turn Program Feedback into a Director-Ready Report with AI",
+        "description": "A stack of feedback forms, some of them handwritten, is hard to make sense of by hand. This demo shows how AI can read the surveys, pull out the key numbers and themes, and turn the whole pile into a clean, director-ready report in minutes.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "description": "Tracking patient care milestones across two separate systems meant constant back-and-forth between platforms. This demo shows how Claude was used to build a custom Excel tracker with color-coded alerts for insurance dates, individual tabs per case manager, and a manager dashboard. The video also includes a useful workflow tip: draft and refine your prompt in ChatGPT first, then bring it into Claude to get a more complete result in fewer steps.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "description": "Messy spreadsheet data is a common problem, but cleaning it by hand takes time. This demo shows a drag-and-drop app built entirely in Claude that handles the cleanup automatically. Drop in a file and it flags missing values, fixes formatting issues, and exports a clean version with a record of every change made. The second half of the video walks through how the app was built using Claude's Artifacts feature, no coding required.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "dAqdQGqyNq8",
+        "title": "Improve How AI Describes Your Organization (GEO)",
+        "description": "When people ask an AI assistant about your organization, you want it to give the right answer. This is called GEO, and it is becoming just as important as showing up in a regular Google search. The demo shows how to ask a tool like Copilot about your programs or events, see where its answers are wrong or missing details, and figure out what to fix. It also shows how the AI itself can help you make a plan.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "0qSXFbGrQ90",
+        "title": "Using CoPilot to Analyze Feedback",
+        "description": "How can AI help make sense of large amounts of staff feedback? In this session, you'll see a practical example of using AI to analyze survey responses, identify common themes, and create summaries that are easier to share with a team. The presenter also discusses the challenges of using AI for qualitative data and shares lessons learned about writing better prompts to get more useful insights.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "description": "Monthly staff surveys were piling up faster than anyone could process them. A staff member at Results for America shows how Gemini, built into Google Sheets, can skip the manual cleanup and go straight to building a chart and summary in one prompt. The video also covers how to pull meaning from written responses and what to keep in mind when your dataset is small.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": ["Gemini"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "7IYj3W4PdPE",
+        "title": "Research Any Interview Subject with AI Deep Research",
+        "description": "ChatGPT's Deep Research feature can build a sourced background report on almost any subject. This demo shows how a fundraising professional used it to prepare for a gala honoree interview, generating interview questions and surfacing potential video clips from social media. The video walks through how to write an effective research prompt and what a completed report looks like, plus how the same approach applies to grant planning, software comparisons, and more.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "4Wo_miqxgmE",
+        "title": "Turn Survey Data into Real Insights",
+        "description": "Data analysis tools can be expensive and hard to learn. This demo shows how ChatGPT can work as a simpler alternative, using Google Form survey results as the starting point. The presenter walks through analyzing responses in multiple languages and questions where people could pick more than one answer, turning raw data into a clean breakdown of demographics and service ratings through conversation alone.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "description": "A staff member at Community Financial Resources shows how to use a ChatGPT project to review and validate a lengthy cardholder agreement: setting up a project with role and audience context, extracting key takeaways, and comparing two versions of a document to flag changes.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "description": "Ask ChatGPT to write VBA code that pulls data from dozens of spreadsheets into one summary automatically. This demo covers pulling budget data, generating summary charts, and locking spreadsheets for distribution, all without knowing how to code.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "description": "Dozens of open-ended survey responses, analyzed and organized in minutes. The Director of Engagement and Culture at Westchester Jewish Community Services walks through using ChatGPT to pull key themes from a leadership retreat survey, shape the output into a clean format, and apply that same format automatically across every remaining question.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "description": "Not sure how to write a spreadsheet formula? This demo shows a tool called sheetformula.com that does it for you. Just type what you want in plain English and it generates the formula instantly. The presenter walks through real examples using a participant list and explains why she prefers this tool over ChatGPT for spreadsheet work.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "description": "Turn a survey spreadsheet into charts, narrative analysis, and a polished summary, all inside ChatGPT. This demo uses real nonprofit staff survey data to show how to go from raw responses to presentation-ready insights without specialized data tools. No coding or data analysis background needed.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "description": "This demo shows how pasting raw data into ChatGPT and describing what you want produces a clean, downloadable spreadsheet.",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "jWdB3uOYoug",
+        "title": "Financial Document Analysis",
+        "description": "A useful look at what AI can do with financial documents, even when you don't know exactly what questions to ask. This demo shows what happens when you upload five years of nonprofit tax returns and audited financials to ChatGPT and ask it to analyze them. The result: trend analysis across revenue, expenses, and net assets, ratio calculations, and a set of charts and graphs, all generated through a simple back-and-forth conversation",
+        "functionAreas": ["Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "description": "Grant proposals can be long, dense, and hard to work through quickly. This demo shows how to use ChatGPT to break down a real funding opportunity, check whether your organization qualifies, and build a proposal template you can reuse. The video also covers how to keep your organization's data private when working with AI tools.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "description": "Live demonstration of turning a grant summary PDF into a finished flier. Starting with the key highlights, the presenter builds a visual flyer aimed at both teens and their parents, adjusting images and wording along the way. The final draft needed only small touch-ups before it was ready to share.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "description": "Long grant applications and RFPs can take hours to read. In this session, learn how AI can quickly summarize a lengthy proposal, highlight key requirements, estimate project costs, and explain confusing contract terms. It's a practical example of using AI to help nonprofits decide whether an opportunity is worth pursuing before investing significant time.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "description": "See how AI can help you respond to a grant opportunity — even on a tight deadline. This demo walks through using ChatGPT as a writing partner to draft three 200-word LOI essays in minutes, using a step-by-step conversation instead of a one-shot prompt",
+        "functionAreas": ["Fundraising", "Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "description": "Practicing a difficult conversation is hard when no one is available to play the other side. This demo shows how ChatGPT can stand in as a role-play partner, staying in character throughout and giving feedback on how the conversation went at the end.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "description": "This demo shows what happens when you upload five years of annual reportsto ChatGPT and ask it to think like a major donor. It pulls out multi-year trends in storytelling and program growth, suggests ten probing questions to ask organizational leadership, and builds six program outcome charts from whatever data it can find.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "VQRVNYS1m3g",
+        "title": "Government Grant Application",
+        "description": "Government grant applications can take weeks just to get started. This demo shows a 20-minute conversation that gets to a 50-60% complete application packet, starting with an RFP from the New York State court system. After uploading the RFP alongside a nonprofit's annual report and financials, ChatGPT identifies the best funding fits, builds an application outline, drafts the sections it already has enough information to write, and lists exactly what still needs a human.",
+        "functionAreas": ["Fundraising"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "description": "How do you actually get better results from AI? This video introduces a five-step framework called aiSPIRE: keep your language simple, give the tool a persona, upload relevant information, refine through back-and-forth, and stay in the conversation rather than walking away after the first answer.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "description": "Use Copilot in Microsoft Word to summarize a long document, answer specific questions about its contents, and draft new text using your organization's own language and information. This demo uses a 13-page nonprofit overview to show what's possible.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "description": "Use Copilot in Microsoft Outlook to summarize a long email thread, automatically schedule a meeting with the right attendees, and turn a one-sentence note into a full reply. Available to anyone with a Microsoft 365 Copilot license.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "description": "Getting better results from AI often comes down to how you ask. This demo covers five practical techniques: giving the AI a role, stating your goal clearly, asking for a critique before a full rewrite, requesting multiple options so you can point to what works, and sharing an example to match. There is also a bonus move: if you are not sure how to phrase your prompt, ask the AI to rewrite it into a better question first.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "description": "Based on surveys of more than 2,000 nonprofit workers, these are the most common concerns people raise about using AI and how the AI for Nonprofits Sprint thinks about each one.",
+        "functionAreas": ["Leadership"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "description": "Skip the complexity of prompt engineering by using a meta-prompt, a prompt that improves other prompts. Paste in any prompt you already have, and get a much richer, more structured version back without learning any specialized techniques.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "description": "The best way to start with AI is to try three things: reading, writing, and chatting. This demo shows a quick example of each.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "description": "AI jargon can get in the way of actually understanding AI. This intro video cuts through the noise with just four terms worth knowing: artificial intelligence, machine learning, large language models, and generative AI, explained in plain language with no technical background required. A good starting point for anyone new to the topic or looking to get everyone on the same page.",
+        "functionAreas": [],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "description": "Use ChatGPT to role-play a difficult performance conversation, practice handling a defensive employee, and get coaching tips, powerful phrases, and a printable reference guide. Useful for new supervisors and HR teams that aren't always available in person.",
+        "functionAreas": ["Leadership", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "description": "A real-world use case for AI in purchasing negotiations. When a longtime renter offered to buy equipment they had been using, the CFO at YWCA New Britain used ChatGPT to check market rates before responding.",
+        "functionAreas": ["Leadership"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "9Np4JDDQvpA",
+        "title": "Track Your Strategic Plan Progress with AI",
+        "description": "Strategic plans often lose momentum once the planning process ends. This demo shows how a library director used three tools together to keep hers on track: ChatGPT to turn broad goals into specific measurable outcomes, Gamma to build a slide deck straight from the plan document, and Magic To Do to break big goals into smaller action steps. A practical workflow for any organization trying to do more with a plan once it's written.",
+        "functionAreas": ["Leadership"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "description": "IT and cybersecurity reports are full of language that board members can't easily act on. This demo shows a simple approach for turning that language into something a non-technical audience can understand, including a technique for tailoring the message to individual board members based on what they care about. The presenter also shares a resource kit with sample prompts and templates ready to use.",
+        "functionAreas": ["Leadership"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "3oX_M8AcBXk",
+        "title": "Role Play Difficult Staff Conversations",
+        "description": "Use ChatGPT to practice a difficult conversation with a coworker, get suggestions when you're stuck, redirect the AI when it goes off track, and receive a performance rating and feedback at the end. A useful exercise for anyone who wants to prepare before a real conversation.",
+        "functionAreas": ["Leadership", "Programs & Client Services"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "description": "Families need clear, welcoming materials, and putting them together can take more time and design skill than staff have to spare. In this demo, see how to use ChatGPT to create a flyer and other visual resources that are deaf-friendly and easy to share with students and parents. The result is accessible, ready-to-use materials, without starting from a blank page.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "description": "This demo shows how to use ChatGPT to turn an informal process into a documented one. Using a summer camp's camper clearance process as the example, it walks through describing the current steps, uploading supporting documents, and prompting AI to produce a written procedure and checklist that spells out who handles each task and when. A useful approach for turning any routine that lives in staff memory into something the whole team can follow.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "description": "Reaching students before they drop off is hard when the data is buried in a spreadsheet. This demo walks through turning a messy roster into a clear, ranked follow-up plan to spotlight who needs attention, and where to start.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "BiOpGsijKl8",
+        "title": "Plan the Perfect Team Retreat with AI",
+        "description": "Never planned a company retreat before? This video follows an HR manager at the Fund for the City of New York who used ChatGPT to figure it out, from brainstorming breakout session ideas to building a ready-to-hand-out staff template.The video also explains why ChatGPT produced far more useful results than a Google search for the same question.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Kv0C743lCUw",
+        "title": "Design a Class Syllabus in Minutes with AI",
+        "description": "Creating a course syllabus from scratch can take hours. In this video, learn how to use ChatGPT to turn an existing paper or document into a complete course outline, including learning objectives, weekly lessons, assignments, and reading lists. You'll also see how a simple back-and-forth conversation with AI can help you improve and customize the syllabus for your needs.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "description": "Getting a letter of medical necessity right is time-consuming, and every insurance company wants it formatted differently. This demo shows how to use ChatGPT as a stand-in medical administrator: it reads the requirements first, asks the right questions, and produces a template formatted the way New York State Medicaid requires.",
+        "functionAreas": ["Programs & Client Services", "Communications"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "-zIvVmJ2XFw",
+        "title": "The 30-Second Front Door — Capturing Quick Client Contacts with AI",
+        "description": "I'll show how I used Claude to build a 30-second, bilingual quick-intake prototype for benefits assistance work — capturing hallway client contacts that a full 15-minute screening process can't, and outputting records formatted for our existing tracking systems. I'll run it live, share the actual prompt so others can replicate it, and cover what didn't work and how I verify AI output. All data shown will be fictional, and this is a personal prototype, not a live organizational system.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "lYzFro10bDM",
+        "title": "Build a Career Progression Framework with Claude",
+        "description": "This demo features the Pathways Project, a tool built in Claude that helps create career ladders for a team. A leader uploads their team's job descriptions and staff feedback, and the tool standardizes the roles, drafts descriptions for new roles that could exist, and lays out how staff can grow over time. A practical example of turning a process you already run into a reusable AI tool.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "89GrUhOThk4",
+        "title": "Can it write it a SOAP note?!",
+        "description": "Case notes take time, and writing a clear SOAP note for every session adds up fast. This demo shows how to use Copilot to draft a SOAP note for an Individualized Service Plan (ISP), moving through the subjective, objective, assessment, and plan sections step by step. Instead of starting from a blank page, you can turn your notes into a clean, organized draft and then adjust it to fit the case. It is a useful shortcut for anyone who documents client or participant sessions and wants to spend less time on paperwork and more time on the work itself.",
+        "functionAreas": ["Programs & Client Services", "Communications"],
+        "tasks": [],
+        "tools": ["CoPilot"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "JzV9-_irHdI",
+        "title": "Build a Web App to Track Student Interventions",
+        "description": "A school team wanted an easy way to record the goals and interventions they create for students, flag who needs a follow-up, and see what has already been done. This demo shows how those needs, along with a few requirements like keeping all the information in one Google Sheet, were given to Gemini to build a simple interactive web app for the school's grade 9 students. Staff record a student's strengths, goals, and next steps in a form, everything feeds into a shared spreadsheet, and the app can send automatic reminder emails for follow-up. A good example of turning a manual tracking process into a shared tool the whole team can use.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": ["Gemini"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "W-j725bzPJU",
+        "title": "Using Perplexity AI in Human Services",
+        "description": "Use Perplexity AI to find policy documents, OMH guidelines, and best practices in seconds instead of searching through multiple websites. Free to use, no login required, and returns sourced answers rather than just links.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": ["Perplexity"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "dooZWSQCNSs",
+        "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+        "description": "This demo shows a Custom GPT that handles the prep work for vocabulary instruction. A teacher types in a word and the tool generates a full lesson routine: introduction, example sentences, and comprehension questions, all structured around a proven teaching approach. The presenter also shares a useful tip from the build process: writing instructions as a numbered list makes it much easier to catch and fix problems when the tool goes off track.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "description": "New volunteers often sign up online without a clear picture of what a shift actually involves. This demo shows how a volunteer manager used ChatGPT to write a script and storyboard for short orientation videos, brought those into InstaDoodle to generate an animated video, and finished in Canva to add branding. A repeatable process for creating engaging onboarding content without a production team.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "description": "Looking for a way to make math more engaging? This session shows how ChatGPT was used to transform a traditional math boot camp into a themed escape room experience. Learn how AI helped generate creative ideas, build worksheets and answer keys, organize lesson plans, and save hours of preparation time—all while creating a fun learning experience that students enjoyed.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "7VjxCHhyAJE",
+        "title": "Document Supervision Sessions Automatically with AI",
+        "description": "Two tools, two privacy levels, one demo. The Wave app is built for general staff meetings: record on your phone, get a summary organized by topics and action items, and export as a Word doc. For clinical settings where sensitive information comes up, Mentalyc turns session recordings into structured clinical notes while automatically removing identifying details. One of the only tools with a dedicated format for supervision documentation.",
+        "functionAreas": ["Programs & Client Services", "Operations"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "description": "Use ChatGPT as a personalized language tutor for grammar drills, real-world role-plays, and targeted feedback on your specific mistakes. This demo shows how to set it up, correct it when it overcorrects, and get practice sentences focused on exactly what you got wrong.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "tAhSI5nok0s",
+        "title": "Job Applications",
+        "description": "Use ChatGPT as a career coach to draft a tailored cover letter from your master resume and a job description, refine it section by section, and generate interview practice questions with sample answers.",
+        "functionAreas": ["Programs & Client Services", "Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "NPl_WDdrKMU",
+        "title": "Draft a Client Letter to a Landlord with AI",
+        "description": "What happens when someone uses ChatGPT to draft a response to an eviction threat, without sharing any personal details? This demo walks through that scenario, showing how the tool asks follow-up questions and sharpens the draft. A useful window into what the people you serve may already be doing on their own",
+        "functionAreas": ["Programs & Client Services", "Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "description": "No musical experience needed. This demo introduces Suno, a tool that turns a text prompt into a full original song with vocals and instruments. Watch how drafting lyrics in ChatGPT first makes the results sharper, with a finished song built around New York City imagery and community themes. A creative way to make fundraising events, celebrations, or social media content more memorable.",
+        "functionAreas": ["Communications"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "wu6DHIkJH7k",
+        "title": "Build a Weekly Newsletter in Minutes",
+        "description": "Learn how one adult education program uses ChatGPT to create a weekly newsletter for students. In this session, Anika Walker from Mercy Learning Center shows how she writes short articles, adds discussion questions, and adapts the reading level so students with different English skills can all understand the content. This is a simple example of using AI to save time while making learning more accessible for everyone.",
+        "functionAreas": ["Communications", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "description": "Use ChatGPT or Microsoft Copilot to find and replace flagged language across a spreadsheet, with a side-by-side change log showing what was updated. This demo compares how both tools handled the same task and what had to be cleaned up after.",
+        "functionAreas": ["Communications", "Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "description": "Use ChatGPT and Midjourney to bring a classroom character to life through weekly chapter stories, daily door notes, and themed illustrations. This demo shows how a preschool teacher uses AI to support social-emotional learning and bilingual storytelling.",
+        "functionAreas": ["Communications", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "description": "Go from a raw dataset to a formatted data journalism report with charts and written analysis, using two ChatGPT prompts and no data science background. This demo uses Canadian wage data to show the full workflow from raw CSV to finished article.",
+        "functionAreas": ["Communications", "Operations"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "description": "Use ChatGPT to outline a presentation, review and refine it, then paste the text into Gamma to build a polished slide deck in minutes. This demo uses a real strategic plan document to show how the two tools work together.",
+        "functionAreas": ["Communications"],
+        "tasks": [],
+        "tools": ["ChatGPT"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "description": "Proofreading external communications can consume time that would be better spent on mission-critical work. This demo shows how Claude's Word integration can take on the heavy lifting of document review—flagging inconsistencies, tightening language, and refining tone—so communications staff and leadership can redirect their energy toward the strategic thinking behind communications that no AI can replace. We'll walk through real use cases and discuss how to build AI-assisted editing into your communications workflow.",
+        "functionAreas": ["Communications", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "description": "Putting together a presentation can mean staring at a blank page, even if the content already exists. In this demonstration see how to turn existing materials into a polished first-draft deck in minutes with AI. Rather than starting from scratch staff time is spent refining the message, adding images, and making the judgment calls.",
+        "functionAreas": ["Communications", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["Claude"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "description": "Training materials don't have to stay on paper. This demo shows how to use NotebookLM to turn existing documents into short podcast episodes and explainer videos ready to use in staff training or supervision. The presenter also shows how the tool can automatically generate training descriptions and continuing education objectives from the same uploaded files. Samples of both formats are played so you can hear what the final output actually sounds like.",
+        "functionAreas": ["Communications", "Programs & Client Services"],
+        "tasks": [],
+        "tools": ["NotebookLM"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "description": "NotebookLM works differently from most AI tools: it only draws from the files you upload and cites every answer so you know exactly where it came from. This demo shows what that looks like in practice, using 44 PDFs of board meeting minutes going back 15 years. Ask any question and get an instant answer pulled from across all of them. The video also covers how the same files can be turned into slide decks, audio summaries, and flashcards.",
+        "functionAreas": ["Communications", "Operations"],
+        "tasks": [],
+        "tools": ["NotebookLM"],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "description": "This demo shows how to use an AI assistant to get clear, specific photo editing guidance and apply it in a photo editor. It covers asking AI how to improve an image, then adjusting lighting, contrast, and color to sharpen the result. A practical way to make event and program photos look polished for newsletters, reports, and social media.",
+        "functionAreas": ["Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "description": "This demo shows how a web content manager uses ChatGPT as a design critic, getting specific feedback on layouts, generating icons through back-and-forth prompting, and thinking through color and accessibility for audiences with lower reading levels. Practical for anyone putting together materials on a small team without a dedicated designer.",
+        "functionAreas": ["Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "description": "Use ChatGPT as a brainstorming partner to work through a real naming decision, asking it to guide the conversation with one question at a time. This demo shows how going back and forth, rather than accepting the first answer, leads to much better results.",
+        "functionAreas": ["Communications"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "MpkMYlaHU4k",
+        "title": "Fundraising Webinar and Social Media",
+        "description": "Got a big research document and not sure what to do with it next? This demo shows how to use ChatGPT to turn a 120-page report into a full communications plan: webinar outline, LinkedIn and Twitter posts in multiple styles, and opening remarks written to match the CEO's actual speaking voice.",
+        "functionAreas": ["Communications", "Fundraising"],
+        "tasks": [],
+        "tools": [],
+        "addedAt": null,
+        "lengthSeconds": null,
+        "status": "active",
+        "startHere": false
+      }
+    ],
+    "functionAreas": [
+      "Leadership",
+      "Operations",
+      "Programs & Client Services",
+      "Communications",
+      "Fundraising"
+    ],
+    "tools": [
+      "ChatGPT",
+      "Claude",
+      "CoPilot",
+      "Gemini",
+      "NotebookLM",
+      "Perplexity"
+    ],
+    "tasks": [
+      "AI policy drafting",
+      "policy implementation",
+      "workplace guidance",
+      "staff AI adoption",
+      "governance",
+      "team learning",
+      "peer learning",
+      "internal training",
+      "staff engagement",
+      "capacity building",
+      "workspace setup",
+      "document organization",
+      "staff checklists",
+      "quality management",
+      "prompt instructions",
+      "brand voice",
+      "content creation",
+      "printed handout drafting",
+      "custom GPT setup",
+      "messaging consistency",
+      "internal FAQ",
+      "knowledge management",
+      "information retrieval",
+      "staff questions",
+      "press releases",
+      "op-eds",
+      "copy drafting",
+      "brand language",
+      "public-facing content",
+      "lesson planning",
+      "curriculum development",
+      "instructional design",
+      "teacher support",
+      "social media drafting",
+      "blog writing",
+      "brand consistency",
+      "content generation",
+      "prompt refinement",
+      "staff training",
+      "interview practice",
+      "roleplay simulation",
+      "voice mode",
+      "performance feedback",
+      "fundraising copy",
+      "fundraising support",
+      "internal guide Q&A",
+      "document querying"
+    ],
+    "synonyms": [],
+    "adjacentTools": [],
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+  },
+  "profiles": [
+    {
+      "id": "leadership-01",
+      "input": {
+        "functionArea": "Leadership",
+        "goal": "Help our staff try AI responsibly and share what they learn without waiting for a finished policy.",
+        "tools": []
+      },
+      "ideal": [
+        {
+          "youtubeId": "6d2bKhdmqqA",
+          "reason": "Gives practical interim principles for staff AI use while a formal policy is still being developed."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "i22v2xwT6k4",
+          "reason": "Shows how a staff practice group can test AI on real work and share lessons across the organization."
+        }
+      ]
+    },
+    {
+      "id": "leadership-02",
+      "input": {
+        "functionArea": "Leadership",
+        "goal": "Prepare for a difficult conversation with an employee and rehearse constructive responses.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "jm9ZaKY1taA",
+          "reason": "Rehearses a performance conversation with a defensive employee and provides coaching and a reference guide."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "3oX_M8AcBXk",
+          "reason": "Practices a difficult coworker conversation and gives suggestions and feedback."
+        },
+        {
+          "youtubeId": "nBAaIIz9QFg",
+          "reason": "Builds a repeatable voice role-play assistant grounded in organizational training materials, with feedback after practice."
+        }
+      ]
+    },
+    {
+      "id": "operations-01",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "Turn scattered participant comments and survey answers into clear themes and a report our director can use.",
+        "tools": ["Claude"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "cwCVpchJHB4",
+          "reason": "Reads feedback forms, extracts numbers and themes, and assembles a report for a director."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "m0mI6_g0V2g",
+          "reason": "Organizes open-ended survey responses into consistent themes and formats across questions."
+        },
+        {
+          "youtubeId": "0qSXFbGrQ90",
+          "reason": "Analyzes qualitative feedback and produces themes and shareable summaries, using a different AI tool."
+        }
+      ]
+    },
+    {
+      "id": "operations-02",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "Give colleagues quick, reliable answers from our internal guides and policies so they do not have to ask the same questions repeatedly.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "UdWR8KKxVDU",
+          "reason": "Builds an internal FAQ from selected documents and covers testing, privacy and keeping the answers current."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "AjI2GF1b6zo",
+          "reason": "Builds a bot grounded in HR policy documents and defines how it should respond when it cannot answer."
+        },
+        {
+          "youtubeId": "_9QqyTbwisc",
+          "reason": "Includes a staff question-answering assistant backed by a long internal guide, alongside a writing assistant."
+        }
+      ]
+    },
+    {
+      "id": "programs-01",
+      "input": {
+        "functionArea": "Programs & Client Services",
+        "goal": "Build a course outline and turn it into practical lessons and engaging activities for our students.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "DNfFMZxAI-0",
+          "reason": "Guides teachers through lesson planning using their own curriculum and clarifying questions."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "Kv0C743lCUw",
+          "reason": "Turns an existing document into a syllabus with objectives, weekly lessons and assignments."
+        },
+        {
+          "youtubeId": "Fz_zl467-QU",
+          "reason": "Generates lesson activities grounded in the organization's curriculum and teaching approach."
+        },
+        {
+          "youtubeId": "fCAYTD-hgU8",
+          "reason": "Demonstrates turning a math program into engaging activities, worksheets and organized lesson plans."
+        }
+      ]
+    },
+    {
+      "id": "programs-02",
+      "input": {
+        "functionArea": "Programs & Client Services",
+        "goal": "Use attendance and intervention records to decide which students need follow-up and help the team keep track of next steps.",
+        "tools": []
+      },
+      "ideal": [
+        {
+          "youtubeId": "c5bL8ah2teE",
+          "reason": "Turns a messy attendance roster into a ranked follow-up plan that highlights who needs attention."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "JzV9-_irHdI",
+          "reason": "Builds a shared record of student goals, interventions and next steps, with follow-up reminders."
+        }
+      ]
+    },
+    {
+      "id": "communications-01",
+      "input": {
+        "functionArea": "Communications",
+        "goal": "Draft social posts and short public updates that sound like our organization, even when different colleagues write them.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "PUACowM_SdU",
+          "reason": "Builds a social media assistant using the organization's voice, mission language and prior content."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "ldd8wxVHvCw",
+          "reason": "Uses organizational documents and clarifying questions to keep public-facing writing consistent across staff."
+        },
+        {
+          "youtubeId": "sLAu2FqUZyE",
+          "reason": "Trains a writing assistant on organizational language and framing for press releases and short public materials."
+        }
+      ]
+    },
+    {
+      "id": "communications-02",
+      "input": {
+        "functionArea": "Communications",
+        "goal": "Turn our existing strategy documents into a clear presentation for the board instead of starting a slide deck from scratch.",
+        "tools": ["Claude"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "AMdAwWwdOzY",
+          "reason": "Uses existing source materials to create a first-draft deck for staff to refine."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "_wdiyBIC8uc",
+          "reason": "Shows a strategy document becoming a presentation outline and then a slide deck."
+        },
+        {
+          "youtubeId": "33a0qYtCMvc",
+          "reason": "Uses uploaded board documents as cited sources and can turn them into slides and summaries."
+        }
+      ]
+    },
+    {
+      "id": "fundraising-01",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "Work out whether a funding opportunity fits our nonprofit and organize what we need before writing the application.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "rjaMvND2IRU",
+          "reason": "Breaks down a funding opportunity, checks eligibility and builds a reusable proposal template."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "ShikWPoBRac",
+          "reason": "Summarizes RFP requirements, costs and contract terms to help decide whether to pursue the opportunity."
+        },
+        {
+          "youtubeId": "VQRVNYS1m3g",
+          "reason": "Identifies funding fits and drafts an application outline while listing information that still needs a person."
+        }
+      ]
+    },
+    {
+      "id": "fundraising-02",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "Prepare for a conversation with a potential funder by anticipating their questions and rehearsing my answers.",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "S_DQeIX2xz8",
+          "reason": "Acts as a grantmaker or donor role-play partner and gives feedback after the practice conversation."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "ADF07rFbH8M",
+          "reason": "Reviews organizational annual reports from a major donor's perspective and generates probing questions for leadership."
+        }
+      ]
+    }
+  ]
+}

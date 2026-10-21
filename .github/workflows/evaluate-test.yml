@@ -1,0 +1,136 @@
+name: Evaluate Anthropic test deployment
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+env:
+  WRANGLER_WRITE_LOGS: 'false'
+  CLOUDFLARE_SEND_METRICS: 'false'
+
+concurrency:
+  group: anthropic-test-evaluation
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: >-
+      github.event.pull_request.number == 76 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      (github.event.label.name == 'deploy-llm-test' || github.event.label.name == 'evaluate-llm-test')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install, verify and build test site
+        env:
+          VITE_CATALOG_URL: ${{ vars.CATALOG_TEST_URL }}
+          VITE_CATALOG_SOURCE: remote
+          VITE_LLM_ENABLED: 'true'
+          VITE_USAGE_ENVIRONMENT: test
+          VITE_USAGE_ENABLED: 'false'
+          VITE_USAGE_TEST_URL: ''
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm lint
+          pnpm test
+          pnpm build
+          pnpm evaluate --benchmark docs/evaluation/2026-10-21/benchmark.json --output build/evaluation/baseline
+
+      - name: Deploy test site with provider calls disabled
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --config wrangler.evaluation.json
+
+      - name: Verify disabled endpoint
+        run: |
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const response = await fetch('https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations', {
+            method: 'POST', body: '{}', signal: AbortSignal.timeout(10000)
+          });
+          assert.equal(response.status, 200);
+          assert.deepEqual(await response.json(), {outcome: 'fallback', reason: 'disabled'});
+          console.log('Disabled endpoint verified; no provider request permitted.');
+          JS
+
+      - name: Enable approved test candidate
+        id: enable
+        if: github.event.label.name == 'evaluate-llm-test'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          node --input-type=module <<'JS'
+          import {readFileSync, writeFileSync} from 'node:fs';
+          import {randomBytes} from 'node:crypto';
+          import assert from 'node:assert/strict';
+          const config = JSON.parse(readFileSync('wrangler.evaluation.json', 'utf8'));
+          assert.equal(config.name, 'ai-sprint-recommender-llm-test');
+          assert.equal(config.vars.LLM_ENVIRONMENT, 'test');
+          assert(Date.parse(config.vars.LLM_TEST_EXPIRES_AT) > Date.now() + 600000, 'Test approval has expired or is too close to expiry');
+          assert(process.env.ANTHROPIC_API_KEY, 'Add the ANTHROPIC_API_KEY Actions secret before running the paid evaluation');
+          writeFileSync(`${process.env.RUNNER_TEMP}/anthropic-test-secrets.json`, JSON.stringify({
+            ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
+            LLM_RATE_KEY: randomBytes(32).toString('hex')
+          }), {mode: 0o600});
+          JS
+          pnpm exec wrangler deploy --config wrangler.evaluation.json --var LLM_ENABLED:true --secrets-file "$RUNNER_TEMP/anthropic-test-secrets.json"
+
+      - name: Run approved trials and collect sanitized diagnostics
+        if: github.event.label.name == 'evaluate-llm-test'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/run-live-evaluation.mjs
+
+      - name: Disable test provider calls after evaluation
+        if: always() && steps.enable.outcome != 'skipped'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          pnpm exec wrangler deploy --config wrangler.evaluation.json
+          node --input-type=module <<'JS'
+          import assert from 'node:assert/strict';
+          const response = await fetch('https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations', {
+            method: 'POST', body: '{}', signal: AbortSignal.timeout(10000)
+          });
+          assert.deepEqual(await response.json(), {outcome: 'fallback', reason: 'disabled'});
+          console.log('Test provider calls are disabled.');
+          JS
+
+      - name: Remove temporary provider secret file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/anthropic-test-secrets.json"
+
+      - name: Save evaluation reports and sanitized diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: anthropic-evaluation-${{ github.run_id }}
+          path: build/evaluation/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Summarize test deployment
+        if: always()
+        run: |
+          echo 'Test site: https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Production deployment and logging configuration were not modified.' >> "$GITHUB_STEP_SUMMARY"

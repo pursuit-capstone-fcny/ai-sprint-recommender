@@ -1,0 +1,14 @@
+{
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v2",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-21",
+  "runtimeDecision": "docs/evaluation/2026-10-21/test-decision.md",
+  "privacyDecision": "docs/evaluation/2026-10-21/test-decision.md",
+  "budgetDecision": "docs/evaluation/2026-10-21/test-decision.md; wrangler.evaluation.json",
+  "allowanceMicrodollars": 1000000,
+  "maxRequestMicrodollars": 6256
+}
