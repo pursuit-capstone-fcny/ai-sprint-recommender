@@ -1,0 +1,7 @@
+{
+  "workflowRun": 39619325524,
+  "sourceRevision": "9a1df76879e7ac6cff1a211a387ac6e2c791a147",
+  "conclusion": "success",
+  "numericRelevanceGatePassed": false,
+  "note": "Evidence complete; trial 3 missed 8/10. Workflow success is not relevance approval."
+}

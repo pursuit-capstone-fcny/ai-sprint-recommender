@@ -105,7 +105,7 @@ jobs:
           assert.equal(model.id, config.vars.LLM_MODEL, 'Approved model must resolve without a model change');
           assert.equal(model.capabilities?.structured_outputs?.supported, true);
           assert.equal(model.capabilities?.thinking?.types?.disabled?.supported, true);
-          assert.equal(model.capabilities?.effort?.low?.supported, true);
+          assert.equal(model.capabilities?.effort?.medium?.supported, true);
           console.log('Approved Anthropic model access and capabilities verified without generation.');
           writeFileSync(`${process.env.RUNNER_TEMP}/anthropic-test-secrets.json`, JSON.stringify({
             ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
@@ -122,9 +122,9 @@ jobs:
           DIAGNOSE_FORMAT: ${{ github.event.label.name == 'diagnose-llm-test' }}
         run: |
           if [ "$DIAGNOSE_FORMAT" = 'true' ]; then
-            node scripts/run-live-evaluation.mjs --diagnose-format --baseline docs/evaluation/2026-10-21/runs/39611658736/report.json
+            node scripts/run-live-evaluation.mjs --diagnose-format --baseline docs/evaluation/2026-10-21/runs/39619325524/report.json
           else
-            node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39611658736/report.json
+            node scripts/run-live-evaluation.mjs --baseline docs/evaluation/2026-10-21/runs/39619325524/report.json
           fi
 
       - name: Allow one minute for browser verification within the same budget

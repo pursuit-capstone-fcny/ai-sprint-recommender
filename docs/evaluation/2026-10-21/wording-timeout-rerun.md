@@ -66,7 +66,55 @@ the frozen version and candidate configuration, a cache hit under one second,
 and zero provider dispatch. Catalog GET timeouts may retry at most twice;
 every attempt is recorded. Paid requests still have exactly one attempt.
 
-## Results
+## V5 results
 
-Pending local and deployed checks. No result or approval is implied by this
-plan. Preserve all attempts and update this section after the run.
+[Run 39619325524](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39619325524)
+tested revision `9a1df76`. Rules stayed **8/10**; LLM trials scored **8/10,
+8/10 and 7/10** with zero benchmark fallbacks. The third trial missed the
+relevance gate. A successful workflow means complete evidence, not passing
+relevance. [Saved comparison](runs/39619325524/report.md).
+
+Both wording regressions scored **1/3** and completed in 2.304 and 1.825
+seconds. The separate single browser Fundraising submission displayed
+[AI suggestions](runs/39619325524/ai-browser.png) with **2/3** approved picks.
+That variation is evidence against calling the wording issue solved. Neither
+probe nor browser scores enter the benchmark denominator. Nonsense and goal
+injection returned empty selections and used standard matching.
+
+All 34 automated requests have matching cost diagnostics. Benchmark median,
+p95 and maximum latency were **1.428, 2.212 and 2.425 seconds**. The first
+unpaid catalog load took **4.684 seconds**; subsequent loads took 68–153 ms.
+All four phases succeeded on their first attempt. Invalid-area cache checks
+took 36–71 ms end to end, with no provider dispatch. This demonstrates the
+new catalog path under observed conditions, not a guarantee after cache
+expiry, eviction, a different Cloudflare location or provider failure.
+
+The benchmark cost **$0.061722** and four probes **$0.008227**, totaling
+**$0.069949** measured from usage. The browser request has unknown actual
+cost and retains its **$0.006256** maximum reservation. All recorded prior
+and current costs plus unknown maximum reservations total **$0.499948**,
+leaving **$0.500052** of the original allowance for recorded requests. The
+persistent ledger also accounts for unrelated visits and is authoritative.
+
+All 477 tests, typecheck, lint, build and formatting passed. CI and preview
+passed. All 15 deployed synthetic failure checks passed, including the
+4,500 ms server timeout. The workflow confirmed test calls disabled and
+removed the synthetic Worker. Production remained on `cc761a7`, with LLM
+calls and usage logging disabled.
+
+## Controlled effort comparison
+
+V5 removed transport failures but still misses task matches. V6 changes only
+Haiku 5.5 effort from low to medium, while keeping V5 prompt text, catalog
+order, ten nullable ranks, disabled thinking and token caps unchanged. The
+version identifies the request configuration as well as prompt text. This
+isolates an inference-setting comparison from further benchmark-driven prompt
+changes; no quality or latency gain is assumed.
+
+The next three fresh trials and same four regression probes reserve at most
+**$0.212704**. An optional single browser submission reserves another
+**$0.006256**. Planning allowance is **$0.45**, below the remaining conservative
+amount. No budget reset, paid retry, new labels or production changes. Preserve
+all V5 evidence regardless of the outcome.
+
+V6 results pending.
