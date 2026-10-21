@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
+import { setTimeout as delay } from 'node:timers/promises';
 import scenarios from '../fixtures/recommendation-failure-cases.json' with { type: 'json' };
 import fixture from '../fixtures/public-catalog.json' with { type: 'json' };
 
@@ -131,24 +132,39 @@ export function failureReport(error) {
       };
 }
 
-export async function runFailureChecks(fetcher = fetch) {
+export async function runFailureChecks(fetcher = fetch, wait = delay) {
   const checks = [];
   for (const expected of scenarios) {
     let phase = 'fetch';
     let httpStatus;
     let actual;
+    const attempts = [];
     try {
-      const response = await fetcher(
-        `${FAILURE_TEST_ORIGIN}/cases/${expected.name}`,
-        {
-          cache: 'no-store',
-          credentials: 'omit',
-          redirect: 'error',
-          signal: AbortSignal.timeout(12_000),
-        },
-      );
-      httpStatus = response.status;
-      phase = 'http-status';
+      let response;
+      for (let index = 0; index < 4; index++) {
+        phase = 'fetch';
+        httpStatus = undefined;
+        const attempt = {
+          attempt: index + 1,
+          startedAt: new Date().toISOString(),
+        };
+        attempts.push(attempt);
+        response = await fetcher(
+          `${FAILURE_TEST_ORIGIN}/cases/${expected.name}`,
+          {
+            cache: 'no-store',
+            credentials: 'omit',
+            redirect: 'error',
+            signal: AbortSignal.timeout(12_000),
+          },
+        );
+        httpStatus = response.status;
+        attempt.httpStatus = httpStatus;
+        phase = 'http-status';
+        if (![404, 503].includes(httpStatus) || index === 3) break;
+        await response.body?.cancel().catch(() => {});
+        await wait([2_000, 4_000, 8_000][index]);
+      }
       if (httpStatus !== 200) {
         await response.body?.cancel().catch(() => {});
         throw new Error('Unexpected HTTP status');
@@ -161,7 +177,7 @@ export async function runFailureChecks(fetcher = fetch) {
       actual = JSON.parse(body);
       phase = 'assertion';
       verifyFailureCase(expected, actual);
-      checks.push({ ...safeActual(actual), passed: true });
+      checks.push({ ...safeActual(actual), attempts, passed: true });
     } catch {
       const classification =
         phase === 'http-status'
@@ -183,6 +199,7 @@ export async function runFailureChecks(fetcher = fetch) {
           scenario: expected.name,
           phase,
           classification,
+          attempts,
           ...(httpStatus === undefined ? {} : { httpStatus }),
           ...(actual === undefined ? {} : { actual: safeActual(actual) }),
         },

@@ -23,7 +23,11 @@ timeout with provider cancellation. It writes the report to
 `build/evaluation/failure-checks/report.json`. A failed run writes `failure.json`
 with the scenario, phase, HTTP status, fixed failure category, allowlisted
 actual fields and completed checks. It never saves raw response or error text.
-Checks run once without retry, including after a fresh Worker deployment.
+Only HTTP 404 and 503 from this isolated Worker get up to four attempts with
+2, 4 and 8 second delays. Reports retain every attempt's timestamp and status,
+including retries followed by success. Transport, JSON and assertion failures
+stop immediately. This handles observed intermittent route unavailability
+after Worker creation without changing or retrying paid recommendation calls.
 Delete the fixture Worker after the workflow finishes, including failed runs.
 
 The 15 cases cover success, default-off, kill switch, empty and retired
