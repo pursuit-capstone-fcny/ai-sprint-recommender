@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Implementation ready for review; owner labels and live evidence pending
+- **Status:** Numeric relevance gate passed; client review and production approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -52,8 +52,13 @@
 
 ## Remaining evidence
 
-- #7 owner-approved labels and catalog; three live trials with measured cost.
-- Ali/Eliot relevance review, held-out wording and preview failure checks.
-- Runtime/privacy/budget decisions, rules-only switch and #23 demo evidence.
+Jason's initial labels remain unchanged. The [V4 evaluation](../docs/evaluation/2026-10-21/quality-rerun.md)
+scores rules 8/10 and LLM 8/10, 10/10 and 9/10, with measured cost for all 30
+benchmark calls. A separate wording probe timed out without attributable cost;
+the broader workflow evidence check failed. Production remains disabled.
+
+- Ali/Eliot's final label/catalog, semantic and weak-profile review.
+- Wording robustness and cold-request follow-up; preserve failed probes.
+- Production runtime/privacy/budget approval and #23 live AI demo evidence.
 
 Commands and report formats: [Evaluation guide](../docs/recommendation-evaluation.md).
