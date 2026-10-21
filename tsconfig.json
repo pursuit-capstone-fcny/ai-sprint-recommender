@@ -21,6 +21,7 @@
     "fixtures",
     "apps-script",
     "vite.config.ts",
-    "eslint.config.js"
+    "eslint.config.js",
+    "server"
   ]
 }
