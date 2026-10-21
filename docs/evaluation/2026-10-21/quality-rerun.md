@@ -37,3 +37,12 @@ regression tests must justify these changes independently of benchmark labels.
 Results and the exact candidate revision will be added after the live run.
 Neither this request nor a better score approves production enablement or
 substitutes for Ali/Eliot's final review.
+
+## Preflight attempts
+
+[Run 39605490096](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39605490096)
+stopped at the deployed synthetic checks, before enabling Anthropic. It used
+no paid calls. The test endpoint was confirmed disabled and the temporary
+synthetic Worker was removed. The original checker omitted the failed scenario
+and HTTP status, so this attempt does not establish a cause. Its
+[failure record](runs/39605490096/failure-checks.json) is preserved.
