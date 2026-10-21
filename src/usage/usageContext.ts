@@ -4,6 +4,7 @@ import type { RankedMatch } from '../contracts/rankedMatch';
 import type { UsageEvent } from '../contracts/usageEvent';
 import { computeMatch } from '../engine/match';
 import { expandSynonyms, normalizeText } from '../engine/vocabulary';
+import type { RecommendationSelection } from '../recommendations/selectRecommendations';
 import type { UsageSession } from './usageSession';
 
 type SearchEvent = Extract<UsageEvent, { type: 'search' }>;
@@ -25,7 +26,12 @@ export function usageMatchType(
   match: RankedMatch,
   profile: IntakeProfile,
 ): MatchType {
-  if (match.matchType === 'strong') return 'strong';
+  if (
+    match.matchType === 'strong' ||
+    match.matchType === 'semantic' ||
+    match.matchType === 'cross-area'
+  )
+    return match.matchType;
   const signals = computeMatch(match.item, profile);
   if (
     match.item.isStartHere &&
@@ -52,6 +58,10 @@ export function createRecommendationUsage(
   profile: IntakeProfile,
   initialResults: RankedMatch[],
   submitted: boolean,
+  metadata: Omit<RecommendationSelection, 'results'> = {
+    recommendationEngine: 'rules',
+    llmFallbackReason: 'not-requested',
+  },
 ) {
   const common = {
     schemaVersion: 1 as const,
@@ -60,8 +70,14 @@ export function createRecommendationUsage(
     mode: 'recommendations' as const,
     src: session.src,
     catalogVersion: catalog.catalogVersion,
-    recommendationEngine: 'rules' as const,
-    llmFallbackReason: 'not-requested' as const,
+    recommendationEngine: metadata.recommendationEngine,
+    llmFallbackReason: metadata.llmFallbackReason,
+    ...(metadata.modelVersion && metadata.promptVersion
+      ? {
+          modelVersion: metadata.modelVersion,
+          promptVersion: metadata.promptVersion,
+        }
+      : {}),
   };
   // Capture only dictionary values; no goal, title, reason or URL enters an event.
   const search = {

@@ -5,6 +5,7 @@ export const RESULTS_HEADING_ID = 'results-heading';
 
 interface ResultsListProps {
   results: RankedMatch[];
+  loading?: boolean;
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
   canShowMore: boolean;
@@ -19,6 +20,7 @@ interface ResultsListProps {
 
 export function ResultsList({
   results,
+  loading = false,
   playingId,
   onPlay,
   canShowMore,
@@ -27,7 +29,11 @@ export function ResultsList({
   onVideoClick,
 }: ResultsListProps) {
   return (
-    <section aria-live="polite" aria-labelledby={RESULTS_HEADING_ID}>
+    <section
+      aria-busy={loading}
+      aria-live="polite"
+      aria-labelledby={RESULTS_HEADING_ID}
+    >
       <div className="results-head">
         <h2 id={RESULTS_HEADING_ID} tabIndex={-1}>
           Videos to start with
