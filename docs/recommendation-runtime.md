@@ -12,7 +12,14 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test candidate
 
-`catalog-rank-v3` prioritizes help with the goal's task and deliverable over
+`catalog-rank-v4` retains v3's task and deliverable ranking instructions. It
+replaces the output array with ten required nullable fields, `rank1` through
+`rank10`, each constrained to a catalog position or null. This prevents the
+12-selection outputs observed in both v3 diagnostic probes without truncating
+results. The adapter preserves rank order and rejects missing/extra slots,
+duplicates and out-of-range positions.
+
+The prompt prioritizes help with the goal's task and deliverable over
 broad area or tool overlap. It retains every catalog candidate and contains no
 benchmark examples or expected IDs. The provider selects numeric positions;
 the server maps them to IDs from that request's trusted catalog snapshot.
@@ -23,15 +30,15 @@ Anthropic's [structured-output reference](https://platform.claude.com/docs/en/bu
 supports numeric enums but does not guarantee string enum capitalization.
 Numeric positions avoid copying case-sensitive YouTube IDs. A new schema can
 add compilation latency on its first use; the five-second deadline still
-applies, with no retry. The adapter validates array limits locally because the
-API does not support `maxItems` or uniqueness constraints. Checked October 21, 2026.
+applies, with no retry. The API does not support `maxItems` or uniqueness
+constraints; ten required slots enforce the size bound and the adapter checks
+uniqueness. Checked October 21, 2026.
 
 Invalid provider results include bounded validation categories and counts in
 test diagnostics only. Categories distinguish stop reason, content, JSON,
 schema, duplicate and out-of-range failures; counts clamp at 100. They contain
 no response text, IDs, prompts or intake, and never appear in the public API or
-production diagnostics. This instrumentation does not change prompt v3 or its
-acceptance rules.
+production diagnostics.
 
 When `LLM_MODEL` is
 `claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to

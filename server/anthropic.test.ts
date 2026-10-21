@@ -18,6 +18,14 @@ const body = providerBody(
   catalog,
   readLimits(environment)!,
 );
+function slots(values: unknown[] = []) {
+  return Object.fromEntries(
+    Array.from({ length: 10 }, (_, index) => [
+      `rank${index + 1}`,
+      values[index] ?? null,
+    ]),
+  );
+}
 function payload(text: string, stop_reason = 'end_turn') {
   return {
     stop_reason,
@@ -26,6 +34,61 @@ function payload(text: string, stop_reason = 'end_turn') {
   };
 }
 describe('Anthropic adapter', () => {
+  it('accepts exactly ten, no, or partial ranked selections using every required slot', async () => {
+    const larger = {
+      ...catalog,
+      items: Array.from({ length: 12 }, (_, position) => ({
+        ...catalog.items[0],
+        youtubeId: `fx${position.toString().padStart(9, '0')}`,
+      })),
+    };
+    const candidate = providerBody(
+      {
+        functionArea: null,
+        goal: '',
+        tools: [],
+        catalogVersion: catalog.catalogVersion,
+      },
+      larger,
+      readLimits(environment)!,
+    );
+    for (const values of [
+      Array.from({ length: 10 }, (_, index) => 9 - index),
+      [],
+      [3, null, 0],
+    ]) {
+      // JSON property order must not change the explicit ranking.
+      const value = Object.fromEntries(Object.entries(slots(values)).reverse());
+      const provider = anthropicProvider(
+        'fixture-only',
+        vi.fn(async () => Response.json(payload(JSON.stringify(value)))),
+      );
+      expect(
+        (await provider(candidate, new AbortController().signal)).value,
+      ).toEqual({
+        youtubeIds: values
+          .filter((position) => position !== null)
+          .map((position) => larger.items[position].youtubeId),
+      });
+    }
+  });
+  it.each([
+    { rank1: 0 },
+    { ...slots([0]), rank11: 1 },
+    { ...slots(), rank5: [] },
+  ])(
+    'rejects missing, unknown and malformed slots without repairing output',
+    async (value) => {
+      const provider = anthropicProvider(
+        'fixture-only',
+        vi.fn(async () => Response.json(payload(JSON.stringify(value)))),
+      );
+      expect(await provider(body, new AbortController().signal)).toMatchObject({
+        value: null,
+        validationFailure: 'schema',
+      });
+    },
+  );
   it('offers every catalog position and maps selections back to the same trusted snapshot', async () => {
     const reordered = { ...catalog, items: [...catalog.items].reverse() };
     const candidate = providerBody(
@@ -39,7 +102,7 @@ describe('Anthropic adapter', () => {
       readLimits(environment)!,
     );
     const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json(payload('{"positions":[2,0]}')),
+      Response.json(payload(JSON.stringify(slots([2, 0])))),
     );
     const result = await anthropicProvider('fixture-only', fetcher)(
       candidate,
@@ -60,23 +123,26 @@ describe('Anthropic adapter', () => {
         tools: item.tools,
       })),
     );
-    expect(wire.output_config.format.schema.properties.positions.items).toEqual(
-      {
-        type: 'integer',
-        enum: [0, 1, 2, 3],
-      },
-    );
+    const schema = wire.output_config.format.schema;
+    const keys = Array.from({ length: 10 }, (_, index) => `rank${index + 1}`);
+    expect(schema.required).toEqual(keys);
+    expect(Object.keys(schema.properties)).toEqual(keys);
+    expect(schema.additionalProperties).toBe(false);
+    for (const key of keys)
+      expect(schema.properties[key]).toEqual({
+        anyOf: [{ type: 'integer', enum: [0, 1, 2, 3] }, { type: 'null' }],
+      });
     expect(wire.catalogIds).toBeUndefined();
     for (const item of catalog.items)
       expect(JSON.stringify(wire)).not.toContain(item.youtubeId);
   });
   it.each([
     [
-      { positions: [1, 1] },
+      slots([1, 1]),
       { validationFailure: 'duplicate', selectionCount: 2, duplicateCount: 1 },
     ],
     [
-      { positions: [-1] },
+      slots([-1]),
       {
         validationFailure: 'schema',
         selectionCount: 1,
@@ -84,7 +150,7 @@ describe('Anthropic adapter', () => {
       },
     ],
     [
-      { positions: [4] },
+      slots([4]),
       {
         validationFailure: 'out-of-range',
         selectionCount: 1,
@@ -92,7 +158,7 @@ describe('Anthropic adapter', () => {
       },
     ],
     [
-      { positions: [0.5] },
+      slots([0.5]),
       {
         validationFailure: 'schema',
         selectionCount: 1,
@@ -100,7 +166,7 @@ describe('Anthropic adapter', () => {
       },
     ],
     [
-      { positions: ['1'] },
+      slots(['1']),
       {
         validationFailure: 'schema',
         selectionCount: 1,
@@ -108,7 +174,7 @@ describe('Anthropic adapter', () => {
       },
     ],
     [
-      { positions: [null] },
+      slots([false]),
       {
         validationFailure: 'schema',
         selectionCount: 1,
@@ -116,16 +182,20 @@ describe('Anthropic adapter', () => {
       },
     ],
     [
-      { positions: [1], explanation: 'private extra content' },
+      { ...slots([1]), explanation: 'private extra content' },
       {
         validationFailure: 'schema',
-        selectionCount: 1,
-        invalidSelectionCount: 0,
+        selectionCount: 2,
+        invalidSelectionCount: 1,
       },
     ],
     [
       { youtubeIds: ['private-response-content'] },
-      { validationFailure: 'schema' },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+      },
     ],
   ])(
     'rejects invalid positions without repairing the result or losing usage',
@@ -145,7 +215,7 @@ describe('Anthropic adapter', () => {
   it('rejects more than ten otherwise valid distinct selections', async () => {
     const larger = {
       ...catalog,
-      items: Array.from({ length: 11 }, (_, position) => ({
+      items: Array.from({ length: 12 }, (_, position) => ({
         ...catalog.items[0],
         youtubeId: `fx${position.toString().padStart(9, '0')}`,
       })),
@@ -166,7 +236,7 @@ describe('Anthropic adapter', () => {
         Response.json(
           payload(
             JSON.stringify({
-              positions: Array.from({ length: 11 }, (_, position) => position),
+              positions: Array.from({ length: 12 }, (_, position) => position),
             }),
           ),
         ),
@@ -177,7 +247,7 @@ describe('Anthropic adapter', () => {
     ).toMatchObject({
       value: null,
       validationFailure: 'schema',
-      selectionCount: 11,
+      selectionCount: 12,
       invalidSelectionCount: 0,
     });
   });
@@ -193,7 +263,7 @@ describe('Anthropic adapter', () => {
       readLimits({ ...environment, LLM_MODEL: 'claude-haiku-5-5' })!,
     );
     const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json(payload('{"positions":[]}')),
+      Response.json(payload(JSON.stringify(slots()))),
     );
     const result = await anthropicProvider('fixture-only', fetcher)(
       candidate,
@@ -213,10 +283,10 @@ describe('Anthropic adapter', () => {
   });
   it('rejects unexpected thinking blocks while preserving measured usage', async () => {
     const response = {
-      ...payload('{"positions":[]}'),
+      ...payload(JSON.stringify(slots())),
       content: [
         { type: 'thinking', thinking: 'Untrusted provider text' },
-        { type: 'text', text: '{"positions":[]}' },
+        { type: 'text', text: JSON.stringify(slots()) },
       ],
     };
     const provider = anthropicProvider(
@@ -233,7 +303,7 @@ describe('Anthropic adapter', () => {
   });
   it('sends one bounded structured request without tools, raw IDs, cache directives or retries', async () => {
     const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json(payload('{"positions":[]}')),
+      Response.json(payload(JSON.stringify(slots()))),
     );
     const provider = anthropicProvider('fixture-only', fetcher);
     expect(await provider(body, new AbortController().signal)).toEqual({
@@ -256,8 +326,8 @@ describe('Anthropic adapter', () => {
   });
   it.each([
     ['private non-JSON content', 'end_turn', 'json'],
-    ['{"positions":[]}', 'max_tokens', 'max-tokens'],
-    ['{"positions":[]}', 'refusal', 'refusal'],
+    [JSON.stringify(slots()), 'max_tokens', 'max-tokens'],
+    [JSON.stringify(slots()), 'refusal', 'refusal'],
     ['private response content', 'private unknown stop reason', 'stop-reason'],
   ])(
     'keeps usage and only bounded failure metadata',
