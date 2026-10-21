@@ -4,6 +4,35 @@ The evidence below separates real Anthropic responses, deployed synthetic
 checks and deterministic tests. Production LLM and usage logging remain
 disabled; this record does not approve enablement.
 
+## Current V4 evidence
+
+[Run 39611658736](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39611658736)
+tested revision `a1d3fa6` with `catalog-rank-v4`. Rules scored 8/10 and three
+fresh LLM trials scored 8/10, 10/10 and 9/10 against unchanged labels. All 30
+benchmark calls have usage/cost diagnostics. One duplicate output was rejected
+in full; the ten nullable slots eliminated the oversized-array failures seen
+in V3. Deterministic tests still reject unknown, malformed and excessive output.
+
+The workflow failed because the separate Operations wording probe timed out
+without an attributable request ID or cost. Its full $0.006256 maximum remains
+in conservative accounting. No paid call was retried. The separate Fundraising
+probe scored 0/3; nonsense and goal injection returned empty selections and
+used rules fallback. See [probes](runs/39611658736/probes.json) and
+[run status](runs/39611658736/run-status.json).
+
+All 15 [deployed synthetic checks](runs/39611658736/failure-checks.json)
+passed; they used no real provider or Sheet. The workflow removed that Worker
+and [confirmed test shutdown](runs/39611658736/disabled.json). A subsequent
+browser submission displayed [Standard matching](runs/39611658736/disabled-browser.png).
+The live AI browser window was skipped after the failed probe evidence check.
+Cold catalog loads still needed bounded unpaid retries. Paid requests retain
+one attempt and the five-second deadline.
+
+Combined validation passed 449 tests, typecheck, lint, build and formatting.
+CI and preview checks passed on the evaluated revision. The historical
+evidence below remains intact; current findings and cost accounting are in
+the [quality rerun](quality-rerun.md).
+
 ## Deployed evidence
 
 [Run 39552055432](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39552055432)
@@ -86,9 +115,9 @@ deployed-provider checks.
 - A rendered browser AI-success demonstration for #23. Rules fallback was
   demonstrated on the deployed test site; deadline and latest-submission
   rendering remain covered by deterministic browser tests.
-- Three passing relevance trials and a passing rules benchmark;
-  Ali/Eliot review of semantic examples, weakest profiles and held-out wording;
-  owner enablement decision and #23 demo evidence.
+- The numeric relevance gate now passes in V4. Ali/Eliot review of semantic
+  examples, weakest profiles and wording robustness, cold-request follow-up,
+  owner enablement decision and #23 demo evidence remain required.
 
 Follow the [failure plan](failure-test-plan.md) and
 [approved test limits](test-decision.md). Any later deployed synthetic-provider

@@ -1,0 +1,116 @@
+{
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v4",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "held-out-operations-01",
+      "requestId": null,
+      "response": {
+        "outcome": "fallback",
+        "reason": "timeout"
+      },
+      "latencyMs": 5016,
+      "displayedIds": ["cwCVpchJHB4", "gzxiw5xdPPI", "zTcrktnmv48"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "timeout",
+      "diagnostic": null
+    },
+    {
+      "id": "held-out-fundraising-02",
+      "requestId": "d518464b-7f66-4fda-845a-d717ac36d27b",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "Q0Vr4PnGoe4",
+          "FMQJH3c5cLc",
+          "bxfxzx-_MME",
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "jm9ZaKY1taA",
+          "t1yNb7iV6g4",
+          "3oX_M8AcBXk",
+          "jWdB3uOYoug",
+          "_9QqyTbwisc"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      },
+      "latencyMs": 1902,
+      "displayedIds": ["Q0Vr4PnGoe4", "FMQJH3c5cLc", "bxfxzx-_MME"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "d518464b-7f66-4fda-845a-d717ac36d27b",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1655,
+        "inputTokens": 20122,
+        "outputTokens": 72,
+        "costMicrodollars": 2049,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "181b94e0-80a0-4687-aea7-61e8d1257042",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      },
+      "latencyMs": 3718,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "181b94e0-80a0-4687-aea7-61e8d1257042",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 3597,
+        "inputTokens": 20092,
+        "outputTokens": 72,
+        "costMicrodollars": 2046,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "bef44e34-5f53-43cc-b391-6a02b02a1953",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      },
+      "latencyMs": 2196,
+      "displayedIds": ["33a0qYtCMvc", "wxJVc1q_nnY", "4LMIC-v5xZ0"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "bef44e34-5f53-43cc-b391-6a02b02a1953",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2148,
+        "inputTokens": 20115,
+        "outputTokens": 72,
+        "costMicrodollars": 2048,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v4"
+      }
+    }
+  ]
+}

@@ -17,8 +17,8 @@ The benchmark fingerprint remains
   storage, create a replacement budget namespace or refund unknown outcomes.
 - A 34-request rerun reserves at most $0.212704. One additional browser
   verification can reserve up to $0.006256. The planning allowance is
-  $0.70, conservatively below the original allowance after previous known
-  calls and maximum reservations for the earlier attempts. The persistent
+  $0.60 for V4, conservatively below the original allowance after previous
+  known calls and maximum reservations for earlier attempts. The persistent
   ledger remains authoritative if any other test-site use consumed budget.
 - Three fresh ten-profile trials, plus the same two separately scored wording
   probes, nonsense and goal injection. The wording probes were not used for
@@ -34,10 +34,12 @@ The benchmark fingerprint remains
 
 ## Candidate
 
-Prompt/config `catalog-rank-v3` will rank the requested task and deliverable
-more precisely and avoid fragile copying of video IDs. Rules matching will
-distinguish specific task evidence from a single common shared word. Generic
-regression tests must justify these changes independently of benchmark labels.
+Prompt/config V3 ranks the requested task and deliverable ahead of broad topic
+or tool overlap, and selects catalog positions instead of copying video IDs.
+V4 retains that policy and fixes the output-size defect diagnosed below.
+All 89 videos remain candidates. Rules matching weights specific task evidence
+above common shared words, with extra weight for titles and task tags. Generic
+regression tests cover these changes independently of benchmark labels.
 
 ## V3 results
 
@@ -76,9 +78,96 @@ Shutdown was confirmed. These probes do not count as relevance trials.
 V4 keeps the task-matching policy and uses ten required nullable output slots
 to enforce the size limit in the provider schema. The server still rejects
 duplicates, unknown selections and malformed responses; it never truncates a
-bad answer into a passing one. Three fresh trials will compare against the
-saved V3 report, with the same labels and limits. One separate browser
-verification may reserve at most another $0.006256 within the original cap.
+bad answer into a passing one. Three fresh trials compared against the saved
+V3 report, with the same labels and limits.
+
+## V4 results and decision
+
+[Run 39611658736](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39611658736)
+evaluated revision `a1d3fa6a2a7b2f5ffe187606f6af41dafd7e9a0f`, Haiku 5.5 and
+`catalog-rank-v4`. The unchanged benchmark now meets the numeric relevance
+target. Each profile requires two approved picks among its first three cards;
+rules and each of three LLM trials require at least eight passing profiles.
+Fallback results never count as an LLM pass.
+
+| Candidate            | Rules    | LLM trials            | Benchmark fallbacks |
+| -------------------- | -------- | --------------------- | ------------------- |
+| Previous V2 baseline | 3/10     | 4/10, 4/10, 3/10      | 7/30                |
+| V3                   | 8/10     | 4/10, 3/10, 3/10      | 18/30               |
+| V4                   | **8/10** | **8/10, 10/10, 9/10** | **1/30**            |
+
+All 30 benchmark responses have matching usage/cost diagnostics. The single
+fallback rejected a duplicate selection in full. Median/p95/max benchmark
+latency was **1.488/3.116/3.625 seconds** with the catalog warmed. Two unpaid
+catalog loads timed out before trial two; the third succeeded. This does not
+establish acceptable cold-request latency.
+
+The workflow still **failed its broader evidence-completeness check**. The
+separate Operations wording probe timed out after 5.016 seconds without a
+response request ID or attributable diagnostic. It selected rules fallback,
+which is not an LLM pass. The Fundraising wording probe returned valid IDs
+but scored **0/3**. These repeated probes remain outside the benchmark score
+and were not used to tune this candidate. Nonsense and goal injection each
+returned an empty selection and selected standard matching. These individual
+checks do not establish general injection resistance.
+
+No paid request was retried. The passing benchmark is preserved alongside the
+failed probe and workflow status in the [comparison](runs/39611658736/report.md),
+[probes](runs/39611658736/probes.json) and
+[run status](runs/39611658736/run-status.json). The workflow confirmed provider
+shutdown and removed the synthetic Worker. Its AI browser window was skipped
+after the failed evidence check. A browser submission after shutdown displayed
+[Standard matching](runs/39611658736/disabled-browser.png); a rendered live AI
+success demonstration remains pending.
+
+## Cost accounting
+
+Costs use reported tokens and approved prices, not a provider billing export.
+
+| Calls in this request        | Measured cost                 | Additional unknown-cost upper bound  |
+| ---------------------------- | ----------------------------- | ------------------------------------ |
+| V3 benchmark and four probes | $0.055715                     | $0.006256 for one browser submission |
+| Two format diagnostics       | $0.003278                     | $0                                   |
+| V4 benchmark                 | $0.061443                     | $0                                   |
+| Four V4 probe attempts       | $0.006143 for three responses | $0.006256 for one timeout            |
+| Total                        | **$0.126579**                 | **$0.012512**                        |
+
+V4 benchmark usage was 603,507 input and 2,160 output tokens. Its measured
+total with probes was **$0.067586**. The original allowance's earlier measured
+cost was $0.059436, with up to $0.225216 reserved for unmeasured earlier calls.
+Combining those with this request gives a conservative recorded upper bound
+of **$0.423743**, below the original $1 allowance. This is not an exact account
+balance or an assertion that unknown calls were free; the unchanged persistent
+ledger remains authoritative, including any unrelated test-site use.
+
+## Client review and remaining work
+
+Two semantic examples for Ali/Eliot:
+
+- Operations feedback now finds **3/3** approved videos in every trial:
+  "Turn Program Feedback into a Director-Ready Report with AI", "Using CoPilot
+  to Analyze Feedback" and "Uncover Patterns in Survey Data with AI". The V2
+  baseline found 1, 0 and 1. Its separate wording probe still timed out.
+- Funder rehearsal remains weak: **1/3, 2/3, then duplicate-response fallback**.
+  "Prompt Nudges for AI" outranks the requested rehearsal workflow in the first
+  two trials; only the second includes both donor role play and donor review.
+  Its separate wording probe has no approved picks. Do not relabel it.
+
+Internal FAQs pass two of three trials but repeatedly rank an inbox workflow
+first. Rules still fail Communications wording with one approved pick and
+funder rehearsal with none; the latter regressed from one approved rules pick.
+The aggregate gain does not erase these weaknesses.
+
+All 449 tests, typecheck, lint, build and formatting passed locally; CI and
+preview checks passed on the evaluated revision. All 15 deployed synthetic
+failure checks passed. Benchmark labels, catalog, repeated wording and the
+budget configuration are unchanged.
+
+Keep #19 open for Ali/Eliot's semantic and weak-profile review, wording
+robustness and cold-request follow-up, production volume/budget approval and
+#23 demo evidence. Neither the score nor this test allowance approves production
+enablement. Production remains on `cc761a7113aba4ddb8bab3ba17f2daba35cdccfa`;
+production LLM calls and usage logging are disabled. Test calls are off at rest.
 
 ## Preflight attempts
 

@@ -1,0 +1,18 @@
+{
+  "workflowRunId": 39611658736,
+  "workflowConclusion": "failure",
+  "sourceRevision": "a1d3fa6a2a7b2f5ffe187606f6af41dafd7e9a0f",
+  "benchmarkTrialsCompleted": 3,
+  "benchmarkRequests": 30,
+  "benchmarkDiagnostics": 30,
+  "separateProbeAttempts": 4,
+  "separateProbeDiagnostics": 3,
+  "unmeasuredProbe": "held-out-operations-01",
+  "failure": "Separate probe timed out with no response request ID. The runner required all 34 request IDs and matching diagnostics.",
+  "unknownRequestMaxMicrodollars": 6256,
+  "paidRequestsRetried": 0,
+  "browserWindow": "skipped-after-evaluation-step-failure",
+  "testProviderDisabled": true,
+  "syntheticWorkerDeleted": true,
+  "productionChanged": false
+}

@@ -1,0 +1,187 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "a31e0a75-e1d6-4990-ad78-8ceee374c936",
+    "status": 200,
+    "latencyMs": 4567,
+    "diagnostic": {
+      "requestId": "a31e0a75-e1d6-4990-ad78-8ceee374c936",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 4301,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 1,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "4abaf7fa-6729-4a6f-80b2-b5ed3ce8e190",
+    "status": 400,
+    "latencyMs": 62,
+    "diagnostic": {
+      "requestId": "4abaf7fa-6729-4a6f-80b2-b5ed3ce8e190",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 4,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "timeout",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "a526b50b-6620-43ab-8a46-584e8da4129c",
+    "status": 200,
+    "latencyMs": 5040,
+    "diagnostic": {
+      "requestId": "a526b50b-6620-43ab-8a46-584e8da4129c",
+      "environment": "test",
+      "outcome": "timeout",
+      "latencyMs": 5000,
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 2,
+    "response": {
+      "outcome": "fallback",
+      "reason": "timeout",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "3c445a7d-724d-407c-b61f-44fbbdc09515",
+    "status": 200,
+    "latencyMs": 5068,
+    "diagnostic": {
+      "requestId": "3c445a7d-724d-407c-b61f-44fbbdc09515",
+      "environment": "test",
+      "outcome": "timeout",
+      "latencyMs": 5000,
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 3,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "d3d236b9-9f76-4e62-b917-aa3a1249fe61",
+    "status": 200,
+    "latencyMs": 4899,
+    "diagnostic": {
+      "requestId": "d3d236b9-9f76-4e62-b917-aa3a1249fe61",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 4826,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "02316c16-ad4b-4b21-bbe8-6bdd7cebb0b4",
+    "status": 400,
+    "latencyMs": 45,
+    "diagnostic": {
+      "requestId": "02316c16-ad4b-4b21-bbe8-6bdd7cebb0b4",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 4,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 3,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "catalog-mismatch",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "1e7c3e6c-80a4-4f50-819b-5f441e9b0aac",
+    "status": 200,
+    "latencyMs": 3393,
+    "diagnostic": {
+      "requestId": "1e7c3e6c-80a4-4f50-819b-5f441e9b0aac",
+      "environment": "test",
+      "outcome": "catalog-mismatch",
+      "latencyMs": 3349,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  },
+  {
+    "trial": 3,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    },
+    "requestId": "39ed7323-2a88-4afc-9399-b151bce04fc9",
+    "status": 400,
+    "latencyMs": 45,
+    "diagnostic": {
+      "requestId": "39ed7323-2a88-4afc-9399-b151bce04fc9",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 3,
+      "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v4"
+    }
+  }
+]
