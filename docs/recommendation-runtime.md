@@ -10,18 +10,29 @@ runtime decision in #1 and the model, owner, permitted data, retention terms,
 pricing and budgets in #8. #19 supplies the relevance evidence required before
 production enablement. An API key alone is insufficient.
 
-## Haiku 5.5 test candidate
+## Haiku 5.5 test results
 
-`catalog-rank-v7` is a test candidate that puts the full catalog first in the
+`catalog-rank-v7` puts the full catalog first in the
 JSON user message, followed by `functionArea`, `goal` and `tools`. V5's system
 prompt, catalog order and metadata, output schema and caps stay unchanged.
-Haiku 5.5 keeps v6's medium effort with thinking disabled. This tests a placement
-hypothesis; it does not establish the cause of earlier relevance failures.
+Haiku 5.5 keeps v6's medium effort with thinking disabled.
+
+The [#19 evaluation report](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/blob/feat/19-recommendation-evaluation/docs/evaluation/2026-10-21/wording-timeout-rerun.md)
+records run `39621407792`, source `5e54e23`: v7 scored **10/10 in all three
+trials**, versus rules at 8/10, with no benchmark fallbacks. V6's medium-effort
+change alone scored 7/10, 9/10 and 6/10. V7's wording probes scored Operations
+3/3 in 1.520 seconds and Fundraising 2/3 in 1.466 seconds. Benchmark latency
+was 1.409 seconds median, 2.228 p95 and 2.566 maximum; all 34 calls had complete
+usage and cost diagnostics.
+
+This supports catalog-first ordering on the existing test cases, not unseen
+accuracy. Test and production LLM calls remain disabled after the run;
+production usage logging remains disabled.
 
 Anthropic's [long-context guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#long-context-prompting)
 recommends long data before the query for inputs over 20,000 tokens, checked
-October 21, 2026. The previous measured input was 20,209 tokens. Whether this
-ordering improves recommendation quality remains for #19 to evaluate.
+October 21, 2026. The previous measured input was 20,209 tokens; this guidance
+motivated the ordering experiment.
 
 V5 ranks the requested activity, output and audience or
 counterparty ahead of general AI guidance. It keeps v4's slots, full catalog,
