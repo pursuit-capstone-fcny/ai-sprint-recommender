@@ -36,6 +36,23 @@ versions. Failure responses contain a bounded `reason`; the browser uses rules.
 The `x-recommendation-request-id` response header joins a response to sanitized
 diagnostics without using the app's session ID.
 
+The server caches validated public catalog snapshots for up to 60 seconds in
+Cloudflare's Cache API, keyed by trusted source URL and catalog version. A new
+requested version fetches the source again; mismatches never dispatch a paid
+call. Cache hits are validated again, and cache errors fall through to a fresh
+fetch. An old requested version can use its cached snapshot for at most 60
+seconds after it was stored, so source edits and retirements have that bounded
+delay. Provider responses and intake text are never cached. The five-second
+deadline and `catalog-rank-v2` prompt are unchanged.
+
+The [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/)
+stores responses within a data center and honors response `Cache-Control` TTL.
+Cache availability and hits must be checked on the deployed test hostname. A
+free mismatch request can warm the actual version, followed by an actual-version
+request with an invalid canonical area to verify a fast cache hit without a
+provider call. Rewarm before a new trial; do not assume another data center has
+the same entry.
+
 ## Separate runtime configuration
 
 `wrangler.recommendations.jsonc` is an opt-in configuration, excluded from the
