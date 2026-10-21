@@ -311,6 +311,47 @@ describe('recommendation endpoint', () => {
     ).toBe('unavailable');
     expect(provider).not.toHaveBeenCalled();
   });
+  it.each(['test', 'production'])(
+    'limits validation metadata to test diagnostics, never public responses (%s)',
+    async (target) => {
+      const { deps, provider, diagnostic } = setup();
+      const invalid = {
+        value: null,
+        inputTokens: 100,
+        outputTokens: 20,
+        validationFailure: 'schema' as const,
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+        privateProviderText: 'private raw output',
+      };
+      provider.mockResolvedValueOnce(invalid);
+      const response = await recommend(
+        request(),
+        { ...environment, LLM_ENVIRONMENT: target },
+        deps,
+      );
+      const publicBody = await response.text();
+      expect(publicBody).toContain('invalid-response');
+      expect(publicBody).not.toContain('validationFailure');
+      expect(publicBody).not.toContain('private');
+      const entry = diagnostic.mock.calls[0][0];
+      if (target === 'test')
+        expect(entry).toMatchObject({
+          validationFailure: 'schema',
+          selectionCount: 1,
+          invalidSelectionCount: 1,
+        });
+      else expect(entry.validationFailure).toBeUndefined();
+      expect(JSON.stringify(entry)).not.toContain('private');
+      provider.mockResolvedValueOnce({ ...invalid, value: { youtubeIds: [] } });
+      await recommend(
+        request(),
+        { ...environment, LLM_ENVIRONMENT: target },
+        deps,
+      );
+      expect(diagnostic.mock.calls[1][0].validationFailure).toBeUndefined();
+    },
+  );
   it('retains maximum spend after ambiguous provider failures, without retries', async () => {
     const { deps, provider, budget } = setup();
     provider.mockRejectedValueOnce(
@@ -320,6 +361,19 @@ describe('recommendation endpoint', () => {
     expect((await response.json()).reason).toBe('provider-error');
     expect(provider).toHaveBeenCalledTimes(1);
     expect(budget.settle).toHaveBeenCalledWith(expect.any(String), null);
+  });
+  it('drops validation metadata outside the bounded schema', async () => {
+    const { deps, provider, diagnostic } = setup();
+    provider.mockResolvedValueOnce({
+      value: null,
+      inputTokens: 100,
+      outputTokens: 20,
+      validationFailure: 'schema',
+      selectionCount: 101,
+    });
+    await recommend(request(), environment, deps);
+    expect(diagnostic.mock.calls[0][0].validationFailure).toBeUndefined();
+    expect(diagnostic.mock.calls[0][0].selectionCount).toBeUndefined();
   });
   it('bounds the whole request at five seconds even when a provider ignores cancellation', async () => {
     vi.useFakeTimers();
