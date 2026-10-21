@@ -11,6 +11,7 @@ interface VideoCardProps {
   match: RankedMatch;
   isPlaying: boolean;
   onPlay: () => void;
+  onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
   showClosestMatch?: boolean;
 }
@@ -19,6 +20,7 @@ export function VideoCard({
   match,
   isPlaying,
   onPlay,
+  onWatch,
   showClosestMatch = true,
 }: VideoCardProps) {
   const { item, reason, matchType } = match;
@@ -114,6 +116,10 @@ export function VideoCard({
             href={watchUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={onWatch}
+            onAuxClick={(event) => {
+              if (event.button === 1) onWatch?.();
+            }}
           >
             <span aria-hidden="true">▶</span> Watch on YouTube{' '}
             <span aria-hidden="true">↗</span>

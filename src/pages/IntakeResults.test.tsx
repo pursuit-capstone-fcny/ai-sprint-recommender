@@ -73,6 +73,7 @@ function selectFundraising() {
   fireEvent.change(screen.getByLabelText(/function area/i), {
     target: { value: 'Fundraising' },
   });
+  fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
 
 describe('IntakeResults', () => {
@@ -92,7 +93,7 @@ describe('IntakeResults', () => {
     expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
   });
 
-  it('re-ranks when a goal is typed', () => {
+  it('keeps displayed results while typing and re-ranks on submission', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();
 
@@ -102,6 +103,10 @@ describe('IntakeResults', () => {
     fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
       target: { value: 'gizmo' },
     });
+    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
+      'Widget Setup Basics',
+    );
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 
     const firstCardAfter = screen.getAllByRole('listitem')[0];
     expect(firstCardAfter.textContent).toContain('Gizmo Onboarding Guide');
@@ -115,6 +120,8 @@ describe('IntakeResults', () => {
     fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
       target: { value: 'gizmo' },
     });
+
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 
     expect(screen.getAllByText('Closest match').length).toBeGreaterThan(0);
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
@@ -150,18 +157,21 @@ describe('IntakeResults', () => {
     );
 
     fireEvent.change(toolSelect, { target: { value: 'Claude' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
     expect(toolSelect.value).toBe('Claude');
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       'Sprocket Tracking Walkthrough',
     );
 
     fireEvent.change(toolSelect, { target: { value: 'Copilot' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
     expect(toolSelect.value).toBe('Copilot');
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       'Gizmo Onboarding Guide',
     );
 
     fireEvent.change(toolSelect, { target: { value: '' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       'Widget Setup Basics',
     );
@@ -208,6 +218,7 @@ describe('IntakeResults', () => {
     fireEvent.change(screen.getByLabelText(/function area/i), {
       target: { value: 'Leadership' },
     });
+    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
     expect(screen.getAllByText('Closest match').length).toBeGreaterThan(0);
   });
 });

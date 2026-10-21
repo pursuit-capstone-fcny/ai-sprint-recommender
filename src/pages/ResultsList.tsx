@@ -10,6 +10,11 @@ interface ResultsListProps {
   canShowMore: boolean;
   onShowMore: () => void;
   showClosestMatch?: boolean;
+  onVideoClick?: (
+    match: RankedMatch,
+    index: number,
+    target: 'embed' | 'youtube',
+  ) => void;
 }
 
 export function ResultsList({
@@ -19,6 +24,7 @@ export function ResultsList({
   canShowMore,
   onShowMore,
   showClosestMatch = true,
+  onVideoClick,
 }: ResultsListProps) {
   return (
     <section aria-live="polite" aria-labelledby={RESULTS_HEADING_ID}>
@@ -31,13 +37,17 @@ export function ResultsList({
         </p>
       </div>
       <ul className="video-card-grid">
-        {results.map((match) => (
+        {results.map((match, index) => (
           <VideoCard
             key={match.item.youtubeId}
             match={match}
             isPlaying={playingId === match.item.youtubeId}
             showClosestMatch={showClosestMatch}
-            onPlay={() => onPlay(match.item.youtubeId)}
+            onPlay={() => {
+              onPlay(match.item.youtubeId);
+              onVideoClick?.(match, index, 'embed');
+            }}
+            onWatch={() => onVideoClick?.(match, index, 'youtube')}
           />
         ))}
       </ul>
