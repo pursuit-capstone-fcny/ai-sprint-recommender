@@ -1,7 +1,17 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { rank } from '../engine';
+import {
+  recommendationsEnabled,
+  requestRecommendations,
+} from '../recommendations/requestRecommendations';
+import {
+  rulesSelection,
+  selectRecommendations,
+  selectRulesResults,
+  type RecommendationSelection,
+} from '../recommendations/selectRecommendations';
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
@@ -14,17 +24,6 @@ const EMPTY_PROFILE: IntakeProfile = {
   goalWords: [],
   tools: [],
 };
-function displayedResults(
-  catalog: CatalogItem[],
-  profile: IntakeProfile,
-  count: number,
-) {
-  const matches = rank(catalog, profile, { topN: count }).slice(0, count);
-  return matches[0]?.matchType === 'fallback'
-    ? matches
-    : matches.filter((match) => match.matchType === 'strong');
-}
-
 function splitGoalWords(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
@@ -42,6 +41,7 @@ interface IntakeResultsProps {
   availableFunctionAreas?: readonly string[];
   availableTools?: string[];
   usage?: { session: UsageSession; catalog: PublicCatalog };
+  recommendationCatalog?: PublicCatalog;
 }
 
 export function IntakeResults({
@@ -49,14 +49,29 @@ export function IntakeResults({
   availableFunctionAreas,
   availableTools: dictionaryTools,
   usage,
+  recommendationCatalog,
 }: IntakeResultsProps) {
   const [functionArea, setFunctionArea] = useState<string | null>(null);
   const [goalText, setGoalText] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [playingId, setPlayingId] = useState<string | null>(null);
-  const [submitted, setSubmitted] = useState<IntakeProfile | null>(null);
-  const profile = submitted ?? EMPTY_PROFILE;
+  const [completed, setCompleted] = useState<{
+    profile: IntakeProfile;
+    selection: RecommendationSelection;
+  } | null>(null);
+  const [loading, setLoading] = useState(false);
+  const pending = useRef<AbortController | null>(null);
+  const profile = completed?.profile ?? EMPTY_PROFILE;
+  const selection = useMemo(
+    () =>
+      completed?.selection ??
+      rulesSelection(catalog, EMPTY_PROFILE, 'not-requested'),
+    [catalog, completed],
+  );
+  const llmEnabled =
+    recommendationsEnabled() && recommendationCatalog !== undefined;
+  useEffect(() => () => pending.current?.abort(), []);
 
   const availableTools = useMemo(
     () => dictionaryTools ?? availableToolsFrom(catalog),
@@ -64,8 +79,11 @@ export function IntakeResults({
   );
 
   const results = useMemo(
-    () => displayedResults(catalog, profile, visibleCount),
-    [catalog, profile, visibleCount],
+    () =>
+      selection.recommendationEngine === 'llm'
+        ? selection.results.slice(0, visibleCount)
+        : selectRulesResults(catalog, profile, visibleCount),
+    [catalog, profile, visibleCount, selection],
   );
   const isGlobalFallback = results[0]?.matchType === 'fallback';
   const usageSession = usage?.session;
@@ -77,17 +95,20 @@ export function IntakeResults({
             usageSession,
             usageCatalog,
             profile,
-            displayedResults(catalog, profile, PAGE_SIZE),
-            submitted !== null,
+            selection.results.slice(0, PAGE_SIZE),
+            completed !== null,
+            selection,
           )
         : null,
-    [usageSession, usageCatalog, profile, catalog, submitted],
+    [usageSession, usageCatalog, profile, selection, completed],
   );
   useEffect(() => {
     usageContext?.display(results);
   }, [usageContext, results]);
 
   const canShowMore = useMemo(() => {
+    if (selection.recommendationEngine === 'llm')
+      return selection.results.length > visibleCount;
     if (isGlobalFallback) return false;
     const nextWindow = rank(catalog, profile, {
       topN: visibleCount + PAGE_SIZE,
@@ -95,9 +116,16 @@ export function IntakeResults({
     return nextWindow
       .slice(visibleCount, visibleCount + PAGE_SIZE)
       .some((match) => match.matchType === 'strong');
-  }, [catalog, profile, visibleCount, isGlobalFallback]);
+  }, [catalog, profile, visibleCount, isGlobalFallback, selection]);
+
+  function cancelPending() {
+    pending.current?.abort();
+    pending.current = null;
+    setLoading(false);
+  }
 
   function handleToggleTool(tool: string) {
+    cancelPending();
     setTools((current) =>
       current.includes(tool)
         ? current.filter((t) => t !== tool)
@@ -106,20 +134,60 @@ export function IntakeResults({
   }
 
   function handleClearFilters() {
+    cancelPending();
     setFunctionArea(null);
     setGoalText('');
     setTools([]);
     setPlayingId(null);
     setVisibleCount(PAGE_SIZE);
-    setSubmitted(null);
+    setCompleted(null);
   }
 
   function handleFindVideos() {
-    setSubmitted({
+    cancelPending();
+    const nextProfile = {
       functionArea,
       goalWords: splitGoalWords(goalText),
       tools: [...tools],
-    });
+    };
+    const blank =
+      functionArea === null && !goalText.trim() && tools.length === 0;
+    if (!llmEnabled || blank || !recommendationCatalog) {
+      setCompleted({
+        profile: nextProfile,
+        selection: rulesSelection(
+          catalog,
+          nextProfile,
+          blank ? 'not-requested' : 'disabled',
+        ),
+      });
+    } else {
+      const controller = new AbortController();
+      pending.current = controller;
+      setLoading(true);
+      void requestRecommendations(
+        {
+          functionArea,
+          goal: goalText,
+          tools: [...tools],
+          catalogVersion: recommendationCatalog.catalogVersion,
+        },
+        controller.signal,
+      ).then((response) => {
+        if (pending.current !== controller || controller.signal.aborted) return;
+        pending.current = null;
+        setLoading(false);
+        setCompleted({
+          profile: nextProfile,
+          selection: selectRecommendations(
+            catalog,
+            nextProfile,
+            recommendationCatalog.catalogVersion,
+            response,
+          ),
+        });
+      });
+    }
     setVisibleCount(PAGE_SIZE);
     setPlayingId(null);
     const heading = document.getElementById(RESULTS_HEADING_ID);
@@ -138,6 +206,7 @@ export function IntakeResults({
       <form
         className="search-panel"
         aria-labelledby="search-panel-title"
+        aria-describedby={llmEnabled ? 'ai-disclosure' : undefined}
         onSubmit={(event) => {
           event.preventDefault();
           handleFindVideos();
@@ -148,15 +217,27 @@ export function IntakeResults({
         </div>
         <IntakeForm
           functionArea={functionArea}
-          onFunctionAreaChange={setFunctionArea}
+          onFunctionAreaChange={(value) => {
+            cancelPending();
+            setFunctionArea(value);
+          }}
           goalText={goalText}
-          onGoalTextChange={setGoalText}
+          onGoalTextChange={(value) => {
+            cancelPending();
+            setGoalText(value);
+          }}
           availableTools={availableTools}
           availableFunctionAreas={availableFunctionAreas}
           selectedTools={tools}
           onToggleTool={handleToggleTool}
         />
-        {usageContext && (
+        {llmEnabled && (
+          <p className="usage-notice" id="ai-disclosure">
+            AI suggestions send your goal and selected options to Anthropic.
+            Leave out personal information.
+          </p>
+        )}
+        {usage && (
           <p className="usage-notice">
             Test preview: we log search tags, displayed videos, clicks, time and
             source with a random ID for this page visit. Your typed goal is not
@@ -176,7 +257,17 @@ export function IntakeResults({
           </button>
         </div>
       </form>
+      <p role="status" className="catalog-notice">
+        {loading
+          ? 'Finding AI suggestions…'
+          : completed
+            ? selection.recommendationEngine === 'llm'
+              ? 'AI suggestions'
+              : 'Standard matching'
+            : null}
+      </p>
       <ResultsList
+        loading={loading}
         results={results}
         playingId={playingId}
         onPlay={setPlayingId}
