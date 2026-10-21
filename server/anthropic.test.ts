@@ -251,7 +251,7 @@ describe('Anthropic adapter', () => {
       invalidSelectionCount: 0,
     });
   });
-  it('disables Haiku 5.5 thinking at low effort for bounded ID output', async () => {
+  it('disables Haiku 5.5 thinking at medium effort for bounded ID output', async () => {
     const candidate = providerBody(
       {
         functionArea: null,
@@ -272,7 +272,7 @@ describe('Anthropic adapter', () => {
     const wire = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
     expect(wire.model).toBe('claude-haiku-5-5');
     expect(wire.thinking).toEqual({ type: 'disabled' });
-    expect(wire.output_config.effort).toBe('low');
+    expect(wire.output_config.effort).toBe('medium');
     expect(wire.output_config.format.type).toBe('json_schema');
     expect(wire.max_tokens).toBe(Number(environment.LLM_MAX_OUTPUT_TOKENS));
     expect(wire.temperature).toBeUndefined();
