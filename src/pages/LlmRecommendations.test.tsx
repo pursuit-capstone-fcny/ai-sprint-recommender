@@ -180,6 +180,10 @@ describe('LLM submissions', () => {
       goal('unmatched');
       submit();
       await screen.findByText('Standard matching');
+      // The status commits before the passive effect sends usage events.
+      await waitFor(() =>
+        expect(logging.session.sender.send).toHaveBeenCalledTimes(4),
+      );
       expect(
         screen.getAllByRole('listitem').map((item) => item.textContent),
       ).toEqual(initial);
