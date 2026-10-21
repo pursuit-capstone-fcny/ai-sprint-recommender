@@ -17,6 +17,7 @@ export function providerBody(
   catalog: PublicCatalog,
   limits: Limits,
 ) {
+  const haiku55 = limits.LLM_MODEL === 'claude-haiku-5-5';
   const data = {
     functionArea: input.functionArea,
     goal: input.goal,
@@ -33,9 +34,13 @@ export function providerBody(
   return {
     model: limits.LLM_MODEL,
     max_tokens: limits.LLM_MAX_OUTPUT_TOKENS,
+    ...(haiku55 ? { thinking: { type: 'disabled' } } : {}),
     system: SYSTEM_PROMPT,
     messages: [{ role: 'user', content: JSON.stringify(data) }],
-    output_config: { format: { type: 'json_schema', schema: outputSchema } },
+    output_config: {
+      format: { type: 'json_schema', schema: outputSchema },
+      ...(haiku55 ? { effort: 'low' } : {}),
+    },
   };
 }
 export type ProviderBody = ReturnType<typeof providerBody>;
