@@ -14,9 +14,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function captureFailure(fetcher) {
+async function captureFailure(fetcher, wait = vi.fn(async () => {})) {
   try {
-    await runFailureChecks(fetcher);
+    await runFailureChecks(fetcher, wait);
   } catch (error) {
     return failureReport(error);
   }
@@ -25,20 +25,31 @@ async function captureFailure(fetcher) {
 
 describe('safe deployed verification failure context', () => {
   it.each([404, 503])(
-    'records HTTP %i without retrying or saving the body',
+    'records persistent HTTP %i after four attempts without saving the body',
     async (status) => {
       const fetcher = vi.fn(
         async () => new Response('private response text', { status }),
       );
-      const report = await captureFailure(fetcher);
-      expect(report.failedCheck).toEqual({
+      const wait = vi.fn(async () => {});
+      const report = await captureFailure(fetcher, wait);
+      expect(report.failedCheck).toMatchObject({
         scenario: 'success',
         phase: 'http-status',
         classification: 'http-status',
         httpStatus: status,
       });
       expect(report.completedChecks).toBe(0);
-      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(fetcher).toHaveBeenCalledTimes(4);
+      expect(wait.mock.calls.map(([milliseconds]) => milliseconds)).toEqual([
+        2000, 4000, 8000,
+      ]);
+      expect(report.failedCheck.attempts).toEqual(
+        Array.from({ length: 4 }, (_, index) => ({
+          attempt: index + 1,
+          httpStatus: status,
+          startedAt: expect.any(String),
+        })),
+      );
       expect(JSON.stringify(report)).not.toContain('private response text');
     },
   );
@@ -77,7 +88,11 @@ describe('safe deployed verification failure context', () => {
       extra: 'private nested value',
     };
     actual.raw = 'private top level value';
-    const report = await captureFailure(async () => Response.json(actual));
+    const fetcher = vi.fn(async () => Response.json(actual));
+    const wait = vi.fn(async () => {});
+    const report = await captureFailure(fetcher, wait);
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(wait).not.toHaveBeenCalled();
     expect(report.failedCheck).toMatchObject({
       scenario: 'success',
       phase: 'assertion',
@@ -105,7 +120,7 @@ describe('safe deployed verification failure context', () => {
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(Response.json(first))
-      .mockResolvedValueOnce(new Response('private failure', { status: 503 }));
+      .mockResolvedValueOnce(new Response('private failure', { status: 500 }));
     const report = await captureFailure(fetcher);
     expect(report.completedChecks).toBe(1);
     expect(report.failedCheck.scenario).toBe('default-off');
@@ -114,6 +129,33 @@ describe('safe deployed verification failure context', () => {
       passed: true,
     });
     expect(JSON.stringify(report)).not.toContain('private');
+  });
+  it('retains the initial 404 when the next attempt passes, then stops on a nonretryable status', async () => {
+    const first = await worker.fetch(
+      new Request(`${FAILURE_TEST_ORIGIN}/cases/success`),
+    );
+    const fetcher = vi
+      .fn()
+      .mockResolvedValueOnce(new Response('', { status: 404 }))
+      .mockResolvedValueOnce(first)
+      .mockResolvedValueOnce(new Response('', { status: 500 }));
+    const wait = vi.fn(async () => {});
+    const report = await captureFailure(fetcher, wait);
+    expect(report.completedChecks).toBe(1);
+    expect(
+      report.checks[0].attempts.map(({ httpStatus }) => httpStatus),
+    ).toEqual([404, 200]);
+    expect(
+      report.checks[0].attempts.every(({ startedAt }) =>
+        Number.isFinite(Date.parse(startedAt)),
+      ),
+    ).toBe(true);
+    expect(wait.mock.calls).toEqual([[2000]]);
+    expect(report.failedCheck).toMatchObject({
+      scenario: 'default-off',
+      httpStatus: 500,
+    });
+    expect(fetcher).toHaveBeenCalledTimes(3);
   });
 });
 describe('isolated deployed failure harness', () => {
