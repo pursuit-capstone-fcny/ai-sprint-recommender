@@ -480,7 +480,10 @@ export async function main(args = process.argv.slice(2)) {
     ]);
     if (
       allIds.length !== 34 ||
-      warmupIds.length !== 6 ||
+      warmupIds.length !== warmups.length ||
+      warmups.length < 6 ||
+      warmups.length > 12 ||
+      warmups.filter((row) => row.phase === 'cache-check').length !== 3 ||
       diagnosticIds.some((id) => !observed.has(id))
     )
       throw new Error(

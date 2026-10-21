@@ -1,0 +1,23 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "response": {
+      "outcome": "fallback",
+      "reason": "timeout",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    },
+    "requestId": "651c9ffb-6f69-48e4-b1c4-ee2138ebef86",
+    "status": 200,
+    "latencyMs": 5117,
+    "diagnostic": {
+      "requestId": "651c9ffb-6f69-48e4-b1c4-ee2138ebef86",
+      "environment": "test",
+      "outcome": "timeout",
+      "latencyMs": 5000,
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-v3"
+    }
+  }
+]

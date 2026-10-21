@@ -445,25 +445,60 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
     });
     expect(snapshots[1].trials[0].calls).toHaveLength(2);
   });
-  it('preserves a timed-out warmup and stops before any trial or retry', async () => {
+  it('preserves three timed-out unpaid loads and stops before any trial', async () => {
     const value = approved();
     const fetcher = vi
       .fn<typeof fetch>()
-      .mockRejectedValueOnce(new DOMException('Timeout', 'TimeoutError'));
+      .mockRejectedValue(new DOMException('Timeout', 'TimeoutError'));
     const progress = vi.fn();
     const warmups = vi.fn();
     await expect(
       runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
     ).rejects.toThrow('warmup');
-    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(fetcher).toHaveBeenCalledTimes(3);
     expect(progress).not.toHaveBeenCalled();
-    expect(warmups).toHaveBeenCalledWith([
+    expect(warmups.mock.calls.at(-1)?.[0]).toHaveLength(3);
+    expect(warmups.mock.calls.at(-1)?.[0][2]).toEqual(
       expect.objectContaining({
         trial: 1,
         phase: 'catalog-load',
+        attempt: 3,
         response: { outcome: 'fallback', reason: 'timeout' },
       }),
-    ]);
+    );
+    for (const [, init] of fetcher.mock.calls) {
+      expect(JSON.parse(String(init?.body)).functionArea).toBe(
+        '__evaluation_invalid_area__',
+      );
+    }
+  });
+  it('can warm after one timeout without repeating any paid-eligible request', async () => {
+    const value = approved();
+    let cold = true;
+    let paid = 0;
+    const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+      const input = JSON.parse(String(init?.body));
+      if (input.catalogVersion !== value.catalog.catalogVersion) {
+        if (cold) {
+          cold = false;
+          throw new DOMException('Timeout', 'TimeoutError');
+        }
+        return warmupResponse(value);
+      }
+      if (input.functionArea === '__evaluation_invalid_area__')
+        return warmupResponse(value, true);
+      paid++;
+      return Response.json(
+        { outcome: 'fallback', reason: 'timeout' },
+        { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
+      );
+    });
+    const trials = await runLiveTrials(value, approval(value), true, fetcher);
+    expect(paid).toBe(30);
+    expect(fetcher).toHaveBeenCalledTimes(37);
+    expect(trials.trials.every((trial) => trial.calls.length === 10)).toBe(
+      true,
+    );
   });
   it('requires the correct frozen catalog and candidate during unpaid warmup', async () => {
     const value = approved();

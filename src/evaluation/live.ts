@@ -19,6 +19,7 @@ export interface Warmup extends Observation {
   trial: number;
   phase: 'catalog-load' | 'cache-check';
   status: number | null;
+  attempt?: number;
 }
 
 async function requestRecommendation(
@@ -130,21 +131,37 @@ export async function runLiveTrials(
   const wrongVersion = `sha256:${(benchmark.catalog.catalogVersion === `sha256:${'0'.repeat(64)}` ? 'f' : '0').repeat(64)}`;
   for (let index = 0; index < 3; index += 1) {
     // Version mismatch fetches and validates the trusted catalog before provider dispatch.
-    // Warm it once per trial; no timeout/error retry and no paid trial without confirmation.
-    const warmup: Warmup = {
-      trial: index + 1,
-      phase: 'catalog-load',
-      ...(await requestRecommendation(
-        approval.endpoint,
-        { ...benchmark.profiles[0].input, catalogVersion: wrongVersion },
-        fetcher,
-        10_000,
-        200,
-      )),
-    };
-    warmups.push(warmup);
-    await saveWarmups(warmups);
+    // A cold Apps Script fetch can exceed the server deadline. Retry only this
+    // unpaid load up to three times; invalid area is a second pre-provider gate.
+    let warmup: Warmup | undefined;
+    for (let attempt = 1; attempt <= 3; attempt++) {
+      warmup = {
+        trial: index + 1,
+        phase: 'catalog-load',
+        attempt,
+        ...(await requestRecommendation(
+          approval.endpoint,
+          {
+            functionArea: '__evaluation_invalid_area__',
+            goal: '',
+            tools: [],
+            catalogVersion: wrongVersion,
+          },
+          fetcher,
+          10_000,
+          200,
+        )),
+      };
+      warmups.push(warmup);
+      await saveWarmups(warmups);
+      if (
+        warmup.response.outcome !== 'fallback' ||
+        warmup.response.reason !== 'timeout'
+      )
+        break;
+    }
     if (
+      !warmup ||
       !warmup.requestId ||
       warmup.response.outcome !== 'fallback' ||
       warmup.response.reason !== 'catalog-mismatch' ||

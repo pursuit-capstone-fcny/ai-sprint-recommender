@@ -26,6 +26,11 @@ The benchmark fingerprint remains
 - Warm only the trusted catalog. Do not cache model answers. Record every
   failed attempt and disable provider calls afterward. A one-minute window
   after the trials permits the single browser verification before shutdown.
+- Cold catalog timeouts may receive up to three unpaid load attempts per
+  trial. Every attempt uses both a wrong catalog version and an invalid area,
+  so it cannot reach provider dispatch. Preserve each timeout and still require
+  the correct catalog/configuration plus a sub-second cache check before paid
+  trials. Other warmup errors fail immediately; paid calls never retry.
 
 ## Candidate
 
@@ -70,3 +75,11 @@ older enabled handler rejecting invalid input. A separate probe then
 verification now waits for propagation using only blank or invalid intake,
 which cannot reserve spend or dispatch Anthropic. Paid requests still have
 one attempt each.
+
+[Run 39608082503](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39608082503)
+confirmed state propagation but its cold catalog load hit the server's
+5,000 ms deadline. No paid trial started. The
+[warmup](runs/39608082503/warmups.json) and
+[confirmed shutdown](runs/39608082503/disabled.json) are saved. This motivates
+the bounded unpaid catalog warmup above; it does not establish acceptable
+cold-request latency for production.
