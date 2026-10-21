@@ -26,6 +26,107 @@ function payload(text: string, stop_reason = 'end_turn') {
   };
 }
 describe('Anthropic adapter', () => {
+  it('offers every catalog position and maps selections back to the same trusted snapshot', async () => {
+    const reordered = { ...catalog, items: [...catalog.items].reverse() };
+    const candidate = providerBody(
+      {
+        functionArea: null,
+        goal: 'A fictional task',
+        tools: [],
+        catalogVersion: catalog.catalogVersion,
+      },
+      reordered,
+      readLimits(environment)!,
+    );
+    const fetcher = vi.fn<typeof fetch>(async () =>
+      Response.json(payload('{"positions":[2,0]}')),
+    );
+    const result = await anthropicProvider('fixture-only', fetcher)(
+      candidate,
+      new AbortController().signal,
+    );
+    expect(result.value).toEqual({
+      youtubeIds: [reordered.items[2].youtubeId, reordered.items[0].youtubeId],
+    });
+    const wire = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
+    const candidates = JSON.parse(wire.messages[0].content).catalog;
+    expect(candidates).toEqual(
+      reordered.items.map((item, position) => ({
+        position,
+        title: item.title,
+        description: item.description,
+        functionAreas: item.functionAreas,
+        tasks: item.tasks,
+        tools: item.tools,
+      })),
+    );
+    expect(wire.output_config.format.schema.properties.positions.items).toEqual(
+      {
+        type: 'integer',
+        enum: [0, 1, 2, 3],
+      },
+    );
+    expect(wire.catalogIds).toBeUndefined();
+    for (const item of catalog.items)
+      expect(JSON.stringify(wire)).not.toContain(item.youtubeId);
+  });
+  it.each([
+    { positions: [1, 1] },
+    { positions: [-1] },
+    { positions: [4] },
+    { positions: [0.5] },
+    { positions: ['1'] },
+    { positions: [null] },
+    { positions: [1], explanation: 'extra' },
+    { youtubeIds: ['fx03BdgtXls'] },
+  ])(
+    'rejects invalid positions without repairing the result or losing usage',
+    async (value) => {
+      const provider = anthropicProvider(
+        'fixture-only',
+        vi.fn(async () => Response.json(payload(JSON.stringify(value)))),
+      );
+      expect(await provider(body, new AbortController().signal)).toEqual({
+        value: null,
+        inputTokens: 200,
+        outputTokens: 20,
+      });
+    },
+  );
+  it('rejects more than ten otherwise valid distinct selections', async () => {
+    const larger = {
+      ...catalog,
+      items: Array.from({ length: 11 }, (_, position) => ({
+        ...catalog.items[0],
+        youtubeId: `fx${position.toString().padStart(9, '0')}`,
+      })),
+    };
+    const candidate = providerBody(
+      {
+        functionArea: null,
+        goal: '',
+        tools: [],
+        catalogVersion: catalog.catalogVersion,
+      },
+      larger,
+      readLimits(environment)!,
+    );
+    const provider = anthropicProvider(
+      'fixture-only',
+      vi.fn(async () =>
+        Response.json(
+          payload(
+            JSON.stringify({
+              positions: Array.from({ length: 11 }, (_, position) => position),
+            }),
+          ),
+        ),
+      ),
+    );
+    expect(
+      (await provider(candidate, new AbortController().signal)).value,
+    ).toBeNull();
+  });
   it('disables Haiku 5.5 thinking at low effort for bounded ID output', async () => {
     const candidate = providerBody(
       {
@@ -38,7 +139,7 @@ describe('Anthropic adapter', () => {
       readLimits({ ...environment, LLM_MODEL: 'claude-haiku-5-5' })!,
     );
     const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json(payload('{"youtubeIds":[]}')),
+      Response.json(payload('{"positions":[]}')),
     );
     const result = await anthropicProvider('fixture-only', fetcher)(
       candidate,
@@ -53,15 +154,15 @@ describe('Anthropic adapter', () => {
     expect(wire.temperature).toBeUndefined();
     expect(wire.tools).toBeUndefined();
     expect(result.value).toEqual({ youtubeIds: [] });
-    expect(body.thinking).toBeUndefined();
-    expect(body.output_config.effort).toBeUndefined();
+    expect(body.request.thinking).toBeUndefined();
+    expect(body.request.output_config.effort).toBeUndefined();
   });
   it('rejects unexpected thinking blocks while preserving measured usage', async () => {
     const response = {
-      ...payload('{"youtubeIds":[]}'),
+      ...payload('{"positions":[]}'),
       content: [
         { type: 'thinking', thinking: 'Untrusted provider text' },
-        { type: 'text', text: '{"youtubeIds":[]}' },
+        { type: 'text', text: '{"positions":[]}' },
       ],
     };
     const provider = anthropicProvider(
@@ -76,7 +177,7 @@ describe('Anthropic adapter', () => {
   });
   it('sends one bounded structured request without tools, raw IDs, cache directives or retries', async () => {
     const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json(payload('{"youtubeIds":[]}')),
+      Response.json(payload('{"positions":[]}')),
     );
     const provider = anthropicProvider('fixture-only', fetcher);
     expect(await provider(body, new AbortController().signal)).toEqual({
@@ -99,8 +200,8 @@ describe('Anthropic adapter', () => {
   });
   it.each([
     ['not json', 'end_turn'],
-    ['{"youtubeIds":[]}', 'max_tokens'],
-    ['{"youtubeIds":[]}', 'refusal'],
+    ['{"positions":[]}', 'max_tokens'],
+    ['{"positions":[]}', 'refusal'],
   ])('keeps usage for invalid/truncated output', async (text, reason) => {
     const provider = anthropicProvider(
       'fixture-only',
@@ -130,11 +231,11 @@ describe('Anthropic adapter', () => {
       long,
       readLimits(environment)!,
     );
-    const data = JSON.parse(bounded.messages[0].content);
+    const data = JSON.parse(bounded.request.messages[0].content);
     expect(data.catalog).toHaveLength(catalog.items.length);
     expect(data.catalog[0].description.length).toBe(500);
     expect(inputTokenBound(bounded)).toBeGreaterThan(
-      JSON.stringify(bounded).length + 4096,
+      JSON.stringify(bounded.request).length + 4096,
     );
   });
   it('does not retry transport errors or parse unbounded provider bodies', async () => {

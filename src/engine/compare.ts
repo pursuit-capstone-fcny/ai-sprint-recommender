@@ -7,7 +7,7 @@ const TOOL_TIER_RANK: Record<VideoMatch['toolTier'], number> = {
   none: 0,
 };
 
-// Tier order: area -> task -> tool -> isStartHere -> addedAt -> youtubeId.
+// Tier order: area -> task (match, then relevance) -> tool -> isStartHere -> addedAt -> youtubeId.
 // isStartHere is not one of AC-11's literal tiers; it's inserted here so
 // AC-13.3's start-here fallback can reuse this same comparator instead of a
 // separate re-sort pass. It only ever breaks ties already made by area/task/
@@ -27,6 +27,10 @@ export function buildComparator(
 
     const taskDiff = Number(matchB.taskMatch) - Number(matchA.taskMatch);
     if (taskDiff !== 0) return taskDiff;
+
+    const relevanceDiff =
+      (matchB.taskRelevance ?? 0) - (matchA.taskRelevance ?? 0);
+    if (relevanceDiff !== 0) return relevanceDiff;
 
     const toolDiff =
       TOOL_TIER_RANK[matchB.toolTier] - TOOL_TIER_RANK[matchA.toolTier];
