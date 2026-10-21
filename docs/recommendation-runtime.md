@@ -64,6 +64,13 @@ same config and environment selection:
 
 Required nonsecret settings have no live defaults:
 
+For a time-limited test, set optional `LLM_TEST_EXPIRES_AT` to a UTC ISO
+timestamp. When present, an invalid or elapsed value disables calls before
+network access and is checked again before paid dispatch. Omission preserves
+the other gates. Production ignores this test-only setting. Keep the test
+monthly cap equal to the total approved allowance and expire the test before
+the next UTC month; a failed cleanup cannot reopen that allowance after reset.
+
 | Variable                                                                    | Meaning                                                   |
 | --------------------------------------------------------------------------- | --------------------------------------------------------- |
 | `LLM_ENABLED`                                                               | Kill switch, exactly `true` to permit calls               |

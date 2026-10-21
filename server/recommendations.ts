@@ -50,6 +50,13 @@ const headers = {
   'x-content-type-options': 'nosniff',
 };
 
+function testExpired(env: WorkerEnv): boolean {
+  if (env.LLM_ENVIRONMENT !== 'test' || env.LLM_TEST_EXPIRES_AT === undefined)
+    return false;
+  const expiry = z.iso.datetime().safeParse(env.LLM_TEST_EXPIRES_AT);
+  return !expiry.success || Date.parse(expiry.data) <= Date.now();
+}
+
 async function clientKey(request: Request, secret: string): Promise<string> {
   const ip = request.headers.get('CF-Connecting-IP');
   if (!ip) throw new Error('Missing client identifier');
@@ -110,7 +117,8 @@ export async function recommend(
       throw new Error('Deadline');
   };
   const execute = async (): Promise<RecommendationResponse> => {
-    if (env.LLM_ENABLED !== 'true') return fallback('disabled');
+    if (env.LLM_ENABLED !== 'true' || testExpired(env))
+      return fallback('disabled');
     const limits = readLimits(env);
     if (
       !limits ||
@@ -203,6 +211,8 @@ export async function recommend(
     let actual: number | null = 0;
     try {
       active();
+      // Recheck after asynchronous catalog/budget work before any paid dispatch.
+      if (testExpired(env)) return fallback('disabled');
       actual = null; // Dispatch can be billed even when the connection fails or is aborted.
       const result = await provider(body, abort.signal);
       if (
