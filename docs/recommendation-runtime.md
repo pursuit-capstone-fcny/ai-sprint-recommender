@@ -12,10 +12,16 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test candidate
 
-`catalog-rank-v6` is a test candidate that changes only Haiku 5.5 effort from
-`low` to `medium`. Thinking stays disabled; v5's prompt text, catalog, output
-schema and all runtime caps stay unchanged. Relevance and latency improvements
-are unproven until #19 evaluates this configuration.
+`catalog-rank-v7` is a test candidate that puts the full catalog first in the
+JSON user message, followed by `functionArea`, `goal` and `tools`. V5's system
+prompt, catalog order and metadata, output schema and caps stay unchanged.
+Haiku 5.5 keeps v6's medium effort with thinking disabled. This tests a placement
+hypothesis; it does not establish the cause of earlier relevance failures.
+
+Anthropic's [long-context guidance](https://platform.claude.com/docs/en/build-with-claude/prompt-engineering/claude-prompting-best-practices#long-context-prompting)
+recommends long data before the query for inputs over 20,000 tokens, checked
+October 21, 2026. The previous measured input was 20,209 tokens. Whether this
+ordering improves recommendation quality remains for #19 to evaluate.
 
 V5 ranks the requested activity, output and audience or
 counterparty ahead of general AI guidance. It keeps v4's slots, full catalog,

@@ -20,9 +20,6 @@ export function providerBody(
 ) {
   const haiku55 = limits.LLM_MODEL === 'claude-haiku-5-5';
   const data = {
-    functionArea: input.functionArea,
-    goal: input.goal,
-    tools: input.tools,
     catalog: catalog.items.map((item, position) => ({
       position,
       title: item.title.slice(0, 200),
@@ -31,6 +28,9 @@ export function providerBody(
       tasks: item.tasks,
       tools: item.tools,
     })),
+    functionArea: input.functionArea,
+    goal: input.goal,
+    tools: input.tools,
   };
   const request = {
     model: limits.LLM_MODEL,
