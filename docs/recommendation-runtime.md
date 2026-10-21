@@ -10,6 +10,22 @@ runtime decision in #1 and the model, owner, permitted data, retention terms,
 pricing and budgets in #8. #19 supplies the relevance evidence required before
 production enablement. An API key alone is insufficient.
 
+## Haiku 5.5 test candidate
+
+`catalog-rank-v2` records the Haiku 5.5 request settings. When `LLM_MODEL` is
+`claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to
+`low`, keeping the output allowance available for ranked IDs. Unexpected
+thinking blocks still reject the result. The five-second deadline is unchanged.
+
+Anthropic's [model page](https://platform.claude.com/docs/en/models/haiku-5-5/overview)
+lists $0.10 input and $0.50 output per million tokens for prompts up to 100,000
+tokens, checked October 21, 2026. The corresponding microdollar rates are
+`100000` and `500000`. A test using those rates must cap input at 100,000 tokens
+or less. Larger prompts use a higher price tier. These are candidate settings,
+not approval to enable calls or spend. The
+[thinking configuration reference](https://platform.claude.com/docs/en/build-with-claude/thinking-troubleshooting)
+permits disabled thinking at effort `high` or below for this model.
+
 ## Request and response
 
 The shared schema is `src/contracts/recommendation.ts`. Submit only canonical

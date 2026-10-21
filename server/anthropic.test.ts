@@ -26,6 +26,54 @@ function payload(text: string, stop_reason = 'end_turn') {
   };
 }
 describe('Anthropic adapter', () => {
+  it('disables Haiku 5.5 thinking at low effort for bounded ID output', async () => {
+    const candidate = providerBody(
+      {
+        functionArea: null,
+        goal: '',
+        tools: [],
+        catalogVersion: catalog.catalogVersion,
+      },
+      catalog,
+      readLimits({ ...environment, LLM_MODEL: 'claude-haiku-5-5' })!,
+    );
+    const fetcher = vi.fn<typeof fetch>(async () =>
+      Response.json(payload('{"youtubeIds":[]}')),
+    );
+    const result = await anthropicProvider('fixture-only', fetcher)(
+      candidate,
+      new AbortController().signal,
+    );
+    const wire = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
+    expect(wire.model).toBe('claude-haiku-5-5');
+    expect(wire.thinking).toEqual({ type: 'disabled' });
+    expect(wire.output_config.effort).toBe('low');
+    expect(wire.output_config.format.type).toBe('json_schema');
+    expect(wire.max_tokens).toBe(Number(environment.LLM_MAX_OUTPUT_TOKENS));
+    expect(wire.temperature).toBeUndefined();
+    expect(wire.tools).toBeUndefined();
+    expect(result.value).toEqual({ youtubeIds: [] });
+    expect(body.thinking).toBeUndefined();
+    expect(body.output_config.effort).toBeUndefined();
+  });
+  it('rejects unexpected thinking blocks while preserving measured usage', async () => {
+    const response = {
+      ...payload('{"youtubeIds":[]}'),
+      content: [
+        { type: 'thinking', thinking: 'Untrusted provider text' },
+        { type: 'text', text: '{"youtubeIds":[]}' },
+      ],
+    };
+    const provider = anthropicProvider(
+      'fixture-only',
+      vi.fn(async () => Response.json(response)),
+    );
+    expect(await provider(body, new AbortController().signal)).toEqual({
+      value: null,
+      inputTokens: 200,
+      outputTokens: 20,
+    });
+  });
   it('sends one bounded structured request without tools, raw IDs, cache directives or retries', async () => {
     const fetcher = vi.fn<typeof fetch>(async () =>
       Response.json(payload('{"youtubeIds":[]}')),
