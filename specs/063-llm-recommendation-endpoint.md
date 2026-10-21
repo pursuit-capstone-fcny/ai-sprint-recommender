@@ -15,13 +15,22 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   expired snapshots fetch the source again. Mismatches make no paid call;
   cache failures do not prevent a fresh fetch. No intake or provider result is
   cached. Source changes can take up to 60 seconds to affect an old version.
+- Given a test deployment with a trusted catalog URL, when the browser loads
+  `GET /api/catalog`, then it receives the validated public envelope and warms
+  the version cache before submission, even with LLM calls disabled. The
+  unpaid load ends within nine seconds; no parameters, writes or production
+  access are accepted. Expired snapshots fetch the source again.
+- Given a recommendation with a valid fresh source response, when cache writes
+  stall or fail, then `waitUntil` keeps them off the response path. Cold or
+  expired caches can still cause fallback within the recommendation deadline.
 - Given catalog text or a goal containing instructions, when the Anthropic
   request is assembled, then that text stays in the untrusted data message.
   The full catalog is retained with bounded title/description fields. It falls
   back if its conservative token bound exceeds the limit; no shortlist is made.
-- Given an explicit goal, when prompt `catalog-rank-v4` ranks the catalog, then
-  it prioritizes help with the requested task and deliverable over broad area
-  or tool overlap. It uses area and tools when the goal is blank.
+- Given an explicit goal, when prompt `catalog-rank-v5` ranks the catalog, then
+  it prioritizes the requested activity, output and audience or counterparty
+  over general AI guidance. It keeps v4's slots, full catalog, model and effort
+  unchanged, and uses area and tools when the goal is blank.
 - Given a provider request, when candidates are encoded, then every catalog
   item has a numeric position constrained by a schema enum. Ten required
   nullable slots, `rank1` through `rank10`, bound the output. The server maps
@@ -37,9 +46,10 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   object of up to ten distinct active IDs is accepted. Unknown IDs, duplicates,
   extra properties, malformed output and truncation reject the whole result.
   Empty lists are valid and let the browser use its insufficient-results policy.
-- Given a failure or slow dependency, when five seconds elapse from request
+- Given a failure or slow dependency, when 4.5 seconds elapse from request
   entry, then the response falls back, aborts network work and never retries a
-  paid request. Unknown billed usage retains the maximum reservation; a failed
+  paid request, leaving 500ms before the browser's five-second limit. Unknown
+  billed usage retains the maximum reservation; a failed
   reservation never reaches the provider.
 - Given measured usage, when settlement succeeds, then spend is reconciled once
   against the reservation's original UTC day and month. Expired reservations

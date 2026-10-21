@@ -12,8 +12,12 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test candidate
 
-`catalog-rank-v4` retains v3's task and deliverable ranking instructions. It
-replaces the output array with ten required nullable fields, `rank1` through
+`catalog-rank-v5` ranks the requested activity, output and audience or
+counterparty ahead of general AI guidance. It keeps v4's slots, full catalog,
+model and effort unchanged.
+
+V4 retained v3's task and deliverable instructions and replaced the output
+array with ten required nullable fields, `rank1` through
 `rank10`, each constrained to a catalog position or null. This prevents the
 12-selection outputs observed in both v3 diagnostic probes without truncating
 results. The adapter preserves rank order and rejects missing/extra slots,
@@ -29,7 +33,7 @@ result without repair. The public API still returns `youtubeIds`.
 Anthropic's [structured-output reference](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)
 supports numeric enums but does not guarantee string enum capitalization.
 Numeric positions avoid copying case-sensitive YouTube IDs. A new schema can
-add compilation latency on its first use; the five-second deadline still
+add compilation latency on its first use; the 4.5-second server deadline still
 applies, with no retry. The API does not support `maxItems` or uniqueness
 constraints; ten required slots enforce the size bound and the adapter checks
 uniqueness. Checked October 21, 2026.
@@ -43,7 +47,8 @@ production diagnostics.
 When `LLM_MODEL` is
 `claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to
 `low`, keeping the output allowance available for ranked IDs. Unexpected
-thinking blocks still reject the result. The five-second deadline is unchanged.
+thinking blocks still reject the result. The browser's five-second limit is
+unchanged.
 
 Anthropic's [model page](https://platform.claude.com/docs/en/models/haiku-5-5/overview)
 lists $0.10 input and $0.50 output per million tokens for prompts up to 100,000
@@ -70,16 +75,34 @@ requested version fetches the source again; mismatches never dispatch a paid
 call. Cache hits are validated again, and cache errors fall through to a fresh
 fetch. An old requested version can use its cached snapshot for at most 60
 seconds after it was stored, so source edits and retirements have that bounded
-delay. Provider responses and intake text are never cached. The five-second
-deadline also covers cache and source work.
+delay. Provider responses and intake text are never cached. The 4.5-second
+server deadline also covers cache and source work, leaving 500ms for delivery
+before the browser's five-second limit. This margin does not guarantee delivery.
+
+Test deployments also serve `GET /api/catalog` while the LLM is disabled. Set
+the test browser's `VITE_CATALOG_URL=/api/catalog` to load the trusted catalog
+before submission. This unpaid route accepts no parameters and uses only the
+validated `LLM_CATALOG_URL`. It validates and stores latest and versioned
+snapshots before returning the public envelope with `Cache-Control: no-store`.
+Its nine-second deadline stays below the browser catalog loader's ten seconds.
+It returns 504 on timeout and generic 503 on source/configuration failures;
+production and unconfigured deployments return 404.
+
+Recommendation cache writes run through
+[`waitUntil`](https://developers.cloudflare.com/workers/runtime-apis/context/#waituntil)
+without delaying the recommendation response. Catalog GET waits for the writes
+so the following submission can use the validated version. Cache failures
+still permit a fresh fetch. No background refresh or longer TTL is introduced.
 
 The [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/)
 stores responses within a data center and honors response `Cache-Control` TTL.
-Cache availability and hits must be checked on the deployed test hostname. A
-free mismatch request can warm the actual version, followed by an actual-version
-request with an invalid canonical area to verify a fast cache hit without a
-provider call. Rewarm before a new trial; do not assume another data center has
-the same entry.
+Cache availability and hits must be checked on the deployed test hostname.
+Load `GET /api/catalog` before each trial and separate probe, then use an
+actual-version request with an invalid canonical area to verify a fast cache
+hit without a provider call. A fabricated version always forces another source
+fetch. Idle time beyond 60 seconds, eviction or a different data center can
+still cause a cold recommendation fetch and fallback. Provider and network
+timeouts also remain possible.
 
 ## Separate runtime configuration
 
@@ -150,7 +173,7 @@ also leaves the conservative charge in place.
 
 A reservation holds concurrency for up to 60 seconds when its outcome is
 unknown. Expiry releases concurrency, never the charge. The server returns by
-five seconds and aborts the provider connection; abort does not prove that the
+4.5 seconds and aborts the provider connection; abort does not prove that the
 provider stopped processing or billing. Configure conservative budgets for
 this possibility. Rate identifiers are re-keyed each minute and cleared by a
 Durable Object alarm, including when traffic stops.

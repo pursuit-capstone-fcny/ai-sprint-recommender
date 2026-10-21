@@ -43,6 +43,38 @@ function setup() {
 }
 afterEach(() => vi.useRealTimers());
 describe('recommendation endpoint', () => {
+  it('does not delay a recommendation for hung cache writes and handles their later rejection', async () => {
+    const { deps, provider } = setup();
+    let failWrite: (error: Error) => void = () => undefined;
+    const pending = new Promise<void>((_, reject) => {
+      failWrite = reject;
+    });
+    const tasks: Promise<unknown>[] = [];
+    const response = await recommend(request(), environment, {
+      ...deps,
+      catalogCache: { match: async () => undefined, put: () => pending },
+      waitUntil: (task) => {
+        tasks.push(task);
+      },
+    });
+    expect((await response.json()).outcome).toBe('success');
+    expect(provider).toHaveBeenCalledTimes(1);
+    expect(tasks).toHaveLength(1);
+    failWrite(new Error('Cache unavailable'));
+    await expect(tasks[0]).resolves.toBeUndefined();
+  });
+  it('returns before the browser deadline when the provider never responds', async () => {
+    vi.useFakeTimers();
+    const { deps, provider, diagnostic } = setup();
+    provider.mockImplementation(() => new Promise(() => undefined));
+    const pending = recommend(request(), environment, deps);
+    await vi.advanceTimersByTimeAsync(RECOMMENDATION_DEADLINE_MS - 500);
+    expect(diagnostic).toHaveBeenCalledWith(
+      expect.objectContaining({ outcome: 'timeout', latencyMs: 4_500 }),
+    );
+    expect((await (await pending).json()).reason).toBe('timeout');
+    expect(provider.mock.calls[0][1].aborted).toBe(true);
+  });
   it('warms a validated version without paid calls and validates intake and IDs on cache hits', async () => {
     const { deps, fetcher, provider, budget } = setup();
     const entries = new Map<string, Response>();
@@ -375,15 +407,15 @@ describe('recommendation endpoint', () => {
     expect(diagnostic.mock.calls[0][0].validationFailure).toBeUndefined();
     expect(diagnostic.mock.calls[0][0].selectionCount).toBeUndefined();
   });
-  it('bounds the whole request at five seconds even when a provider ignores cancellation', async () => {
+  it('still falls back before dispatch when a cold source exceeds the server deadline', async () => {
     vi.useFakeTimers();
-    const { deps, provider } = setup();
-    provider.mockImplementation(() => new Promise(() => undefined));
+    const { deps, provider, fetcher, budget } = setup();
+    fetcher.mockImplementation(() => new Promise(() => undefined));
     const pending = recommend(request(), environment, deps);
-    await vi.advanceTimersByTimeAsync(RECOMMENDATION_DEADLINE_MS);
+    await vi.advanceTimersByTimeAsync(RECOMMENDATION_DEADLINE_MS - 500);
     expect((await (await pending).json()).reason).toBe('timeout');
-    expect(provider).toHaveBeenCalledTimes(1);
-    expect(provider.mock.calls[0][1].aborted).toBe(true);
+    expect(provider).not.toHaveBeenCalled();
+    expect(budget.reserve).not.toHaveBeenCalled();
   });
   it('does not dispatch after a slow reservation outlives the deadline', async () => {
     vi.useFakeTimers();

@@ -142,7 +142,65 @@ describe('validated catalog snapshot cache', () => {
       }),
     ).toEqual(catalog);
     expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(cache.put).toHaveBeenCalledTimes(1);
+    expect(cache.put).toHaveBeenCalledTimes(2);
+  });
+  it('does not wait for cache writes when a Worker context keeps them alive', async () => {
+    const { fetcher } = setup();
+    let finish: () => void = () => undefined;
+    const pending = new Promise<void>((resolve) => {
+      finish = resolve;
+    });
+    const waitUntil = vi.fn();
+    const cache = { match: async () => undefined, put: vi.fn(() => pending) };
+    expect(
+      await readCatalogSnapshot({
+        origin,
+        source,
+        requestedVersion: catalog.catalogVersion,
+        signal: new AbortController().signal,
+        fetcher,
+        cache,
+        waitUntil,
+      }),
+    ).toEqual(catalog);
+    expect(waitUntil).toHaveBeenCalledTimes(1);
+    expect(cache.put).toHaveBeenCalledTimes(2);
+    finish();
+    await waitUntil.mock.calls[0][0];
+  });
+  it('does not extend freshness while decoding a cached snapshot', async () => {
+    vi.useFakeTimers();
+    const storedAt = Date.now();
+    vi.advanceTimersByTime(59_999);
+    const { fetcher } = setup();
+    const cache = {
+      match: async () =>
+        new Response(
+          new ReadableStream({
+            start(controller) {
+              setTimeout(() => {
+                controller.enqueue(
+                  new TextEncoder().encode(JSON.stringify(catalog)),
+                );
+                controller.close();
+              }, 2);
+            },
+          }),
+          { headers: { 'x-catalog-stored-at': storedAt.toString() } },
+        ),
+      put: async () => undefined,
+    };
+    const result = readCatalogSnapshot({
+      origin,
+      source,
+      requestedVersion: catalog.catalogVersion,
+      signal: new AbortController().signal,
+      fetcher,
+      cache,
+    });
+    await vi.advanceTimersByTimeAsync(2);
+    expect(await result).toEqual(catalog);
+    expect(fetcher).toHaveBeenCalledTimes(1);
   });
   it.each([
     { ...catalog, items: [{ ...catalog.items[0], status: 'retired' }] },
