@@ -22,6 +22,19 @@ function respond(body: unknown) {
 }
 
 describe('loadCatalog', () => {
+  it('loads the configured same-origin catalog route with the existing ten-second limit', async () => {
+    vi.stubEnv('VITE_CATALOG_URL', '/api/catalog');
+    const fetchMock = respond(fixture);
+    expect(await loadCatalog()).toMatchObject({
+      status: 'ready',
+      catalog: fixture,
+      source: 'remote',
+    });
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/catalog',
+      expect.objectContaining({ credentials: 'omit', cache: 'no-store' }),
+    );
+  });
   it('loads the shared envelope and adapts fields for the existing engine/cards', async () => {
     const fetchMock = respond(fixture);
     const result = await loadCatalog();

@@ -21,7 +21,7 @@ export function defaultCatalogCache(): CatalogCache | undefined {
 export function catalogCacheKey(
   origin: string,
   source: string,
-  version: string,
+  version = 'latest',
 ): Request {
   const url = new URL('/__recommendation-catalog/v1', origin);
   url.searchParams.set('source', source);
@@ -32,10 +32,11 @@ export function catalogCacheKey(
 export async function readCatalogSnapshot(options: {
   origin: string;
   source: string;
-  requestedVersion: string;
+  requestedVersion?: string;
   signal: AbortSignal;
   fetcher: typeof fetch;
   cache?: CatalogCache;
+  waitUntil?: (task: Promise<unknown>) => void;
 }): Promise<PublicCatalog> {
   const { origin, source, requestedVersion, signal, fetcher, cache } = options;
   if (cache) {
@@ -56,7 +57,11 @@ export async function readCatalogSnapshot(options: {
         const catalog = parsePublicCatalog(
           await boundedJson(cached, MAX_CATALOG_BYTES),
         );
-        if (catalog.catalogVersion === requestedVersion) return catalog;
+        if (
+          Date.now() - storedAt < CATALOG_CACHE_SECONDS * 1_000 &&
+          (!requestedVersion || catalog.catalogVersion === requestedVersion)
+        )
+          return catalog;
       }
     } catch {
       // Cache errors and invalid snapshots are misses; the trusted source remains available.
@@ -75,20 +80,28 @@ export async function readCatalogSnapshot(options: {
   );
   signal.throwIfAborted();
   if (cache) {
-    try {
-      // Store only the validated server snapshot, under its own version even on a mismatch.
-      await cache.put(
-        catalogCacheKey(origin, source, catalog.catalogVersion),
-        Response.json(catalog, {
-          headers: {
-            'cache-control': `public, max-age=${CATALOG_CACHE_SECONDS}`,
-            [storedAtHeader]: Date.now().toString(),
-          },
-        }),
-      );
-    } catch {
-      // A cache write must not turn a valid source response into a fallback.
-    }
+    const save = async () => {
+      const snapshot = Response.json(catalog, {
+        headers: {
+          'cache-control': `public, max-age=${CATALOG_CACHE_SECONDS}`,
+          [storedAtHeader]: Date.now().toString(),
+        },
+      });
+      // The catalog GET can find the latest validated snapshot without browser input.
+      // Versioned lookups still miss on any new version and fetch the trusted source.
+      await Promise.allSettled([
+        cache.put(
+          catalogCacheKey(origin, source, catalog.catalogVersion),
+          snapshot.clone(),
+        ),
+        cache.put(catalogCacheKey(origin, source), snapshot),
+      ]);
+    };
+    const saved = save().catch(() => undefined);
+    // Recommendation latency must not depend on a cache write. Catalog GET waits
+    // for it so the following submission can reuse the validated version.
+    if (options.waitUntil) options.waitUntil(saved);
+    else await saved;
   }
   return catalog;
 }

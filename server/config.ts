@@ -5,19 +5,23 @@ const positive = z.coerce
   .int()
   .positive()
   .max(Number.MAX_SAFE_INTEGER);
+export const CatalogSourceSchema = z.url().refine((value) => {
+  const url = new URL(value);
+  return (
+    url.protocol === 'https:' &&
+    url.hostname === 'script.google.com' &&
+    /^\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url.pathname) &&
+    !url.search &&
+    !url.hash &&
+    !url.port &&
+    !url.username &&
+    !url.password
+  );
+});
 const schema = z.object({
   LLM_ENVIRONMENT: z.enum(['test', 'production']),
   LLM_MODEL: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/),
-  LLM_CATALOG_URL: z.url().refine((value) => {
-    const url = new URL(value);
-    return (
-      url.protocol === 'https:' &&
-      url.hostname === 'script.google.com' &&
-      /^\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url.pathname) &&
-      !url.search &&
-      !url.hash
-    );
-  }),
+  LLM_CATALOG_URL: CatalogSourceSchema,
   LLM_MAX_INPUT_TOKENS: positive.max(200_000),
   LLM_MAX_OUTPUT_TOKENS: positive.max(2_000),
   LLM_REQUESTS_PER_MINUTE: positive.max(10_000),
