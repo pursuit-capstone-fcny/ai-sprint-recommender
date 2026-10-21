@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@testing-library/react';
 import { afterEach, describe, expect, it } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
@@ -93,7 +99,7 @@ describe('IntakeResults', () => {
     const firstCardBefore = screen.getAllByRole('listitem')[0];
     expect(firstCardBefore.textContent).toContain('Widget Setup Basics');
 
-    fireEvent.change(screen.getByLabelText(/what are you trying to do/i), {
+    fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
       target: { value: 'gizmo' },
     });
 
@@ -106,7 +112,7 @@ describe('IntakeResults', () => {
     fireEvent.change(screen.getByLabelText(/function area/i), {
       target: { value: 'Leadership' },
     });
-    fireEvent.change(screen.getByLabelText(/what are you trying to do/i), {
+    fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
       target: { value: 'gizmo' },
     });
 
@@ -132,5 +138,76 @@ describe('IntakeResults', () => {
     expect(cards).toHaveLength(4);
     expect(screen.queryByText('Closest match')).toBeNull();
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
+  });
+
+  it('narrows to one tool with the tool select, and "Any AI tool" undoes it', () => {
+    render(<IntakeResults catalog={catalog} />);
+    selectFundraising();
+    const toolSelect = screen.getByLabelText(/tool/i) as HTMLSelectElement;
+    expect(toolSelect.value).toBe('');
+    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
+      'Widget Setup Basics',
+    );
+
+    fireEvent.change(toolSelect, { target: { value: 'Claude' } });
+    expect(toolSelect.value).toBe('Claude');
+    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
+      'Sprocket Tracking Walkthrough',
+    );
+
+    fireEvent.change(toolSelect, { target: { value: 'Copilot' } });
+    expect(toolSelect.value).toBe('Copilot');
+    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
+      'Gizmo Onboarding Guide',
+    );
+
+    fireEvent.change(toolSelect, { target: { value: '' } });
+    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
+      'Widget Setup Basics',
+    );
+  });
+
+  it('"Clear" resets area, goal and tool', () => {
+    render(<IntakeResults catalog={catalog} />);
+    const area = screen.getByLabelText(/function area/i) as HTMLSelectElement;
+    const goal = screen.getByLabelText(
+      /what do you want to learn/i,
+    ) as HTMLInputElement;
+    const tool = screen.getByLabelText(/tool/i) as HTMLSelectElement;
+
+    selectFundraising();
+    fireEvent.change(goal, { target: { value: 'gizmo' } });
+    fireEvent.change(tool, { target: { value: 'Claude' } });
+    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
+
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+
+    expect(area.value).toBe('');
+    expect(goal.value).toBe('');
+    expect(tool.value).toBe('');
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  it('"Find videos" moves focus to the results heading', () => {
+    render(<IntakeResults catalog={catalog} />);
+    fireEvent.click(screen.getByRole('button', { name: /find videos/i }));
+    expect(document.activeElement).toBe(
+      screen.getByRole('heading', { name: 'Videos to start with' }),
+    );
+  });
+
+  it('shows tool pills, not "Closest match", in the "Not sure" state', () => {
+    render(<IntakeResults catalog={catalog} />);
+    const cards = screen.getAllByRole('listitem');
+    expect(cards.length).toBeGreaterThan(0);
+    expect(screen.queryByText('Closest match')).toBeNull();
+    const firstTitle = cards[0].querySelector('h3')?.textContent;
+    const firstItem = catalog.find((item) => item.title === firstTitle);
+    expect(within(cards[0]).getByText(firstItem!.tools[0])).toBeTruthy();
+
+    fireEvent.change(screen.getByLabelText(/function area/i), {
+      target: { value: 'Leadership' },
+    });
+    expect(screen.getAllByText('Closest match').length).toBeGreaterThan(0);
   });
 });
