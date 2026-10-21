@@ -33,10 +33,41 @@ const DiagnosticSchema = z.strictObject({
 });
 const allowedKeys = Object.keys(DiagnosticSchema.shape);
 
-export function diagnosticsFromEnvelope(envelope) {
+export function hasReadyDiagnostic(observed, probeIds, expectedOutcome) {
+  return [...probeIds].some(
+    (id) => observed.get(id)?.outcome === expectedOutcome,
+  );
+}
+
+function increment(counts, key, amount = 1) {
+  if (counts) counts[key] = Math.min(1_000_000_000, counts[key] + amount);
+}
+
+function valueType(value) {
+  if (value === null) return 'null';
+  if (Array.isArray(value)) return 'array';
+  return ['string', 'object', 'number', 'boolean', 'undefined'].includes(
+    typeof value,
+  )
+    ? typeof value
+    : 'other';
+}
+
+export function diagnosticsFromEnvelope(envelope, counts) {
   if (!envelope || !Array.isArray(envelope.logs)) return [];
   const diagnostics = [];
   for (const log of envelope.logs) {
+    increment(counts, 'logs');
+    if (counts) {
+      increment(
+        counts.logLevels,
+        Object.hasOwn(counts.logLevels, log?.level) ? log.level : 'other',
+      );
+      increment(counts.messageContainers, valueType(log?.message));
+      if (Array.isArray(log?.message))
+        for (const message of log.message)
+          increment(counts.messageValues, valueType(message));
+    }
     if (log?.level !== 'info' || !Array.isArray(log.message)) continue;
     for (const message of log.message) {
       if (typeof message !== 'string' || message.length > 4_096) continue;
@@ -73,8 +104,32 @@ export function createDiagnosticStream(
   let depth = 0;
   let quoted = false;
   let escaped = false;
+  const types = () => ({
+    string: 0,
+    object: 0,
+    array: 0,
+    number: 0,
+    boolean: 0,
+    null: 0,
+    undefined: 0,
+    other: 0,
+  });
+  const counts = {
+    stdoutBytes: 0,
+    envelopes: 0,
+    malformedEnvelopes: 0,
+    acceptedDiagnostics: 0,
+    logs: 0,
+    logLevels: { info: 0, log: 0, warn: 0, error: 0, debug: 0, other: 0 },
+    messageContainers: types(),
+    messageValues: types(),
+  };
   return {
+    snapshot() {
+      return structuredClone(counts);
+    },
     push(chunk) {
+      increment(counts, 'stdoutBytes', Buffer.byteLength(chunk, 'utf8'));
       for (const character of chunk) {
         if (depth === 0) {
           if (character !== '{') continue;
@@ -100,11 +155,14 @@ export function createDiagnosticStream(
         if (depth === 0) {
           let diagnostics = [];
           try {
-            diagnostics = diagnosticsFromEnvelope(JSON.parse(record));
+            const envelope = JSON.parse(record);
+            increment(counts, 'envelopes');
+            diagnostics = diagnosticsFromEnvelope(envelope, counts);
           } catch {
-            /* Discard malformed envelopes. */
+            increment(counts, 'malformedEnvelopes');
           }
           record = '';
+          increment(counts, 'acceptedDiagnostics', diagnostics.length);
           for (const diagnostic of diagnostics) onDiagnostic(diagnostic);
         }
       }

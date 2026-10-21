@@ -71,6 +71,12 @@ jobs:
           console.log('Disabled endpoint verified; no provider request permitted.');
           JS
 
+      - name: Verify sanitized diagnostic capture without paid calls
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/run-live-evaluation.mjs --check-diagnostics
+
       - name: Enable approved test candidate
         id: enable
         if: github.event.label.name == 'evaluate-llm-test'

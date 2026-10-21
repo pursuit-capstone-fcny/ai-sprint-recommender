@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   createDiagnosticStream,
   diagnosticsFromEnvelope,
+  hasReadyDiagnostic,
 } from './live-evaluation-logs.mjs';
 
 const diagnostic = {
@@ -37,6 +38,22 @@ function envelope(candidate = diagnostic) {
 }
 
 describe('sanitized evaluation tail', () => {
+  it('accepts a delayed earlier probe after the next probe was sent', () => {
+    const firstId = diagnostic.requestId;
+    const laterId = 'f976a1c4-1bd9-4ca7-8401-deb88bc46eb1';
+    const observed = new Map([
+      [firstId, { ...diagnostic, outcome: 'disabled' }],
+    ]);
+    expect(
+      hasReadyDiagnostic(observed, new Set([firstId, laterId]), 'disabled'),
+    ).toBe(true);
+    expect(hasReadyDiagnostic(observed, new Set([laterId]), 'disabled')).toBe(
+      false,
+    );
+    expect(
+      hasReadyDiagnostic(observed, new Set([firstId]), 'not-requested'),
+    ).toBe(false);
+  });
   it('keeps only bounded diagnostic fields, never headers, IPs, exceptions or unknown fields', () => {
     const entries = diagnosticsFromEnvelope(
       envelope({
@@ -112,5 +129,31 @@ describe('sanitized evaluation tail', () => {
     stream.push('{"logs":broken}\n');
     stream.push(JSON.stringify(envelope()));
     expect(entries).toEqual([diagnostic]);
+  });
+  it('reports only bounded counters and fixed shape labels for missing diagnostics', () => {
+    const stream = createDiagnosticStream(() => {});
+    const sample = envelope();
+    sample.logs.push({
+      level: 'PRIVATE_LOG_LEVEL',
+      message: [{ secret: 'PRIVATE_TOKEN' }, 42, null],
+    });
+    sample.logs.push({ level: 'log', message: 'PRIVATE_GOAL' });
+    const text = JSON.stringify(sample, null, 4);
+    stream.push(text);
+    const counts = stream.snapshot();
+    expect(counts).toMatchObject({
+      stdoutBytes: Buffer.byteLength(text, 'utf8'),
+      envelopes: 1,
+      acceptedDiagnostics: 1,
+      logs: 4,
+      logLevels: { info: 1, error: 1, log: 1, other: 1 },
+      messageContainers: { array: 3, string: 1 },
+      messageValues: { string: 2, object: 1, number: 1, null: 1 },
+    });
+    expect(JSON.stringify(counts)).not.toMatch(
+      /PRIVATE|192\.0\.2\.1|authorization/,
+    );
+    counts.envelopes = 99;
+    expect(stream.snapshot().envelopes).toBe(1);
   });
 });
