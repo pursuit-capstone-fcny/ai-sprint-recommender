@@ -1,10 +1,13 @@
 import { useCatalog } from '../data/useCatalog';
 import { IntakeResults } from './IntakeResults';
+import { getUsageSession } from '../usage/usageSession';
 import './global.css';
 import './intake-results.css';
 
 export function IntakeResultsPage() {
   const catalog = useCatalog();
+  const usageSession =
+    catalog.status === 'ready' ? getUsageSession(catalog.source) : null;
 
   return (
     <>
@@ -77,6 +80,11 @@ export function IntakeResultsPage() {
                   catalog={catalog.items}
                   availableFunctionAreas={catalog.catalog.functionAreas}
                   availableTools={catalog.catalog.tools}
+                  usage={
+                    usageSession
+                      ? { session: usageSession, catalog: catalog.catalog }
+                      : undefined
+                  }
                 />
               )}
             </>

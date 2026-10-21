@@ -25,6 +25,9 @@ jobs:
         env:
           VITE_CATALOG_URL: ${{ vars.CATALOG_PRODUCTION_URL }}
           VITE_CATALOG_SOURCE: remote
+          VITE_USAGE_ENVIRONMENT: production
+          VITE_USAGE_ENABLED: 'false'
+          VITE_USAGE_TEST_URL: ''
         run: |
           pnpm install --frozen-lockfile
           pnpm build

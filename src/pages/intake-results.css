@@ -336,6 +336,12 @@
   margin-top: var(--space-3);
 }
 
+.usage-notice {
+  margin: var(--space-2) 0 0;
+  color: var(--muted);
+  font-size: var(--text-sm);
+}
+
 /* Results */
 
 .results-head {

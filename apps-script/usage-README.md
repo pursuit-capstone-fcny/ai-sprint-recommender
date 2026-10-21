@@ -1,13 +1,51 @@
 # Usage backend
 
-Backend slice of [approved #16](../docs/specs/016-usage-logging.md), stacked on
-#9. The page does not send events yet. No live deployment or logging flag changes
-are part of this PR.
+Implements [approved #16](../docs/specs/016-usage-logging.md). The test Apps Script
+deployment serves version 3. The browser sender is enabled only in configured
+test previews; production logging remains off.
+
+## Browser sender
+
+The preview workflow sets `VITE_USAGE_ENVIRONMENT=test`, `VITE_USAGE_ENABLED=true`
+and `VITE_USAGE_TEST_URL` only when `CATALOG_TEST_URL` exists. The URL must be an
+HTTPS Apps Script `/exec` endpoint and equal the remote catalog URL. Fixtures
+never log. Production explicitly sets environment `production`, flag `false`
+and an empty usage URL; the sender also rejects production configuration.
+
+Find videos commits the draft inputs and creates a search context. Typing does
+not submit. Initial picks and Clear log displayed-card impressions without a
+search event. Show more keeps the context and logs only new cards. Embed and
+YouTube clicks retain that context and rank, even while inputs have unsent edits.
+Copy link is not logged. Session IDs and source tags live only in page memory;
+there are no cookies, storage entries, background sync or persistent retries.
+
+Goal tasks are matched with the current engine vocabulary and filtered against
+the served dictionary. The sender never serializes raw goals, reasons, titles,
+URLs or referrers. Only the `src` query parameter is read for attribution, with
+missing/unknown values normalized to `website`/`other`.
+
+Only #11 `strong` results count as strong. Other cards map to `start-here` when
+that designation has no matching signals, `cross-area` when outside a selected
+area, or `weak`. Search fallback type describes cross-area/start-here cards in
+the initial result set, or `none` when neither is used. Empty sets use
+`unavailable`. This mapping does not change ranking or infer LLM success.
+
+Delivery is serial, with at most 32 waiting events plus one in flight. Queued
+events expire after 60 seconds. Each attempt has a ten-second deadline covering
+both fetch and response parsing. Requests use `keepalive`, omit credentials and
+referrers, and set no custom headers. Only `USAGE_BUSY` gets one immediate retry
+with the identical payload. Network, opaque and invalid responses are dropped;
+disabled/full/rate-limit responses stop delivery for the rest of the visit.
+Navigation may lose queued events, and an acknowledgment is required to count
+delivery as confirmed. Counts remain estimates.
+
+The test notice states one-day retention with hourly cleanup. Keep that notice
+and the test Script Properties in agreement. This is not production approval.
 
 ## Event contract
 
 `src/contracts/usageEvent.ts` exports the strict version 1 schema and catalog
-reference validator for the backend and future sender. A POST contains one JSON
+reference validator for the backend and browser sender. A POST contains one JSON
 object, encoded as `text/plain`, at most 16,384 UTF-8 bytes.
 
 | Fields                                              | Rule                                                                                                                             |
@@ -24,8 +62,8 @@ Model/prompt versions, when present, must be paired and match the server allowli
 Reason codes are fixed enums, never provider error text.
 
 The schema uses the proposed match/fallback enums in #16. Ahsan's internal
-`strong`/`fallback` ranking contract is unchanged. The future sender must map
-verified signals to the usage enums; it must not send `fallback` as `matchType`.
+`strong`/`fallback` ranking contract is unchanged. The sender maps
+verified signals to the usage enums and never sends `fallback` as `matchType`.
 `semantic` requires LLM recommendations; direct views use `matchType=direct`
 and never emit a search event. Enum agreement with #11–#14/#24 remains open.
 
@@ -107,7 +145,7 @@ logging or choose a retention/traffic policy.
    retention boundary, in groups from the bottom, under the same lock. It runs
    even with ingestion disabled and does not depend on the write-cap properties.
 6. Verify the test POST, duplicate, cap and purge cases below before enabling
-   production. The current #9 test deployment still serves its previous bundle.
+   production. Version 3 of the test deployment serves the #16 backend.
 
 Do not manually edit/delete log rows to reset caps, and do not share one usage
 file across independently deployed scripts with different locks. Corrupt headers,
@@ -122,15 +160,12 @@ a server-only upstream credential. Never put a secret in the SPA.
 
 ## Remaining #16 work
 
-- Browser sender, in-memory session/context IDs, canonical tag extraction, event
-  timing/deduplication, source handling and the approved disclosure.
+- Topic/direct-video event contexts when those routes are implemented.
+- Production disclosure and environment configuration after #8 approval.
 - Owner approval of the proposed enums and concrete retention/traffic limits.
-- Live isolated deployment: signed-out `text/plain` POST, acknowledgment/CORS,
-  two simultaneous copies of one event, both click targets, Unicode payload
-  rejection, capped writes, and trigger-driven purge with synthetic aged rows.
-  Confirm preview writes never reach production and #9 GET still works.
-- Signed-out page checks for search, Show more, rerenders, navigation and offline
-  behavior once the sender exists.
+- Trigger-driven purge with synthetic aged rows and peak-traffic load testing.
+  Test POST, CORS, concurrent duplicates, both targets, Unicode limits and capped
+  writes passed on version 3. See the test deployment record for browser checks.
 
 Local tests cover schema privacy, references, UTF-8 size, lock contention,
 durable retry deduplication, caps, literal storage, initialization and retention.
