@@ -18,9 +18,15 @@ export function ResultsList({
 }: ResultsListProps) {
   return (
     <section aria-live="polite">
-      <p className="results-count">
-        {results.length} {results.length === 1 ? 'pick' : 'picks'}
-      </p>
+      <div className="results-head">
+        <div>
+          <h2>Your picks</h2>
+          <p>Ranked by how well each video fits what you told us.</p>
+        </div>
+        <p className="results-count">
+          {results.length} {results.length === 1 ? 'pick' : 'picks'}
+        </p>
+      </div>
       <ul className="video-card-grid">
         {results.map((match) => (
           <VideoCard
@@ -32,9 +38,15 @@ export function ResultsList({
         ))}
       </ul>
       {canShowMore && (
-        <button type="button" className="show-more" onClick={onShowMore}>
-          Show more
-        </button>
+        <div className="show-more-row">
+          <button
+            type="button"
+            className="btn btn-secondary show-more"
+            onClick={onShowMore}
+          >
+            Show more
+          </button>
+        </div>
       )}
     </section>
   );
