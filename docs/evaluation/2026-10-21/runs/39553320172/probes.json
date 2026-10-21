@@ -1,0 +1,153 @@
+{
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v2",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "held-out-operations-01",
+      "requestId": "1fe57034-ca14-4685-a695-ae2e03bab7fe",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "wu6DHIkJH7k",
+          "dooZWSQCNSs",
+          "8ahFA8ECM4c",
+          "m0mI6_g0V2g",
+          "kONzk7f2M5o",
+          "Hkj01weD_Hs",
+          "5vR5cPnqT-Q",
+          "0qSXFbGrQ90",
+          "i22v2xwT6k4"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      },
+      "latencyMs": 1911,
+      "displayedIds": ["AMdAwWwdOzY", "wu6DHIkJH7k", "dooZWSQCNSs"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "1fe57034-ca14-4685-a695-ae2e03bab7fe",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1758,
+        "inputTokens": 16857,
+        "outputTokens": 131,
+        "costMicrodollars": 1752,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      }
+    },
+    {
+      "id": "held-out-fundraising-02",
+      "requestId": "e140f69b-4f5b-433d-a34b-59170b351468",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "_9QqyTbwisc",
+          "bxfxzx-_MME",
+          "FMQJH3c5cLc",
+          "jm9ZaKY1taA",
+          "3oX_M8AcBXk",
+          "S_DQeIX2xz8",
+          "6EWc3MgRNFg",
+          "AMdAwWwdOzY",
+          "ADF07rFbH8M",
+          "UdWR8KKxVDU"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      },
+      "latencyMs": 1735,
+      "displayedIds": ["_9QqyTbwisc", "bxfxzx-_MME", "FMQJH3c5cLc"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "e140f69b-4f5b-433d-a34b-59170b351468",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1692,
+        "inputTokens": 16862,
+        "outputTokens": 130,
+        "costMicrodollars": 1752,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "0ef28f2a-90af-4f51-8a72-f94755cd3551",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      },
+      "latencyMs": 1424,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "0ef28f2a-90af-4f51-8a72-f94755cd3551",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1377,
+        "inputTokens": 16832,
+        "outputTokens": 13,
+        "costMicrodollars": 1690,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "0581e69a-6082-4162-bf35-9e6757658dd4",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "6d2bKhdmqqA",
+          "i22v2xwT6k4",
+          "4LMIC-v5xZ0",
+          "UdWR8KKxVDU",
+          "nBAaIIz9QFg",
+          "rKn6KASMk50",
+          "maR3ZerQIJU",
+          "wxJVc1q_nnY",
+          "Fz_zl467-QU",
+          "_pM0ua51qRI"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      },
+      "latencyMs": 1537,
+      "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "4LMIC-v5xZ0"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "0581e69a-6082-4162-bf35-9e6757658dd4",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1489,
+        "inputTokens": 16855,
+        "outputTokens": 128,
+        "costMicrodollars": 1750,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v2"
+      }
+    }
+  ]
+}

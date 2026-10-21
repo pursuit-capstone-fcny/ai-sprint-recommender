@@ -1,9 +1,8 @@
-# Failure-check evidence — October 21, 2026
+# Failure-check evidence, October 21, 2026
 
-AC-19.5 remains incomplete. Deterministic tests pass, but the first deployed
-evaluation produced only rules fallbacks. Neither that result nor a blocked
-injection probe establishes model resilience. Production LLM and usage logging
-remain disabled; this record does not approve enablement.
+The evidence below separates real Anthropic responses, deployed synthetic
+checks and deterministic tests. Production LLM and usage logging remain
+disabled; this record does not approve enablement.
 
 ## Deployed evidence
 
@@ -24,9 +23,23 @@ The [report](runs/39552055432/report.md),
 | Nonsense / goal injection | Both returned `rate-limited` and selected active rules results.                                                                                 | These probes did not test Anthropic's handling of the text.                                                                  |
 | Cost                      | 22 benchmark diagnostics matched rate-limit responses; the 8 timeouts had no response request ID. Both blocked probes had matching diagnostics. | No measured token/cost values were captured. Missing values mean unknown, not zero; timed-out calls may have incurred spend. |
 
-The next candidate, `a865d2e`, adds validated catalog caching, two unpaid
-catalog checks before each trial, and a model-access preflight. Its deployed
-results are pending in this record. Preserve the earlier evidence separately.
+The second [run 39553320172](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39553320172)
+evaluated `a865d2e` with validated catalog caching and the same model, prompt
+and labels. It completed all 34 requests and collected matching diagnostics.
+
+| Check                                     | Observed result                                                                                                           | Limit of evidence                                                                                   |
+| ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| Catalog mismatch / invalid canonical area | Three mismatch loads returned the frozen catalog version; three invalid-area probes rejected before dispatch in 30–50 ms. | Confirms a warm validated catalog, not cold-cache latency.                                          |
+| Invalid model output                      | Six benchmark responses were rejected; the shared selector used complete rules fallback.                                  | Bounded diagnostics omit raw provider output, so the specific validation failure is not attributed. |
+| Insufficient output                       | One benchmark response and the nonsense probe selected complete rules fallback.                                           | A valid empty response is not a relevance pass.                                                     |
+| Goal injection                            | Anthropic returned only active catalog IDs.                                                                               | One synthetic goal probe does not establish general injection resistance.                           |
+| Nonsense                                  | Anthropic returned an empty ID list; three active standard matches were displayed by the shared selector.                 | No claim that these rules picks are semantically relevant.                                          |
+| Held-out wording                          | Both responses were valid, but each had 0/3 approved picks.                                                               | Separate from the ten-profile score; do not tune on these paraphrases.                              |
+| Cost / latency                            | All 34 request IDs have measured usage and cost, totaling $0.059436. Benchmark p95 was 2.41 seconds.                      | Earlier timed-out calls retain unknown actual cost and maximum reservations.                        |
+| Rules-only switch                         | Workflow disabled test calls afterward. Browser submission then displayed Standard matching and three catalog cards.      | Rendered success timing and stale-response behavior remain covered by deterministic browser tests.  |
+
+See the [saved probes](runs/39553320172/probes.json),
+[warmups](runs/39553320172/warmups.json) and [comparison](runs/39553320172/report.md).
 
 ## Deterministic coverage
 
@@ -50,11 +63,12 @@ deployed-provider checks.
 - Deployed isolated-fixture checks for invalid IDs, empty/retired catalogs,
   provider failures, missing limits, exhausted budgets and blocked-call dispatch
   counts. Never mutate the shared tracker Sheet for these checks.
-- Actual model handling of both goal and catalog-description injection, plus
-  nonsense input. Existing blocked probes cannot satisfy this requirement.
+- Catalog-description injection at the deployed validation boundary. Live
+  model resilience to arbitrary injected catalog text is not established by
+  the goal-injection probe.
 - Rendered browser success/failure demonstration, five-second fallback, latest
   submission behavior and the rules-only switch on the deployed test site.
-- Complete latency/usage/cost accounting and three passing relevance trials;
+- Three passing relevance trials and a passing rules benchmark;
   Ali/Eliot review of semantic examples, weakest profiles and held-out wording;
   owner enablement decision and #23 demo evidence.
 

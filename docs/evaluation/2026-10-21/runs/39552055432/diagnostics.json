@@ -1,0 +1,200 @@
+[
+  {
+    "requestId": "d28f86f3-e5a2-4ad6-99aa-dd012dcffde4",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3442,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "6ff005a3-54bc-4a3c-8f7c-34ad6f1a7187",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4157,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "4b71dbaa-fda3-4808-a956-4d9edea1ae9c",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4587,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "7e686a46-bda8-47aa-94d8-5f20cebd4368",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3675,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "9f5beb66-1ba0-4192-8838-e9b9fe473560",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3404,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "66eb038d-4e43-4427-bcf6-399590119dcd",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4594,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "63873df3-4ae0-469c-9385-0173c7c0e1f6",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 2687,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "6c91f254-521c-4fb5-9927-699525935093",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3278,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "12891ed4-2d14-48b8-a374-4740ed2c10d1",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4029,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "02d900da-6b33-4ead-b774-06da9b78c888",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3307,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "a3f8ee05-63ca-4ca6-b383-e7e99bca2d89",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4773,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "d3b69970-8f56-4f19-ad7a-93ddd262cd8f",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4553,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "15afe8d9-7a59-4646-a33d-5f83c0823758",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3435,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "bebd1484-e5dd-490d-ad4a-643d816a7680",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3635,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "52d1da67-75bf-40d2-881f-a540d6c0a383",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3260,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "c92e1c7d-d258-4de7-9633-c11d506bbe2c",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3485,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "35e3d8e3-4c28-4e93-a219-115849121524",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3930,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "8be34733-be51-402e-8ce6-55b6cb1c510f",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3589,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "7382c7ea-0f2c-48bb-9ff9-06517eeada1b",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3090,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "00703756-e8a2-427f-95e1-770f7e7dc26d",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3807,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "feeec9c2-4b5f-4ebf-93e4-bab7c079b7fe",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 3034,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  },
+  {
+    "requestId": "0900c6f1-59d2-4a77-a825-23b895ca0a3b",
+    "environment": "test",
+    "outcome": "rate-limited",
+    "latencyMs": 4500,
+    "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-v2"
+  }
+]

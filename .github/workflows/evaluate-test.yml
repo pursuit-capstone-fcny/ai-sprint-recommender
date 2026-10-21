@@ -77,6 +77,16 @@ jobs:
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node scripts/run-live-evaluation.mjs --check-diagnostics
 
+      - name: Deploy isolated synthetic failure checks
+        id: failuredeploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --config wrangler.failure-test.json
+
+      - name: Verify deployed failure handling without provider calls
+        run: node scripts/verify-failure-worker.mjs
+
       - name: Enable approved test candidate
         id: enable
         if: github.event.label.name == 'evaluate-llm-test'
@@ -139,6 +149,13 @@ jobs:
       - name: Remove temporary provider secret file
         if: always()
         run: rm -f "$RUNNER_TEMP/anthropic-test-secrets.json"
+
+      - name: Remove isolated synthetic failure Worker
+        if: always() && steps.failuredeploy.outcome == 'success'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler delete --config wrangler.failure-test.json --force
 
       - name: Save evaluation reports and sanitized diagnostics
         if: always()
