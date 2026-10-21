@@ -1,8 +1,9 @@
 # Evaluation failure checks
 
-Status: Proposed plan. No live provider calls have been made for this benchmark.
-These checks are separate from the ten relevance profiles and never increase
-its denominator. Keep production LLM and production logging disabled.
+Status: Live evaluation attempted; see [recorded results](failure-results.md).
+Unverified cases remain open. These checks are separate from the ten relevance
+profiles and never increase its denominator. Keep production LLM and production
+logging disabled.
 
 The production catalog currently reads the same 89-video source as the test
 site. **Do not alter that Sheet to create empty, retired or malicious rows.**
