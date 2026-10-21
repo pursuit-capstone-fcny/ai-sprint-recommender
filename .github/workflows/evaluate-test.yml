@@ -35,7 +35,15 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
 
-      - name: Install, verify and build test site
+      - name: Install and verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm lint
+          pnpm test
+          pnpm evaluate --benchmark docs/evaluation/2026-10-21/benchmark.json --output build/evaluation/baseline
+
+      - name: Build test site
         env:
           VITE_CATALOG_URL: ${{ vars.CATALOG_TEST_URL }}
           VITE_CATALOG_SOURCE: remote
@@ -43,13 +51,7 @@ jobs:
           VITE_USAGE_ENVIRONMENT: test
           VITE_USAGE_ENABLED: 'false'
           VITE_USAGE_TEST_URL: ''
-        run: |
-          pnpm install --frozen-lockfile
-          pnpm typecheck
-          pnpm lint
-          pnpm test
-          pnpm build
-          pnpm evaluate --benchmark docs/evaluation/2026-10-21/benchmark.json --output build/evaluation/baseline
+        run: pnpm build
 
       - name: Deploy test site with provider calls disabled
         env:
