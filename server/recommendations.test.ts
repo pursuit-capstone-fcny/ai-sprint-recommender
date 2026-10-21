@@ -42,6 +42,65 @@ function setup() {
 }
 afterEach(() => vi.useRealTimers());
 describe('recommendation endpoint', () => {
+  it.each(['2026-10-21T00:00:00Z', 'not-a-date', ''])(
+    'closes an expired or invalid test window without network calls',
+    async (expiry) => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));
+      const { deps, provider, fetcher, budget } = setup();
+      const response = await recommend(
+        request(),
+        { ...environment, LLM_TEST_EXPIRES_AT: expiry },
+        deps,
+      );
+      expect(await response.json()).toEqual({
+        outcome: 'fallback',
+        reason: 'disabled',
+      });
+      expect(provider).not.toHaveBeenCalled();
+      expect(fetcher).not.toHaveBeenCalled();
+      expect(budget.reserve).not.toHaveBeenCalled();
+    },
+  );
+  it('permits a future test window and ignores the test expiry in production', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));
+    const { deps, provider } = setup();
+    const open = await recommend(
+      request(),
+      { ...environment, LLM_TEST_EXPIRES_AT: '2026-10-22T00:00:00Z' },
+      deps,
+    );
+    expect((await open.json()).outcome).toBe('success');
+    const production = await recommend(
+      request(),
+      {
+        ...environment,
+        LLM_ENVIRONMENT: 'production',
+        LLM_TEST_EXPIRES_AT: 'invalid',
+      },
+      deps,
+    );
+    expect((await production.json()).outcome).toBe('success');
+    expect(provider).toHaveBeenCalledTimes(2);
+  });
+  it('rechecks test expiry after reservation and refunds before dispatch', async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));
+    const { deps, provider, budget } = setup();
+    budget.reserve.mockImplementation(async () => {
+      vi.setSystemTime(new Date('2026-10-21T00:00:01Z'));
+      return { ok: true };
+    });
+    const response = await recommend(
+      request(),
+      { ...environment, LLM_TEST_EXPIRES_AT: '2026-10-21T00:00:01Z' },
+      deps,
+    );
+    expect((await response.json()).reason).toBe('disabled');
+    expect(provider).not.toHaveBeenCalled();
+    expect(budget.settle).toHaveBeenCalledWith(expect.any(String), 0);
+  });
   it('defaults off without reading the request, catalog, or provider', async () => {
     const { deps, provider, fetcher } = setup();
     const result = await recommend(request(), {}, deps);

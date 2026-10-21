@@ -54,6 +54,24 @@ describe('rank', () => {
     );
   });
 
+  it('AC-11.3: grammatical words do not turn unrelated descriptions into task matches', () => {
+    const pair = fixtureCatalog.filter((item) =>
+      ['fx01GrntRpt', 'fx03BdgtXls'].includes(item.youtubeId),
+    );
+    const meaningful = profile({ goalWords: ['budget'] });
+    const sentence = profile({ goalWords: ['a', 'budget'] });
+    expect(rank(pair, sentence)).toEqual(rank(pair, meaningful));
+    expect(rank(pair, sentence)[0].item.youtubeId).toBe('fx03BdgtXls');
+  });
+
+  it('AC-13.3: a goal made only of grammatical words uses the no-match fallback', () => {
+    const grammatical = profile({ goalWords: ['a', 'and', 'the', 'with'] });
+    const unknown = profile({ goalWords: ['zzznonsense'] });
+    expect(rank(fixtureCatalog, grammatical)).toEqual(
+      rank(fixtureCatalog, unknown),
+    );
+  });
+
   it('AC-11.3: within an area, a task match outranks a tool-only match', () => {
     const result = rank(
       fixtureCatalog,
