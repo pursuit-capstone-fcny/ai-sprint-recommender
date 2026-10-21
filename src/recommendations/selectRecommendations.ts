@@ -93,10 +93,20 @@ export function selectRecommendations(
   // Reject the whole response. Never blend valid fragments with rules results.
   if (result.youtubeIds.some((id) => !active.has(id)))
     return rulesSelection(catalog, profile, 'invalid-response', versions);
-  const results = applyDedupe(
+  let results = applyDedupe(
     result.youtubeIds.map((id) => semanticMatch(active.get(id)!, profile)),
     RECOMMENDATION_PAGE_SIZE,
   );
+  const distinctTasks = new Set(
+    results.map(
+      ({ item }) =>
+        item.tasks[0]?.trim().toLowerCase() ?? `__unique__:${item.youtubeId}`,
+    ),
+  ).size;
+  // applyDedupe demotes duplicates. A short window must not pull them back
+  // into its vacant slots, or a single task would pass the minimum-picks gate.
+  if (distinctTasks < RECOMMENDATION_PAGE_SIZE)
+    results = results.slice(0, distinctTasks);
   if (results.length < 2)
     return rulesSelection(catalog, profile, 'insufficient-results', versions);
   return {
