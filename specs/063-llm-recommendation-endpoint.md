@@ -9,6 +9,12 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   an enabled request contains canonical intake fields and a matching catalog
   version, then the server fetches and validates the public catalog itself.
   Extra fields, noncanonical tags and goals over 500 characters are rejected.
+- Given a validated catalog snapshot cached under its trusted source and
+  version, when the same version is requested within 60 seconds, then the
+  server revalidates and reuses it. New versions, invalid cache entries and
+  expired snapshots fetch the source again. Mismatches make no paid call;
+  cache failures do not prevent a fresh fetch. No intake or provider result is
+  cached. Source changes can take up to 60 seconds to affect an old version.
 - Given catalog text or a goal containing instructions, when the Anthropic
   request is assembled, then that text stays in the untrusted data message.
   The full catalog is retained with bounded title/description fields. It falls

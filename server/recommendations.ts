@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { parsePublicCatalog } from '../src/contracts/publicCatalog';
 import {
   RECOMMENDATION_DEADLINE_MS,
   RECOMMENDATION_PROMPT_VERSION,
@@ -15,6 +14,11 @@ import {
   type Provider,
 } from './anthropic';
 import { boundedJson } from './bounded-json';
+import {
+  defaultCatalogCache,
+  readCatalogSnapshot,
+  type CatalogCache,
+} from './catalog-cache';
 import { type Budget } from './budget';
 import { durableBudget, type BudgetNamespace } from './budget-object';
 import { callCost, readLimits, type Variables } from './config';
@@ -40,6 +44,7 @@ interface Dependencies {
   fetch?: typeof fetch;
   provider?: Provider;
   budget?: Budget;
+  catalogCache?: CatalogCache;
   diagnostic?: (entry: Diagnostic) => void;
   clientKey?: () => Promise<string>;
 }
@@ -156,14 +161,14 @@ export async function recommend(
     const fetcher = deps.fetch ?? fetch;
     let catalog;
     try {
-      const response = await fetcher(limits.LLM_CATALOG_URL, {
+      catalog = await readCatalogSnapshot({
+        origin: new URL(request.url).origin,
+        source: limits.LLM_CATALOG_URL,
+        requestedVersion: input.catalogVersion,
         signal: abort.signal,
-        redirect: 'follow',
-        credentials: 'omit',
-        referrerPolicy: 'no-referrer',
+        fetcher,
+        cache: deps.catalogCache ?? defaultCatalogCache(),
       });
-      if (!response.ok) return fallback('unavailable');
-      catalog = parsePublicCatalog(await boundedJson(response, 1_048_576));
     } catch {
       return fallback(
         abort.signal.aborted || Date.now() >= deadline

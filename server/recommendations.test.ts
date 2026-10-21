@@ -7,6 +7,7 @@ import {
 import { recommend, type Diagnostic } from './recommendations';
 import { catalog, environment } from './test-helpers';
 import type { Provider } from './anthropic';
+import type { CatalogCache } from './catalog-cache';
 
 const input = {
   functionArea: 'Operations',
@@ -42,6 +43,50 @@ function setup() {
 }
 afterEach(() => vi.useRealTimers());
 describe('recommendation endpoint', () => {
+  it('warms a validated version without paid calls and validates intake and IDs on cache hits', async () => {
+    const { deps, fetcher, provider, budget } = setup();
+    const entries = new Map<string, Response>();
+    const catalogCache: CatalogCache = {
+      match: vi.fn(async (key) => entries.get(key.url)?.clone()),
+      put: vi.fn(async (key, value) => {
+        entries.set(key.url, value.clone());
+      }),
+    };
+    const cached = { ...deps, catalogCache };
+    const warmup = await recommend(
+      request({ ...input, catalogVersion: 'sha256:' + 'f'.repeat(64) }),
+      environment,
+      cached,
+    );
+    expect((await warmup.json()).reason).toBe('catalog-mismatch');
+    const invalid = await recommend(
+      request({
+        ...input,
+        functionArea: '__evaluation_invalid_area__',
+        goal: '',
+        tools: [],
+      }),
+      environment,
+      cached,
+    );
+    expect(invalid.status).toBe(400);
+    expect(await invalid.json()).toMatchObject({
+      outcome: 'fallback',
+      reason: 'unavailable',
+      catalogVersion: catalog.catalogVersion,
+    });
+    expect(budget.reserve).not.toHaveBeenCalled();
+    expect(provider).not.toHaveBeenCalled();
+    provider.mockResolvedValueOnce({
+      value: { youtubeIds: ['unknown0000'] },
+      inputTokens: 100,
+      outputTokens: 20,
+    });
+    const response = await recommend(request(), environment, cached);
+    expect((await response.json()).reason).toBe('invalid-response');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(provider).toHaveBeenCalledTimes(1);
+  });
   it.each(['2026-10-21T00:00:00Z', 'not-a-date', ''])(
     'closes an expired or invalid test window without network calls',
     async (expiry) => {
