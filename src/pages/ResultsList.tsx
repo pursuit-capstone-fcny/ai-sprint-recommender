@@ -1,12 +1,15 @@
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
 
+export const RESULTS_HEADING_ID = 'results-heading';
+
 interface ResultsListProps {
   results: RankedMatch[];
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
   canShowMore: boolean;
   onShowMore: () => void;
+  showClosestMatch?: boolean;
 }
 
 export function ResultsList({
@@ -15,16 +18,16 @@ export function ResultsList({
   onPlay,
   canShowMore,
   onShowMore,
+  showClosestMatch = true,
 }: ResultsListProps) {
   return (
-    <section aria-live="polite">
+    <section aria-live="polite" aria-labelledby={RESULTS_HEADING_ID}>
       <div className="results-head">
-        <div>
-          <h2>Your picks</h2>
-          <p>Ranked by how well each video fits what you told us.</p>
-        </div>
-        <p className="results-count">
-          {results.length} {results.length === 1 ? 'pick' : 'picks'}
+        <h2 id={RESULTS_HEADING_ID} tabIndex={-1}>
+          Videos to start with
+        </h2>
+        <p className="pill results-count">
+          {results.length} {results.length === 1 ? 'video' : 'videos'}
         </p>
       </div>
       <ul className="video-card-grid">
@@ -33,6 +36,7 @@ export function ResultsList({
             key={match.item.youtubeId}
             match={match}
             isPlaying={playingId === match.item.youtubeId}
+            showClosestMatch={showClosestMatch}
             onPlay={() => onPlay(match.item.youtubeId)}
           />
         ))}

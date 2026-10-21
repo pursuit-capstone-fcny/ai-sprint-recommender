@@ -1,4 +1,10 @@
-import { cleanup, fireEvent, render, screen } from '@testing-library/react';
+import {
+  cleanup,
+  fireEvent,
+  render,
+  screen,
+  within,
+} from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/public-catalog.json';
 import { IntakeResultsPage } from './IntakeResultsPage';
@@ -49,7 +55,13 @@ describe('catalog page integration', () => {
     expect(fixture.items.some((item) => item.tools.includes('Claude'))).toBe(
       false,
     );
-    expect(screen.getByRole('button', { name: 'Claude' })).toBeTruthy();
+    const toolSelect = screen.getByLabelText('Tool (optional)');
+    expect(
+      within(toolSelect).getByRole('option', { name: 'Claude' }),
+    ).toBeTruthy();
+    expect(
+      screen.getByText(`${fixture.items.length} videos loaded`),
+    ).toBeTruthy();
     expect(screen.getAllByText('Length unavailable').length).toBeGreaterThan(0);
   });
 });

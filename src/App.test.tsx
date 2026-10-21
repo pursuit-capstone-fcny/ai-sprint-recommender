@@ -11,7 +11,9 @@ describe('App', () => {
       </BrowserRouter>,
     );
     expect(
-      screen.getByRole('heading', { name: /find your next ai video/i }),
+      screen.getByRole('heading', {
+        name: /find the right ai video for your work/i,
+      }),
     ).toBeTruthy();
   });
 });

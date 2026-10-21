@@ -3,7 +3,7 @@ import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { rank } from '../engine';
 import { IntakeForm } from './IntakeForm';
-import { ResultsList } from './ResultsList';
+import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
 
 const PAGE_SIZE = 3;
 
@@ -81,24 +81,66 @@ export function IntakeResults({
     );
   }
 
+  function handleClearFilters() {
+    setFunctionArea(null);
+    setGoalText('');
+    setTools([]);
+    setPlayingId(null);
+  }
+
+  // Results already update live; this just takes the user to them.
+  function handleFindVideos() {
+    const heading = document.getElementById(RESULTS_HEADING_ID);
+    if (!heading) return;
+    const reduceMotion =
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+    heading.scrollIntoView?.({
+      behavior: reduceMotion ? 'auto' : 'smooth',
+      block: 'start',
+    });
+    heading.focus({ preventScroll: true });
+  }
+
   return (
     <>
-      <IntakeForm
-        functionArea={functionArea}
-        onFunctionAreaChange={setFunctionArea}
-        goalText={goalText}
-        onGoalTextChange={setGoalText}
-        availableTools={availableTools}
-        availableFunctionAreas={availableFunctionAreas}
-        selectedTools={tools}
-        onToggleTool={handleToggleTool}
-      />
+      <section className="search-panel" aria-labelledby="search-panel-title">
+        <div className="panel-head">
+          <h2 id="search-panel-title">What are you working on?</h2>
+        </div>
+        <IntakeForm
+          functionArea={functionArea}
+          onFunctionAreaChange={setFunctionArea}
+          goalText={goalText}
+          onGoalTextChange={setGoalText}
+          availableTools={availableTools}
+          availableFunctionAreas={availableFunctionAreas}
+          selectedTools={tools}
+          onToggleTool={handleToggleTool}
+        />
+        <div className="form-actions">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleFindVideos}
+          >
+            Find videos
+          </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={handleClearFilters}
+          >
+            Clear
+          </button>
+        </div>
+      </section>
       <ResultsList
         results={results}
         playingId={playingId}
         onPlay={setPlayingId}
         canShowMore={canShowMore}
         onShowMore={() => setVisibleCount((count) => count + PAGE_SIZE)}
+        showClosestMatch={functionArea !== null}
       />
     </>
   );

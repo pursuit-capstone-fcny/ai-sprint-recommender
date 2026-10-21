@@ -11,22 +11,23 @@ export function IntakeResultsPage() {
       <header className="topbar">
         <div className="topbar-inner">
           <div className="brand">
-            <span className="brand-mark" aria-hidden="true">
-              AI
+            <span className="brand-mark" aria-hidden="true" />
+            <span className="wordmark">
+              <strong>Sprint</strong> <span aria-hidden="true">/</span> AI video
+              finder
             </span>
-            FCNY Sprint Recommender
           </div>
-          <span className="topbar-note">Short videos for your next sprint</span>
+          <span className="topbar-note">AI for Nonprofits Sprint</span>
         </div>
       </header>
       <main className="intake-results-page">
         <div className="hero">
           <div className="hero-inner">
-            <p className="eyebrow">AI Sprint videos</p>
-            <h1>Find your next AI video</h1>
+            <p className="eyebrow">AI Sprint video library</p>
+            <h1>Find the right AI video for your work.</h1>
             <p className="hero-lede">
-              Tell us your area, goal and tools. We'll line up the videos that
-              fit best.
+              Pick your area and tell us what you're working on. We'll suggest a
+              few short Sprint videos to start with.
             </p>
           </div>
         </div>
@@ -50,8 +51,15 @@ export function IntakeResultsPage() {
           )}
           {catalog.status === 'ready' && (
             <>
-              {catalog.source === 'fixture' && (
-                <p className="demo-notice">Demo catalog</p>
+              {catalog.source === 'fixture' ? (
+                <p className="catalog-notice demo-notice">Demo catalog</p>
+              ) : (
+                catalog.items.length > 0 && (
+                  <p className="catalog-notice library-status">
+                    {catalog.items.length}{' '}
+                    {catalog.items.length === 1 ? 'video' : 'videos'} loaded
+                  </p>
+                )
               )}
               {catalog.items.length === 0 ? (
                 <div className="state-panel">
@@ -73,8 +81,29 @@ export function IntakeResultsPage() {
               )}
             </>
           )}
+
+          <div className="info-panels">
+            <section className="info-panel" aria-labelledby="how-it-works">
+              <h2 id="how-it-works">How we pick videos</h2>
+              <p>
+                We look at your area first, then what you want to learn, then
+                your tools. If nothing fits exactly, we show the closest videos
+                and say so.
+              </p>
+            </section>
+            <section className="info-panel" aria-labelledby="about-library">
+              <h2 id="about-library">About these videos</h2>
+              <p>
+                Every video here was made by the AI for Nonprofits Sprint. The
+                Sprint team adds new ones each month.
+              </p>
+            </section>
+          </div>
         </div>
       </main>
+      <footer className="site-footer">
+        AI for Nonprofits Sprint · Fund for the City of New York
+      </footer>
     </>
   );
 }
