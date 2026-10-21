@@ -81,9 +81,9 @@ export default {
           else signal.addEventListener('abort', abort, { once: true });
         });
       if (name === 'catalog-description-injection') {
-        const data = JSON.parse(body.messages[0].content);
+        const data = JSON.parse(body.request.messages[0].content);
         catalogTextIsUntrustedData =
-          body.system === SYSTEM_PROMPT &&
+          body.request.system === SYSTEM_PROMPT &&
           data.catalog[0].description === injection;
         if (!catalogTextIsUntrustedData)
           throw new Error('Synthetic prompt boundary failed');

@@ -12,7 +12,21 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test candidate
 
-`catalog-rank-v2` records the Haiku 5.5 request settings. When `LLM_MODEL` is
+`catalog-rank-v3` prioritizes help with the goal's task and deliverable over
+broad area or tool overlap. It retains every catalog candidate and contains no
+benchmark examples or expected IDs. The provider selects numeric positions;
+the server maps them to IDs from that request's trusted catalog snapshot.
+Duplicate, noninteger, out-of-range and oversized selections reject the whole
+result without repair. The public API still returns `youtubeIds`.
+
+Anthropic's [structured-output reference](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)
+supports numeric enums but does not guarantee string enum capitalization.
+Numeric positions avoid copying case-sensitive YouTube IDs. A new schema can
+add compilation latency on its first use; the five-second deadline still
+applies, with no retry. The adapter validates array limits locally because the
+API does not support `maxItems` or uniqueness constraints. Checked October 21, 2026.
+
+When `LLM_MODEL` is
 `claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to
 `low`, keeping the output allowance available for ranked IDs. Unexpected
 thinking blocks still reject the result. The five-second deadline is unchanged.
@@ -43,7 +57,7 @@ call. Cache hits are validated again, and cache errors fall through to a fresh
 fetch. An old requested version can use its cached snapshot for at most 60
 seconds after it was stored, so source edits and retirements have that bounded
 delay. Provider responses and intake text are never cached. The five-second
-deadline and `catalog-rank-v2` prompt are unchanged.
+deadline also covers cache and source work.
 
 The [Cache API](https://developers.cloudflare.com/workers/runtime-apis/cache/)
 stores responses within a data center and honors response `Cache-Control` TTL.
