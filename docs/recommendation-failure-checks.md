@@ -20,7 +20,10 @@ node scripts/verify-failure-worker.mjs
 The verifier calls the fixed test hostname and checks exact result shapes,
 fallback reasons, catalog/provider/reservation counts, and the five-second
 timeout with provider cancellation. It writes the report to
-`build/evaluation/failure-checks/report.json` or a generic `failure.json`.
+`build/evaluation/failure-checks/report.json`. A failed run writes `failure.json`
+with the scenario, phase, HTTP status, fixed failure category, allowlisted
+actual fields and completed checks. It never saves raw response or error text.
+Checks run once without retry, including after a fresh Worker deployment.
 Delete the fixture Worker after the workflow finishes, including failed runs.
 
 The 15 cases cover success, default-off, kill switch, empty and retired
