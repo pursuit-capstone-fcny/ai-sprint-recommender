@@ -62,7 +62,26 @@ export function providerBody(
   return { request, catalogIds: catalog.items.map((item) => item.youtubeId) };
 }
 export type ProviderBody = ReturnType<typeof providerBody>;
-export interface ProviderResult {
+const count = z.number().int().min(0).max(100).optional();
+export const ProviderValidationSchema = z.object({
+  validationFailure: z.enum([
+    'max-tokens',
+    'refusal',
+    'stop-reason',
+    'content',
+    'json',
+    'schema',
+    'duplicate',
+    'out-of-range',
+  ]),
+  contentBlockCount: count,
+  selectionCount: count,
+  invalidSelectionCount: count,
+  duplicateCount: count,
+  outOfRangeCount: count,
+});
+export type ProviderValidation = z.infer<typeof ProviderValidationSchema>;
+export interface ProviderResult extends Partial<ProviderValidation> {
   value: unknown;
   inputTokens: number;
   outputTokens: number;
@@ -79,10 +98,7 @@ export function inputTokenBound(body: ProviderBody): number {
 }
 
 const positionsSchema = z.strictObject({
-  positions: z
-    .array(z.number().int().nonnegative())
-    .max(10)
-    .refine((positions) => new Set(positions).size === positions.length),
+  positions: z.array(z.number().int().nonnegative()).max(10),
 });
 
 const responseSchema = z.object({
@@ -119,30 +135,83 @@ export function anthropicProvider(
     // Preserve known usage even when a model result is malformed or truncated.
     const content = contentSchema.safeParse(parsed.content);
     let value: unknown = null;
-    if (parsed.stop_reason === 'end_turn' && content.success) {
+    let validation: ProviderValidation | undefined;
+    if (parsed.stop_reason !== 'end_turn') {
+      validation = {
+        validationFailure:
+          parsed.stop_reason === 'max_tokens'
+            ? 'max-tokens'
+            : parsed.stop_reason === 'refusal'
+              ? 'refusal'
+              : 'stop-reason',
+      };
+    } else if (!content.success) {
+      validation = {
+        validationFailure: 'content',
+        ...(Array.isArray(parsed.content)
+          ? { contentBlockCount: Math.min(parsed.content.length, 100) }
+          : {}),
+      };
+    } else {
       try {
-        const output = positionsSchema.safeParse(
-          JSON.parse(content.data[0].text),
-        );
-        if (
-          output.success &&
-          output.data.positions.every(
-            (position) => position < body.catalogIds.length,
-          )
-        ) {
-          value = {
-            youtubeIds: output.data.positions.map(
-              (position) => body.catalogIds[position],
-            ),
+        const decoded: unknown = JSON.parse(content.data[0].text);
+        const output = positionsSchema.safeParse(decoded);
+        if (!output.success) {
+          const positions =
+            decoded &&
+            typeof decoded === 'object' &&
+            'positions' in decoded &&
+            Array.isArray(decoded.positions)
+              ? decoded.positions
+              : undefined;
+          validation = {
+            validationFailure: 'schema',
+            ...(positions
+              ? {
+                  selectionCount: Math.min(positions.length, 100),
+                  invalidSelectionCount: Math.min(
+                    positions.filter(
+                      (position) =>
+                        !Number.isSafeInteger(position) || position < 0,
+                    ).length,
+                    100,
+                  ),
+                }
+              : {}),
           };
+        } else {
+          const positions = output.data.positions;
+          const duplicateCount = positions.length - new Set(positions).size;
+          const outOfRangeCount = positions.filter(
+            (position) => position >= body.catalogIds.length,
+          ).length;
+          if (duplicateCount)
+            validation = {
+              validationFailure: 'duplicate',
+              selectionCount: positions.length,
+              duplicateCount,
+            };
+          else if (outOfRangeCount)
+            validation = {
+              validationFailure: 'out-of-range',
+              selectionCount: positions.length,
+              outOfRangeCount,
+            };
+          else
+            value = {
+              youtubeIds: positions.map(
+                (position) => body.catalogIds[position],
+              ),
+            };
         }
       } catch {
-        /* The endpoint rejects the whole result. */
+        validation = { validationFailure: 'json' };
       }
     }
     // No cache directives are sent. Count every reported input token conservatively.
     return {
       value,
+      ...validation,
       inputTokens:
         parsed.usage.input_tokens +
         (parsed.usage.cache_creation_input_tokens ?? 0) +

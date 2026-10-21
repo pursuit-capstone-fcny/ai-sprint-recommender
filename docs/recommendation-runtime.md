@@ -26,6 +26,13 @@ add compilation latency on its first use; the five-second deadline still
 applies, with no retry. The adapter validates array limits locally because the
 API does not support `maxItems` or uniqueness constraints. Checked October 21, 2026.
 
+Invalid provider results include bounded validation categories and counts in
+test diagnostics only. Categories distinguish stop reason, content, JSON,
+schema, duplicate and out-of-range failures; counts clamp at 100. They contain
+no response text, IDs, prompts or intake, and never appear in the public API or
+production diagnostics. This instrumentation does not change prompt v3 or its
+acceptance rules.
+
 When `LLM_MODEL` is
 `claude-haiku-5-5`, the adapter explicitly disables thinking and sets effort to
 `low`, keeping the output allowance available for ranked IDs. Unexpected
