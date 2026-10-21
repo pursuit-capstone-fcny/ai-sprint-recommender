@@ -62,13 +62,22 @@ export function VideoCard({ match, isPlaying, onPlay }: VideoCardProps) {
         </button>
       )}
 
-      <h3>{item.title}</h3>
-      <p className="duration">{formatDuration(item.durationSeconds)}</p>
-      <p className="description">{item.description}</p>
-      <p className="reason">{reason}</p>
-      <a href={watchUrl} target="_blank" rel="noopener noreferrer">
-        Watch on YouTube
-      </a>
+      <div className="card-body">
+        <h3>{item.title}</h3>
+        <p className="duration">{formatDuration(item.durationSeconds)}</p>
+        <p className="description">{item.description}</p>
+        <p className="reason">{reason}</p>
+        <div className="card-actions">
+          <a
+            className="watch-link"
+            href={watchUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Watch on YouTube
+          </a>
+        </div>
+      </div>
     </li>
   );
 }
