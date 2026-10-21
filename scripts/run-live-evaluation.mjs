@@ -116,6 +116,7 @@ export async function main(args = process.argv.slice(2)) {
   const overallTimer = setTimeout(() => abort.abort(), 600_000);
   const observed = new Map();
   const probeIds = new Set();
+  const readinessProbes = [];
   const extraResults = [];
   let evaluator;
   let tail;
@@ -324,12 +325,28 @@ export async function main(args = process.argv.slice(2)) {
         .parse(response.headers.get('x-recommendation-request-id'));
       probeIds.add(requestId);
       const payload = await response.json();
+      readinessProbes.push({
+        checkedAt: new Date().toISOString(),
+        requestId,
+        httpStatus: response.status,
+        outcome:
+          payload.outcome === 'fallback' &&
+          ['disabled', 'not-requested'].includes(payload.reason)
+            ? payload.reason
+            : 'unexpected',
+      });
       if (
         !response.ok ||
         payload.outcome !== 'fallback' ||
-        payload.reason !== expectedOutcome
+        !['disabled', 'not-requested'].includes(payload.reason)
       )
         throw new Error('Test endpoint is not ready for evaluation.');
+      // Deployment propagation can briefly serve the previous flag value.
+      // This blank intake cannot reserve budget or dispatch a provider call.
+      if (payload.reason !== expectedOutcome) {
+        await pause(1_000);
+        continue;
+      }
       const probeDeadline = Math.min(readinessDeadline, Date.now() + 2_000);
       while (!ready && Date.now() < probeDeadline) {
         ready = hasReadyDiagnostic(observed, probeIds, expectedOutcome);
@@ -490,6 +507,10 @@ export async function main(args = process.argv.slice(2)) {
     }
     throw error;
   } finally {
+    await writeFile(
+      `${liveDirectory}/readiness.json`,
+      `${JSON.stringify({ expectedOutcome, confirmed: readinessConfirmed, paidCalls: 0, probes: readinessProbes }, null, 2)}\n`,
+    );
     stopping = true;
     clearTimeout(overallTimer);
     process.removeListener('SIGINT', stop);

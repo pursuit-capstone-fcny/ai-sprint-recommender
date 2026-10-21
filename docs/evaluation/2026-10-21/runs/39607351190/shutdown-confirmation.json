@@ -1,0 +1,9 @@
+{
+  "confirmed": true,
+  "method": "Separate empty-body POST after workflow shutdown deployment propagated",
+  "response": {
+    "outcome": "fallback",
+    "reason": "disabled"
+  },
+  "paidCalls": 0
+}

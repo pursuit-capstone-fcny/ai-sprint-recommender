@@ -54,3 +54,19 @@ passed the synthetic success case, then received HTTP 404 for the known
 response status. This attempt also made no paid calls. The checker now allows
 a bounded wait for synthetic-route 404/503 responses and records every
 attempt; it never retries assertions or paid provider requests.
+
+Free-only [run 39607060696](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39607060696)
+passed all 15 deployed checks. Its first synthetic request received 404, then
+200 after a two-second wait. Every later check passed on the first attempt.
+The [report](runs/39607060696/failure-checks.json) preserves both responses.
+The test provider remained disabled and the temporary Worker was removed.
+
+[Run 39607351190](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39607351190)
+passed the synthetic checks but stopped at unpaid readiness immediately
+after enabling. The original readiness report omitted the response state.
+Shutdown deployed `LLM_ENABLED=false`, but its immediate assertion saw the
+older enabled handler rejecting invalid input. A separate probe then
+[confirmed disabled](runs/39607351190/shutdown-confirmation.json). State
+verification now waits for propagation using only blank or invalid intake,
+which cannot reserve spend or dispatch Anthropic. Paid requests still have
+one attempt each.
