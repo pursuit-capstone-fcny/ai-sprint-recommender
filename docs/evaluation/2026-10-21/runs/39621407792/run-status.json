@@ -1,0 +1,8 @@
+{
+  "workflowRun": 39621407792,
+  "sourceRevision": "5e54e2313c572d8bdb25f4d14b352a6b2f7da48f",
+  "conclusion": "success",
+  "numericRelevanceGatePassed": true,
+  "paidBrowserCalls": 0,
+  "note": "Three fresh 10/10 trials and passing repeated wording regressions; owner review and production enablement remain pending. Post-shutdown browser showed Standard matching."
+}

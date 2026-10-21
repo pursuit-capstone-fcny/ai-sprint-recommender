@@ -1,9 +1,9 @@
 # Initial evaluation results
 
-This is the historical V2 report. The [quality rerun](quality-rerun.md) records
-the current V4 result: rules **8/10**, LLM **8/10, 10/10 and 9/10**, with the same
-labels. A separate wording probe timed out and another scored 0/3, so the full
-workflow's evidence check failed. Production LLM calls and logging remain off.
+This is the historical V2 report. The [wording and timeout rerun](wording-timeout-rerun.md)
+records the current V7 result: rules **8/10**, LLM **10/10 in all three trials**,
+wording regressions **3/3 and 2/3**, and no timeouts. Labels are unchanged.
+Production LLM calls and logging remain off pending owner review.
 
 **Initial decision: keep production LLM calls and usage logging disabled.** Anthropic
 works on the isolated test deployment, but neither recommendation path reaches

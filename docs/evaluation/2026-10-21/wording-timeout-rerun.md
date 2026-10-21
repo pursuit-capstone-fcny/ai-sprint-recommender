@@ -5,6 +5,11 @@ remaining original $1 allowance. Benchmark labels, the 89-video catalog and
 the existing wording probes stay unchanged. Production LLM calls and usage
 logging remain disabled.
 
+V7 passes all three trials at **10/10**, with wording regressions at **3/3**
+and **2/3**, no timeouts and no benchmark fallbacks. Rules remain **8/10**.
+The original labels are unchanged. See the V7 evidence below; V5 and V6
+misses remain recorded. Production enablement is still pending owner review.
+
 ## Budget and comparison
 
 The previous recorded cost plus maximum unknown-cost reservations is
@@ -148,4 +153,62 @@ One final three-trial run and the same four probes reserve at most
 allowance is **$0.35**, below the conservative remaining balance. Preserve all
 results, labels and prior failures; retain the original ledger and expiry.
 
-V7 results pending.
+## V7 results and decision
+
+[Run 39621407792](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39621407792)
+tested revision `5e54e23`, Haiku 5.5 and `catalog-rank-v7`. Rules stayed
+**8/10**; LLM scored **10/10 in each of three fresh trials**, with zero
+benchmark fallbacks. No paid request was retried. The [comparison](runs/39621407792/report.md)
+preserves per-profile cards, approved hits and variation.
+
+| Candidate                     | Three LLM trials    | Operations wording | Fundraising wording | Benchmark fallbacks |
+| ----------------------------- | ------------------- | ------------------ | ------------------- | ------------------- |
+| V4 baseline                   | 8/10, 10/10, 9/10   | Timeout            | 0/3                 | 1/30                |
+| V5 policy and timeout changes | 8/10, 8/10, 7/10    | 1/3                | 1/3                 | 0/30                |
+| V6 medium effort              | 7/10, 9/10, 6/10    | 0/3                | 0/3                 | 0/30                |
+| V7 catalog before intake      | 10/10, 10/10, 10/10 | 3/3                | 2/3                 | 0/30                |
+
+The Operations paraphrase returned survey-pattern analysis, the director-ready
+feedback report and CoPilot feedback analysis. Fundraising returned donor role
+play and donor review in its first two cards. Their latency was **1.520 and
+1.466 seconds**. These are repeated regression examples, not unseen wording
+validation. All ten benchmark profiles passed in all three trials, but their
+selected cards still varied. Rules still miss Communications 01 and
+Fundraising 02; passing the aggregate target does not erase those misses.
+
+Changing input order was the only provider-request change from V6 to V7.
+This comparison supports that packaging change for this catalog and benchmark;
+it does not establish general reliability or isolate whether low effort would
+also work with the new order. Keep the evaluated medium-effort configuration.
+
+All **34** automated request IDs have matching diagnostics and known usage.
+No request timed out. Benchmark median/p95/max latency was **1.409/2.228/2.566
+seconds**. The first unpaid catalog load took **4.409 seconds**, later loads
+35–68 ms; all succeeded on their first attempt. Invalid-area checks took
+34–59 ms end to end and dispatched no provider calls. All **15 deployed
+synthetic checks** passed, including the **4,500 ms** server deadline.
+
+Nonsense and goal injection returned empty selections and used complete rules
+fallback. These probes do not establish general injection resistance. All
+478 tests, typecheck, lint, build and formatting passed locally; the evaluated
+revision passed CI and preview. The workflow confirmed [test shutdown](runs/39621407792/disabled.json)
+and removed the synthetic Worker. The subsequent browser submission showed
+[Standard matching](runs/39621407792/disabled-browser.png) without a provider
+call. No V7 paid browser submission was made; its live results use the deployed
+API and shared browser selection code. V5/V6 rendered AI checks remain separate.
+
+V7 benchmark usage was **606,267 input tokens and 2,160 output tokens**, costing
+**$0.061722**. Four probes cost **$0.008227**, for **$0.069949** measured total.
+This task's three runs measured **$0.209847**; its two browser requests retain
+at most **$0.012512** in unknown-cost reservations. Adding prior recorded
+spend and unknown maximum reservations gives **$0.646102** of the original
+**$1**, leaving **$0.353898** conservatively for recorded requests. These are
+usage-based calculations, not a billing export. Unrelated visitors, if any,
+remain accounted for by the unchanged persistent ledger. It was never reset.
+
+Keep test provider calls off at rest. Production remains on `cc761a7`, its
+October 21 04:25 UTC deployment, with LLM calls and usage logging disabled.
+The numeric and existing wording regression gates pass. #19 remains open for
+Ali/Eliot's label/catalog and semantic review, fresh unseen wording checks,
+production runtime/privacy/volume approval and the final #23 demo record.
+Retain the ordinary rules-only deployment until those approvals are recorded.

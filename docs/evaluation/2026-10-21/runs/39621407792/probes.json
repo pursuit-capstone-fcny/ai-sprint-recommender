@@ -1,0 +1,134 @@
+{
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v7",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "held-out-operations-01",
+      "requestId": "3516aa24-2de1-4ce3-b1d8-20ac9b92cb63",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "m0mI6_g0V2g",
+          "cwCVpchJHB4",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1520,
+      "displayedIds": ["m0mI6_g0V2g", "cwCVpchJHB4", "0qSXFbGrQ90"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "3516aa24-2de1-4ce3-b1d8-20ac9b92cb63",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1464,
+        "inputTokens": 20209,
+        "outputTokens": 72,
+        "costMicrodollars": 2057,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "held-out-fundraising-02",
+      "requestId": "fd9c79d9-f1f1-4851-a100-0d19dddada42",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "jm9ZaKY1taA",
+          "3oX_M8AcBXk",
+          "VQRVNYS1m3g",
+          "_9QqyTbwisc",
+          "7IYj3W4PdPE"
+        ],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1466,
+      "displayedIds": ["S_DQeIX2xz8", "ADF07rFbH8M", "jm9ZaKY1taA"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "fd9c79d9-f1f1-4851-a100-0d19dddada42",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1418,
+        "inputTokens": 20214,
+        "outputTokens": 72,
+        "costMicrodollars": 2058,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "246417bf-d3fe-4f65-b437-1bb25a6bbf2f",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1484,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "246417bf-d3fe-4f65-b437-1bb25a6bbf2f",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1438,
+        "inputTokens": 20184,
+        "outputTokens": 72,
+        "costMicrodollars": 2055,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "938209b8-fba7-4ade-aece-8c304967886e",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1935,
+      "displayedIds": ["33a0qYtCMvc", "wxJVc1q_nnY", "4LMIC-v5xZ0"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "938209b8-fba7-4ade-aece-8c304967886e",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1860,
+        "inputTokens": 20207,
+        "outputTokens": 72,
+        "costMicrodollars": 2057,
+        "reservedMicrodollars": 6256,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    }
+  ]
+}

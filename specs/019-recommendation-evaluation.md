@@ -52,13 +52,14 @@
 
 ## Remaining evidence
 
-Jason's initial labels remain unchanged. The [V4 evaluation](../docs/evaluation/2026-10-21/quality-rerun.md)
-scores rules 8/10 and LLM 8/10, 10/10 and 9/10, with measured cost for all 30
-benchmark calls. A separate wording probe timed out without attributable cost;
-the broader workflow evidence check failed. Production remains disabled.
+Jason's initial labels remain unchanged. The [V7 evaluation](../docs/evaluation/2026-10-21/wording-timeout-rerun.md)
+scores rules 8/10 and LLM 10/10 in all three trials. The two repeated wording
+regressions score 3/3 and 2/3. All 34 requests have measured diagnostics, with
+no timeouts or benchmark fallbacks. V5/V6 misses remain preserved. Test calls
+are disabled afterward; production LLM calls and logging remain disabled.
 
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.
-- Wording robustness and cold-request follow-up; preserve failed probes.
-- Production runtime/privacy/budget approval and #23 live AI demo evidence.
+- Fresh unseen wording checks, separate from these inspected regressions.
+- Production runtime/privacy/budget approval and #23 final demo evidence.
 
 Commands and report formats: [Evaluation guide](../docs/recommendation-evaluation.md).

@@ -4,7 +4,32 @@ The evidence below separates real Anthropic responses, deployed synthetic
 checks and deterministic tests. Production LLM and usage logging remain
 disabled; this record does not approve enablement.
 
-## Current V4 evidence
+## Current V7 evidence
+
+[Run 39621407792](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39621407792)
+tested `5e54e23` with `catalog-rank-v7`. All three LLM trials passed 10/10;
+rules passed 8/10. The Operations and Fundraising wording regressions scored
+3/3 and 2/3. All 34 requests completed with matching diagnostics and no
+transport timeouts. No benchmark request fell back. Nonsense and goal injection
+returned empty lists and selected rules fallback.
+
+The test-only catalog GET completed its initial load in 4.409 seconds and
+all four warmup phases needed one attempt. Recommendation p95 was 2.228 seconds.
+All 15 [deployed synthetic checks](runs/39621407792/failure-checks.json) passed,
+including the 4.5-second server deadline within the unchanged five-second
+client limit. Deterministic tests also cover a 5.2-second catalog load before
+submission, stalled cache writes, expired snapshots, retirements and the
+production-disabled catalog route. Expiry, eviction, location changes and
+external failures can still cause fallback.
+
+The workflow [confirmed shutdown](runs/39621407792/disabled.json) and deleted
+the synthetic Worker. The browser then showed [Standard matching](runs/39621407792/disabled-browser.png).
+No V7 paid browser request was made. V5/V6 rendered AI results and all failures
+are preserved separately. All 478 tests, typecheck, lint, build and formatting
+passed; CI and preview passed on the evaluated revision. See the [current
+report](wording-timeout-rerun.md) for costs, limits and remaining owner review.
+
+## Historical V4 evidence
 
 [Run 39611658736](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39611658736)
 tested revision `a1d3fa6` with `catalog-rank-v4`. Rules scored 8/10 and three
@@ -112,12 +137,12 @@ deployed-provider checks.
 
 - Live model resilience to arbitrary injected catalog text remains unproven.
   The deployed check establishes that an invented ID cannot cross validation.
-- A rendered browser AI-success demonstration for #23. Rules fallback was
-  demonstrated on the deployed test site; deadline and latest-submission
-  rendering remain covered by deterministic browser tests.
-- The numeric relevance gate now passes in V4. Ali/Eliot review of semantic
-  examples, weakest profiles and wording robustness, cold-request follow-up,
-  owner enablement decision and #23 demo evidence remain required.
+- A final #23 demo record for the evaluated V7 configuration. V5/V6 rendered
+  AI checks and V7 rules-only shutdown are saved; V7 paid success was checked
+  through the deployed API and shared selector.
+- V7 passes the numeric and existing wording regression gates. Ali/Eliot
+  review of labels, semantic examples and weak rules profiles, fresh unseen
+  wording validation, owner enablement and #23 demo evidence remain required.
 
 Follow the [failure plan](failure-test-plan.md) and
 [approved test limits](test-decision.md). Any later deployed synthetic-provider

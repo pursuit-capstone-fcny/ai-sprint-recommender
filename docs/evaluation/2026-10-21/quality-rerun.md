@@ -1,5 +1,9 @@
 # Quality improvement rerun
 
+Historical V3/V4 evidence. The [wording and timeout rerun](wording-timeout-rerun.md)
+records the current V7 result: LLM 10/10 in all three trials, both wording
+regressions passing and no timeouts. Earlier failures below remain preserved.
+
 Jason requested quality improvements and another #19 evaluation on October
 21, 2026, within the remaining original $1 allowance. The approved benchmark,
 catalog and labels remain unchanged. Production LLM calls and usage logging
