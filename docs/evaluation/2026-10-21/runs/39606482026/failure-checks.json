@@ -1,0 +1,37 @@
+{
+  "passed": false,
+  "scope": "Deployed Worker with isolated synthetic dependencies; not live Anthropic safety evidence.",
+  "worker": "https://ai-sprint-recommender-failure-test.jason-zeng151.workers.dev",
+  "checkedAt": "2026-10-21T13:17:32.045Z",
+  "completedChecks": 1,
+  "failedCheck": {
+    "scenario": "default-off",
+    "phase": "http-status",
+    "classification": "http-status",
+    "httpStatus": 404
+  },
+  "checks": [
+    {
+      "mode": "synthetic-dependencies",
+      "scenario": "success",
+      "status": 200,
+      "providerAborted": false,
+      "serverLatencyMs": 0,
+      "calls": {
+        "catalogReads": 1,
+        "providerCalls": 1,
+        "reservations": 1
+      },
+      "result": {
+        "outcome": "success",
+        "modelVersion": "fixture-model",
+        "promptVersion": "catalog-rank-v3",
+        "catalogVersion": "sha256:e2166d31e9fed6a14d960509a662393481bc512960f83fb274959059d89922ac",
+        "youtubeIdCount": 1,
+        "allIdsKnown": true,
+        "youtubeIds": ["fx03BdgtXls"]
+      },
+      "passed": true
+    }
+  ]
+}

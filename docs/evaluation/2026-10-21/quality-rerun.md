@@ -46,3 +46,11 @@ no paid calls. The test endpoint was confirmed disabled and the temporary
 synthetic Worker was removed. The original checker omitted the failed scenario
 and HTTP status, so this attempt does not establish a cause. Its
 [failure record](runs/39605490096/failure-checks.json) is preserved.
+
+The free-only [run 39606482026](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39606482026)
+passed the synthetic success case, then received HTTP 404 for the known
+`default-off` route just after deployment. The
+[bounded diagnostic](runs/39606482026/failure-checks.json) preserves that
+response status. This attempt also made no paid calls. The checker now allows
+a bounded wait for synthetic-route 404/503 responses and records every
+attempt; it never retries assertions or paid provider requests.
