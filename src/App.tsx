@@ -1,18 +1,10 @@
 import { Route, Routes } from 'react-router';
+import { IntakeResultsPage } from './pages/IntakeResultsPage';
 
 export function App() {
   return (
     <Routes>
-      <Route path="/" element={<Home />} />
+      <Route path="/" element={<IntakeResultsPage />} />
     </Routes>
-  );
-}
-
-function Home() {
-  return (
-    <main>
-      <h1>FCNY Sprint Recommender</h1>
-      <p>Catalog and ranking land in later issues.</p>
-    </main>
   );
 }
