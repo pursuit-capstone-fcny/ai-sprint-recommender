@@ -1,5 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/evaluation/draft-benchmark.json';
 import mockFixture from '../../fixtures/evaluation/mock-trials.json';
 import {
@@ -15,7 +15,7 @@ import {
   type Diagnostics,
   type Trials,
 } from './report';
-import { runLiveTrials, LiveApprovalSchema } from './live';
+import { runLiveTrials, LiveApprovalSchema, type Warmup } from './live';
 import { PublicCatalogDataSchema } from '../contracts/publicCatalog';
 
 const benchmark = parseBenchmark(fixture);
@@ -252,6 +252,22 @@ describe('AC-19.2–4 comparable trial reports', () => {
 });
 
 describe('AC-19.5–6 manual live checks are opt-in', () => {
+  afterEach(() => vi.restoreAllMocks());
+  function warmupResponse(value: Benchmark, cacheCheck = false) {
+    return Response.json(
+      {
+        outcome: 'fallback',
+        reason: cacheCheck ? 'unavailable' : 'catalog-mismatch',
+        catalogVersion: value.catalog.catalogVersion,
+        modelVersion: 'mock-model-v1',
+        promptVersion: 'mock-prompt-v1',
+      },
+      {
+        status: cacheCheck ? 400 : 200,
+        headers: { 'X-Recommendation-Request-Id': randomUUID() },
+      },
+    );
+  }
   it('makes zero calls without approved profiles, explicit opt-in and a sufficient allowance', async () => {
     const fetcher = vi.fn<typeof fetch>();
     const value = approved();
@@ -291,8 +307,10 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
           .success,
       ).toBe(false);
   });
-  it('makes exactly thirty fresh requests with a five-second deadline and no retries', async () => {
+  it('checks the catalog twice before each trial and makes exactly thirty paid-eligible requests without retries', async () => {
     const value = approved();
+    const deadlines = vi.spyOn(AbortSignal, 'timeout');
+    const paidEligible = vi.fn();
     const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
       expect(init).toMatchObject({
         cache: 'no-store',
@@ -307,13 +325,44 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
         'goal',
         'tools',
       ]);
+      if (request.catalogVersion !== value.catalog.catalogVersion)
+        return warmupResponse(value);
+      if (request.functionArea === '__evaluation_invalid_area__')
+        return warmupResponse(value, true);
+      paidEligible();
       return Response.json(
         { outcome: 'fallback', reason: 'rate-limited' },
         { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
       );
     });
-    const trials = await runLiveTrials(value, approval(value), true, fetcher);
-    expect(fetcher).toHaveBeenCalledTimes(30);
+    const warmups: Warmup[][] = [];
+    const trials = await runLiveTrials(
+      value,
+      approval(value),
+      true,
+      fetcher,
+      async () => {},
+      async (rows) => {
+        warmups.push(structuredClone(rows));
+      },
+    );
+    expect(fetcher).toHaveBeenCalledTimes(36);
+    expect(paidEligible).toHaveBeenCalledTimes(30);
+    expect(warmups.at(-1)?.map((row) => [row.trial, row.phase])).toEqual([
+      [1, 'catalog-load'],
+      [1, 'cache-check'],
+      [2, 'catalog-load'],
+      [2, 'cache-check'],
+      [3, 'catalog-load'],
+      [3, 'cache-check'],
+    ]);
+    expect(deadlines.mock.calls.map(([duration]) => duration)).toEqual(
+      Array.from({ length: 3 }, () => [
+        10_000,
+        10_000,
+        ...Array(10).fill(5_000),
+      ]).flat(),
+    );
     expect(trials.trials).toHaveLength(3);
     expect(
       new Set(
@@ -331,6 +380,8 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
     const value = approved();
     const fetcher = vi
       .fn<typeof fetch>()
+      .mockResolvedValueOnce(warmupResponse(value))
+      .mockResolvedValueOnce(warmupResponse(value, true))
       .mockRejectedValueOnce(new DOMException('Timeout', 'TimeoutError'))
       .mockResolvedValueOnce(
         Response.json({
@@ -347,11 +398,74 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
         snapshots.push(structuredClone(progress));
       }),
     ).rejects.toThrow('configuration');
-    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(fetcher).toHaveBeenCalledTimes(4);
     expect(snapshots[0].trials[0].calls[0].response).toEqual({
       outcome: 'fallback',
       reason: 'timeout',
     });
     expect(snapshots[1].trials[0].calls).toHaveLength(2);
+  });
+  it('preserves a timed-out warmup and stops before any trial or retry', async () => {
+    const value = approved();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockRejectedValueOnce(new DOMException('Timeout', 'TimeoutError'));
+    const progress = vi.fn();
+    const warmups = vi.fn();
+    await expect(
+      runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
+    ).rejects.toThrow('warmup');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    expect(progress).not.toHaveBeenCalled();
+    expect(warmups).toHaveBeenCalledWith([
+      expect.objectContaining({
+        trial: 1,
+        phase: 'catalog-load',
+        response: { outcome: 'fallback', reason: 'timeout' },
+      }),
+    ]);
+  });
+  it('requires the correct frozen catalog and candidate during unpaid warmup', async () => {
+    const value = approved();
+    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
+      Response.json(
+        {
+          outcome: 'fallback',
+          reason: 'catalog-mismatch',
+          catalogVersion: `sha256:${'0'.repeat(64)}`,
+          modelVersion: 'mock-model-v1',
+          promptVersion: 'mock-prompt-v1',
+        },
+        { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
+      ),
+    );
+    await expect(
+      runLiveTrials(value, approval(value), true, fetcher),
+    ).rejects.toThrow('warmup');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it('stops before paid calls when the deployed cache check takes a second', async () => {
+    const value = approved();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(warmupResponse(value))
+      .mockResolvedValueOnce(warmupResponse(value, true));
+    vi.spyOn(performance, 'now')
+      .mockReturnValueOnce(0)
+      .mockReturnValueOnce(10)
+      .mockReturnValueOnce(10)
+      .mockReturnValueOnce(1_010);
+    const progress = vi.fn();
+    const warmups = vi.fn();
+    await expect(
+      runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
+    ).rejects.toThrow('cache check');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(progress).not.toHaveBeenCalled();
+    expect(warmups.mock.calls.at(-1)?.[0][1]).toMatchObject({
+      phase: 'cache-check',
+      status: 400,
+      latencyMs: 1_000,
+    });
   });
 });

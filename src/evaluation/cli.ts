@@ -53,6 +53,12 @@ export async function main() {
           `${JSON.stringify(progress, null, 2)}\n`,
         );
       },
+      async (warmups) => {
+        await writeFile(
+          resolve(output, 'warmups.json'),
+          `${JSON.stringify(warmups, null, 2)}\n`,
+        );
+      },
     );
   const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], {
     encoding: 'utf8',

@@ -180,6 +180,47 @@ export async function main(args = process.argv.slice(2)) {
       (row) => trialIds.has(row.requestId) && !probeIds.has(row.requestId),
     );
     await writeFile(diagnosticsPath, `${JSON.stringify(records, null, 2)}\n`);
+    let warmups = [];
+    try {
+      warmups = JSON.parse(
+        await readFile(`${liveDirectory}/warmups.json`, 'utf8'),
+      );
+    } catch {
+      /* No warmup completed. */
+    }
+    if (warmups.length)
+      await writeFile(
+        `${liveDirectory}/warmups.json`,
+        `${JSON.stringify(
+          warmups.map((row) => ({
+            ...row,
+            diagnostic: observed.get(row.requestId) ?? null,
+          })),
+          null,
+          2,
+        )}\n`,
+      );
+    const knownIds = new Set([
+      ...trialIds,
+      ...probeIds,
+      ...extraResults.map((row) => row.requestId),
+      ...warmups.map((row) => row.requestId),
+    ]);
+    await writeFile(
+      `${liveDirectory}/unmatched.json`,
+      `${JSON.stringify(
+        {
+          attribution: 'unknown-origin',
+          excludedFromRelevance: true,
+          note: 'These sanitized records could be timed-out evaluation calls or unrelated visits. Do not attribute them to a profile. Missing cost is unknown, not zero.',
+          diagnostics: [...observed.values()].filter(
+            (row) => !knownIds.has(row.requestId),
+          ),
+        },
+        null,
+        2,
+      )}\n`,
+    );
     if (extraResults.length)
       await writeFile(
         `${liveDirectory}/probes.json`,
@@ -392,9 +433,14 @@ export async function main(args = process.argv.slice(2)) {
       ...ids,
       ...extraResults.map((row) => row.requestId).filter(Boolean),
     ];
+    const warmups = JSON.parse(
+      await readFile(`${liveDirectory}/warmups.json`, 'utf8'),
+    );
+    const warmupIds = warmups.map((row) => row.requestId).filter(Boolean);
+    const diagnosticIds = [...allIds, ...warmupIds];
     const diagnosticsDeadline = Date.now() + 15_000;
     while (
-      allIds.some((id) => !observed.has(id)) &&
+      diagnosticIds.some((id) => !observed.has(id)) &&
       Date.now() < diagnosticsDeadline
     )
       await pause(200);
@@ -411,7 +457,11 @@ export async function main(args = process.argv.slice(2)) {
       '--output',
       'build/evaluation/comparison',
     ]);
-    if (allIds.length !== 34 || allIds.some((id) => !observed.has(id)))
+    if (
+      allIds.length !== 34 ||
+      warmupIds.length !== 6 ||
+      diagnosticIds.some((id) => !observed.has(id))
+    )
       throw new Error(
         'Some diagnostic evidence is missing; comparison retains incomplete metrics.',
       );
