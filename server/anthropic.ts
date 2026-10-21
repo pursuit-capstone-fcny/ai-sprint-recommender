@@ -61,7 +61,7 @@ export function providerBody(
           additionalProperties: false,
         },
       },
-      ...(haiku55 ? { effort: 'low' } : {}),
+      ...(haiku55 ? { effort: 'medium' } : {}),
     },
   };
   // This map stays on the server; the provider selects numbered candidates.

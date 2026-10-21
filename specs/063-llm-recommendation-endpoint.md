@@ -27,10 +27,11 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   request is assembled, then that text stays in the untrusted data message.
   The full catalog is retained with bounded title/description fields. It falls
   back if its conservative token bound exceeds the limit; no shortlist is made.
-- Given an explicit goal, when prompt `catalog-rank-v5` ranks the catalog, then
+- Given an explicit goal, when candidate `catalog-rank-v6` ranks the catalog, then
   it prioritizes the requested activity, output and audience or counterparty
-  over general AI guidance. It keeps v4's slots, full catalog, model and effort
-  unchanged, and uses area and tools when the goal is blank.
+  over general AI guidance. It keeps v5's prompt, full catalog and output schema,
+  and changes only Haiku 5.5 effort to medium with thinking disabled. Existing
+  caps still apply; it uses area and tools when the goal is blank.
 - Given a provider request, when candidates are encoded, then every catalog
   item has a numeric position constrained by a schema enum. Ten required
   nullable slots, `rank1` through `rank10`, bound the output. The server maps
