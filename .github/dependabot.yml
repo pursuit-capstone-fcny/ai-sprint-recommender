@@ -10,3 +10,12 @@ updates:
     directory: /
     schedule:
       interval: weekly
+    # React refuses to run when react and react-dom versions differ, so
+    # they update in one PR.
+    groups:
+      react:
+        patterns:
+          - react
+          - react-dom
+          - '@types/react'
+          - '@types/react-dom'
