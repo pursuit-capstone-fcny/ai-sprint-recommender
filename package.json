@@ -18,7 +18,8 @@
     "test": "vitest run",
     "prepare": "husky",
     "build:apps-script:test": "node scripts/build-apps-script.mjs --test",
-    "check:catalog": "node scripts/check-catalog.mjs"
+    "check:catalog": "node scripts/check-catalog.mjs",
+    "evaluate": "node scripts/evaluate-recommendations.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",

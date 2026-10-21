@@ -1,0 +1,380 @@
+{
+  "kind": "mock",
+  "benchmarkFingerprint": "258f57c179e6692d2f288edaa654b9ee965cafa28c3c5540249ca0d78aa450b5",
+  "modelVersion": "mock-model-v1",
+  "promptVersion": "mock-prompt-v1",
+  "trials": [
+    {
+      "startedAt": "2026-10-20T00:00:00.000Z",
+      "calls": [
+        {
+          "profileId": "profile-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval00000", "fxEval02000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval01000", "fxEval02000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-03",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval10000", "fxEval12000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-04",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval11000", "fxEval12000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-05",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval20000", "fxEval22000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-06",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval21000", "fxEval22000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-07",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval30000", "fxEval32000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-08",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval31000", "fxEval32000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-09",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval40000", "fxEval42000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-10",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval41000", "fxEval42000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        }
+      ]
+    },
+    {
+      "startedAt": "2026-10-20T00:01:00.000Z",
+      "calls": [
+        {
+          "profileId": "profile-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval02000", "fxEval00000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval02000", "fxEval01000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-03",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval12000", "fxEval10000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-04",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval12000", "fxEval11000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-05",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval22000", "fxEval20000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-06",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval22000", "fxEval21000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-07",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval32000", "fxEval30000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-08",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval32000", "fxEval31000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-09",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval42000", "fxEval40000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-10",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval42000", "fxEval41000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        }
+      ]
+    },
+    {
+      "startedAt": "2026-10-20T00:02:00.000Z",
+      "calls": [
+        {
+          "profileId": "profile-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval00000", "fxEval02000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval01000", "fxEval02000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-03",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval10000", "fxEval12000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-04",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval11000", "fxEval12000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-05",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval20000", "fxEval22000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-06",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval21000", "fxEval22000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-07",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval30000", "fxEval32000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-08",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval31000", "fxEval32000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-09",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": ["fxEval40000", "fxEval42000"],
+            "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304",
+            "modelVersion": "mock-model-v1",
+            "promptVersion": "mock-prompt-v1"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        },
+        {
+          "profileId": "profile-10",
+          "response": {
+            "outcome": "fallback",
+            "reason": "budget-exhausted"
+          },
+          "requestId": null,
+          "latencyMs": 0
+        }
+      ]
+    }
+  ]
+}

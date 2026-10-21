@@ -1,0 +1,422 @@
+{
+  "schemaVersion": 1,
+  "id": "draft-fictional-v1",
+  "approval": {
+    "status": "draft"
+  },
+  "catalog": {
+    "schemaVersion": 1,
+    "items": [
+      {
+        "youtubeId": "fxEval00000",
+        "title": "[Fixture] Grant reports",
+        "description": "Fictional public example about grant reports for Fundraising.",
+        "functionAreas": ["Fundraising"],
+        "tasks": ["grant reports"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-01",
+        "lengthSeconds": 180,
+        "status": "active",
+        "startHere": true
+      },
+      {
+        "youtubeId": "fxEval01000",
+        "title": "[Fixture] Donor emails",
+        "description": "Fictional public example about donor emails for Fundraising.",
+        "functionAreas": ["Fundraising"],
+        "tasks": ["donor emails"],
+        "tools": ["Claude"],
+        "addedAt": "2026-09-02",
+        "lengthSeconds": 210,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval02000",
+        "title": "[Fixture] Funding research",
+        "description": "Fictional public example about funding research for Fundraising.",
+        "functionAreas": ["Fundraising"],
+        "tasks": ["funding research"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-03",
+        "lengthSeconds": 240,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval10000",
+        "title": "[Fixture] Budget tracking",
+        "description": "Fictional public example about budget tracking for Operations.",
+        "functionAreas": ["Operations"],
+        "tasks": ["budget tracking"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-01",
+        "lengthSeconds": 180,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval11000",
+        "title": "[Fixture] Meeting summaries",
+        "description": "Fictional public example about meeting summaries for Operations.",
+        "functionAreas": ["Operations"],
+        "tasks": ["meeting summaries"],
+        "tools": ["Claude"],
+        "addedAt": "2026-09-02",
+        "lengthSeconds": 210,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval12000",
+        "title": "[Fixture] Data analysis",
+        "description": "Fictional public example about data analysis for Operations.",
+        "functionAreas": ["Operations"],
+        "tasks": ["data analysis"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-03",
+        "lengthSeconds": 240,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval20000",
+        "title": "[Fixture] Newsletters",
+        "description": "Fictional public example about newsletters for Communications.",
+        "functionAreas": ["Communications"],
+        "tasks": ["newsletters"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-01",
+        "lengthSeconds": 180,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval21000",
+        "title": "[Fixture] Social posts",
+        "description": "Fictional public example about social posts for Communications.",
+        "functionAreas": ["Communications"],
+        "tasks": ["social posts"],
+        "tools": ["Claude"],
+        "addedAt": "2026-09-02",
+        "lengthSeconds": 210,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval22000",
+        "title": "[Fixture] Content planning",
+        "description": "Fictional public example about content planning for Communications.",
+        "functionAreas": ["Communications"],
+        "tasks": ["content planning"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-03",
+        "lengthSeconds": 240,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval30000",
+        "title": "[Fixture] Participant feedback",
+        "description": "Fictional public example about participant feedback for Programs & Client Services.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": ["participant feedback"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-01",
+        "lengthSeconds": 180,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval31000",
+        "title": "[Fixture] Service plans",
+        "description": "Fictional public example about service plans for Programs & Client Services.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": ["service plans"],
+        "tools": ["Claude"],
+        "addedAt": "2026-09-02",
+        "lengthSeconds": 210,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval32000",
+        "title": "[Fixture] Volunteer onboarding",
+        "description": "Fictional public example about volunteer onboarding for Programs & Client Services.",
+        "functionAreas": ["Programs & Client Services"],
+        "tasks": ["volunteer onboarding"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-03",
+        "lengthSeconds": 240,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval40000",
+        "title": "[Fixture] Board updates",
+        "description": "Fictional public example about board updates for Leadership.",
+        "functionAreas": ["Leadership"],
+        "tasks": ["board updates"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-01",
+        "lengthSeconds": 180,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval41000",
+        "title": "[Fixture] Strategy planning",
+        "description": "Fictional public example about strategy planning for Leadership.",
+        "functionAreas": ["Leadership"],
+        "tasks": ["strategy planning"],
+        "tools": ["Claude"],
+        "addedAt": "2026-09-02",
+        "lengthSeconds": 210,
+        "status": "active",
+        "startHere": false
+      },
+      {
+        "youtubeId": "fxEval42000",
+        "title": "[Fixture] Risk summaries",
+        "description": "Fictional public example about risk summaries for Leadership.",
+        "functionAreas": ["Leadership"],
+        "tasks": ["risk summaries"],
+        "tools": ["ChatGPT"],
+        "addedAt": "2026-09-03",
+        "lengthSeconds": 240,
+        "status": "active",
+        "startHere": false
+      }
+    ],
+    "functionAreas": [
+      "Fundraising",
+      "Operations",
+      "Communications",
+      "Programs & Client Services",
+      "Leadership"
+    ],
+    "tools": ["ChatGPT", "Claude"],
+    "tasks": [
+      "grant reports",
+      "donor emails",
+      "funding research",
+      "budget tracking",
+      "meeting summaries",
+      "data analysis",
+      "newsletters",
+      "social posts",
+      "content planning",
+      "participant feedback",
+      "service plans",
+      "volunteer onboarding",
+      "board updates",
+      "strategy planning",
+      "risk summaries"
+    ],
+    "synonyms": [],
+    "adjacentTools": [],
+    "catalogVersion": "sha256:e1a5997fade25a52da13471fbd9a3dee6e6e9ace25ffd9522e5a88d0c08a3304"
+  },
+  "profiles": [
+    {
+      "id": "profile-01",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "Prepare grant reports and funding research",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval00000",
+          "reason": "Draft label: directly covers grant reports."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval02000",
+          "reason": "Draft label: covers the related request for funding research."
+        }
+      ]
+    },
+    {
+      "id": "profile-02",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "Prepare donor emails and funding research",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval01000",
+          "reason": "Draft label: directly covers donor emails."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval02000",
+          "reason": "Draft label: covers the related request for funding research."
+        }
+      ]
+    },
+    {
+      "id": "profile-03",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "Prepare budget tracking and data analysis",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval10000",
+          "reason": "Draft label: directly covers budget tracking."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval12000",
+          "reason": "Draft label: covers the related request for data analysis."
+        }
+      ]
+    },
+    {
+      "id": "profile-04",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "Prepare meeting summaries and data analysis",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval11000",
+          "reason": "Draft label: directly covers meeting summaries."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval12000",
+          "reason": "Draft label: covers the related request for data analysis."
+        }
+      ]
+    },
+    {
+      "id": "profile-05",
+      "input": {
+        "functionArea": "Communications",
+        "goal": "Prepare newsletters and content planning",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval20000",
+          "reason": "Draft label: directly covers newsletters."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval22000",
+          "reason": "Draft label: covers the related request for content planning."
+        }
+      ]
+    },
+    {
+      "id": "profile-06",
+      "input": {
+        "functionArea": "Communications",
+        "goal": "Prepare social posts and content planning",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval21000",
+          "reason": "Draft label: directly covers social posts."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval22000",
+          "reason": "Draft label: covers the related request for content planning."
+        }
+      ]
+    },
+    {
+      "id": "profile-07",
+      "input": {
+        "functionArea": "Programs & Client Services",
+        "goal": "Prepare participant feedback and volunteer onboarding",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval30000",
+          "reason": "Draft label: directly covers participant feedback."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval32000",
+          "reason": "Draft label: covers the related request for volunteer onboarding."
+        }
+      ]
+    },
+    {
+      "id": "profile-08",
+      "input": {
+        "functionArea": "Programs & Client Services",
+        "goal": "Prepare service plans and volunteer onboarding",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval31000",
+          "reason": "Draft label: directly covers service plans."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval32000",
+          "reason": "Draft label: covers the related request for volunteer onboarding."
+        }
+      ]
+    },
+    {
+      "id": "profile-09",
+      "input": {
+        "functionArea": "Leadership",
+        "goal": "Prepare board updates and risk summaries",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval40000",
+          "reason": "Draft label: directly covers board updates."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval42000",
+          "reason": "Draft label: covers the related request for risk summaries."
+        }
+      ]
+    },
+    {
+      "id": "profile-10",
+      "input": {
+        "functionArea": "Leadership",
+        "goal": "Prepare strategy planning and risk summaries",
+        "tools": ["ChatGPT"]
+      },
+      "ideal": [
+        {
+          "youtubeId": "fxEval41000",
+          "reason": "Draft label: directly covers strategy planning."
+        }
+      ],
+      "good": [
+        {
+          "youtubeId": "fxEval42000",
+          "reason": "Draft label: covers the related request for risk summaries."
+        }
+      ]
+    }
+  ]
+}

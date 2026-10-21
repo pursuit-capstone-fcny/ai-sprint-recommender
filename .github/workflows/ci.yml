@@ -35,6 +35,9 @@ jobs:
       - name: Test
         run: pnpm test
 
+      - name: Recommendation evaluation (no provider calls)
+        run: pnpm evaluate --trials fixtures/evaluation/mock-trials.json
+
       - name: Build
         run: pnpm build
 
