@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { Benchmark } from './benchmark';
 import { benchmarkFingerprint } from './benchmark';
-import type { Trials } from './report';
+import type { Diagnostics, Trials } from './report';
 import {
   RecommendationResponseSchema,
   RECOMMENDATION_DEADLINE_MS,
@@ -9,17 +9,79 @@ import {
   type RecommendationResponse,
 } from '../contracts/recommendation';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
+import { parsePublicCatalog } from '../contracts/publicCatalog';
 
 interface Observation {
   response: RecommendationResponse;
   requestId: string | null;
   latencyMs: number;
 }
-export interface Warmup extends Observation {
+export interface Warmup {
   trial: number;
   phase: 'catalog-load' | 'cache-check';
   status: number | null;
   attempt?: number;
+  requestId: string | null;
+  latencyMs: number;
+  response:
+    | RecommendationResponse
+    | { outcome: 'catalog-loaded'; catalogVersion: string };
+}
+
+async function loadCatalog(
+  endpoint: string,
+  fetcher: typeof fetch,
+): Promise<Pick<Warmup, 'response' | 'requestId' | 'latencyMs' | 'status'>> {
+  const started = performance.now();
+  let status: number | null = null;
+  let response: Warmup['response'];
+  try {
+    const result = await fetcher(new URL('/api/catalog', endpoint), {
+      method: 'GET',
+      headers: { accept: 'application/json', 'cache-control': 'no-cache' },
+      cache: 'no-store',
+      credentials: 'omit',
+      redirect: 'error',
+      signal: AbortSignal.timeout(10_000),
+    });
+    status = result.status;
+    if (status === 200) {
+      try {
+        const catalog = parsePublicCatalog(await result.json());
+        response = {
+          outcome: 'catalog-loaded',
+          catalogVersion: catalog.catalogVersion,
+        };
+      } catch (error) {
+        if (
+          (error instanceof Error || error instanceof DOMException) &&
+          ['TimeoutError', 'AbortError'].includes(error.name)
+        )
+          throw error;
+        response = { outcome: 'fallback', reason: 'invalid-response' };
+      }
+    } else {
+      response = {
+        outcome: 'fallback',
+        reason: status === 504 ? 'timeout' : 'provider-error',
+      };
+    }
+  } catch (error) {
+    response = {
+      outcome: 'fallback',
+      reason:
+        (error instanceof Error || error instanceof DOMException) &&
+        ['TimeoutError', 'AbortError'].includes(error.name)
+          ? 'timeout'
+          : 'provider-error',
+    };
+  }
+  return {
+    response,
+    requestId: null,
+    status,
+    latencyMs: Math.round(performance.now() - started),
+  };
 }
 
 async function requestRecommendation(
@@ -116,28 +178,14 @@ export async function warmCatalog(
   trial: number,
 ): Promise<Warmup[]> {
   const warmups: Warmup[] = [];
-  const wrongVersion = `sha256:${(benchmark.catalog.catalogVersion === `sha256:${'0'.repeat(64)}` ? 'f' : '0').repeat(64)}`;
-  // Version mismatch fetches and validates the trusted catalog before provider dispatch.
-  // A cold Apps Script fetch can exceed the server deadline. Retry only this
-  // unpaid load up to three times; invalid area is a second pre-provider gate.
+  // Catalog GET has no provider path. Retry only its timeouts, at most three attempts.
   let warmup: Warmup | undefined;
   for (let attempt = 1; attempt <= 3; attempt++) {
     warmup = {
       trial,
       phase: 'catalog-load',
       attempt,
-      ...(await requestRecommendation(
-        approval.endpoint,
-        {
-          functionArea: '__evaluation_invalid_area__',
-          goal: '',
-          tools: [],
-          catalogVersion: wrongVersion,
-        },
-        fetcher,
-        10_000,
-        200,
-      )),
+      ...(await loadCatalog(approval.endpoint, fetcher)),
     };
     warmups.push(warmup);
     await saveWarmups(warmups);
@@ -149,12 +197,9 @@ export async function warmCatalog(
   }
   if (
     !warmup ||
-    !warmup.requestId ||
-    warmup.response.outcome !== 'fallback' ||
-    warmup.response.reason !== 'catalog-mismatch' ||
-    warmup.response.catalogVersion !== benchmark.catalog.catalogVersion ||
-    warmup.response.modelVersion !== approval.modelVersion ||
-    warmup.response.promptVersion !== approval.promptVersion
+    warmup.status !== 200 ||
+    warmup.response.outcome !== 'catalog-loaded' ||
+    warmup.response.catalogVersion !== benchmark.catalog.catalogVersion
   ) {
     throw new Error(
       'Catalog warmup did not confirm the approved catalog and configuration. No trial retry was attempted.',
@@ -195,6 +240,67 @@ export async function warmCatalog(
     );
   }
   return warmups;
+}
+
+export function hasCompleteWarmupEvidence(
+  warmups: Warmup[],
+  diagnostics: ReadonlyMap<string, Diagnostics[number]>,
+  catalogVersion: string,
+  approval: z.infer<typeof LiveApprovalSchema>,
+  trialCount: number,
+): boolean {
+  if (
+    warmups.length < trialCount * 2 ||
+    warmups.length > trialCount * 4 ||
+    warmups.some((row) => row.trial < 1 || row.trial > trialCount)
+  )
+    return false;
+  const cacheIds = new Set<string>();
+  for (let trial = 1; trial <= trialCount; trial++) {
+    const rows = warmups.filter((row) => row.trial === trial);
+    const check = rows.at(-1);
+    const loads = rows.slice(0, -1);
+    if (
+      loads.length < 1 ||
+      loads.length > 3 ||
+      loads.some(
+        (row, index) =>
+          row.phase !== 'catalog-load' ||
+          row.requestId !== null ||
+          row.attempt !== index + 1 ||
+          (index === loads.length - 1
+            ? row.status !== 200 ||
+              row.response.outcome !== 'catalog-loaded' ||
+              row.response.catalogVersion !== catalogVersion
+            : row.response.outcome !== 'fallback' ||
+              row.response.reason !== 'timeout'),
+      ) ||
+      !check ||
+      check.phase !== 'cache-check' ||
+      !check.requestId ||
+      cacheIds.has(check.requestId) ||
+      check.status !== 400 ||
+      check.latencyMs >= 1_000 ||
+      check.response.outcome !== 'fallback' ||
+      check.response.reason !== 'unavailable' ||
+      check.response.catalogVersion !== catalogVersion ||
+      check.response.modelVersion !== approval.modelVersion ||
+      check.response.promptVersion !== approval.promptVersion
+    )
+      return false;
+    cacheIds.add(check.requestId);
+    const diagnostic = diagnostics.get(check.requestId);
+    if (
+      diagnostic?.requestId !== check.requestId ||
+      diagnostic.environment !== 'test' ||
+      diagnostic.outcome !== 'unavailable' ||
+      diagnostic.catalogVersion !== catalogVersion ||
+      diagnostic.modelVersion !== approval.modelVersion ||
+      diagnostic.promptVersion !== approval.promptVersion
+    )
+      return false;
+  }
+  return true;
 }
 
 // No provider credentials: this exercises only the approved preview endpoint.

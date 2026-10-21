@@ -37,7 +37,7 @@ export async function main(args = process.argv.slice(2)) {
     stdin: {
       contents: `
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
-    export { LiveApprovalSchema, warmCatalog } from './src/evaluation/live';
+    export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
     export { RecommendationRequestSchema, RecommendationResponseSchema } from './src/contracts/recommendation';
     export { selectRecommendations } from './src/recommendations/selectRecommendations';
     export { toCatalogItem } from './src/contracts/catalogItem';
@@ -401,18 +401,20 @@ export async function main(args = process.argv.slice(2)) {
       trial.calls.map((call) => call.requestId).filter(Boolean),
     );
     const catalog = benchmark.catalog.items.map(contracts.toCatalogItem);
-    if (diagnoseFormat)
-      await contracts.warmCatalog(
-        benchmark,
-        approval,
-        fetch,
-        async (rows) =>
-          writeFile(
-            `${liveDirectory}/warmups.json`,
-            `${JSON.stringify(rows, null, 2)}\n`,
-          ),
-        1,
-      );
+    const trialWarmups = diagnoseFormat
+      ? []
+      : JSON.parse(await readFile(`${liveDirectory}/warmups.json`, 'utf8'));
+    await contracts.warmCatalog(
+      benchmark,
+      approval,
+      fetch,
+      async (rows) =>
+        writeFile(
+          `${liveDirectory}/warmups.json`,
+          `${JSON.stringify([...trialWarmups, ...rows], null, 2)}\n`,
+        ),
+      diagnoseFormat ? 1 : 4,
+    );
     // Separate probes have one attempt each and never alter benchmark scores.
     for (const testCase of cases) {
       checkRunning();
@@ -485,7 +487,10 @@ export async function main(args = process.argv.slice(2)) {
     const warmups = JSON.parse(
       await readFile(`${liveDirectory}/warmups.json`, 'utf8'),
     );
-    const warmupIds = warmups.map((row) => row.requestId).filter(Boolean);
+    const warmupIds = warmups
+      .filter((row) => row.phase === 'cache-check')
+      .map((row) => row.requestId)
+      .filter(Boolean);
     const diagnosticIds = [...allIds, ...warmupIds];
     const diagnosticsDeadline = Date.now() + 15_000;
     while (
@@ -509,11 +514,14 @@ export async function main(args = process.argv.slice(2)) {
       ]);
     if (
       allIds.length !== (diagnoseFormat ? 2 : 34) ||
-      warmupIds.length !== warmups.length ||
-      warmups.length < (diagnoseFormat ? 2 : 6) ||
-      warmups.length > (diagnoseFormat ? 4 : 12) ||
-      warmups.filter((row) => row.phase === 'cache-check').length !==
-        (diagnoseFormat ? 1 : 3) ||
+      new Set(allIds).size !== allIds.length ||
+      !contracts.hasCompleteWarmupEvidence(
+        warmups,
+        observed,
+        benchmark.catalog.catalogVersion,
+        approval,
+        diagnoseFormat ? 1 : 4,
+      ) ||
       diagnosticIds.some((id) => !observed.has(id))
     )
       throw new Error(

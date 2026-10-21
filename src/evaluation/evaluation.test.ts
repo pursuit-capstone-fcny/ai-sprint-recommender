@@ -15,7 +15,12 @@ import {
   type Diagnostics,
   type Trials,
 } from './report';
-import { runLiveTrials, LiveApprovalSchema, type Warmup } from './live';
+import {
+  runLiveTrials,
+  LiveApprovalSchema,
+  hasCompleteWarmupEvidence,
+  type Warmup,
+} from './live';
 import { PublicCatalogDataSchema } from '../contracts/publicCatalog';
 
 const benchmark = parseBenchmark(fixture);
@@ -294,6 +299,7 @@ describe('AC-19.2–4 comparable trial reports', () => {
 describe('AC-19.5–6 manual live checks are opt-in', () => {
   afterEach(() => vi.restoreAllMocks());
   function warmupResponse(value: Benchmark, cacheCheck = false) {
+    if (!cacheCheck) return Response.json(value.catalog);
     return Response.json(
       {
         outcome: 'fallback',
@@ -358,6 +364,14 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
         redirect: 'error',
       });
       expect(init?.signal).toBeInstanceOf(AbortSignal);
+      if (init?.method === 'GET') {
+        expect(String(_url)).toBe(
+          new URL('/api/catalog', approval(value).endpoint).href,
+        );
+        expect(init.body).toBeUndefined();
+        return warmupResponse(value);
+      }
+      expect(init?.method).toBe('POST');
       const request = JSON.parse(String(init?.body));
       expect(Object.keys(request).sort()).toEqual([
         'catalogVersion',
@@ -365,8 +379,7 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
         'goal',
         'tools',
       ]);
-      if (request.catalogVersion !== value.catalog.catalogVersion)
-        return warmupResponse(value);
+      expect(request.catalogVersion).toBe(value.catalog.catalogVersion);
       if (request.functionArea === '__evaluation_invalid_area__')
         return warmupResponse(value, true);
       paidEligible();
@@ -388,6 +401,16 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
     );
     expect(fetcher).toHaveBeenCalledTimes(36);
     expect(paidEligible).toHaveBeenCalledTimes(30);
+    expect(warmups.at(-1)?.[0]).toMatchObject({
+      attempt: 1,
+      requestId: null,
+      status: 200,
+      response: {
+        outcome: 'catalog-loaded',
+        catalogVersion: value.catalog.catalogVersion,
+      },
+    });
+    expect(JSON.stringify(warmups)).not.toContain(value.catalog.items[0].title);
     expect(warmups.at(-1)?.map((row) => [row.trial, row.phase])).toEqual([
       [1, 'catalog-load'],
       [1, 'cache-check'],
@@ -445,46 +468,55 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
     });
     expect(snapshots[1].trials[0].calls).toHaveLength(2);
   });
-  it('preserves three timed-out unpaid loads and stops before any trial', async () => {
-    const value = approved();
-    const fetcher = vi
-      .fn<typeof fetch>()
-      .mockRejectedValue(new DOMException('Timeout', 'TimeoutError'));
-    const progress = vi.fn();
-    const warmups = vi.fn();
-    await expect(
-      runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
-    ).rejects.toThrow('warmup');
-    expect(fetcher).toHaveBeenCalledTimes(3);
-    expect(progress).not.toHaveBeenCalled();
-    expect(warmups.mock.calls.at(-1)?.[0]).toHaveLength(3);
-    expect(warmups.mock.calls.at(-1)?.[0][2]).toEqual(
-      expect.objectContaining({
-        trial: 1,
-        phase: 'catalog-load',
-        attempt: 3,
-        response: { outcome: 'fallback', reason: 'timeout' },
-      }),
-    );
-    for (const [, init] of fetcher.mock.calls) {
-      expect(JSON.parse(String(init?.body)).functionArea).toBe(
-        '__evaluation_invalid_area__',
+  it.each(['client', 'server'])(
+    'preserves three %s-timed-out unpaid loads and stops before any trial',
+    async (timeoutSource) => {
+      const value = approved();
+      const fetcher = vi.fn<typeof fetch>();
+      if (timeoutSource === 'client')
+        fetcher.mockRejectedValue(new DOMException('Timeout', 'TimeoutError'));
+      else
+        fetcher.mockImplementation(
+          async () => new Response(null, { status: 504 }),
+        );
+      const progress = vi.fn();
+      const warmups = vi.fn();
+      await expect(
+        runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
+      ).rejects.toThrow('warmup');
+      expect(fetcher).toHaveBeenCalledTimes(3);
+      expect(progress).not.toHaveBeenCalled();
+      expect(warmups.mock.calls.at(-1)?.[0]).toHaveLength(3);
+      expect(warmups.mock.calls.at(-1)?.[0][2]).toEqual(
+        expect.objectContaining({
+          trial: 1,
+          phase: 'catalog-load',
+          attempt: 3,
+          response: { outcome: 'fallback', reason: 'timeout' },
+        }),
       );
-    }
-  });
+      for (const [, init] of fetcher.mock.calls) {
+        expect(init?.method).toBe('GET');
+        expect(init?.body).toBeUndefined();
+      }
+    },
+  );
   it('can warm after one timeout without repeating any paid-eligible request', async () => {
     const value = approved();
     let cold = true;
     let paid = 0;
     const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
-      const input = JSON.parse(String(init?.body));
-      if (input.catalogVersion !== value.catalog.catalogVersion) {
+      if (init?.method === 'GET') {
         if (cold) {
           cold = false;
-          throw new DOMException('Timeout', 'TimeoutError');
+          return Response.json(
+            { error: 'Catalog unavailable' },
+            { status: 504 },
+          );
         }
         return warmupResponse(value);
       }
+      const input = JSON.parse(String(init?.body));
       if (input.functionArea === '__evaluation_invalid_area__')
         return warmupResponse(value, true);
       paid++;
@@ -500,24 +532,57 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
       true,
     );
   });
-  it('requires the correct frozen catalog and candidate during unpaid warmup', async () => {
+  it.each(['version', 'malformed', 'retired', 'unavailable', 'invalid-json'])(
+    'stops on %s catalog loads without paid calls or retries',
+    async (kind) => {
+      const value = approved();
+      const data = structuredClone(value.catalog);
+      if (kind === 'version') data.catalogVersion = `sha256:${'0'.repeat(64)}`;
+      if (kind === 'retired') data.items[0].status = 'retired';
+      const response =
+        kind === 'invalid-json'
+          ? new Response('not json')
+          : Response.json(kind === 'malformed' ? { items: [] } : data, {
+              status: kind === 'unavailable' ? 503 : 200,
+            });
+      const fetcher = vi.fn<typeof fetch>().mockResolvedValue(response);
+      const progress = vi.fn();
+      const warmups = vi.fn();
+      await expect(
+        runLiveTrials(value, approval(value), true, fetcher, progress, warmups),
+      ).rejects.toThrow('warmup');
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(fetcher.mock.calls[0][1]?.method).toBe('GET');
+      expect(progress).not.toHaveBeenCalled();
+      expect(warmups.mock.calls.at(-1)?.[0]).toHaveLength(1);
+    },
+  );
+  it('requires the approved candidate on the cache check after a valid GET', async () => {
     const value = approved();
-    const fetcher = vi.fn<typeof fetch>().mockResolvedValue(
-      Response.json(
-        {
-          outcome: 'fallback',
-          reason: 'catalog-mismatch',
-          catalogVersion: `sha256:${'0'.repeat(64)}`,
-          modelVersion: 'mock-model-v1',
-          promptVersion: 'mock-prompt-v1',
-        },
-        { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
-      ),
-    );
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(warmupResponse(value))
+      .mockResolvedValueOnce(
+        Response.json(
+          {
+            outcome: 'fallback',
+            reason: 'unavailable',
+            catalogVersion: value.catalog.catalogVersion,
+            modelVersion: 'wrong-model',
+            promptVersion: 'mock-prompt-v1',
+          },
+          {
+            status: 400,
+            headers: { 'X-Recommendation-Request-Id': randomUUID() },
+          },
+        ),
+      );
+    const progress = vi.fn();
     await expect(
-      runLiveTrials(value, approval(value), true, fetcher),
-    ).rejects.toThrow('warmup');
-    expect(fetcher).toHaveBeenCalledTimes(1);
+      runLiveTrials(value, approval(value), true, fetcher, progress),
+    ).rejects.toThrow('cache check');
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(progress).not.toHaveBeenCalled();
   });
   it('stops before paid calls when the deployed cache check takes a second', async () => {
     const value = approved();
@@ -542,5 +607,124 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
       status: 400,
       latencyMs: 1_000,
     });
+  });
+
+  it('requires validated GET attempts and matching POST diagnostics for all three trials and probes', () => {
+    const value = approved();
+    const permission = LiveApprovalSchema.parse(approval(value));
+    const rows: Warmup[] = [];
+    const diagnostics = new Map<string, Diagnostics[number]>();
+    for (let trial = 1; trial <= 4; trial++) {
+      const requestId = randomUUID();
+      rows.push(
+        {
+          trial,
+          phase: 'catalog-load',
+          attempt: 1,
+          requestId: null,
+          status: 504,
+          latencyMs: 9_050,
+          response: { outcome: 'fallback', reason: 'timeout' },
+        },
+        {
+          trial,
+          phase: 'catalog-load',
+          attempt: 2,
+          requestId: null,
+          status: 200,
+          latencyMs: 50,
+          response: {
+            outcome: 'catalog-loaded',
+            catalogVersion: value.catalog.catalogVersion,
+          },
+        },
+        {
+          trial,
+          phase: 'cache-check',
+          requestId,
+          status: 400,
+          latencyMs: 40,
+          response: {
+            outcome: 'fallback',
+            reason: 'unavailable',
+            catalogVersion: value.catalog.catalogVersion,
+            modelVersion: permission.modelVersion,
+            promptVersion: permission.promptVersion,
+          },
+        },
+      );
+      diagnostics.set(requestId, {
+        requestId,
+        environment: 'test',
+        outcome: 'unavailable',
+        latencyMs: 30,
+        catalogVersion: value.catalog.catalogVersion,
+        modelVersion: permission.modelVersion,
+        promptVersion: permission.promptVersion,
+      });
+    }
+    const complete = (warmups = rows, metrics = diagnostics) =>
+      hasCompleteWarmupEvidence(
+        warmups,
+        metrics,
+        value.catalog.catalogVersion,
+        permission,
+        4,
+      );
+    expect(complete()).toBe(true);
+    expect(diagnostics.size).toBe(4); // GET records intentionally have no request IDs/diagnostics.
+    expect(complete(rows.filter((row) => row.trial !== 4))).toBe(false);
+    expect(complete(rows, new Map())).toBe(false);
+    for (const invalid of [
+      'get-id',
+      'get-version',
+      'get-status',
+      'attempt',
+      'non-timeout-retry',
+      'slow-post',
+    ]) {
+      const altered = structuredClone(rows);
+      switch (invalid) {
+        case 'get-id':
+          altered[1].requestId = randomUUID();
+          break;
+        case 'get-version':
+          altered[1].response = {
+            outcome: 'catalog-loaded',
+            catalogVersion: `sha256:${'0'.repeat(64)}`,
+          };
+          break;
+        case 'get-status':
+          altered[1].status = 503;
+          break;
+        case 'attempt':
+          altered[1].attempt = 3;
+          break;
+        case 'non-timeout-retry':
+          altered[0].response = {
+            outcome: 'fallback',
+            reason: 'provider-error',
+          };
+          break;
+        case 'slow-post':
+          altered[2].latencyMs = 1_000;
+          break;
+      }
+      expect(complete(altered), invalid).toBe(false);
+    }
+    for (const invalid of [
+      'outcome',
+      'catalogVersion',
+      'modelVersion',
+      'promptVersion',
+    ]) {
+      const metrics = structuredClone(diagnostics);
+      const entry = metrics.values().next().value!;
+      if (invalid === 'outcome') entry.outcome = 'success';
+      else
+        entry[invalid as 'catalogVersion' | 'modelVersion' | 'promptVersion'] =
+          'wrong';
+      expect(complete(rows, metrics), invalid).toBe(false);
+    }
   });
 });
