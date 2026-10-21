@@ -21,6 +21,9 @@ jobs:
           cache: pnpm
 
       - name: Install and build
+        env:
+          VITE_CATALOG_URL: ${{ vars.CATALOG_TEST_URL }}
+          VITE_CATALOG_SOURCE: ${{ vars.CATALOG_TEST_URL && 'remote' || 'fixture' }}
         run: |
           pnpm install --frozen-lockfile
           pnpm build

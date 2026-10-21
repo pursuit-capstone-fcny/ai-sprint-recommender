@@ -8,6 +8,7 @@ interface IntakeFormProps {
   goalText: string;
   onGoalTextChange: (value: string) => void;
   availableTools: string[];
+  availableFunctionAreas?: readonly string[];
   selectedTools: string[];
   onToggleTool: (tool: string) => void;
 }
@@ -18,6 +19,7 @@ export function IntakeForm({
   goalText,
   onGoalTextChange,
   availableTools,
+  availableFunctionAreas = FUNCTION_AREAS,
   selectedTools,
   onToggleTool,
 }: IntakeFormProps) {
@@ -33,7 +35,7 @@ export function IntakeForm({
           onChange={(event) => onFunctionAreaChange(event.target.value || null)}
         >
           <option value="">Not sure</option>
-          {FUNCTION_AREAS.map((area) => (
+          {availableFunctionAreas.map((area) => (
             <option key={area} value={area}>
               {area}
             </option>

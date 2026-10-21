@@ -36,7 +36,7 @@ export function buildComparator(
     if (startHereDiff !== 0) return startHereDiff;
 
     if (a.addedAt !== b.addedAt) {
-      return a.addedAt < b.addedAt ? 1 : -1;
+      return (a.addedAt ?? '') < (b.addedAt ?? '') ? 1 : -1;
     }
 
     if (a.youtubeId === b.youtubeId) return 0;

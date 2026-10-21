@@ -13,8 +13,14 @@
     "isolatedModules": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "resolveJsonModule": true,
-    "types": ["vite/client"]
+    "types": ["vite/client", "node"],
+    "resolveJsonModule": true
   },
-  "include": ["src", "fixtures", "vite.config.ts", "eslint.config.js"]
+  "include": [
+    "src",
+    "fixtures",
+    "apps-script",
+    "vite.config.ts",
+    "eslint.config.js"
+  ]
 }

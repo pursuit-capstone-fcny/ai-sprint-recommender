@@ -5,9 +5,25 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import tseslint from 'typescript-eslint';
 
 export default tseslint.config(
-  { ignores: ['dist', 'coverage'] },
+  { ignores: ['dist', 'build', 'coverage'] },
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  {
+    files: ['scripts/*.mjs'],
+    languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['apps-script/index.ts', 'apps-script/test-setup.ts'],
+    languageOptions: {
+      globals: {
+        PropertiesService: 'readonly',
+        SpreadsheetApp: 'readonly',
+        LockService: 'readonly',
+        ContentService: 'readonly',
+        Utilities: 'readonly',
+      },
+    },
+  },
   {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {

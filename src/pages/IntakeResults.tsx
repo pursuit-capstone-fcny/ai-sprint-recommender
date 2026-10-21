@@ -21,16 +21,25 @@ function availableToolsFrom(catalog: CatalogItem[]): string[] {
 
 interface IntakeResultsProps {
   catalog: CatalogItem[];
+  availableFunctionAreas?: readonly string[];
+  availableTools?: string[];
 }
 
-export function IntakeResults({ catalog }: IntakeResultsProps) {
+export function IntakeResults({
+  catalog,
+  availableFunctionAreas,
+  availableTools: dictionaryTools,
+}: IntakeResultsProps) {
   const [functionArea, setFunctionArea] = useState<string | null>(null);
   const [goalText, setGoalText] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [playingId, setPlayingId] = useState<string | null>(null);
 
-  const availableTools = useMemo(() => availableToolsFrom(catalog), [catalog]);
+  const availableTools = useMemo(
+    () => dictionaryTools ?? availableToolsFrom(catalog),
+    [catalog, dictionaryTools],
+  );
 
   const profile: IntakeProfile = useMemo(
     () => ({ functionArea, goalWords: splitGoalWords(goalText), tools }),
@@ -80,6 +89,7 @@ export function IntakeResults({ catalog }: IntakeResultsProps) {
         goalText={goalText}
         onGoalTextChange={setGoalText}
         availableTools={availableTools}
+        availableFunctionAreas={availableFunctionAreas}
         selectedTools={tools}
         onToggleTool={handleToggleTool}
       />
