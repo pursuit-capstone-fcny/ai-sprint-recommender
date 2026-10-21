@@ -3,7 +3,7 @@
   "environment": "test",
   "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
   "modelVersion": "claude-haiku-5-5",
-  "promptVersion": "catalog-rank-v3",
+  "promptVersion": "catalog-rank-v4",
   "approvedBy": "Jason",
   "approvedAt": "2026-10-21",
   "runtimeDecision": "docs/evaluation/2026-10-21/test-decision.md; docs/evaluation/2026-10-21/quality-rerun.md",

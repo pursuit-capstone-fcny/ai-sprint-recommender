@@ -1,0 +1,70 @@
+{
+  "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v3",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "format-probe-1",
+      "requestId": "cb9c9f90-af2c-4ecc-b82c-6b3a740d445f",
+      "response": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v3"
+      },
+      "latencyMs": 1786,
+      "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "nBAaIIz9QFg"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "invalid-response",
+      "diagnostic": {
+        "requestId": "cb9c9f90-af2c-4ecc-b82c-6b3a740d445f",
+        "environment": "test",
+        "outcome": "invalid-response",
+        "latencyMs": 1713,
+        "inputTokens": 16227,
+        "outputTokens": 32,
+        "costMicrodollars": 1639,
+        "reservedMicrodollars": 6256,
+        "validationFailure": "schema",
+        "selectionCount": 12,
+        "invalidSelectionCount": 0,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v3"
+      }
+    },
+    {
+      "id": "format-probe-2",
+      "requestId": "d8474a25-1590-434e-8d67-23ecc212608c",
+      "response": {
+        "outcome": "fallback",
+        "reason": "invalid-response",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v3"
+      },
+      "latencyMs": 1399,
+      "displayedIds": ["cwCVpchJHB4", "4Wo_miqxgmE", "m0mI6_g0V2g"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "invalid-response",
+      "diagnostic": {
+        "requestId": "d8474a25-1590-434e-8d67-23ecc212608c",
+        "environment": "test",
+        "outcome": "invalid-response",
+        "latencyMs": 1372,
+        "inputTokens": 16229,
+        "outputTokens": 32,
+        "costMicrodollars": 1639,
+        "reservedMicrodollars": 6256,
+        "validationFailure": "schema",
+        "selectionCount": 12,
+        "invalidSelectionCount": 0,
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v3"
+      }
+    }
+  ]
+}

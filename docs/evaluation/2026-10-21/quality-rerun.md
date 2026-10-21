@@ -64,6 +64,22 @@ allowance is now $0.60; the original $1 cap and expiry remain unchanged.
 Neither this request nor a better score approves production enablement or
 substitutes for Ali/Eliot's final review.
 
+## Format diagnosis and V4
+
+[Run 39610228742](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39610228742)
+sent two approved synthetic profiles through the same budget-controlled
+endpoint. Both returned 12 selections with zero malformed selection values,
+exceeding the ten-selection contract. Their bounded
+[diagnostics](runs/39610228742/probes.json) cost **$0.003278** in total.
+Shutdown was confirmed. These probes do not count as relevance trials.
+
+V4 keeps the task-matching policy and uses ten required nullable output slots
+to enforce the size limit in the provider schema. The server still rejects
+duplicates, unknown selections and malformed responses; it never truncates a
+bad answer into a passing one. Three fresh trials will compare against the
+saved V3 report, with the same labels and limits. One separate browser
+verification may reserve at most another $0.006256 within the original cap.
+
 ## Preflight attempts
 
 [Run 39605490096](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/39605490096)
