@@ -11,7 +11,9 @@ import {
   anthropicProvider,
   inputTokenBound,
   providerBody,
+  ProviderValidationSchema,
   type Provider,
+  type ProviderValidation,
 } from './anthropic';
 import { boundedJson } from './bounded-json';
 import {
@@ -27,7 +29,7 @@ export interface WorkerEnv extends Variables {
   ASSETS?: { fetch(request: Request): Promise<Response> };
   RECOMMENDATION_BUDGET?: BudgetNamespace;
 }
-export interface Diagnostic {
+export interface Diagnostic extends Partial<ProviderValidation> {
   requestId: string;
   environment: 'test' | 'production' | 'unconfigured';
   outcome: 'success' | RecommendationFallbackReason;
@@ -247,8 +249,16 @@ export async function recommend(
         return fallback('invalid-response');
       const parsed = outputSchema.safeParse(result.value);
       const ids = new Set(catalog.items.map((item) => item.youtubeId));
-      if (!parsed.success || parsed.data.youtubeIds.some((id) => !ids.has(id)))
+      if (
+        !parsed.success ||
+        parsed.data.youtubeIds.some((id) => !ids.has(id))
+      ) {
+        if (limits.LLM_ENVIRONMENT === 'test') {
+          const validation = ProviderValidationSchema.safeParse(result);
+          if (validation.success) Object.assign(diagnostic, validation.data);
+        }
         return fallback('invalid-response');
+      }
       return {
         outcome: 'success',
         youtubeIds: parsed.data.youtubeIds,

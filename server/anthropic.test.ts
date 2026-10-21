@@ -71,17 +71,65 @@ describe('Anthropic adapter', () => {
       expect(JSON.stringify(wire)).not.toContain(item.youtubeId);
   });
   it.each([
-    { positions: [1, 1] },
-    { positions: [-1] },
-    { positions: [4] },
-    { positions: [0.5] },
-    { positions: ['1'] },
-    { positions: [null] },
-    { positions: [1], explanation: 'extra' },
-    { youtubeIds: ['fx03BdgtXls'] },
+    [
+      { positions: [1, 1] },
+      { validationFailure: 'duplicate', selectionCount: 2, duplicateCount: 1 },
+    ],
+    [
+      { positions: [-1] },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+      },
+    ],
+    [
+      { positions: [4] },
+      {
+        validationFailure: 'out-of-range',
+        selectionCount: 1,
+        outOfRangeCount: 1,
+      },
+    ],
+    [
+      { positions: [0.5] },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+      },
+    ],
+    [
+      { positions: ['1'] },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+      },
+    ],
+    [
+      { positions: [null] },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 1,
+      },
+    ],
+    [
+      { positions: [1], explanation: 'private extra content' },
+      {
+        validationFailure: 'schema',
+        selectionCount: 1,
+        invalidSelectionCount: 0,
+      },
+    ],
+    [
+      { youtubeIds: ['private-response-content'] },
+      { validationFailure: 'schema' },
+    ],
   ])(
     'rejects invalid positions without repairing the result or losing usage',
-    async (value) => {
+    async (value, validation) => {
       const provider = anthropicProvider(
         'fixture-only',
         vi.fn(async () => Response.json(payload(JSON.stringify(value)))),
@@ -90,6 +138,7 @@ describe('Anthropic adapter', () => {
         value: null,
         inputTokens: 200,
         outputTokens: 20,
+        ...validation,
       });
     },
   );
@@ -124,8 +173,13 @@ describe('Anthropic adapter', () => {
       ),
     );
     expect(
-      (await provider(candidate, new AbortController().signal)).value,
-    ).toBeNull();
+      await provider(candidate, new AbortController().signal),
+    ).toMatchObject({
+      value: null,
+      validationFailure: 'schema',
+      selectionCount: 11,
+      invalidSelectionCount: 0,
+    });
   });
   it('disables Haiku 5.5 thinking at low effort for bounded ID output', async () => {
     const candidate = providerBody(
@@ -173,6 +227,8 @@ describe('Anthropic adapter', () => {
       value: null,
       inputTokens: 200,
       outputTokens: 20,
+      validationFailure: 'content',
+      contentBlockCount: 2,
     });
   });
   it('sends one bounded structured request without tools, raw IDs, cache directives or retries', async () => {
@@ -199,20 +255,25 @@ describe('Anthropic adapter', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
   it.each([
-    ['not json', 'end_turn'],
-    ['{"positions":[]}', 'max_tokens'],
-    ['{"positions":[]}', 'refusal'],
-  ])('keeps usage for invalid/truncated output', async (text, reason) => {
-    const provider = anthropicProvider(
-      'fixture-only',
-      vi.fn(async () => Response.json(payload(text, reason))),
-    );
-    expect(await provider(body, new AbortController().signal)).toEqual({
-      value: null,
-      inputTokens: 200,
-      outputTokens: 20,
-    });
-  });
+    ['private non-JSON content', 'end_turn', 'json'],
+    ['{"positions":[]}', 'max_tokens', 'max-tokens'],
+    ['{"positions":[]}', 'refusal', 'refusal'],
+    ['private response content', 'private unknown stop reason', 'stop-reason'],
+  ])(
+    'keeps usage and only bounded failure metadata',
+    async (text, reason, validationFailure) => {
+      const provider = anthropicProvider(
+        'fixture-only',
+        vi.fn(async () => Response.json(payload(text, reason))),
+      );
+      expect(await provider(body, new AbortController().signal)).toEqual({
+        value: null,
+        inputTokens: 200,
+        outputTokens: 20,
+        validationFailure,
+      });
+    },
+  );
   it('bounds catalog text while retaining all candidates and encodes Unicode conservatively', () => {
     const long = {
       ...catalog,
@@ -237,6 +298,24 @@ describe('Anthropic adapter', () => {
     expect(inputTokenBound(bounded)).toBeGreaterThan(
       JSON.stringify(bounded.request).length + 4096,
     );
+  });
+  it('caps counts and never includes private invalid selections', async () => {
+    const provider = anthropicProvider(
+      'fixture-only',
+      vi.fn(async () =>
+        Response.json(
+          payload(JSON.stringify({ positions: Array(101).fill('private') })),
+        ),
+      ),
+    );
+    expect(await provider(body, new AbortController().signal)).toEqual({
+      value: null,
+      inputTokens: 200,
+      outputTokens: 20,
+      validationFailure: 'schema',
+      selectionCount: 100,
+      invalidSelectionCount: 100,
+    });
   });
   it('does not retry transport errors or parse unbounded provider bodies', async () => {
     const fetcher = vi.fn<typeof fetch>(

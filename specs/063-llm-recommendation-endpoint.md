@@ -46,6 +46,10 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   the generated request ID, environment, bounded outcome, latency, token/cost
   totals and versions. No goals, prompts, response bodies, IPs, app session IDs
   or source tags are recorded. Rate hashes expire on the minute alarm.
+- Given an invalid provider selection in the test environment, when diagnostics
+  run, then a fixed validation category and counts capped at 100 identify the
+  failing stage. Raw output stays private; public and production responses and
+  production diagnostics omit this metadata.
 
 Validation: mocked Anthropic requests, endpoint and storage tests; all CI checks;
 Wrangler dry runs for the default and isolated runtime configurations. Live
