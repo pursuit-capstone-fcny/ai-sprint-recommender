@@ -94,6 +94,18 @@ jobs:
           assert.equal(config.vars.LLM_ENVIRONMENT, 'test');
           assert(Date.parse(config.vars.LLM_TEST_EXPIRES_AT) > Date.now() + 600000, 'Test approval has expired or is too close to expiry');
           assert(process.env.ANTHROPIC_API_KEY, 'Add the ANTHROPIC_API_KEY Actions secret before running the paid evaluation');
+          const modelResponse = await fetch(`https://api.anthropic.com/v1/models/${encodeURIComponent(config.vars.LLM_MODEL)}`, {
+            headers: {'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01'},
+            signal: AbortSignal.timeout(10000)
+          });
+          assert.equal(modelResponse.status, 200, `Anthropic model access check failed with HTTP ${modelResponse.status}; no generation was requested`);
+          const model = await modelResponse.json();
+          assert.equal(model.type, 'model');
+          assert.equal(model.id, config.vars.LLM_MODEL, 'Approved model must resolve without a model change');
+          assert.equal(model.capabilities?.structured_outputs?.supported, true);
+          assert.equal(model.capabilities?.thinking?.types?.disabled?.supported, true);
+          assert.equal(model.capabilities?.effort?.low?.supported, true);
+          console.log('Approved Anthropic model access and capabilities verified without generation.');
           writeFileSync(`${process.env.RUNNER_TEMP}/anthropic-test-secrets.json`, JSON.stringify({
             ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
             LLM_RATE_KEY: randomBytes(32).toString('hex')
