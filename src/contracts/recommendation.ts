@@ -3,7 +3,7 @@ import { RecommendationVersionSchema } from './usageEvent';
 
 export const RECOMMENDATION_PATH = '/api/recommendations';
 export const RECOMMENDATION_DEADLINE_MS = 5_000;
-export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v6';
+export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v7';
 
 const catalogVersion = z.string().regex(/^sha256:[a-f0-9]{64}$/);
 const tag = z.string().min(1).max(120);
