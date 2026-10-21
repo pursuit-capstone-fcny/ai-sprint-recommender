@@ -3,12 +3,12 @@
   "environment": "test",
   "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
   "modelVersion": "claude-haiku-5-5",
-  "promptVersion": "catalog-rank-v4",
+  "promptVersion": "catalog-rank-v5",
   "approvedBy": "Jason",
   "approvedAt": "2026-10-21",
-  "runtimeDecision": "docs/evaluation/2026-10-21/test-decision.md; docs/evaluation/2026-10-21/quality-rerun.md",
+  "runtimeDecision": "docs/evaluation/2026-10-21/test-decision.md; docs/evaluation/2026-10-21/quality-rerun.md; docs/evaluation/2026-10-21/wording-timeout-rerun.md",
   "privacyDecision": "docs/evaluation/2026-10-21/test-decision.md",
-  "budgetDecision": "docs/evaluation/2026-10-21/quality-rerun.md; wrangler.evaluation.json",
-  "allowanceMicrodollars": 600000,
+  "budgetDecision": "docs/evaluation/2026-10-21/wording-timeout-rerun.md; wrangler.evaluation.json",
+  "allowanceMicrodollars": 500000,
   "maxRequestMicrodollars": 6256
 }
