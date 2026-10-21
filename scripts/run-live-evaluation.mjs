@@ -19,7 +19,13 @@ const diagnosticsPath = `${liveDirectory}/diagnostics.json`;
 export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({
     args,
-    options: { 'check-diagnostics': { type: 'boolean', default: false } },
+    options: {
+      'check-diagnostics': { type: 'boolean', default: false },
+      baseline: {
+        type: 'string',
+        default: 'build/evaluation/baseline/report.json',
+      },
+    },
   });
   const checkDiagnostics = values['check-diagnostics'];
   const expectedOutcome = checkDiagnostics ? 'disabled' : 'not-requested';
@@ -101,9 +107,7 @@ export async function main(args = process.argv.slice(2)) {
       }),
     }));
     // Fail before spending if the baseline is absent; comparison uses the same frozen labels.
-    const baseline = JSON.parse(
-      await readFile('build/evaluation/baseline/report.json', 'utf8'),
-    );
+    const baseline = JSON.parse(await readFile(values.baseline, 'utf8'));
     if (baseline.benchmarkFingerprint !== approval.benchmarkFingerprint)
       throw new Error('Baseline and approval differ.');
   }
@@ -453,7 +457,7 @@ export async function main(args = process.argv.slice(2)) {
       '--diagnostics',
       diagnosticsPath,
       '--baseline',
-      'build/evaluation/baseline/report.json',
+      values.baseline,
       '--output',
       'build/evaluation/comparison',
     ]);
