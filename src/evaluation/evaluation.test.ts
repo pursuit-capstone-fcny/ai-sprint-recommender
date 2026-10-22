@@ -1,4 +1,5 @@
 import { createHash, randomUUID } from 'node:crypto';
+import { existsSync, readFileSync, readdirSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/evaluation/draft-benchmark.json';
 import mockFixture from '../../fixtures/evaluation/mock-trials.json';
@@ -10,6 +11,7 @@ import {
 import {
   evaluate,
   renderReport,
+  parseEvaluationReport,
   scorePicks,
   TrialsSchema,
   type Diagnostics,
@@ -25,6 +27,10 @@ import { PublicCatalogDataSchema } from '../contracts/publicCatalog';
 
 const benchmark = parseBenchmark(fixture);
 const mockTrials = TrialsSchema.parse(mockFixture);
+vi.mock('./approval', async (original) => ({
+  ...(await original<typeof import('./approval')>()),
+  readCheckout: () => ({ sourceRevision: 'a'.repeat(40), dirty: false }),
+}));
 const sourceRevision = 'test-revision';
 function cloneBenchmark() {
   return structuredClone(benchmark);
@@ -46,6 +52,8 @@ function approved() {
 }
 function approval(value: Benchmark) {
   return {
+    approvedSourceRevision: 'a'.repeat(40),
+    expiresAt: '2099-01-01T00:00:00Z',
     benchmarkFingerprint: benchmarkFingerprint(value),
     environment: 'test',
     endpoint:
@@ -294,6 +302,64 @@ describe('AC-19.2–4 comparable trial reports', () => {
         .profiles[0].metricsComplete,
     ).toBe(false);
   });
+  it('rejects an inconsistent baseline instead of publishing its claimed score', () => {
+    const report = evaluate(benchmark, { sourceRevision });
+    const baseline = structuredClone(report);
+    baseline.rules.passedProfiles = 0;
+    baseline.rules.passed = false;
+    expect(() => renderReport(report, baseline)).toThrow();
+  });
+  it.each([
+    'unknown-field',
+    'fingerprint',
+    'profile-id',
+    'score',
+    'video-id',
+    'variation',
+  ])('rejects a baseline with invalid %s before comparison', (kind) => {
+    const report = evaluate(benchmark, { sourceRevision });
+    const row = report.rules.profiles[0];
+    switch (kind) {
+      case 'unknown-field':
+        expect(() =>
+          parseEvaluationReport({ ...report, untrusted: true }, benchmark),
+        ).toThrow();
+        return;
+      case 'fingerprint':
+        report.benchmarkFingerprint = '0'.repeat(64);
+        break;
+      case 'profile-id':
+        row.profileId = 'unknown-profile';
+        break;
+      case 'score':
+        row.hits = row.hits === 3 ? 2 : 3;
+        row.misses = 3 - row.hits;
+        break;
+      case 'video-id':
+        row.displayedIds[0] = 'unknown0000';
+        break;
+      case 'variation':
+        report.variation[0].distinctResults = 1;
+        break;
+    }
+    expect(() => parseEvaluationReport(report, benchmark)).toThrow();
+  });
+  it('keeps the stored historical reports readable without recomputing their rankings', () => {
+    const root = 'docs/evaluation/2026-10-21';
+    const frozen = parseBenchmark(
+      JSON.parse(readFileSync(`${root}/benchmark.json`, 'utf8')),
+    );
+    const runs = readdirSync(`${root}/runs`).filter((run) =>
+      existsSync(`${root}/runs/${run}/report.json`),
+    );
+    expect(runs.length).toBeGreaterThan(0);
+    for (const run of runs) {
+      const saved = JSON.parse(
+        readFileSync(`${root}/runs/${run}/report.json`, 'utf8'),
+      );
+      expect(parseEvaluationReport(saved, frozen)).toEqual(saved);
+    }
+  });
 });
 
 describe('AC-19.5–6 manual live checks are opt-in', () => {
@@ -314,6 +380,29 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
       },
     );
   }
+  it('rejects an unapproved or dirty checkout before any network call', async () => {
+    const value = approved();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockRejectedValue(new DOMException('Timeout', 'TimeoutError'));
+    for (const checkout of [
+      { sourceRevision: 'b'.repeat(40), dirty: false },
+      { sourceRevision: 'a'.repeat(40), dirty: true },
+    ]) {
+      await expect(
+        runLiveTrials(
+          value,
+          approval(value),
+          true,
+          fetcher,
+          async () => {},
+          async () => {},
+          checkout,
+        ),
+      ).rejects.toThrow();
+    }
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it('makes zero calls without approved profiles, explicit opt-in and a sufficient allowance', async () => {
     const fetcher = vi.fn<typeof fetch>();
     const value = approved();
@@ -532,13 +621,23 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
       true,
     );
   });
-  it.each(['version', 'malformed', 'retired', 'unavailable', 'invalid-json'])(
+  it.each([
+    'version',
+    'malformed',
+    'retired',
+    'unavailable',
+    'invalid-json',
+    'changed-content',
+  ])(
     'stops on %s catalog loads without paid calls or retries',
     async (kind) => {
       const value = approved();
       const data = structuredClone(value.catalog);
       if (kind === 'version') data.catalogVersion = `sha256:${'0'.repeat(64)}`;
       if (kind === 'retired') data.items[0].status = 'retired';
+      if (kind === 'changed-content')
+        data.items[0].description =
+          'Changed public description under an unchanged version.';
       const response =
         kind === 'invalid-json'
           ? new Response('not json')

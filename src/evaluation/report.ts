@@ -1,7 +1,11 @@
 import { z } from 'zod';
+import { isDeepStrictEqual } from 'node:util';
 import type { Benchmark, BenchmarkProfile } from './benchmark';
-import { benchmarkFingerprint } from './benchmark';
-import { RecommendationResponseSchema } from '../contracts/recommendation';
+import { benchmarkFingerprint, BenchmarkSchema } from './benchmark';
+import {
+  RecommendationResponseSchema,
+  RecommendationFallbackReasonSchema,
+} from '../contracts/recommendation';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
 import { toCatalogItem } from '../contracts/catalogItem';
 import {
@@ -241,10 +245,192 @@ export function evaluate(
 }
 export type EvaluationReport = ReturnType<typeof evaluate>;
 
+const scoreSchema = z.strictObject({
+  profileId: z.string().regex(/^[a-z0-9-]+$/),
+  displayedIds: z
+    .array(z.string().regex(/^[A-Za-z0-9_-]{11}$/))
+    .max(3)
+    .refine((ids) => new Set(ids).size === ids.length),
+  hits: z.number().int().min(0).max(3),
+  misses: z.number().int().min(0).max(3),
+  passed: z.boolean(),
+});
+const llmScoreSchema = scoreSchema.extend({
+  engine: z.enum(['llm', 'rules']),
+  fallbackReason: z.union([
+    z.literal('none'),
+    RecommendationFallbackReasonSchema,
+  ]),
+  requestId: z.uuid().nullable(),
+  latencyMs: z.number().nonnegative(),
+  inputTokens: z.number().int().nonnegative().nullable(),
+  outputTokens: z.number().int().nonnegative().nullable(),
+  costMicrodollars: z.number().int().nonnegative().nullable(),
+  reservedMicrodollars: z.number().int().nonnegative().nullable(),
+  metricsComplete: z.boolean(),
+});
+export const EvaluationReportSchema = z
+  .strictObject({
+    schemaVersion: z.literal(1),
+    benchmarkId: z.string().regex(/^[a-z0-9-]+$/),
+    benchmarkFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
+    catalogVersion: z.string().regex(/^sha256:[a-f0-9]{64}$/),
+    sourceRevision: z.string().min(1),
+    approval: BenchmarkSchema.shape.approval,
+    modelVersion: RecommendationVersionSchema.shape.modelVersion.nullable(),
+    promptVersion: RecommendationVersionSchema.shape.promptVersion.nullable(),
+    trialKind: z.enum(['mock', 'live']).nullable(),
+    rules: z.strictObject({
+      passedProfiles: z.number().int().min(0).max(10),
+      passed: z.boolean(),
+      profiles: z.array(scoreSchema).length(10),
+    }),
+    llm: z
+      .array(
+        z.strictObject({
+          trial: z.number().int().min(1).max(3),
+          startedAt: z.iso.datetime(),
+          passedProfiles: z.number().int().min(0).max(10),
+          passed: z.boolean(),
+          fallbackCount: z.number().int().min(0).max(10),
+          profiles: z.array(llmScoreSchema).length(10),
+        }),
+      )
+      .refine((trials) => trials.length === 0 || trials.length === 3),
+    variation: z
+      .array(
+        z.strictObject({
+          profileId: z.string(),
+          distinctResults: z.number().int().min(0).max(3),
+        }),
+      )
+      .length(10),
+    warnings: z.array(z.string()),
+    relevanceEvidenceComplete: z.boolean(),
+    productionEnablement: z.literal('pending-owner-review'),
+  })
+  .superRefine((report, ctx) => {
+    const invalid = () =>
+      ctx.addIssue({
+        code: 'custom',
+        message: 'Inconsistent evaluation report.',
+      });
+    const ids = report.rules.profiles.map((row) => row.profileId);
+    const sameIds = (rows: { profileId: string }[]) =>
+      new Set(rows.map((row) => row.profileId)).size === 10 &&
+      rows.every((row) => ids.includes(row.profileId));
+    if (!sameIds(report.rules.profiles) || !sameIds(report.variation))
+      invalid();
+    const summaries = [report.rules, ...report.llm];
+    for (const summary of summaries) {
+      if (
+        !sameIds(summary.profiles) ||
+        summary.passedProfiles !==
+          summary.profiles.filter((row) => row.passed).length ||
+        summary.passed !== summary.passedProfiles >= 8
+      )
+        invalid();
+      for (const row of summary.profiles) {
+        const eligible = !('engine' in row) || row.engine === 'llm';
+        if (
+          row.hits + row.misses !== 3 ||
+          row.hits > row.displayedIds.length ||
+          row.passed !== (row.hits >= 2 && eligible)
+        )
+          invalid();
+      }
+    }
+    const requestIds = new Set<string>();
+    report.llm.forEach((trial, index) => {
+      if (
+        trial.trial !== index + 1 ||
+        trial.fallbackCount !==
+          trial.profiles.filter((row) => row.engine === 'rules').length
+      )
+        invalid();
+      for (const row of trial.profiles) {
+        if ((row.engine === 'llm') !== (row.fallbackReason === 'none'))
+          invalid();
+        if (row.requestId) {
+          if (requestIds.has(row.requestId)) invalid();
+          requestIds.add(row.requestId);
+        }
+        if (
+          row.metricsComplete &&
+          (!row.requestId ||
+            row.inputTokens === null ||
+            row.outputTokens === null ||
+            row.costMicrodollars === null)
+        )
+          invalid();
+      }
+    });
+    for (const row of report.variation) {
+      const count = new Set(
+        report.llm.map((trial) =>
+          JSON.stringify(
+            trial.profiles.find(
+              (profile) => profile.profileId === row.profileId,
+            )?.displayedIds,
+          ),
+        ),
+      ).size;
+      if (row.distinctResults !== count) invalid();
+    }
+    if (
+      (report.llm.length === 0) !== (report.trialKind === null) ||
+      (report.llm.length === 0) !== (report.modelVersion === null) ||
+      (report.llm.length === 0) !== (report.promptVersion === null) ||
+      report.relevanceEvidenceComplete !== (report.warnings.length === 0)
+    )
+      invalid();
+    if (
+      report.relevanceEvidenceComplete &&
+      (report.approval.status !== 'approved' ||
+        report.trialKind !== 'live' ||
+        !report.rules.passed ||
+        report.llm.some(
+          (trial) =>
+            !trial.passed || trial.profiles.some((row) => !row.metricsComplete),
+        ))
+    )
+      invalid();
+  });
+
+export function parseEvaluationReport(
+  value: unknown,
+  benchmark: Benchmark,
+): EvaluationReport {
+  const report = EvaluationReportSchema.parse(value);
+  if (
+    report.benchmarkFingerprint !== benchmarkFingerprint(benchmark) ||
+    report.benchmarkId !== benchmark.id ||
+    report.catalogVersion !== benchmark.catalog.catalogVersion ||
+    !isDeepStrictEqual(report.approval, benchmark.approval)
+  )
+    throw new Error('Baseline must use identical frozen data and labels.');
+  const active = new Set(benchmark.catalog.items.map((item) => item.youtubeId));
+  for (const summary of [report.rules, ...report.llm]) {
+    for (const row of summary.profiles) {
+      const profile = benchmark.profiles.find(
+        (profile) => profile.id === row.profileId,
+      );
+      if (!profile || row.displayedIds.some((id) => !active.has(id)))
+        throw new Error('Baseline contains unknown profile or catalog IDs.');
+      const expected = scorePicks(profile, row.displayedIds);
+      if (row.hits !== expected.hits || row.misses !== expected.misses)
+        throw new Error('Baseline scores differ from frozen labels.');
+    }
+  }
+  return report;
+}
+
 export function renderReport(
   report: EvaluationReport,
   baseline?: EvaluationReport,
 ): string {
+  EvaluationReportSchema.parse(report);
+  if (baseline) EvaluationReportSchema.parse(baseline);
   if (baseline && baseline.benchmarkFingerprint !== report.benchmarkFingerprint)
     throw new Error(
       'Before/after reports must use identical frozen data and labels.',

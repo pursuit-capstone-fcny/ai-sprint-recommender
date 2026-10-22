@@ -1,5 +1,4 @@
 import { readFile, writeFile, mkdir, appendFile } from 'node:fs/promises';
-import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 import { parseArgs } from 'node:util';
 import { parseBenchmark } from './benchmark';
@@ -8,16 +7,18 @@ import {
   renderReport,
   TrialsSchema,
   DiagnosticsSchema,
-  type EvaluationReport,
+  parseEvaluationReport,
 } from './report';
 import { runLiveTrials } from './live';
+import { readCheckout, validateLiveApproval } from './approval';
 
 async function readJson(path: string): Promise<unknown> {
   return JSON.parse(await readFile(path, 'utf8'));
 }
 
-export async function main() {
+export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({
+    args,
     options: {
       benchmark: {
         type: 'string',
@@ -36,15 +37,26 @@ export async function main() {
   if (values['allow-paid'] && !values['live-approval'])
     throw new Error('Paid opt-in also requires an approval file.');
   const benchmark = parseBenchmark(await readJson(values.benchmark));
+  const checkout = readCheckout();
+  const liveApproval = values['live-approval']
+    ? validateLiveApproval(
+        benchmark,
+        await readJson(values['live-approval']),
+        checkout,
+      )
+    : undefined;
+  const baseline = values.baseline
+    ? parseEvaluationReport(await readJson(values.baseline), benchmark)
+    : undefined;
   const output = resolve(values.output);
   await mkdir(output, { recursive: true });
   let trials = values.trials
     ? TrialsSchema.parse(await readJson(values.trials))
     : undefined;
-  if (values['live-approval'])
+  if (liveApproval)
     trials = await runLiveTrials(
       benchmark,
-      await readJson(values['live-approval']),
+      liveApproval,
       values['allow-paid'],
       fetch,
       async (progress) => {
@@ -59,24 +71,15 @@ export async function main() {
           `${JSON.stringify(warmups, null, 2)}\n`,
         );
       },
+      checkout,
     );
-  const sourceRevision = execFileSync('git', ['rev-parse', 'HEAD'], {
-    encoding: 'utf8',
-  }).trim();
-  const dirty = execFileSync('git', ['status', '--porcelain'], {
-    encoding: 'utf8',
-  }).trim();
   const report = evaluate(benchmark, {
-    sourceRevision: `${sourceRevision}${dirty ? '-dirty' : ''}`,
+    sourceRevision: `${checkout.sourceRevision}${checkout.dirty ? '-dirty' : ''}`,
     trials,
     diagnostics: values.diagnostics
       ? DiagnosticsSchema.parse(await readJson(values.diagnostics))
       : undefined,
   });
-  // Baseline files are produced by this CLI; fail rather than silently comparing unrelated data.
-  const baseline = values.baseline
-    ? ((await readJson(values.baseline)) as EvaluationReport)
-    : undefined;
   const markdown = renderReport(report, baseline);
   await writeFile(
     resolve(output, 'report.json'),

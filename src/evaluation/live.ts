@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { createHash } from 'node:crypto';
 import type { Benchmark } from './benchmark';
 import { benchmarkFingerprint } from './benchmark';
 import type { Diagnostics, Trials } from './report';
@@ -8,7 +9,13 @@ import {
   type RecommendationRequest,
   type RecommendationResponse,
 } from '../contracts/recommendation';
-import { RecommendationVersionSchema } from '../contracts/usageEvent';
+import {
+  LiveApprovalSchema,
+  readCheckout,
+  validateLiveApproval,
+  type Checkout,
+} from './approval';
+export { LiveApprovalSchema } from './approval';
 import { parsePublicCatalog } from '../contracts/publicCatalog';
 
 interface Observation {
@@ -30,6 +37,7 @@ export interface Warmup {
 
 async function loadCatalog(
   endpoint: string,
+  benchmark: Benchmark,
   fetcher: typeof fetch,
 ): Promise<Pick<Warmup, 'response' | 'requestId' | 'latencyMs' | 'status'>> {
   const started = performance.now();
@@ -48,6 +56,13 @@ async function loadCatalog(
     if (status === 200) {
       try {
         const catalog = parsePublicCatalog(await result.json());
+        const { catalogVersion, ...data } = catalog;
+        const actualVersion = `sha256:${createHash('sha256').update(JSON.stringify(data)).digest('hex')}`;
+        if (
+          actualVersion !== catalogVersion ||
+          JSON.stringify(catalog) !== JSON.stringify(benchmark.catalog)
+        )
+          throw new Error('Catalog content differs from the frozen benchmark.');
         response = {
           outcome: 'catalog-loaded',
           catalogVersion: catalog.catalogVersion,
@@ -138,38 +153,6 @@ async function requestRecommendation(
   };
 }
 
-export const LiveApprovalSchema = z
-  .strictObject({
-    benchmarkFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
-    environment: z.literal('test'),
-    endpoint: z.url().refine((value) => {
-      const url = new URL(value);
-      return (
-        url.protocol === 'https:' &&
-        /^(?:[a-f0-9]{8}-)?ai-sprint-recommender-llm-test\.[a-z0-9-]+\.workers\.dev$/.test(
-          url.hostname,
-        ) &&
-        url.pathname === '/api/recommendations' &&
-        !url.search &&
-        !url.hash &&
-        !url.username &&
-        !url.password &&
-        !url.port
-      );
-    }),
-    ...RecommendationVersionSchema.shape,
-    approvedBy: z.string().trim().min(1),
-    approvedAt: z.iso.date(),
-    runtimeDecision: z.string().trim().min(1),
-    privacyDecision: z.string().trim().min(1),
-    budgetDecision: z.string().trim().min(1),
-    allowanceMicrodollars: z.number().int().positive(),
-    maxRequestMicrodollars: z.number().int().positive(),
-  })
-  .refine(
-    (value) => value.maxRequestMicrodollars * 30 <= value.allowanceMicrodollars,
-  );
-
 export async function warmCatalog(
   benchmark: Benchmark,
   approval: z.infer<typeof LiveApprovalSchema>,
@@ -185,7 +168,7 @@ export async function warmCatalog(
       trial,
       phase: 'catalog-load',
       attempt,
-      ...(await loadCatalog(approval.endpoint, fetcher)),
+      ...(await loadCatalog(approval.endpoint, benchmark, fetcher)),
     };
     warmups.push(warmup);
     await saveWarmups(warmups);
@@ -312,12 +295,13 @@ export async function runLiveTrials(
   fetcher: typeof fetch = fetch,
   saveProgress: (progress: Trials) => Promise<void> = async () => {},
   saveWarmups: (warmups: Warmup[]) => Promise<void> = async () => {},
+  checkout: Checkout = readCheckout(),
 ): Promise<Trials> {
   if (!allowPaid || benchmark.approval.status !== 'approved')
     throw new Error(
       'Live calls require explicit opt-in and approved profiles.',
     );
-  const approval = LiveApprovalSchema.parse(approvalValue);
+  const approval = validateLiveApproval(benchmark, approvalValue, checkout);
   const fingerprint = benchmarkFingerprint(benchmark);
   if (approval.benchmarkFingerprint !== fingerprint)
     throw new Error('Live approval does not match this benchmark.');

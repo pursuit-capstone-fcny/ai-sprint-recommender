@@ -12,7 +12,6 @@ import {
 } from './live-evaluation-logs.mjs';
 
 const benchmarkPath = 'docs/evaluation/2026-10-21/benchmark.json';
-const approvalPath = 'docs/evaluation/2026-10-21/approval.json';
 const liveDirectory = 'build/evaluation/live';
 const diagnosticsPath = `${liveDirectory}/diagnostics.json`;
 
@@ -22,6 +21,10 @@ export async function main(args = process.argv.slice(2)) {
     options: {
       'check-diagnostics': { type: 'boolean', default: false },
       'diagnose-format': { type: 'boolean', default: false },
+      approval: {
+        type: 'string',
+        default: 'docs/evaluation/2026-10-21/approval.json',
+      },
       baseline: {
         type: 'string',
         default: 'build/evaluation/baseline/report.json',
@@ -29,6 +32,7 @@ export async function main(args = process.argv.slice(2)) {
     },
   });
   const checkDiagnostics = values['check-diagnostics'];
+  const approvalPath = values.approval;
   const diagnoseFormat = values['diagnose-format'];
   if (checkDiagnostics && diagnoseFormat)
     throw new Error('Choose one diagnostic mode.');
@@ -38,6 +42,8 @@ export async function main(args = process.argv.slice(2)) {
       contents: `
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
+    export { validateLiveApproval } from './src/evaluation/approval';
+    export { parseEvaluationReport } from './src/evaluation/report';
     export { RecommendationRequestSchema, RecommendationResponseSchema } from './src/contracts/recommendation';
     export { selectRecommendations } from './src/recommendations/selectRecommendations';
     export { toCatalogItem } from './src/contracts/catalogItem';
@@ -61,6 +67,15 @@ export async function main(args = process.argv.slice(2)) {
     JSON.parse(await readFile(benchmarkPath, 'utf8')),
   );
   const endpoint = new URL(approval.endpoint);
+  // Disabled diagnostics use only a blank intake; all paid modes require a clean, pinned, unexpired candidate.
+  if (!checkDiagnostics)
+    contracts.validateLiveApproval(
+      benchmark,
+      approval,
+      undefined,
+      Date.now(),
+      34,
+    );
   if (
     benchmark.approval.status !== 'approved' ||
     contracts.benchmarkFingerprint(benchmark) !==
@@ -120,9 +135,10 @@ export async function main(args = process.argv.slice(2)) {
       }),
     }));
     // Fail before spending if the baseline is absent; comparison uses the same frozen labels.
-    const baseline = JSON.parse(await readFile(values.baseline, 'utf8'));
-    if (baseline.benchmarkFingerprint !== approval.benchmarkFingerprint)
-      throw new Error('Baseline and approval differ.');
+    contracts.parseEvaluationReport(
+      JSON.parse(await readFile(values.baseline, 'utf8')),
+      benchmark,
+    );
   }
   await mkdir(liveDirectory, { recursive: true });
   const abort = new AbortController();
