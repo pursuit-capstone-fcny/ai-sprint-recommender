@@ -40,12 +40,18 @@ The label-triggered workflow accepts only same-repository PR #76. Applying
 `deploy-llm-test` deploys the configured test site with paid calls disabled.
 Paid labels require a current owner-approved JSON document in the repository
 Actions variable `LLM_EVALUATION_APPROVAL`. It uses the approval schema in
-`approval.json`, including the exact 40-character `approvedSourceRevision`
-and UTC `expiresAt`. Keep the document outside the Git checkout so recording
+`approval.json`, including the exact 40-character `approvedSourceRevision`,
+`approvedWorkflowRunId`, `approvedWorkflowRunAttempt` and UTC `expiresAt`.
+Approval covers only that run attempt; relabeling or rerunning requires a new
+owner decision. Only the exact deployed test hostname is accepted.
+Keep the document outside the Git checkout so recording
 the revision does not change it. The workflow checks the frozen benchmark,
 clean checkout, source revision, expiry and allowance before test network
-work. Local runs pass that document with `--approval` to
-`scripts/run-live-evaluation.mjs`. A label alone does not renew approval.
+work. Paid entry points require the matching GitHub workflow context;
+standalone local paid runs are rejected. The workflow passes that document
+with `--approval` to `scripts/run-live-evaluation.mjs`. It rechecks expiry
+before every paid dispatch and sets server expiry to the earlier configured
+or approved deadline. A label alone does not renew approval.
 Ordinary CI never calls Anthropic. The checked-in approval records the
 historical V7 candidate and its expired allowance; it cannot authorize a new run.
 

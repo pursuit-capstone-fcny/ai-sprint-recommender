@@ -51,16 +51,19 @@ is code, not dynamically read from the Sheet configuration.
    runner does not set or raise them.
 4. Save the approval JSON outside the Git checkout with the fields below.
    Obtain actual human approval; the template is not approval. The allowance
-   must cover thirty times the server's verified maximum reservation per request. Amounts use
-   microdollars, where 1,000,000 is one US dollar.
+   must cover the workflow's 34 maximum request reservations. Amounts use
+   microdollars, where 1,000,000 is one US dollar. Approval covers one named
+   GitHub workflow run and attempt; paid entry points reject local execution.
 
 ```json
 {
   "approvedSourceRevision": "approved 40-character Git commit SHA",
+  "approvedWorkflowRunId": "approved GitHub workflow run ID",
+  "approvedWorkflowRunAttempt": 0,
   "expiresAt": "YYYY-MM-DDTHH:MM:SSZ",
   "benchmarkFingerprint": "copy from report.json",
   "environment": "test",
-  "endpoint": "https://ai-sprint-recommender-llm-test.ACCOUNT.workers.dev/api/recommendations",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
   "modelVersion": "approved-model-version",
   "promptVersion": "approved-prompt-version",
   "approvedBy": "owner",
@@ -73,20 +76,26 @@ is code, not dynamically read from the Sheet configuration.
 }
 ```
 
-The placeholder dates, revision, hash and zero limits deliberately fail
+The placeholder dates, revision, run ID, hash and zero values deliberately fail
 validation.
 `approvedSourceRevision` must equal `git rev-parse HEAD` in a clean checkout,
-including no untracked files. `expiresAt` is the owner's agreed UTC deadline.
+including no untracked files. `expiresAt` is the owner's agreed UTC deadline,
+checked again before every paid request with room for its five-second timeout.
 The runner rejects an expired approval or a different or dirty checkout before
 network access. The October 21 allowance has expired and does not authorize
 another run.
-Approval must name the dedicated `ai-sprint-recommender-llm-test` Worker on
-`workers.dev`, optionally its versioned test URL. Production URLs are rejected.
+Only the exact endpoint shown above is accepted, matching the workflow's
+deployed Worker. Other accounts and version-prefixed URLs are rejected.
 No provider key belongs in an approval, benchmark or browser environment.
 
 ## Run three fresh trials
 
-Only after approval, run manually:
+For a future owner-authorized run, first trigger the test workflow and let its
+missing-approval preflight fail without model calls. Then record approval for
+that run ID and its next attempt in `LLM_EVALUATION_APPROVAL`, and rerun that
+failed workflow. GitHub [increments the attempt on every rerun](https://docs.github.com/en/actions/reference/workflows-and-actions/variables).
+Relabeling creates another run ID; neither action can reuse that approval.
+The workflow deploys the approved checkout before invoking the paid CLI:
 
 ```sh
 pnpm evaluate --benchmark /path/to/approved-benchmark.json \
@@ -98,6 +107,8 @@ This sends exactly one POST per profile per trial, sequentially, with no cache,
 credentials or retries and a five-second deadline. Each request contains only
 function area, synthetic goal, tools and catalog version. No session IDs or
 source tags are sent. A changed model or prompt stops the run immediately.
+The workflow also runs four separate probes, with no extra browser window,
+and bounds server expiry by the earlier of its configured and approved deadlines.
 `live-progress.json` saves each completed call, including partial evidence if
 the run stops. A partial file is not a passing trial and fails trial validation.
 
@@ -120,6 +131,9 @@ actual cost; reconcile these before approval. Repeated request IDs across
 trials fail validation. Baseline and candidate must use identical benchmark
 fingerprints. The comparison writes both complete reports to `comparison.json`
 and shows before/after per-profile rules and LLM scores in Markdown.
+Saved-input reports are replay-only, show the captured source as unknown, and
+cannot certify fresh relevance. Only the workflow's newly completed requests
+and matching diagnostics receive fresh source/run provenance.
 
 ## Owner review before enabling production LLM
 

@@ -99,14 +99,19 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: |
+          node scripts/check-live-evaluation-approval.mjs --benchmark docs/evaluation/2026-10-21/benchmark.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json"
           node --input-type=module <<'JS'
           import {readFileSync, writeFileSync} from 'node:fs';
           import {randomBytes} from 'node:crypto';
+          import {execFileSync} from 'node:child_process';
           import assert from 'node:assert/strict';
           const config = JSON.parse(readFileSync('wrangler.evaluation.json', 'utf8'));
+          const approval = JSON.parse(readFileSync(`${process.env.RUNNER_TEMP}/llm-evaluation-approval.json`, 'utf8'));
           assert.equal(config.name, 'ai-sprint-recommender-llm-test');
           assert.equal(config.vars.LLM_ENVIRONMENT, 'test');
-          assert(Date.parse(config.vars.LLM_TEST_EXPIRES_AT) > Date.now() + 600000, 'Test approval has expired or is too close to expiry');
+          assert.equal(approval.endpoint, `https://${config.name}.jason-zeng151.workers.dev/api/recommendations`);
+          const expiresAt = new Date(Math.min(Date.parse(approval.expiresAt), Date.parse(config.vars.LLM_TEST_EXPIRES_AT))).toISOString();
+          assert(Date.parse(expiresAt) > Date.now() + 600000, 'Test approval has expired or is too close to expiry');
           assert(process.env.ANTHROPIC_API_KEY, 'Add the ANTHROPIC_API_KEY Actions secret before running the paid evaluation');
           const modelResponse = await fetch(`https://api.anthropic.com/v1/models/${encodeURIComponent(config.vars.LLM_MODEL)}`, {
             headers: {'x-api-key': process.env.ANTHROPIC_API_KEY, 'anthropic-version': '2023-06-01'},
@@ -124,8 +129,9 @@ jobs:
             ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
             LLM_RATE_KEY: randomBytes(32).toString('hex')
           }), {mode: 0o600});
+          assert(Date.parse(expiresAt) > Date.now() + 600000, 'Approval cannot cover the bounded evaluation window');
+          execFileSync('pnpm', ['exec', 'wrangler', 'deploy', '--config', 'wrangler.evaluation.json', '--var', 'LLM_ENABLED:true', '--var', `LLM_TEST_EXPIRES_AT:${expiresAt}`, '--secrets-file', `${process.env.RUNNER_TEMP}/anthropic-test-secrets.json`], {stdio: 'inherit'});
           JS
-          pnpm exec wrangler deploy --config wrangler.evaluation.json --var LLM_ENABLED:true --secrets-file "$RUNNER_TEMP/anthropic-test-secrets.json"
 
       - name: Run approved trials and collect sanitized diagnostics
         if: github.event.label.name != 'deploy-llm-test'
@@ -139,10 +145,6 @@ jobs:
           else
             node scripts/run-live-evaluation.mjs --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline docs/evaluation/2026-10-21/runs/39620354628/report.json
           fi
-
-      - name: Allow one minute for browser verification within the same budget
-        if: github.event.label.name == 'evaluate-llm-test'
-        run: sleep 60
 
       - name: Disable test provider calls after evaluation
         if: always() && steps.enable.outcome != 'skipped'

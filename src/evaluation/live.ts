@@ -13,6 +13,7 @@ import {
   LiveApprovalSchema,
   readCheckout,
   validateLiveApproval,
+  assertApprovalWindow,
   type Checkout,
 } from './approval';
 export { LiveApprovalSchema } from './approval';
@@ -308,6 +309,7 @@ export async function runLiveTrials(
   const trials: Trials['trials'] = [];
   const warmups: Warmup[] = [];
   for (let index = 0; index < 3; index += 1) {
+    assertApprovalWindow(approval);
     const loaded = await warmCatalog(
       benchmark,
       approval,
@@ -322,6 +324,7 @@ export async function runLiveTrials(
     };
     trials.push(trial);
     for (const profile of benchmark.profiles) {
+      assertApprovalWindow(approval, Date.now(), RECOMMENDATION_DEADLINE_MS);
       const observation = await requestRecommendation(
         approval.endpoint,
         { ...profile.input, catalogVersion: benchmark.catalog.catalogVersion },

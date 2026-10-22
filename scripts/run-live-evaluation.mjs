@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, appendFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { pathToFileURL } from 'node:url';
@@ -42,8 +42,8 @@ export async function main(args = process.argv.slice(2)) {
       contents: `
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
-    export { validateLiveApproval } from './src/evaluation/approval';
-    export { parseEvaluationReport } from './src/evaluation/report';
+    export { validateLiveApproval, assertApprovalWindow } from './src/evaluation/approval';
+    export { parseEvaluationReport, evaluate, renderReport, TrialsSchema, DiagnosticsSchema } from './src/evaluation/report';
     export { RecommendationRequestSchema, RecommendationResponseSchema } from './src/contracts/recommendation';
     export { selectRecommendations } from './src/recommendations/selectRecommendations';
     export { toCatalogItem } from './src/contracts/catalogItem';
@@ -434,6 +434,7 @@ export async function main(args = process.argv.slice(2)) {
     // Separate probes have one attempt each and never alter benchmark scores.
     for (const testCase of cases) {
       checkRunning();
+      contracts.assertApprovalWindow(approval, Date.now(), 5_000);
       const started = performance.now();
       let requestId = null;
       let response;
@@ -515,19 +516,6 @@ export async function main(args = process.argv.slice(2)) {
     )
       await pause(200);
     await saveDiagnostics();
-    if (!diagnoseFormat)
-      await runEvaluator([
-        '--benchmark',
-        benchmarkPath,
-        '--trials',
-        `${liveDirectory}/trials.json`,
-        '--diagnostics',
-        diagnosticsPath,
-        '--baseline',
-        values.baseline,
-        '--output',
-        'build/evaluation/comparison',
-      ]);
     if (
       allIds.length !== (diagnoseFormat ? 2 : 34) ||
       new Set(allIds).size !== allIds.length ||
@@ -543,6 +531,45 @@ export async function main(args = process.argv.slice(2)) {
       throw new Error(
         'Some diagnostic evidence is missing; comparison retains incomplete metrics.',
       );
+    if (!diagnoseFormat) {
+      // Only this successful in-process run can attest fresh capture. The saved-input CLI
+      // remains replay-only, even if an input file labels itself live.
+      const baseline = contracts.parseEvaluationReport(
+        JSON.parse(await readFile(values.baseline, 'utf8')),
+        benchmark,
+      );
+      const report = contracts.evaluate(benchmark, {
+        sourceRevision: approval.approvedSourceRevision,
+        trials: contracts.TrialsSchema.parse(trials),
+        diagnostics: contracts.DiagnosticsSchema.parse(
+          JSON.parse(await readFile(diagnosticsPath, 'utf8')),
+        ),
+        evidence: {
+          kind: 'fresh',
+          sourceRevision: approval.approvedSourceRevision,
+          runId: approval.approvedWorkflowRunId,
+          runAttempt: approval.approvedWorkflowRunAttempt,
+        },
+      });
+      const markdown = contracts.renderReport(report, baseline);
+      const output = 'build/evaluation/comparison';
+      await mkdir(output, { recursive: true });
+      await writeFile(
+        `${output}/report.json`,
+        `${JSON.stringify(report, null, 2)}\n`,
+      );
+      await writeFile(`${output}/report.md`, markdown);
+      await writeFile(
+        `${output}/comparison.json`,
+        `${JSON.stringify({ before: baseline, after: report }, null, 2)}\n`,
+      );
+      await writeFile(
+        `${output}/trials.json`,
+        `${JSON.stringify(trials, null, 2)}\n`,
+      );
+      if (process.env.GITHUB_STEP_SUMMARY)
+        await appendFile(process.env.GITHUB_STEP_SUMMARY, markdown);
+    }
     completed = true;
     console.log(
       diagnoseFormat

@@ -1,6 +1,6 @@
 import { createHash, randomUUID } from 'node:crypto';
 import { existsSync, readFileSync, readdirSync } from 'node:fs';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/evaluation/draft-benchmark.json';
 import mockFixture from '../../fixtures/evaluation/mock-trials.json';
 import {
@@ -32,6 +32,16 @@ vi.mock('./approval', async (original) => ({
   readCheckout: () => ({ sourceRevision: 'a'.repeat(40), dirty: false }),
 }));
 const sourceRevision = 'test-revision';
+beforeEach(() => {
+  vi.stubEnv(
+    'GITHUB_REPOSITORY',
+    'pursuit-capstone-fcny/ai-sprint-recommender',
+  );
+  vi.stubEnv('GITHUB_WORKFLOW', 'Evaluate Anthropic test deployment');
+  vi.stubEnv('GITHUB_RUN_ID', '123');
+  vi.stubEnv('GITHUB_RUN_ATTEMPT', '1');
+});
+afterEach(() => vi.unstubAllEnvs());
 function cloneBenchmark() {
   return structuredClone(benchmark);
 }
@@ -53,11 +63,13 @@ function approved() {
 function approval(value: Benchmark) {
   return {
     approvedSourceRevision: 'a'.repeat(40),
+    approvedWorkflowRunId: '123',
+    approvedWorkflowRunAttempt: 1,
     expiresAt: '2099-01-01T00:00:00Z',
     benchmarkFingerprint: benchmarkFingerprint(value),
     environment: 'test',
     endpoint:
-      'https://ai-sprint-recommender-llm-test.example.workers.dev/api/recommendations',
+      'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations',
     modelVersion: 'mock-model-v1',
     promptVersion: 'mock-prompt-v1',
     approvedBy: 'Fictional test reviewer',
@@ -433,8 +445,8 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
   it('rejects production, redirects, query parameters and credentials', () => {
     for (const endpoint of [
       'https://ai-sprint-recommender.example.workers.dev/api/recommendations',
-      'https://ai-sprint-recommender-llm-test.example.workers.dev/api/recommendations?paid=true',
-      'https://name:password@ai-sprint-recommender-llm-test.example.workers.dev/api/recommendations',
+      'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations?paid=true',
+      'https://name:password@ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations',
       'https://example.com/api/recommendations',
     ])
       expect(

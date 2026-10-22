@@ -12,5 +12,7 @@
   "allowanceMicrodollars": 350000,
   "maxRequestMicrodollars": 6256,
   "approvedSourceRevision": "5e54e2313c572d8bdb25f4d14b352a6b2f7da48f",
-  "expiresAt": "2026-10-22T00:00:00Z"
+  "expiresAt": "2026-10-22T00:00:00Z",
+  "approvedWorkflowRunId": "39621407792",
+  "approvedWorkflowRunAttempt": 1
 }
