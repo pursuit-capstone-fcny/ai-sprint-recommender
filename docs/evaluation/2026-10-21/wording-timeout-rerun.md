@@ -208,7 +208,35 @@ remain accounted for by the unchanged persistent ledger. It was never reset.
 
 Keep test provider calls off at rest. Production remains on `cc761a7`, its
 October 21 04:25 UTC deployment, with LLM calls and usage logging disabled.
-The numeric and existing wording regression gates pass. #19 remains open for
+At this historical revision, the numeric and existing wording regression gates
+passed. The October 22 review replay below supersedes that readiness claim.
+#19 remains open for
 Ali/Eliot's label/catalog and semantic review, fresh unseen wording checks,
 production runtime/privacy/volume approval and the final #23 demo record.
 Retain the ordinary rules-only deployment until those approvals are recorded.
+
+## October 22 review fixes and unpaid replay
+
+PR #75 now counts only actual primary task tags toward its two-task minimum.
+Previously, per-video placeholders let untagged videos satisfy the gate.
+The corrected selector at `10044469b63e6577e0f22c295b37bb53dbbc2dcf`
+replayed the saved V7 responses against the same frozen catalog and labels.
+[Replay report](review-replay/report.md) and [JSON](review-replay/report.json)
+record **3/10 in each trial, with seven complete rules fallbacks per trial**.
+Rules remain **8/10**. The affected profiles lack two distinct primary task
+tags in their selected videos. These are reused responses, not fresh trials;
+their latency, token and cost fields belong to the historical V7 requests.
+The original reports remain unchanged. This replay made no provider calls.
+
+The current LLM relevance gate fails. Catalog task coverage and selection need
+review before another approved live evaluation. Do not change the frozen
+labels or count the historical 10/10 result as current readiness. The original
+allowance expired at `2026-10-22T00:00:00Z`; recorded cumulative spend remains
+at most **$0.646102** and no extension or budget reset is approved.
+
+PR #76 also validates actual catalog content, rejects inconsistent baseline
+reports, and checks a clean approved source revision and expiry before paid
+work. Shutdown removes the remote test provider and rate-key bindings even
+after deployment failure. All **503 tests**, typecheck, lint, build, formatting
+and the offline CI evaluation pass. The PR #75 preview loaded all 89 videos.
+Production LLM calls and logging remain disabled.
