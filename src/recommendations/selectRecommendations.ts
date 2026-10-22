@@ -98,17 +98,23 @@ export function selectRecommendations(
     RECOMMENDATION_PAGE_SIZE,
   );
   const distinctTasks = new Set(
+    results
+      .map(({ item }) => item.tasks[0]?.trim().toLowerCase())
+      .filter(Boolean),
+  ).size;
+  // Untagged picks keep their place, but cannot establish task diversity.
+  if (distinctTasks < 2)
+    return rulesSelection(catalog, profile, 'insufficient-results', versions);
+  const distinctSlots = new Set(
     results.map(
       ({ item }) =>
         item.tasks[0]?.trim().toLowerCase() ?? `__unique__:${item.youtubeId}`,
     ),
   ).size;
   // applyDedupe demotes duplicates. A short window must not pull them back
-  // into its vacant slots, or a single task would pass the minimum-picks gate.
-  if (distinctTasks < RECOMMENDATION_PAGE_SIZE)
-    results = results.slice(0, distinctTasks);
-  if (results.length < 2)
-    return rulesSelection(catalog, profile, 'insufficient-results', versions);
+  // into its vacant slots. Untagged picks still occupy separate display slots.
+  if (distinctSlots < RECOMMENDATION_PAGE_SIZE)
+    results = results.slice(0, distinctSlots);
   return {
     results,
     recommendationEngine: 'llm',

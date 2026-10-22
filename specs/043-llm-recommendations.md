@@ -15,8 +15,9 @@ Live calls remain disabled pending #8 provider, privacy and budget approval and
   the results heading.
 - Given a success response, when the page selects cards, then all IDs are
   active in the same catalog version. The first three follow model order with
-  task duplicates demoted. Fewer than two distinct tasks causes complete rules
-  fallback. Unknown, duplicate or retired IDs reject the whole response.
+  task duplicates demoted. Fewer than two distinct primary task tags causes
+  complete rules fallback; untagged picks and secondary tags do not count toward
+  that minimum. Unknown, duplicate or retired IDs reject the whole response.
 - Given semantic picks, when cards render, then their content and links come
   from the catalog. Reasons cite matched tags or say "Suggested for your goal".
   Cross-area picks are labeled. Show more uses the same validated response.

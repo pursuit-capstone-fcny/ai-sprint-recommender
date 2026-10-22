@@ -115,6 +115,45 @@ describe('final recommendation selection', () => {
       'fx01GrntRpt',
     ]);
   });
+  it.each([
+    ['two untagged picks', [[], []]],
+    ['an untagged pick before one task', [[], ['budget tracking']]],
+    ['an untagged pick after one task', [['budget tracking'], []]],
+    [
+      'different secondary tasks under the same primary task',
+      [
+        ['budget tracking', 'grant reports'],
+        ['budget tracking', 'meeting notes'],
+      ],
+    ],
+  ])('uses complete rules results for %s', (_, tasks) => {
+    const candidates = catalog.slice(0, 2).map((item, index) => ({
+      ...item,
+      tasks: tasks[index],
+    }));
+    const selected = selectRecommendations(
+      candidates,
+      profile,
+      envelope.catalogVersion,
+      { ...success, youtubeIds: candidates.map((item) => item.youtubeId) },
+    );
+    expect(selected.recommendationEngine).toBe('rules');
+    expect(selected.llmFallbackReason).toBe('insufficient-results');
+    expect(selected.results).toEqual(selectRulesResults(candidates, profile));
+  });
+  it('preserves an untagged pick and remaining picks when two primary tasks are present', () => {
+    const youtubeIds = [
+      'fx09IntroCt',
+      'fx04BdgtSht',
+      'fx01GrntRpt',
+      'fx03BdgtXls',
+    ];
+    const selected = select({ ...success, youtubeIds });
+    expect(selected.recommendationEngine).toBe('llm');
+    expect(selected.results.map(({ item }) => item.youtubeId)).toEqual(
+      youtubeIds,
+    );
+  });
   it('rejects an entire response with a retired ID and handles an empty catalog', () => {
     expect(
       selectRecommendations(
