@@ -38,11 +38,23 @@ changing labels. A low score is a finding, not permission to change the labels.
 
 The label-triggered workflow accepts only same-repository PR #76. Applying
 `deploy-llm-test` deploys the configured test site with paid calls disabled.
-Applying `evaluate-llm-test` explicitly runs the approved evaluation after
-checking model access without generation, the API secret and expiration.
-Ordinary CI never calls Anthropic.
+Paid labels require a current owner-approved JSON document in the repository
+Actions variable `LLM_EVALUATION_APPROVAL`. It uses the approval schema in
+`approval.json`, including the exact 40-character `approvedSourceRevision`
+and UTC `expiresAt`. Keep the document outside the Git checkout so recording
+the revision does not change it. The workflow checks the frozen benchmark,
+clean checkout, source revision, expiry and allowance before test network
+work. Local runs pass that document with `--approval` to
+`scripts/run-live-evaluation.mjs`. A label alone does not renew approval.
+Ordinary CI never calls Anthropic. The checked-in approval records the
+historical V7 candidate and its expired allowance; it cannot authorize a new run.
 
-The workflow disables provider calls after the run, including on failure.
+The workflow disables provider calls after the run, including on failure,
+then deletes the remote test Worker's `ANTHROPIC_API_KEY` and `LLM_RATE_KEY`
+bindings even if disabling fails. It verifies both are absent and records
+bounded cleanup evidence. GitHub Actions source secrets and budget storage
+remain unchanged. `cleanup-llm-test` runs only disabled deployment, credential
+cleanup and unpaid verification, so expired approval does not block shutdown.
 The server also stops test calls at `2026-10-22T00:00:00Z`, before the monthly
 budget can reset. Future live runs need renewed approval and an updated
 expiration. `wrangler.evaluation.json` is disabled at rest and has no

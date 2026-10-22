@@ -10,5 +10,7 @@
   "privacyDecision": "docs/evaluation/2026-10-21/test-decision.md",
   "budgetDecision": "docs/evaluation/2026-10-21/wording-timeout-rerun.md; wrangler.evaluation.json",
   "allowanceMicrodollars": 350000,
-  "maxRequestMicrodollars": 6256
+  "maxRequestMicrodollars": 6256,
+  "approvedSourceRevision": "5e54e2313c572d8bdb25f4d14b352a6b2f7da48f",
+  "expiresAt": "2026-10-22T00:00:00Z"
 }
