@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Numeric relevance gate passed; client review and production approval pending
+- **Status:** Relevance gate not met after review replay; fresh evaluation and client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -52,12 +52,15 @@
 
 ## Remaining evidence
 
-Jason's initial labels remain unchanged. The [V7 evaluation](../docs/evaluation/2026-10-21/wording-timeout-rerun.md)
-scores rules 8/10 and LLM 10/10 in all three trials. The two repeated wording
-regressions score 3/3 and 2/3. All 34 requests have measured diagnostics, with
-no timeouts or benchmark fallbacks. V5/V6 misses remain preserved. Test calls
-are disabled afterward; production LLM calls and logging remain disabled.
+Jason's initial labels remain unchanged. The [October 22 review replay](../docs/evaluation/2026-10-21/wording-timeout-rerun.md#october-22-review-fixes-and-unpaid-replay)
+scores rules 8/10 and the saved V7 LLM responses 3/10 in each trial, with seven
+complete rules fallbacks per trial. It supersedes the earlier numeric-readiness
+claim after distinct-task validation was corrected. Historical reports and
+measured costs remain preserved; replay made no provider calls and cannot
+certify fresh relevance. Production LLM calls and logging remain disabled.
 
+- Three fresh passing trials for the reviewed implementation, under renewed
+  approval for the exact source revision and workflow execution.
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.
 - Fresh unseen wording checks, separate from these inspected regressions.
 - Production runtime/privacy/budget approval and #23 final demo evidence.

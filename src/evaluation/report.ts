@@ -75,6 +75,17 @@ export const DiagnosticsSchema = z
   );
 export type Diagnostics = z.infer<typeof DiagnosticsSchema>;
 
+export const EvaluationEvidenceSchema = z.discriminatedUnion('kind', [
+  z.strictObject({ kind: z.literal('replay') }),
+  z.strictObject({
+    kind: z.literal('fresh'),
+    sourceRevision: z.string().regex(/^[a-f0-9]{40}$/),
+    runId: z.string().regex(/^[1-9][0-9]*$/),
+    runAttempt: z.number().int().positive(),
+  }),
+]);
+export type EvaluationEvidence = z.infer<typeof EvaluationEvidenceSchema>;
+
 function intake(profile: BenchmarkProfile) {
   return {
     ...profile.input,
@@ -103,10 +114,21 @@ export function evaluate(
     sourceRevision: string;
     trials?: Trials;
     diagnostics?: Diagnostics;
+    evidence?: EvaluationEvidence;
   },
 ) {
   const fingerprint = benchmarkFingerprint(benchmark);
   const trials = options.trials && TrialsSchema.parse(options.trials);
+  // Input files cannot attest that provider calls happened in this execution.
+  const evidence = EvaluationEvidenceSchema.parse(
+    options.evidence ?? { kind: 'replay' },
+  );
+  if (
+    evidence.kind === 'fresh' &&
+    (trials?.kind !== 'live' ||
+      evidence.sourceRevision !== options.sourceRevision)
+  )
+    throw new Error('Fresh evidence must match the executed live candidate.');
   if (trials && trials.benchmarkFingerprint !== fingerprint)
     throw new Error('Trials use a different benchmark.');
   const diagnostics = DiagnosticsSchema.parse(options.diagnostics ?? []);
@@ -201,6 +223,9 @@ export function evaluate(
     ...(trials?.kind !== 'live'
       ? ['Three fresh live trials have not been recorded.']
       : []),
+    ...(trials && evidence.kind === 'replay'
+      ? ['Saved-input replay cannot establish fresh live relevance.']
+      : []),
     ...(llm.some((trial) => !trial.passed)
       ? ['At least one LLM trial missed the 8/10 target.']
       : []),
@@ -216,7 +241,10 @@ export function evaluate(
     benchmarkId: benchmark.id,
     benchmarkFingerprint: fingerprint,
     catalogVersion: benchmark.catalog.catalogVersion,
-    sourceRevision: options.sourceRevision,
+    sourceRevision:
+      trials && evidence.kind === 'replay' ? 'unknown' : options.sourceRevision,
+    evaluationSourceRevision: options.sourceRevision,
+    evidence,
     approval: benchmark.approval,
     modelVersion: trials?.modelVersion ?? null,
     promptVersion: trials?.promptVersion ?? null,
@@ -243,7 +271,7 @@ export function evaluate(
     productionEnablement: 'pending-owner-review' as const,
   };
 }
-export type EvaluationReport = ReturnType<typeof evaluate>;
+export type EvaluationReport = z.infer<typeof EvaluationReportSchema>;
 
 const scoreSchema = z.strictObject({
   profileId: z.string().regex(/^[a-z0-9-]+$/),
@@ -276,6 +304,9 @@ export const EvaluationReportSchema = z
     benchmarkFingerprint: z.string().regex(/^[a-f0-9]{64}$/),
     catalogVersion: z.string().regex(/^sha256:[a-f0-9]{64}$/),
     sourceRevision: z.string().min(1),
+    // Optional only to preserve historical reports without rewriting their evidence.
+    evaluationSourceRevision: z.string().min(1).optional(),
+    evidence: EvaluationEvidenceSchema.optional(),
     approval: BenchmarkSchema.shape.approval,
     modelVersion: RecommendationVersionSchema.shape.modelVersion.nullable(),
     promptVersion: RecommendationVersionSchema.shape.promptVersion.nullable(),
@@ -395,6 +426,21 @@ export const EvaluationReportSchema = z
         ))
     )
       invalid();
+    if (Boolean(report.evidence) !== Boolean(report.evaluationSourceRevision))
+      invalid();
+    if (
+      report.evidence?.kind === 'replay' &&
+      (report.relevanceEvidenceComplete ||
+        (report.trialKind !== null && report.sourceRevision !== 'unknown'))
+    )
+      invalid();
+    if (
+      report.evidence?.kind === 'fresh' &&
+      (report.trialKind !== 'live' ||
+        report.sourceRevision !== report.evidence.sourceRevision ||
+        report.evaluationSourceRevision !== report.sourceRevision)
+    )
+      invalid();
   });
 
 export function parseEvaluationReport(
@@ -440,7 +486,15 @@ export function renderReport(
     '',
     `Benchmark: ${report.benchmarkId}. Labels: ${report.approval.status}.`,
     `Catalog: ${report.catalogVersion}`,
-    `Code: ${report.sourceRevision}`,
+    `Trial source code: ${report.sourceRevision}`,
+    ...(report.evaluationSourceRevision
+      ? [`Scoring code: ${report.evaluationSourceRevision}`]
+      : []),
+    report.evidence?.kind === 'fresh'
+      ? `Evidence: fresh execution in GitHub run ${report.evidence.runId}, attempt ${report.evidence.runAttempt}.`
+      : report.evidence?.kind === 'replay'
+        ? 'Evidence: offline replay; saved inputs cannot establish fresh live relevance.'
+        : 'Evidence: historical report; execution provenance was not recorded in this format.',
     `Model: ${report.modelVersion ?? 'not run'}. Prompt: ${report.promptVersion ?? 'not run'}. Trials: ${report.trialKind ?? 'none'}.`,
     '',
     `Rules: ${report.rules.passedProfiles}/10 profiles reached two good picks.`,

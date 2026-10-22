@@ -76,6 +76,14 @@ export async function main(args = process.argv.slice(2)) {
   const report = evaluate(benchmark, {
     sourceRevision: `${checkout.sourceRevision}${checkout.dirty ? '-dirty' : ''}`,
     trials,
+    evidence: liveApproval
+      ? {
+          kind: 'fresh',
+          sourceRevision: liveApproval.approvedSourceRevision,
+          runId: liveApproval.approvedWorkflowRunId,
+          runAttempt: liveApproval.approvedWorkflowRunAttempt,
+        }
+      : { kind: 'replay' },
     diagnostics: values.diagnostics
       ? DiagnosticsSchema.parse(await readJson(values.diagnostics))
       : undefined,
