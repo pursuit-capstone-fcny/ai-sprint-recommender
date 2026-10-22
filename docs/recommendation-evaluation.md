@@ -49,13 +49,15 @@ is code, not dynamically read from the Sheet configuration.
    prompt, deployed candidate revision and server limits in the approval
    evidence. The server's atomic budgets and kill switch enforce spend. The
    runner does not set or raise them.
-4. Prepare a local approval JSON with the fields below. Obtain actual human
-   approval; the template is not approval. The allowance must cover thirty
-   times the server's verified maximum reservation per request. Amounts use
+4. Save the approval JSON outside the Git checkout with the fields below.
+   Obtain actual human approval; the template is not approval. The allowance
+   must cover thirty times the server's verified maximum reservation per request. Amounts use
    microdollars, where 1,000,000 is one US dollar.
 
 ```json
 {
+  "approvedSourceRevision": "approved 40-character Git commit SHA",
+  "expiresAt": "YYYY-MM-DDTHH:MM:SSZ",
   "benchmarkFingerprint": "copy from report.json",
   "environment": "test",
   "endpoint": "https://ai-sprint-recommender-llm-test.ACCOUNT.workers.dev/api/recommendations",
@@ -71,7 +73,13 @@ is code, not dynamically read from the Sheet configuration.
 }
 ```
 
-The placeholder date, hash and zero limits deliberately fail validation.
+The placeholder dates, revision, hash and zero limits deliberately fail
+validation.
+`approvedSourceRevision` must equal `git rev-parse HEAD` in a clean checkout,
+including no untracked files. `expiresAt` is the owner's agreed UTC deadline.
+The runner rejects an expired approval or a different or dirty checkout before
+network access. The October 21 allowance has expired and does not authorize
+another run.
 Approval must name the dedicated `ai-sprint-recommender-llm-test` Worker on
 `workers.dev`, optionally its versioned test URL. Production URLs are rejected.
 No provider key belongs in an approval, benchmark or browser environment.
