@@ -68,6 +68,10 @@ claim after distinct-task validation was corrected. Historical reports and
 measured costs remain preserved; replay made no provider calls and cannot
 certify fresh relevance. Production LLM calls and logging remain disabled.
 
+The [October 26 Luna comparison](../docs/evaluation/2026-10-26-luna/results.md)
+scores low effort 4/10, 5/10, 3/10 and medium 0/10, 1/10, 0/10. Neither meets
+the target. This isolated provider run does not certify the deployed endpoint.
+
 - Three fresh passing trials for the reviewed implementation, under renewed
   approval for the exact source revision and workflow execution.
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.
