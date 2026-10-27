@@ -52,11 +52,12 @@
 
 ### AC-19.7: Isolated provider comparison
 
-- **Given** a separate approved model, effort pair and allowance, **when**
+- **Given** an approved model, effort selection, prompt and allowance, **when**
   comparing providers, **then** three trials per effort use the frozen labels,
-  catalog, prompt and browser selector. Record reasoning tokens, latency,
+  catalog and browser selector. Record the approved prompt version, reasoning tokens, latency,
   known costs and unknown reservations. Bind approval to one source and
-  workflow attempt; make no deployment changes. Direct provider results do
+  workflow attempt; carry prior costs and unknown reservations forward without
+  resetting the allowance. Make no deployment changes. Direct provider results do
   not satisfy the fresh deployed-endpoint gate.
 
 ## Remaining evidence

@@ -8,6 +8,8 @@ import {
   LUNA_ENDPOINT,
   LUNA_FINGERPRINT,
   LUNA_MODEL,
+  LUNA_PRIOR_SPEND,
+  LUNA_RERUN_PROMPT,
   LUNA_REPOSITORY,
   LUNA_RESERVATION,
   LUNA_WORKFLOW,
@@ -40,6 +42,7 @@ const approval: LunaApproval = {
   efforts: ['low', 'medium'],
   promptVersion: 'catalog-rank-v7',
   allowanceMicrodollars: 1_000_000,
+  priorSpendMicrodollars: LUNA_PRIOR_SPEND,
   maxCalls: LUNA_CALLS,
   runtime: 'isolated-github-provider-comparison',
   data: 'unchanged-synthetic-benchmark-public-catalog',
@@ -80,6 +83,31 @@ function response() {
 afterEach(() => vi.useRealTimers());
 
 describe('Luna comparison authorization', () => {
+  it('allows a low-only rerun while carrying prior timeout reservations forward', () => {
+    const rerun = {
+      ...approval,
+      efforts: ['low'],
+      maxCalls: 30,
+      promptVersion: 'catalog-rank-luna-v8',
+      priorSpendMicrodollars: 183_040,
+    };
+    const checkout = {
+      sourceRevision: approval.approvedSourceRevision,
+      dirty: false,
+    };
+    expect(
+      validateLunaApproval(benchmark, rerun, checkout, environment, now()),
+    ).toEqual(rerun);
+    for (const altered of [
+      { ...rerun, priorSpendMicrodollars: 0 },
+      { ...rerun, allowanceMicrodollars: 393_039 },
+      { ...rerun, maxCalls: 60 },
+      { ...rerun, efforts: ['low', 'low'] },
+    ])
+      expect(() =>
+        validateLunaApproval(benchmark, altered, checkout, environment, now()),
+      ).toThrow();
+  });
   it('binds one clean source, benchmark, run and attempt', () => {
     const checkout = {
       sourceRevision: approval.approvedSourceRevision,
@@ -238,6 +266,50 @@ describe('Luna responses and costs', () => {
 });
 
 describe('Luna paid dispatch boundaries using mocks', () => {
+  it('runs only 30 low-effort requests with the approved prompt and unchanged catalog data', async () => {
+    const rerun: LunaApproval = {
+      ...approval,
+      efforts: ['low'],
+      maxCalls: 30,
+      promptVersion: LUNA_RERUN_PROMPT,
+      allowanceMicrodollars: LUNA_PRIOR_SPEND + 30 * LUNA_RESERVATION,
+    };
+    const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+      const request = JSON.parse(String(init?.body));
+      expect(request.reasoning.effort).toBe('low');
+      expect(request.input[0].content).toContain(
+        'never add an unrelated or weak video',
+      );
+      const data = JSON.parse(request.input[1].content);
+      expect(
+        data.catalog.map((item: { tasks: string[] }) => item.tasks),
+      ).toEqual(benchmark.catalog.items.map((item) => item.tasks));
+      expect(data).not.toHaveProperty('ideal');
+      expect(data).not.toHaveProperty('good');
+      return Response.json(response());
+    });
+    const state = await runLunaComparison({
+      benchmark,
+      approval: rerun,
+      limits,
+      key: 'synthetic',
+      now,
+      fetcher,
+      save: vi.fn(),
+    });
+    expect(fetcher).toHaveBeenCalledTimes(30);
+    expect(
+      state.records.every(
+        (row) => row.response?.promptVersion === LUNA_RERUN_PROMPT,
+      ),
+    ).toBe(true);
+    const scored = scoreLunaState(benchmark, state, 'low');
+    expect(scored.trials.promptVersion).toBe(LUNA_RERUN_PROMPT);
+    expect(scored.report.relevanceEvidenceComplete).toBe(false);
+    expect(lunaSpent(state) + state.approval.priorSpendMicrodollars).toBe(
+      258_040,
+    );
+  });
   it('runs exactly 60 fresh calls, reserves before dispatch and never certifies a deployment', async () => {
     let saved: LunaState | undefined;
     const fetcher = vi.fn<typeof fetch>(async (url, init) => {

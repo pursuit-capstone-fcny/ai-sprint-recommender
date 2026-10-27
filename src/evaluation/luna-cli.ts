@@ -6,10 +6,12 @@ import {
   renameSync,
 } from 'node:fs';
 import { resolve } from 'node:path';
+import { createHash } from 'node:crypto';
 import { parseBenchmark } from './benchmark';
 import { readCheckout } from './approval';
 import {
   LUNA_MODEL,
+  LUNA_PRIOR_SPEND,
   lunaSpent,
   runLunaComparison,
   scoreLunaState,
@@ -34,6 +36,15 @@ export async function main() {
   );
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error('Add the OPENAI_API_KEY Actions secret.');
+  const priorCapture = readFileSync(
+    'docs/evaluation/2026-10-26-luna/runs/40445851804-2/capture.json',
+  );
+  if (
+    createHash('sha256').update(priorCapture).digest('hex') !==
+      '547265442f5afcec3f372d81d486acbefd8575ea3003c852a90d175ee9820ed4' ||
+    lunaSpent(JSON.parse(priorCapture.toString('utf8'))) !== LUNA_PRIOR_SPEND
+  )
+    throw new Error('Prior Luna allowance evidence changed.');
   const directory = resolve('build/evaluation/luna');
   mkdirSync(directory, { recursive: true });
   const ledger = resolve(directory, 'capture.json');
@@ -74,7 +85,7 @@ export async function main() {
     '',
     'Fresh provider calls from an isolated runner, scored with the existing browser selector. This does not test the deployed endpoint or establish production readiness. The nested reports score saved responses and are explicitly ineligible for the deployed relevance gate.',
     '',
-    'The frozen benchmark, catalog, prompt, distinct-task gate and labels are unchanged. Both efforts use standard mode, no prompt caching, 2,000 total output tokens including reasoning, a 4.5-second deadline and no retries.',
+    `The frozen benchmark, catalog, distinct-task gate and labels are unchanged. Prompt: ${approval.promptVersion}. Efforts: ${approval.efforts.join(', ')}. Each uses standard mode, no prompt caching, 2,000 total output tokens including reasoning, a 4.5-second deadline and no retries.`,
     '',
     '| Effort | Trial passes | Rules fallbacks | Median / p95 latency | Known token cost | Unknown maximum reservations |',
     '| --- | --- | --- | --- | --- | --- |',
@@ -104,7 +115,7 @@ export async function main() {
   }
   lines.push(
     '',
-    `Conservative total: $${(lunaSpent(state) / 1_000_000).toFixed(6)} of the new $${(approval.allowanceMicrodollars / 1_000_000).toFixed(2)} allowance. Unknown costs retain their full reservation. Token costs use $0.10/M input and $0.50/M output, including reasoning; they are not a billing export.`,
+    `This run: at most $${(lunaSpent(state) / 1_000_000).toFixed(6)}. Prior runs: at most $${(approval.priorSpendMicrodollars / 1_000_000).toFixed(6)}. Cumulative: at most $${((approval.priorSpendMicrodollars + lunaSpent(state)) / 1_000_000).toFixed(6)} of the existing $${(approval.allowanceMicrodollars / 1_000_000).toFixed(2)} allowance. Remaining: at least $${((approval.allowanceMicrodollars - approval.priorSpendMicrodollars - lunaSpent(state)) / 1_000_000).toFixed(6)}. Unknown costs retain their full reservation. Token costs use $0.10/M input and $0.50/M output, including reasoning; they are not a billing export.`,
     '',
     'Production LLM calls and usage logging were not enabled. No Cloudflare or Apps Script deployment was performed.',
     '',

@@ -20,29 +20,47 @@ export const LUNA_MAX_INPUT = 60_000;
 export const LUNA_MAX_OUTPUT = 2_000;
 export const LUNA_RESERVATION = 7_000;
 export const LUNA_CALLS = 60;
+export const LUNA_PRIOR_SPEND = 183_040;
+export const LUNA_RERUN_PROMPT = 'catalog-rank-luna-v8';
+const complementaryTasks = [
+  'Choose a useful set of complementary videos, not just several versions of the same demonstration. Keep the strongest direct answers first. Then consider supporting steps only when the description shows how they directly help prepare the inputs, produce the requested output, or practice the requested activity.',
+  "The application checks task diversity using only the first entry in each item's tasks array. Empty tasks do not establish diversity; never infer or invent missing tags. Among equally useful choices, prefer different existing primary tasks. Look for at least two such tasks among useful recommendations, but never add an unrelated or weak video just to satisfy that check. Keep a stronger untagged direct answer ahead of a weaker tagged item. If relevant catalog coverage is insufficient, return the useful matches and leave unused ranks null so the application can fall back.",
+].join(' ');
 export const LUNA_WORKFLOW = 'Compare GPT-6 Luna benchmark';
 export const LUNA_REPOSITORY = 'pursuit-capstone-fcny/ai-sprint-recommender';
-export const LunaApprovalSchema = z.strictObject({
-  approvedBy: z.literal('Jason'),
-  approvedAt: z.iso.date(),
-  expiresAt: z.iso.datetime(),
-  approvedSourceRevision: z.string().regex(/^[a-f0-9]{40}$/),
-  approvedWorkflowRunId: z.string().regex(/^[1-9][0-9]*$/),
-  approvedWorkflowRunAttempt: z.number().int().positive(),
-  benchmarkFingerprint: z.literal(LUNA_FINGERPRINT),
-  endpoint: z.literal(LUNA_ENDPOINT),
-  model: z.literal(LUNA_MODEL),
-  efforts: z.tuple([z.literal('low'), z.literal('medium')]),
-  promptVersion: z.literal(RECOMMENDATION_PROMPT_VERSION),
-  allowanceMicrodollars: z
-    .number()
-    .int()
-    .min(LUNA_RESERVATION * LUNA_CALLS)
-    .max(1_000_000),
-  maxCalls: z.literal(LUNA_CALLS),
-  runtime: z.literal('isolated-github-provider-comparison'),
-  data: z.literal('unchanged-synthetic-benchmark-public-catalog'),
-});
+export const LunaApprovalSchema = z
+  .strictObject({
+    approvedBy: z.literal('Jason'),
+    approvedAt: z.iso.date(),
+    expiresAt: z.iso.datetime(),
+    approvedSourceRevision: z.string().regex(/^[a-f0-9]{40}$/),
+    approvedWorkflowRunId: z.string().regex(/^[1-9][0-9]*$/),
+    approvedWorkflowRunAttempt: z.number().int().positive(),
+    benchmarkFingerprint: z.literal(LUNA_FINGERPRINT),
+    endpoint: z.literal(LUNA_ENDPOINT),
+    model: z.literal(LUNA_MODEL),
+    efforts: z.union([
+      z.tuple([z.literal('low')]),
+      z.tuple([z.literal('low'), z.literal('medium')]),
+    ]),
+    promptVersion: z.enum([RECOMMENDATION_PROMPT_VERSION, LUNA_RERUN_PROMPT]),
+    priorSpendMicrodollars: z.literal(LUNA_PRIOR_SPEND),
+    allowanceMicrodollars: z
+      .number()
+      .int()
+      .min(LUNA_PRIOR_SPEND + LUNA_RESERVATION * 30)
+      .max(1_000_000),
+    maxCalls: z.union([z.literal(30), z.literal(LUNA_CALLS)]),
+    runtime: z.literal('isolated-github-provider-comparison'),
+    data: z.literal('unchanged-synthetic-benchmark-public-catalog'),
+  })
+  .refine(
+    (approval) =>
+      approval.maxCalls === approval.efforts.length * 30 &&
+      approval.priorSpendMicrodollars + approval.maxCalls * LUNA_RESERVATION <=
+        approval.allowanceMicrodollars,
+    'The remaining allowance must cover every maximum request reservation.',
+  );
 export type LunaApproval = z.infer<typeof LunaApprovalSchema>;
 type Effort = LunaApproval['efforts'][number];
 
@@ -72,7 +90,11 @@ export function validateLunaApproval(
   return approval;
 }
 
-export function lunaBody(body: ProviderBody, effort: Effort) {
+export function lunaBody(
+  body: ProviderBody,
+  effort: Effort,
+  promptVersion: LunaApproval['promptVersion'] = RECOMMENDATION_PROMPT_VERSION,
+) {
   const request = {
     model: LUNA_MODEL,
     reasoning: { effort, mode: 'standard' },
@@ -83,7 +105,13 @@ export function lunaBody(body: ProviderBody, effort: Effort) {
     prompt_cache_options: { mode: 'explicit' },
     max_output_tokens: LUNA_MAX_OUTPUT,
     input: [
-      { role: 'system', content: body.request.system },
+      {
+        role: 'system',
+        content:
+          promptVersion === LUNA_RERUN_PROMPT
+            ? `${body.request.system} ${complementaryTasks}`
+            : body.request.system,
+      },
       ...body.request.messages,
     ],
     text: {
@@ -261,7 +289,7 @@ export async function runLunaComparison(options: {
     ),
   );
   for (const effort of approval.efforts)
-    for (const body of bodies) lunaBody(body, effort);
+    for (const body of bodies) lunaBody(body, effort, approval.promptVersion);
   const state: LunaState = {
     kind: 'live-provider-comparison',
     approval,
@@ -279,7 +307,10 @@ export async function runLunaComparison(options: {
         assertApprovalWindow(approval, now(), LUNA_DEADLINE_MS);
         if (
           state.records.length >= approval.maxCalls ||
-          lunaSpent(state) + LUNA_RESERVATION > approval.allowanceMicrodollars
+          approval.priorSpendMicrodollars +
+            lunaSpent(state) +
+            LUNA_RESERVATION >
+            approval.allowanceMicrodollars
         )
           throw new Error('Luna allowance exhausted.');
         const started = now();
@@ -299,7 +330,7 @@ export async function runLunaComparison(options: {
         save(state);
         const version = {
           modelVersion: LUNA_MODEL,
-          promptVersion: RECOMMENDATION_PROMPT_VERSION,
+          promptVersion: approval.promptVersion,
           catalogVersion: benchmark.catalog.catalogVersion,
         };
         const fallback = (
@@ -323,7 +354,9 @@ export async function runLunaComparison(options: {
                   'content-type': 'application/json',
                   Authorization: `Bearer ${key}`,
                 },
-                body: JSON.stringify(lunaBody(bodies[index], effort)),
+                body: JSON.stringify(
+                  lunaBody(bodies[index], effort, approval.promptVersion),
+                ),
               });
               if (controller.signal.aborted) return;
               record.httpStatus = response.status;
@@ -393,7 +426,7 @@ export function scoreLunaState(
     kind: 'live',
     benchmarkFingerprint: benchmarkFingerprint(benchmark),
     modelVersion: LUNA_MODEL,
-    promptVersion: RECOMMENDATION_PROMPT_VERSION,
+    promptVersion: state.approval.promptVersion,
     trials: [1, 2, 3].map((trial) => ({
       startedAt: records.find((row) => row.trial === trial)!.startedAt,
       calls: records
@@ -413,7 +446,7 @@ export function scoreLunaState(
       row.response!.outcome === 'success' ? 'success' : row.response!.reason,
     latencyMs: row.latencyMs!,
     modelVersion: LUNA_MODEL,
-    promptVersion: RECOMMENDATION_PROMPT_VERSION,
+    promptVersion: state.approval.promptVersion,
     catalogVersion: benchmark.catalog.catalogVersion,
     reservedMicrodollars: row.reservationMicrodollars,
     ...(row.measurement
