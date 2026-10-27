@@ -39,7 +39,7 @@
 
 - **Given** injection-like text, invalid output, timeouts or server fallback,
   **when** evaluated, **then** selection still uses validated active catalog
-  IDs and reports rules fallback. Paid trials use the dedicated test endpoint,
+  IDs and reports rules fallback. Deployed trials use the dedicated test endpoint,
   one request per profile, no retry and a five-second deadline. Partial
   evidence is saved before stopping on candidate mismatch.
 
@@ -49,6 +49,15 @@
   live command is attempted, **then** it dispatches zero requests. An explicit
   paid opt-in and allowance for thirty requests are required. Neither passing
   mocks nor a complete report changes production flags.
+
+### AC-19.7: Isolated provider comparison
+
+- **Given** a separate approved model, effort pair and allowance, **when**
+  comparing providers, **then** three trials per effort use the frozen labels,
+  catalog, prompt and browser selector. Record reasoning tokens, latency,
+  known costs and unknown reservations. Bind approval to one source and
+  workflow attempt; make no deployment changes. Direct provider results do
+  not satisfy the fresh deployed-endpoint gate.
 
 ## Remaining evidence
 
