@@ -47,3 +47,22 @@ Save per-profile selections, scores, fallbacks, latency and token costs alongsid
 the original evidence. This is a development benchmark that has already been
 inspected. It does not certify generalization, a deployed Luna endpoint or
 production readiness. No Cloudflare or Apps Script deployment is involved.
+
+## Second experiment
+
+V8 completed in run 40545682960, attempt 2. Scores fell to 2/10, 3/10, 3/10;
+median latency rose to 3.066 seconds. It made 30 calls, with $0.036028 known
+cost and one $0.007 unknown reservation. Reject V8 as a quality improvement.
+The capture and generated report are retained unchanged in meaning.
+
+Test `catalog-rank-luna-v9` next. It replaces the long combined instructions
+with a shorter prompt distinguishing exact matches from transferable workflows.
+It retains relevance ahead of diversity, forbids weak padding, and leaves
+catalog data, schema, gate, deadline and low effort unchanged. It contains no
+benchmark-specific examples or labels. This tests prompt wording only.
+
+Carry forward $0.226068 across both completed runs, leaving at least $0.773932.
+Authorize at most 30 new calls and $0.21 additional maximum reservations on one
+new source/run/attempt. The V8 capture hash is
+`2f52b62ac70c686a3b4e569a6d6b5e71c2d72d53ba117e928961244e6499f63b`.
+Stop after this comparison and record regressions as well as gains.

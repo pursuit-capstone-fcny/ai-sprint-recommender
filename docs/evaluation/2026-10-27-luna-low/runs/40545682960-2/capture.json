@@ -1,0 +1,1270 @@
+{
+  "kind": "live-provider-comparison",
+  "approval": {
+    "approvedBy": "Jason",
+    "approvedAt": "2026-10-27",
+    "expiresAt": "2026-10-27T17:26:10Z",
+    "approvedSourceRevision": "ae1e85fdbf3445b45d0ad3f47d53d72e495c8de7",
+    "approvedWorkflowRunId": "40545682960",
+    "approvedWorkflowRunAttempt": 2,
+    "benchmarkFingerprint": "4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde",
+    "endpoint": "https://api.openai.com/v1/responses",
+    "model": "gpt-6-luna",
+    "efforts": ["low"],
+    "promptVersion": "catalog-rank-luna-v8",
+    "priorSpendMicrodollars": 183040,
+    "allowanceMicrodollars": 1000000,
+    "maxCalls": 30,
+    "runtime": "isolated-github-provider-comparison",
+    "data": "unchanged-synthetic-benchmark-public-catalog"
+  },
+  "productionEnablement": "not-evaluated",
+  "complete": true,
+  "records": [
+    {
+      "requestId": "a5431fc3-fa51-479d-a62b-883ab8a5b229",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "leadership-01",
+      "startedAt": "2026-10-27T16:58:26.561Z",
+      "latencyMs": 4506,
+      "reservationMicrodollars": 7000,
+      "measurement": null,
+      "response": {
+        "outcome": "fallback",
+        "reason": "timeout",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": null
+    },
+    {
+      "requestId": "f6618bbf-424d-443d-aa4c-38a4c85d56a3",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "leadership-02",
+      "startedAt": "2026-10-27T16:58:31.067Z",
+      "latencyMs": 4298,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_046840bb2b5bdac5016ae0d837344487d29c028695f8f4044b",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11429,
+        "outputTokens": 248,
+        "reasoningTokens": 186,
+        "costMicrodollars": 1267,
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "9c6cff41-2d4c-4d2d-b4fe-17fae90882d9",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "operations-01",
+      "startedAt": "2026-10-27T16:58:35.366Z",
+      "latencyMs": 2890,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0e19c9910b3db63e016ae0d83b7b1087d286bf6e52ba71147b",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11432,
+        "outputTokens": 217,
+        "reasoningTokens": 155,
+        "costMicrodollars": 1252,
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "m0mI6_g0V2g",
+          "8ahFA8ECM4c",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "tIekXJLsm8g"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "m0mI6_g0V2g",
+          "8ahFA8ECM4c",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "tIekXJLsm8g"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "eba6d8f1-125f-4ea1-9f5a-349210574e88",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "operations-02",
+      "startedAt": "2026-10-27T16:58:38.256Z",
+      "latencyMs": 2081,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0396630c959d75d4016ae0d83e5dac87d2a4ea5358fcd26cec",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11439,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "UdWR8KKxVDU",
+          "AjI2GF1b6zo",
+          "4LMIC-v5xZ0",
+          "_9QqyTbwisc",
+          "6d2bKhdmqqA",
+          "i22v2xwT6k4",
+          "DP0rtrJVOvM",
+          "Z8yOypmasGg"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "UdWR8KKxVDU",
+          "AjI2GF1b6zo",
+          "4LMIC-v5xZ0",
+          "_9QqyTbwisc",
+          "6d2bKhdmqqA",
+          "i22v2xwT6k4",
+          "DP0rtrJVOvM",
+          "Z8yOypmasGg"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "330b0df3-5e94-4033-bc82-435a9a9b72f3",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "programs-01",
+      "startedAt": "2026-10-27T16:58:40.337Z",
+      "latencyMs": 3485,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0735f0c82b680700016ae0d8406c4087d28945c54e565f51f8",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 255,
+        "reasoningTokens": 193,
+        "costMicrodollars": 1271,
+        "youtubeIds": [
+          "DNfFMZxAI-0",
+          "Kv0C743lCUw",
+          "Fz_zl467-QU",
+          "dooZWSQCNSs",
+          "fCAYTD-hgU8",
+          "smSNnphsmiw"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "DNfFMZxAI-0",
+          "Kv0C743lCUw",
+          "Fz_zl467-QU",
+          "dooZWSQCNSs",
+          "fCAYTD-hgU8",
+          "smSNnphsmiw"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "afabcaed-fd3d-4352-86a5-3bb592ce6b7a",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "programs-02",
+      "startedAt": "2026-10-27T16:58:43.822Z",
+      "latencyMs": 1970,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_059ac20e6c9095e3016ae0d843ed0087d2941ede99b1057a16",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11437,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "zTcrktnmv48",
+          "rtBkm7m6JCg",
+          "-zIvVmJ2XFw"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "zTcrktnmv48",
+          "rtBkm7m6JCg",
+          "-zIvVmJ2XFw"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "29257074-14c9-4fba-8799-c67105f1ca6f",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "communications-01",
+      "startedAt": "2026-10-27T16:58:45.793Z",
+      "latencyMs": 4053,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0e9ad8c6373c51fc016ae0d845ebfc87d29cb1f4961b266023",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "_9QqyTbwisc",
+          "MpkMYlaHU4k",
+          "wu6DHIkJH7k",
+          "kONzk7f2M5o",
+          "DP0rtrJVOvM"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "_9QqyTbwisc",
+          "MpkMYlaHU4k",
+          "wu6DHIkJH7k",
+          "kONzk7f2M5o",
+          "DP0rtrJVOvM"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "9ff0a535-6c66-4f67-b497-cd19210704cd",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "communications-02",
+      "startedAt": "2026-10-27T16:58:49.847Z",
+      "latencyMs": 3350,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_09d9f10c83f8ec60016ae0d849f0d087d2ac6eed0940292671",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 290,
+        "reasoningTokens": 228,
+        "costMicrodollars": 1289,
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "_wdiyBIC8uc",
+          "9Np4JDDQvpA",
+          "33a0qYtCMvc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "_wdiyBIC8uc",
+          "9Np4JDDQvpA",
+          "33a0qYtCMvc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "95f696df-6991-4904-910f-4283d6346b91",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "fundraising-01",
+      "startedAt": "2026-10-27T16:58:53.197Z",
+      "latencyMs": 2132,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0034af75e52195d6016ae0d84dc0f887d2912a53688d462674",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M",
+          "_9QqyTbwisc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M",
+          "_9QqyTbwisc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "df558f7b-1e9b-42b1-a2ef-b438086071a7",
+      "effort": "low",
+      "trial": 1,
+      "profileId": "fundraising-02",
+      "startedAt": "2026-10-27T16:58:55.330Z",
+      "latencyMs": 3409,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0226dfb9111829be016ae0d84f65c087d29a30355eed633e04",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 274,
+        "reasoningTokens": 212,
+        "costMicrodollars": 1281,
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "jm9ZaKY1taA",
+          "rjaMvND2IRU"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "jm9ZaKY1taA",
+          "rjaMvND2IRU"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "20b6390a-b68e-47bd-81a0-3aafd3827305",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "leadership-01",
+      "startedAt": "2026-10-27T16:58:58.740Z",
+      "latencyMs": 4173,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_04846bf27cfc5d5b016ae0d852d94c87d2982b256341e7ffb7",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11430,
+        "outputTokens": 328,
+        "reasoningTokens": 266,
+        "costMicrodollars": 1307,
+        "youtubeIds": [
+          "i22v2xwT6k4",
+          "6d2bKhdmqqA",
+          "bxfxzx-_MME",
+          "rFhgVTsItlU",
+          "FMQJH3c5cLc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "i22v2xwT6k4",
+          "6d2bKhdmqqA",
+          "bxfxzx-_MME",
+          "rFhgVTsItlU",
+          "FMQJH3c5cLc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "ae1592ed-2380-4805-81d4-25c228bfe7e0",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "leadership-02",
+      "startedAt": "2026-10-27T16:59:02.913Z",
+      "latencyMs": 3845,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0966de891baed640016ae0d856febc87d2a1c0c6a2c5c77265",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11429,
+        "outputTokens": 286,
+        "reasoningTokens": 224,
+        "costMicrodollars": 1286,
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "2b936ac7-d17a-4860-a527-a5ea58c6a97e",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "operations-01",
+      "startedAt": "2026-10-27T16:59:06.759Z",
+      "latencyMs": 2847,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_09d940812d9753cc016ae0d85ad95087d28e2951e12a55f885",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11432,
+        "outputTokens": 233,
+        "reasoningTokens": 171,
+        "costMicrodollars": 1260,
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "8ahFA8ECM4c",
+          "m0mI6_g0V2g",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "tIekXJLsm8g"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "8ahFA8ECM4c",
+          "m0mI6_g0V2g",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "tIekXJLsm8g"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "234d6fcb-32b9-4ec7-8aa2-8f4832f74368",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "operations-02",
+      "startedAt": "2026-10-27T16:59:09.606Z",
+      "latencyMs": 3592,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_04f8cf3617697441016ae0d85db64887d2817a868c815aa4e0",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11439,
+        "outputTokens": 325,
+        "reasoningTokens": 263,
+        "costMicrodollars": 1307,
+        "youtubeIds": [
+          "AjI2GF1b6zo",
+          "UdWR8KKxVDU",
+          "wxJVc1q_nnY",
+          "4LMIC-v5xZ0",
+          "_9QqyTbwisc",
+          "DP0rtrJVOvM"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "AjI2GF1b6zo",
+          "UdWR8KKxVDU",
+          "wxJVc1q_nnY",
+          "4LMIC-v5xZ0",
+          "_9QqyTbwisc",
+          "DP0rtrJVOvM"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "5c2e9ea4-687c-4ce8-8db8-8e7d747ff166",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "programs-01",
+      "startedAt": "2026-10-27T16:59:13.198Z",
+      "latencyMs": 2542,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0ed3c750bcaa2922016ae0d861487087d29ed689e59104044a",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 232,
+        "reasoningTokens": 170,
+        "costMicrodollars": 1260,
+        "youtubeIds": [
+          "Kv0C743lCUw",
+          "fCAYTD-hgU8",
+          "Fz_zl467-QU",
+          "DNfFMZxAI-0",
+          "dooZWSQCNSs"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "Kv0C743lCUw",
+          "fCAYTD-hgU8",
+          "Fz_zl467-QU",
+          "DNfFMZxAI-0",
+          "dooZWSQCNSs"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "0427bcfd-0ad4-4a19-a62b-9bd89bcd7066",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "programs-02",
+      "startedAt": "2026-10-27T16:59:15.740Z",
+      "latencyMs": 1302,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_018700f132ca7827016ae0d863da8487d2b88c50297b4bc8c6",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11437,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "1yBNcKEISP0",
+          "ZMPLTq-ptrE",
+          "0qSXFbGrQ90"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "1yBNcKEISP0",
+          "ZMPLTq-ptrE",
+          "0qSXFbGrQ90"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "966648af-f51c-4348-b618-1f61ce84d7b2",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "communications-01",
+      "startedAt": "2026-10-27T16:59:17.042Z",
+      "latencyMs": 1751,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_05f7817080d9b70a016ae0d86525b887d2a58f5547c5fd86d0",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "MpkMYlaHU4k",
+          "0kMuHMGvhBE",
+          "wu6DHIkJH7k",
+          "_wdiyBIC8uc",
+          "kONzk7f2M5o",
+          "WtEV-VSDLFg"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "MpkMYlaHU4k",
+          "0kMuHMGvhBE",
+          "wu6DHIkJH7k",
+          "_wdiyBIC8uc",
+          "kONzk7f2M5o",
+          "WtEV-VSDLFg"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "3f45acf9-a590-46ac-918a-53d39eb20240",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "communications-02",
+      "startedAt": "2026-10-27T16:59:18.794Z",
+      "latencyMs": 3421,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_08e2aefc7c92c479016ae0d866e3e087d2a3123c93b6edb155",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 286,
+        "reasoningTokens": 224,
+        "costMicrodollars": 1287,
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "_wdiyBIC8uc",
+          "9Np4JDDQvpA",
+          "33a0qYtCMvc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "_wdiyBIC8uc",
+          "9Np4JDDQvpA",
+          "33a0qYtCMvc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "f605091e-be30-4a25-a7de-0995be8be6fc",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "fundraising-01",
+      "startedAt": "2026-10-27T16:59:22.215Z",
+      "latencyMs": 1212,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0e392830f0465a68016ae0d86a4d8887d28464dfbca0deb674",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M",
+          "_9QqyTbwisc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M",
+          "_9QqyTbwisc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "69771ef5-730a-41d5-9ece-cca670debe9d",
+      "effort": "low",
+      "trial": 2,
+      "profileId": "fundraising-02",
+      "startedAt": "2026-10-27T16:59:23.427Z",
+      "latencyMs": 3184,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0b301e5e4f8c6bf7016ae0d86b7fec87d2bcf170ce919f0c1e",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 290,
+        "reasoningTokens": 228,
+        "costMicrodollars": 1289,
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "jm9ZaKY1taA"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "jm9ZaKY1taA"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "19c405dc-3a81-4e2f-bd26-33805f9aa9dc",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "leadership-01",
+      "startedAt": "2026-10-27T16:59:26.612Z",
+      "latencyMs": 3916,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0166ca5f09a595a8016ae0d86eb14887d292c3ff600bf977e8",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11430,
+        "outputTokens": 363,
+        "reasoningTokens": 301,
+        "costMicrodollars": 1325,
+        "youtubeIds": [
+          "i22v2xwT6k4",
+          "6d2bKhdmqqA",
+          "rFhgVTsItlU",
+          "FMQJH3c5cLc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "i22v2xwT6k4",
+          "6d2bKhdmqqA",
+          "rFhgVTsItlU",
+          "FMQJH3c5cLc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "69d76f98-dec1-456d-815f-1d4859096705",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "leadership-02",
+      "startedAt": "2026-10-27T16:59:30.528Z",
+      "latencyMs": 2646,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_09bc58af56c5896a016ae0d872bc3c87d2b4796f09ca3708ee",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11429,
+        "outputTokens": 230,
+        "reasoningTokens": 168,
+        "costMicrodollars": 1258,
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "b796c021-62b1-4540-adf1-cd24246bf4e9",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "operations-01",
+      "startedAt": "2026-10-27T16:59:33.175Z",
+      "latencyMs": 4321,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0a374ac9a841bd86016ae0d875b43887d2b53b446aa4c15770",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11432,
+        "outputTokens": 236,
+        "reasoningTokens": 174,
+        "costMicrodollars": 1262,
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "m0mI6_g0V2g",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c",
+          "0qSXFbGrQ90",
+          "tIekXJLsm8g"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "m0mI6_g0V2g",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c",
+          "0qSXFbGrQ90",
+          "tIekXJLsm8g"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "e3badbe4-5fbf-4945-924b-cb1795e6b8fd",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "operations-02",
+      "startedAt": "2026-10-27T16:59:37.496Z",
+      "latencyMs": 3718,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_045e5ffc998b3221016ae0d879d29887d2916e403541e3219b",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11439,
+        "outputTokens": 273,
+        "reasoningTokens": 211,
+        "costMicrodollars": 1281,
+        "youtubeIds": [
+          "UdWR8KKxVDU",
+          "AjI2GF1b6zo",
+          "wxJVc1q_nnY",
+          "4LMIC-v5xZ0"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "UdWR8KKxVDU",
+          "AjI2GF1b6zo",
+          "wxJVc1q_nnY",
+          "4LMIC-v5xZ0"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "7a5aab21-1c03-418b-a8ef-4e000586de81",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "programs-01",
+      "startedAt": "2026-10-27T16:59:41.215Z",
+      "latencyMs": 2568,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_089d7de3953404a2016ae0d87d4ea487d2a06b5b0ee998c299",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 200,
+        "reasoningTokens": 138,
+        "costMicrodollars": 1244,
+        "youtubeIds": [
+          "Kv0C743lCUw",
+          "DNfFMZxAI-0",
+          "fCAYTD-hgU8",
+          "Fz_zl467-QU",
+          "dooZWSQCNSs",
+          "smSNnphsmiw",
+          "xpbFvf5lM-w"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "Kv0C743lCUw",
+          "DNfFMZxAI-0",
+          "fCAYTD-hgU8",
+          "Fz_zl467-QU",
+          "dooZWSQCNSs",
+          "smSNnphsmiw",
+          "xpbFvf5lM-w"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "645d0926-c433-4c56-ad81-245a07171c4f",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "programs-02",
+      "startedAt": "2026-10-27T16:59:43.783Z",
+      "latencyMs": 1436,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0db9234b2a8f1d1f016ae0d87fe58087d29f16620875020800",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11437,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "c5bL8ah2teE",
+          "JzV9-_irHdI",
+          "_pM0ua51qRI",
+          "M-MqULy0DqM",
+          "LCZZLOrfwXc",
+          "4LMIC-v5xZ0",
+          "0qSXFbGrQ90",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "81e67174-f69f-473d-a474-21427a1666a8",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "communications-01",
+      "startedAt": "2026-10-27T16:59:45.220Z",
+      "latencyMs": 1199,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0504d3075084e9a2016ae0d8814fc487d2a6fd01dd9fe10c8b",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "_9QqyTbwisc",
+          "MpkMYlaHU4k",
+          "wu6DHIkJH7k",
+          "kONzk7f2M5o",
+          "0kMuHMGvhBE",
+          "_wdiyBIC8uc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "PUACowM_SdU",
+          "ldd8wxVHvCw",
+          "sLAu2FqUZyE",
+          "_9QqyTbwisc",
+          "MpkMYlaHU4k",
+          "wu6DHIkJH7k",
+          "kONzk7f2M5o",
+          "0kMuHMGvhBE",
+          "_wdiyBIC8uc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "10e52bc1-c32f-41a1-89e8-2b593bf0205f",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "communications-02",
+      "startedAt": "2026-10-27T16:59:46.420Z",
+      "latencyMs": 2948,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0651036e49e8a78b016ae0d8827ebc87d2a9c423cfd84f83fe",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11436,
+        "outputTokens": 229,
+        "reasoningTokens": 167,
+        "costMicrodollars": 1259,
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "9Np4JDDQvpA",
+          "_wdiyBIC8uc",
+          "33a0qYtCMvc"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "AMdAwWwdOzY",
+          "9Np4JDDQvpA",
+          "_wdiyBIC8uc",
+          "33a0qYtCMvc"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "fe000d35-bfc0-45e2-8eda-1aba969626b7",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "fundraising-01",
+      "startedAt": "2026-10-27T16:59:49.369Z",
+      "latencyMs": 1757,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_0361cf72a735b05a016ae0d885762087d288a2507a07dd2509",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1174,
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "VQRVNYS1m3g",
+          "7IYj3W4PdPE",
+          "6EWc3MgRNFg",
+          "ZlfTvy2PT1w",
+          "ADF07rFbH8M"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    },
+    {
+      "requestId": "14d871db-2c1b-4640-8806-d8d250888ef3",
+      "effort": "low",
+      "trial": 3,
+      "profileId": "fundraising-02",
+      "startedAt": "2026-10-27T16:59:51.126Z",
+      "latencyMs": 3291,
+      "reservationMicrodollars": 7000,
+      "measurement": {
+        "providerResponseId": "resp_08bddb9e9f65dab2016ae0d88736c087d2ace3283a46bad447",
+        "providerModel": "gpt-6-luna",
+        "providerStatus": "completed",
+        "inputTokens": 11435,
+        "outputTokens": 318,
+        "reasoningTokens": 256,
+        "costMicrodollars": 1303,
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "3oX_M8AcBXk",
+          "jm9ZaKY1taA",
+          "ShikWPoBRac",
+          "rjaMvND2IRU"
+        ],
+        "failure": null,
+        "fatal": false
+      },
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "3oX_M8AcBXk",
+          "jm9ZaKY1taA",
+          "ShikWPoBRac",
+          "rjaMvND2IRU"
+        ],
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v8",
+        "catalogVersion": "sha256:9b971a3a363a2cfb183d5534eac687ae3a908ece83ea36ccc1965cd97e599306"
+      },
+      "httpStatus": 200
+    }
+  ]
+}

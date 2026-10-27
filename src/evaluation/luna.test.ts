@@ -5,6 +5,7 @@ import { readLimits } from '../../server/config';
 import { parseBenchmark } from './benchmark';
 import {
   LUNA_CALLS,
+  LUNA_COMPACT_PROMPT,
   LUNA_ENDPOINT,
   LUNA_FINGERPRINT,
   LUNA_MODEL,
@@ -83,13 +84,32 @@ function response() {
 afterEach(() => vi.useRealTimers());
 
 describe('Luna comparison authorization', () => {
+  it('changes only prompt text for the compact candidate and preserves every catalog field', () => {
+    for (const profile of benchmark.profiles) {
+      const original = providerBody(
+        { ...profile.input, catalogVersion: benchmark.catalog.catalogVersion },
+        benchmark.catalog,
+        readLimits(limits)!,
+      );
+      const previous = lunaBody(original, 'low');
+      const candidate = lunaBody(original, 'low', LUNA_COMPACT_PROMPT);
+      expect(candidate.input[1]).toEqual(previous.input[1]);
+      expect(candidate.text.format).toEqual(previous.text.format);
+      expect(candidate.input[0].content.length).toBeLessThan(
+        previous.input[0].content.length,
+      );
+      expect(candidate.input[0].content).toContain('Never sacrifice relevance');
+      expect(candidate.input[0].content).toContain('untrusted JSON data');
+      expect(candidate.reasoning).toEqual(previous.reasoning);
+    }
+  });
   it('allows a low-only rerun while carrying prior timeout reservations forward', () => {
     const rerun = {
       ...approval,
       efforts: ['low'],
       maxCalls: 30,
       promptVersion: 'catalog-rank-luna-v8',
-      priorSpendMicrodollars: 183_040,
+      priorSpendMicrodollars: LUNA_PRIOR_SPEND,
     };
     const checkout = {
       sourceRevision: approval.approvedSourceRevision,
@@ -100,7 +120,10 @@ describe('Luna comparison authorization', () => {
     ).toEqual(rerun);
     for (const altered of [
       { ...rerun, priorSpendMicrodollars: 0 },
-      { ...rerun, allowanceMicrodollars: 393_039 },
+      {
+        ...rerun,
+        allowanceMicrodollars: LUNA_PRIOR_SPEND + 30 * LUNA_RESERVATION - 1,
+      },
       { ...rerun, maxCalls: 60 },
       { ...rerun, efforts: ['low', 'low'] },
     ])
@@ -307,7 +330,7 @@ describe('Luna paid dispatch boundaries using mocks', () => {
     expect(scored.trials.promptVersion).toBe(LUNA_RERUN_PROMPT);
     expect(scored.report.relevanceEvidenceComplete).toBe(false);
     expect(lunaSpent(state) + state.approval.priorSpendMicrodollars).toBe(
-      258_040,
+      LUNA_PRIOR_SPEND + 75_000,
     );
   });
   it('runs exactly 60 fresh calls, reserves before dispatch and never certifies a deployment', async () => {

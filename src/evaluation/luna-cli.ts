@@ -36,14 +36,23 @@ export async function main() {
   );
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error('Add the OPENAI_API_KEY Actions secret.');
-  const priorCapture = readFileSync(
-    'docs/evaluation/2026-10-26-luna/runs/40445851804-2/capture.json',
-  );
-  if (
-    createHash('sha256').update(priorCapture).digest('hex') !==
-      '547265442f5afcec3f372d81d486acbefd8575ea3003c852a90d175ee9820ed4' ||
-    lunaSpent(JSON.parse(priorCapture.toString('utf8'))) !== LUNA_PRIOR_SPEND
-  )
+  const previousRuns = [
+    [
+      'docs/evaluation/2026-10-26-luna/runs/40445851804-2/capture.json',
+      '547265442f5afcec3f372d81d486acbefd8575ea3003c852a90d175ee9820ed4',
+    ],
+    [
+      'docs/evaluation/2026-10-27-luna-low/runs/40545682960-2/capture.json',
+      '2f52b62ac70c686a3b4e569a6d6b5e71c2d72d53ba117e928961244e6499f63b',
+    ],
+  ];
+  const priorSpend = previousRuns.reduce((total, [path, hash]) => {
+    const capture = readFileSync(path);
+    if (createHash('sha256').update(capture).digest('hex') !== hash)
+      throw new Error('Prior Luna capture changed.');
+    return total + lunaSpent(JSON.parse(capture.toString('utf8')));
+  }, 0);
+  if (priorSpend !== LUNA_PRIOR_SPEND)
     throw new Error('Prior Luna allowance evidence changed.');
   const directory = resolve('build/evaluation/luna');
   mkdirSync(directory, { recursive: true });
