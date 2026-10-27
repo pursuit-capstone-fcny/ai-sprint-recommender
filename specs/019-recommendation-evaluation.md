@@ -73,6 +73,10 @@ The [October 26 Luna comparison](../docs/evaluation/2026-10-26-luna/results.md)
 scores low effort 4/10, 5/10, 3/10 and medium 0/10, 1/10, 0/10. Neither meets
 the target. This isolated provider run does not certify the deployed endpoint.
 
+The [October 27 prompt trials](../docs/evaluation/2026-10-27-luna-low/results.md)
+score V8 at 2/10, 3/10, 3/10 and V9 at 3/10 each. Both are rejected as quality
+improvements; V7 remains the default. Labels, catalog tags and the gate are unchanged.
+
 - Three fresh passing trials for the reviewed implementation, under renewed
   approval for the exact source revision and workflow execution.
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.

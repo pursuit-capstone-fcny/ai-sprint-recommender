@@ -20,7 +20,9 @@ export const LUNA_MAX_INPUT = 60_000;
 export const LUNA_MAX_OUTPUT = 2_000;
 export const LUNA_RESERVATION = 7_000;
 export const LUNA_CALLS = 60;
-export const LUNA_PRIOR_SPEND = 226_068;
+export const LUNA_PRIOR_SPEND = 261_960;
+// Retained for reproducibility. Neither experiment beat V7 in the frozen
+// benchmark; V7 remains the default and no candidate is production-approved.
 export const LUNA_RERUN_PROMPT = 'catalog-rank-luna-v8';
 export const LUNA_COMPACT_PROMPT = 'catalog-rank-luna-v9';
 const compactPrompt = [
