@@ -14,8 +14,8 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Goal
 
-- Deliver the required MVP analytics dashboard for authorized FCNY admins using #16 usage events, a restricted aggregate Google Sheet and an FCNY-owned Looker Studio report.
-- MVP covers basic video/tag data: appearance frequency, keyword association, keyword frequency and filters for unused content. Percentage watched is optional pending feasibility and collection approval.
+- Deliver the required MVP analytics dashboard for authorized FCNY admins using #16 usage events, a restricted aggregate Google Sheet and an FCNY-owned private admin app.
+- MVP covers basic video/tag data: appearance frequency, keyword association, keyword frequency and filters for unused content. Percentage watched is optional pending feasibility and collection approval. The user confirmed a private app dashboard in place of Looker Studio on Oct 29, 2026.
 
 ### Work order
 
@@ -34,9 +34,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 ### Acceptance criteria
 
 - AC-24.1 FCNY-owned restricted dashboard
-  - Given the FCNY-owned Looker Studio report and a restricted aggregate Sheet derived from #16
+  - Given the FCNY-owned private admin app and a restricted aggregate Sheet derived from #16
   - When an authorized Sprint admin opens it without YouTube channel access
-  - Then the report shows only aggregate video/tag data and public catalog metadata; named staff can read it, unauthorized visitors cannot, and no raw event log is published.
+  - Then the report shows only aggregate video/tag data and public catalog metadata; named staff can read it, unauthorized visitors cannot, and no raw event log is published. Each page and data request checks Google-authenticated identity against a server-side staff allowlist and enforces the visitor's reporting-file access; use a separate app deployment executing as the visiting user, never the anonymous catalog endpoint.
 - AC-24.2 Video appearance frequency
   - Given accepted production impression and click events in the selected reporting period
   - When video totals are calculated
@@ -47,7 +47,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Then count distinct displayed video/searchId pairs whose video carries each tag, counting a pair once per tag even when catalog joins repeat it. Keep tag appearances separate from keyword search frequency; unavailable historical catalog mappings are flagged and never silently joined to retagged current metadata.
 - AC-24.4 Filters and unused content
   - Given the complete active video catalog and canonical tag dictionary left-joined to usage aggregates
-  - When an admin selects a date range, video/tag, tag category, source or recommendation/topic mode and an activity filter
+  - When an admin selects a date range, video/tag, tag category, source or recommendation/topic mode and an activity filter in sortable, paginated video/tag/association views
   - Then the view can show all items, zero appearances, appearances with zero clicks, and tags with zero searches. Include videos/tags with no event rows as zeros, distinguish these states, and label them as no recorded activity in the selected period rather than never used. Tag clicks derive from the clicked videos catalog tags without inflating video click totals.
 - AC-24.5 Required for MVP
   - Given the confirmed MVP scope
@@ -64,7 +64,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-24.8 Reporting operations
   - Given the restricted aggregate pipeline and approved production logging
   - When a scheduled daily refresh runs
-  - Then deduplicate accepted events before joins, use receivedAt dates in America/New_York, exclude team and isolated test/preview traffic by default, and expose last successful refresh, reporting coverage, stale/error and empty states. Name the FCNY refresh/access/retention owner and document refresh failures and recovery. Keep the proposed Sheet-to-Looker approach; Airtable is not an MVP dependency.
+  - Then deduplicate accepted events before joins, use receivedAt dates in America/New_York, exclude team and isolated test/preview traffic by default, and expose last successful refresh, reporting coverage, stale/error and empty states. Name the FCNY refresh/access/retention owner and document refresh failures and recovery. Keep the restricted Sheet-to-private-app approach; Airtable is not an MVP dependency.
 - AC-24.9 Canonical keyword frequency
   - Given search events carrying allowlisted functionArea, tools and tasks
   - When the keyword-frequency table is built

@@ -153,7 +153,9 @@ export function analyticsServices() {
       },
     }),
   });
+  let generation = 0;
   vi.stubGlobal('Utilities', {
+    getUuid: () => `fixture-generation-${++generation}`,
     DigestAlgorithm: { SHA_256: 'sha256' },
     Charset: { UTF_8: 'utf8' },
     computeDigest: (_algorithm: string, value: string) =>

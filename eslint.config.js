@@ -15,6 +15,7 @@ export default tseslint.config(
   {
     files: [
       'apps-script/index.ts',
+      'apps-script-admin/index.ts',
       'apps-script/test-setup.ts',
       'apps-script/catalog-sheet.ts',
       'apps-script/usage-sheet.ts',
@@ -29,6 +30,8 @@ export default tseslint.config(
         ContentService: 'readonly',
         Utilities: 'readonly',
         ScriptApp: 'readonly',
+        Session: 'readonly',
+        HtmlService: 'readonly',
       },
     },
   },
@@ -48,5 +51,12 @@ export default tseslint.config(
   {
     ...jsxA11y.flatConfigs.recommended,
     files: ['**/*.{tsx,jsx}'],
+  },
+  {
+    files: ['src/admin/AnalyticsDashboard.tsx'],
+    rules: {
+      // Horizontal data tables must be focusable for keyboard scrolling.
+      'jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['region'] }],
+    },
   },
 );
