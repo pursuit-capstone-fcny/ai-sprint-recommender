@@ -10,6 +10,9 @@ production collection were not changed.
 - [Test recommender with team attribution](https://e4cdf1ae-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team)
 - [Private test Sheet](https://docs.google.com/spreadsheets/d/1UO6Biq_clsL8kqmHyBN2qChJ8nbLSwclY_Jdg499xHY/edit)
 
+The recommender footer links **Admin analytics** to the private dashboard in a
+new tab. This navigation grants no access and passes no credentials.
+
 Sign in to the dashboard, authorize Google's scopes, and paste the test Sheet
 link. The test owner completed consent and successfully connected it. Other
 staff need their own Google account with access to the test Sheet. No sharing

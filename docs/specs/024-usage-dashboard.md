@@ -79,6 +79,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When Ali or Eliot signs in and supplies the Google Sheets link
   - Then validate the file under that user's Google identity, save only that account's connection, and load inventory/aggregates without asking for file IDs, Script Properties, a separate report file or an app email allowlist. Support normalized catalog/usage workbooks, the integration library's tag-review format and existing aggregate reports. A failed connection must preserve the previous binding; disconnect must only forget the current user's connection. Reject public/link/domain sharing and inaccessible files. Never edit the source or enable collection while connecting. Proposed tags require explicit Approved status; missing usage collection and unapproved tags remain visibly unavailable. Direct reads use an approved workbook reporting policy or a labeled conservative 24-hour window, and do not publish raw events. The public preview remains fictional and cannot connect real data.
 
+- AC-24.12 Website entry point
+  - Given an admin is on the deployed recommender website
+  - When they choose Admin analytics in the Staff navigation in the footer
+  - Then open the private Google dashboard in a new tab with an accessible new-tab notice. The link does not grant access or pass credentials; Google sign-in and actual permission to the connected Restricted Sheet remain required. The public synthetic analytics preview is not the live destination.
+
 ### Open questions
 
 - [ ] Name the authorized admin viewers and FCNY owner for aggregate refresh, retention, access and recovery; confirm reporting coverage and retention under #8. Dashboard inclusion in MVP is already confirmed.
