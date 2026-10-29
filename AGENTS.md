@@ -31,7 +31,7 @@ One-time setup: install [pnpm](https://pnpm.io/installation) and
 | `src/engine/`      | Ranking logic. Pure functions, no React, no network                     |
 | `src/contracts/`   | Shared TypeScript types: catalog shape, usage event payloads            |
 | `apps-script/`     | Apps Script source deployed to the Sheet (`doGet`/`doPost`)             |
-| `specs/`           | Per-feature spec files with Given/When/Then acceptance criteria         |
+| `docs/specs/`      | Per-feature spec files with Given/When/Then acceptance criteria         |
 | `docs/adr/`        | Decision records. Change a decision here, not silently                  |
 | `docs/glossary.md` | Canonical terms and ID formats. Use these names in code, specs, and PRs |
 
@@ -56,7 +56,7 @@ One-time setup: install [pnpm](https://pnpm.io/installation) and
 
 1. `pnpm typecheck`, `pnpm lint`, `pnpm test`, and `pnpm build` pass locally
    and in CI.
-2. A spec exists under `specs/` with Given/When/Then acceptance criteria, and
+2. A spec exists under `docs/specs/` with Given/When/Then acceptance criteria, and
    the implementation matches it.
 3. The data rules above hold for every file in the diff.
 4. UI changes are checked on the Cloudflare preview deployment.
@@ -66,5 +66,7 @@ One-time setup: install [pnpm](https://pnpm.io/installation) and
 
 - Read `docs/glossary.md` before writing code or specs; use its terms and ID
   formats exactly (catalog items, usage events, and sprints have defined IDs).
+- Before implementing an issue, read its `docs/specs/NNN-*.md` spec. For a new
+  spec, start from `docs/specs/_template/spec.md` and retain the issue's acceptance-criterion IDs.
 - Match existing code style. Do not refactor unrelated code.
 - Do not edit `docs/adr/` decisions without an explicit ask.
