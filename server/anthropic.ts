@@ -79,6 +79,7 @@ export const ProviderValidationSchema = z.object({
     'schema',
     'duplicate',
     'out-of-range',
+    'candidate-or-usage-mismatch',
   ]),
   contentBlockCount: count,
   selectionCount: count,
@@ -91,6 +92,7 @@ export interface ProviderResult extends Partial<ProviderValidation> {
   value: unknown;
   inputTokens: number;
   outputTokens: number;
+  reasoningTokens?: number;
 }
 export type Provider = (
   body: ProviderBody,

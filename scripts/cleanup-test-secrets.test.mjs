@@ -6,7 +6,7 @@ const config = {
   vars: { LLM_ENVIRONMENT: 'test', LLM_ENABLED: 'false' },
 };
 const credentials = { accountId: 'a'.repeat(32), token: 'fake-test-token' };
-const names = ['ANTHROPIC_API_KEY', 'LLM_RATE_KEY'];
+const names = ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY', 'LLM_RATE_KEY'];
 const response = (result) => Response.json({ success: true, result });
 
 describe('test Worker secret cleanup', () => {
@@ -18,11 +18,13 @@ describe('test Worker secret cleanup', () => {
       )
       .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response(null))
+      .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response([{ name: 'OTHER' }]));
     const report = await cleanupTestSecrets(config, credentials, fetcher);
     expect(report.confirmed).toBe(true);
     expect(report.paidCalls).toBe(0);
     expect(report.bindings.map((entry) => entry.outcome)).toEqual([
+      'removed',
       'removed',
       'removed',
     ]);
@@ -41,15 +43,17 @@ describe('test Worker secret cleanup', () => {
     expect(report.bindings.map((entry) => entry.outcome)).toEqual([
       'absent',
       'absent',
+      'absent',
     ]);
     expect(fetcher).toHaveBeenCalledTimes(2);
   });
 
-  it('still attempts the second deletion after the first fails and sanitizes errors', async () => {
+  it('still attempts remaining deletions after the first fails and sanitizes errors', async () => {
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(response(names.map((name) => ({ name }))))
       .mockRejectedValueOnce(new Error('fake-sensitive-value'))
+      .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response([{ name: names[0] }]));
     const report = await cleanupTestSecrets(config, credentials, fetcher);
@@ -57,8 +61,9 @@ describe('test Worker secret cleanup', () => {
     expect(report.bindings.map((entry) => entry.outcome)).toEqual([
       'failed',
       'removed',
+      'removed',
     ]);
-    expect(fetcher).toHaveBeenCalledTimes(4);
+    expect(fetcher).toHaveBeenCalledTimes(5);
     expect(JSON.stringify(report)).not.toContain('fake-sensitive-value');
   });
 
@@ -87,7 +92,7 @@ describe('test Worker secret cleanup', () => {
     expect(fetcher).not.toHaveBeenCalled();
   });
 
-  it('attempts both deletions if the initial listing fails, but requires final proof', async () => {
+  it('attempts every deletion if the initial listing fails, but requires final proof', async () => {
     const fetcher = vi
       .fn()
       .mockResolvedValueOnce(
@@ -98,9 +103,10 @@ describe('test Worker secret cleanup', () => {
       )
       .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response(null))
+      .mockResolvedValueOnce(response(null))
       .mockResolvedValueOnce(response([]));
     const report = await cleanupTestSecrets(config, credentials, fetcher);
-    expect(fetcher).toHaveBeenCalledTimes(4);
+    expect(fetcher).toHaveBeenCalledTimes(5);
     expect(report.confirmed).toBe(true);
     expect(JSON.stringify(report)).not.toContain('sensitive');
   });

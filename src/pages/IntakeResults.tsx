@@ -233,8 +233,11 @@ export function IntakeResults({
         />
         {llmEnabled && (
           <p className="usage-notice" id="ai-disclosure">
-            AI suggestions send your goal and selected options to Anthropic.
-            Leave out personal information.
+            AI suggestions send your goal and selected options to{' '}
+            {import.meta.env.VITE_LLM_PROVIDER === 'openai'
+              ? 'OpenAI'
+              : 'Anthropic'}
+            . Leave out personal information.
           </p>
         )}
         {usage && (

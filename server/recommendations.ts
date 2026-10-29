@@ -16,6 +16,7 @@ import {
   type ProviderValidation,
 } from './anthropic';
 import { boundedJson } from './bounded-json';
+import { lunaBody, lunaProvider } from './luna';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -36,6 +37,7 @@ export interface Diagnostic extends Partial<ProviderValidation> {
   latencyMs: number;
   inputTokens?: number;
   outputTokens?: number;
+  reasoningTokens?: number;
   costMicrodollars?: number;
   reservedMicrodollars?: number;
   catalogVersion?: string;
@@ -130,11 +132,15 @@ export async function recommend(
     if (env.LLM_ENABLED !== 'true' || testExpired(env))
       return fallback('disabled');
     const limits = readLimits(env);
+    const providerKey =
+      limits?.LLM_PROVIDER === 'openai'
+        ? env.OPENAI_API_KEY
+        : env.ANTHROPIC_API_KEY;
     if (
       !limits ||
       env.LLM_APPROVALS_RECORDED !== 'true' ||
-      typeof env.ANTHROPIC_API_KEY !== 'string' ||
-      !env.ANTHROPIC_API_KEY ||
+      typeof providerKey !== 'string' ||
+      !providerKey ||
       typeof env.LLM_RATE_KEY !== 'string' ||
       env.LLM_RATE_KEY.length < 32 ||
       (!deps.budget && !env.RECOMMENDATION_BUDGET)
@@ -196,13 +202,31 @@ export async function recommend(
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
     const body = providerBody(input, catalog, limits);
-    if (inputTokenBound(body) > limits.LLM_MAX_INPUT_TOKENS)
+    let bound: number;
+    try {
+      bound =
+        limits.LLM_PROVIDER === 'openai'
+          ? new TextEncoder().encode(JSON.stringify(lunaBody(body, 'low')))
+              .length + 1_024
+          : inputTokenBound(body);
+    } catch {
+      return fallback('catalog-too-large');
+    }
+    if (bound > limits.LLM_MAX_INPUT_TOKENS)
       return fallback('catalog-too-large');
     const budget =
       deps.budget ??
-      durableBudget(env.RECOMMENDATION_BUDGET!, limits.LLM_ENVIRONMENT);
+      durableBudget(
+        env.RECOMMENDATION_BUDGET!,
+        limits.LLM_PROVIDER === 'openai'
+          ? 'test:gpt-6-luna'
+          : limits.LLM_ENVIRONMENT,
+      );
     const provider =
-      deps.provider ?? anthropicProvider(env.ANTHROPIC_API_KEY, fetcher);
+      deps.provider ??
+      (limits.LLM_PROVIDER === 'openai'
+        ? lunaProvider(providerKey, fetcher)
+        : anthropicProvider(providerKey, fetcher));
     const identifier = await (deps.clientKey?.() ??
       clientKey(request, env.LLM_RATE_KEY));
     active();
@@ -243,6 +267,13 @@ export async function recommend(
       actual = measuredCost;
       diagnostic.inputTokens = result.inputTokens;
       diagnostic.outputTokens = result.outputTokens;
+      if (
+        result.reasoningTokens !== undefined &&
+        Number.isSafeInteger(result.reasoningTokens) &&
+        result.reasoningTokens >= 0 &&
+        result.reasoningTokens <= result.outputTokens
+      )
+        diagnostic.reasoningTokens = result.reasoningTokens;
       diagnostic.costMicrodollars = actual;
       active();
       if (

@@ -19,6 +19,15 @@ export const CatalogSourceSchema = z.url().refine((value) => {
   );
 });
 const schema = z.object({
+  LLM_PROVIDER: z.enum(['anthropic', 'openai']).default('anthropic'),
+  LLM_REASONING_EFFORT: z.literal('low').optional(),
+  LLM_ALLOWANCE_MICRODOLLARS: positive.max(1_000_000).optional(),
+  LLM_PRIOR_MICRODOLLARS: z.coerce
+    .number()
+    .int()
+    .nonnegative()
+    .max(1_000_000)
+    .optional(),
   LLM_ENVIRONMENT: z.enum(['test', 'production']),
   LLM_MODEL: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/),
   LLM_CATALOG_URL: CatalogSourceSchema,
@@ -40,6 +49,21 @@ export function readLimits(env: Variables): Limits | null {
   const result = schema.safeParse(env);
   if (!result.success) return null;
   const limits = result.data;
+  // Luna is approved only for the bounded test candidate. No production opt-in.
+  if (
+    limits.LLM_PROVIDER === 'openai' &&
+    (limits.LLM_ENVIRONMENT !== 'test' ||
+      limits.LLM_MODEL !== 'gpt-6-luna' ||
+      limits.LLM_REASONING_EFFORT !== 'low' ||
+      limits.LLM_MAX_INPUT_TOKENS !== 60_000 ||
+      limits.LLM_MAX_OUTPUT_TOKENS !== 2_000 ||
+      limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
+      limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000 ||
+      limits.LLM_ALLOWANCE_MICRODOLLARS === undefined ||
+      limits.LLM_PRIOR_MICRODOLLARS === undefined ||
+      limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS)
+  )
+    return null;
   if (
     limits.LLM_DAILY_MICRODOLLARS > limits.LLM_MONTHLY_MICRODOLLARS ||
     !Number.isSafeInteger(

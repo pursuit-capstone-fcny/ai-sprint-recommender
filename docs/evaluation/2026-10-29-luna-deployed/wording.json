@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "status": "new-wording-probes-client-review-pending",
+  "benchmarkId": "fcny-89-proposed-v1",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scoring": "Separate qualitative checks. Inherit source-profile labels unchanged; never add to the ten-profile denominator.",
+  "profiles": [
+    {
+      "id": "wording-operations-01",
+      "sourceProfileId": "operations-01",
+      "input": {
+        "functionArea": "Operations",
+        "goal": "I have a folder full of anonymous workshop evaluations. Help me group what people said, find repeated concerns, and write a brief for my manager.",
+        "tools": ["Claude"]
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "sourceProfileId": "fundraising-02",
+      "input": {
+        "functionArea": "Fundraising",
+        "goal": "Before I ask a foundation for support, I need to rehearse the questions its reviewer could ask about our program and tighten my replies.",
+        "tools": ["ChatGPT"]
+      }
+    }
+  ]
+}

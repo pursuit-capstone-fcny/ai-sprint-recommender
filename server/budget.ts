@@ -11,6 +11,8 @@ export interface Ledger {
   month: string;
   daily: number;
   monthly: number;
+  // Lifetime allowance never rolls over with the daily/monthly counters.
+  total?: number;
   minute: number;
   requests: number;
   clients: Record<string, number>;
@@ -75,6 +77,11 @@ export function reserve(
   now: number,
 ): ReservationResult {
   expireLedger(ledger, now);
+  if (limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined)
+    ledger.total = Math.max(
+      ledger.total ?? 0,
+      limits.LLM_PRIOR_MICRODOLLARS ?? 0,
+    );
   if (now >= deadline) return { ok: false, reason: 'timeout' };
   if (ledger.reservations[id]) return { ok: false, reason: 'rate-limited' };
   if (
@@ -87,13 +94,16 @@ export function reserve(
     !Number.isSafeInteger(amount) ||
     amount < 1 ||
     ledger.daily + amount > limits.LLM_DAILY_MICRODOLLARS ||
-    ledger.monthly + amount > limits.LLM_MONTHLY_MICRODOLLARS
+    ledger.monthly + amount > limits.LLM_MONTHLY_MICRODOLLARS ||
+    (limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined &&
+      (ledger.total ?? 0) + amount > limits.LLM_ALLOWANCE_MICRODOLLARS)
   )
     return { ok: false, reason: 'budget-exhausted' };
   ledger.requests++;
   ledger.clients[client] = (ledger.clients[client] ?? 0) + 1;
   ledger.daily += amount;
   ledger.monthly += amount;
+  if (ledger.total !== undefined) ledger.total += amount;
   ledger.reservations[id] = {
     amount,
     day: ledger.day,
@@ -115,5 +125,6 @@ export function settle(
   if (!Number.isSafeInteger(actual) || actual < 0) return;
   if (ledger.day === entry.day) ledger.daily += actual - entry.amount;
   if (ledger.month === entry.month) ledger.monthly += actual - entry.amount;
+  if (ledger.total !== undefined) ledger.total += actual - entry.amount;
   delete ledger.reservations[id];
 }

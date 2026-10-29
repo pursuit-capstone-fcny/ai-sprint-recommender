@@ -46,6 +46,16 @@ export class RecommendationBudget {
     if (!limits || request.method !== 'POST')
       return Response.json({ ok: false }, { status: 503 });
     const action = new URL(request.url).pathname;
+    if (action === '/summary' && limits.LLM_PROVIDER === 'openai') {
+      const ledger = await this.state.storage.get<Ledger>('ledger');
+      return Response.json({
+        allowanceMicrodollars: limits.LLM_ALLOWANCE_MICRODOLLARS,
+        spentMicrodollars: Math.max(
+          ledger?.total ?? 0,
+          limits.LLM_PRIOR_MICRODOLLARS ?? 0,
+        ),
+      });
+    }
     const parsed = (
       action === '/reserve' ? reserveSchema : settleSchema
     ).safeParse(await request.json());

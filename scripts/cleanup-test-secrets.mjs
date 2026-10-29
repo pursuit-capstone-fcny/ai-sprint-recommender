@@ -4,7 +4,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const worker = 'ai-sprint-recommender-llm-test';
-const bindings = ['ANTHROPIC_API_KEY', 'LLM_RATE_KEY'];
+const bindings = ['ANTHROPIC_API_KEY', 'OPENAI_API_KEY', 'LLM_RATE_KEY'];
 
 export async function cleanupTestSecrets(config, credentials, fetcher = fetch) {
   assert(

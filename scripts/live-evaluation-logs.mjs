@@ -22,6 +22,7 @@ const DiagnosticSchema = z.strictObject({
   latencyMs: z.number().nonnegative().max(600_000),
   inputTokens: count.optional(),
   outputTokens: count.optional(),
+  reasoningTokens: count.optional(),
   costMicrodollars: count.optional(),
   reservedMicrodollars: count.optional(),
   validationFailure: z
@@ -34,6 +35,7 @@ const DiagnosticSchema = z.strictObject({
       'schema',
       'duplicate',
       'out-of-range',
+      'candidate-or-usage-mismatch',
     ])
     .optional(),
   contentBlockCount: z.number().int().min(0).max(100).optional(),

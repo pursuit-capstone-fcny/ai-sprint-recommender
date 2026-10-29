@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: luna-provider-comparison
+  group: recommendation-evaluation
   cancel-in-progress: false
 
 jobs:

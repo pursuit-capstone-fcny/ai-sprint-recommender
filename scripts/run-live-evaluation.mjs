@@ -11,7 +11,6 @@ import {
   hasReadyDiagnostic,
 } from './live-evaluation-logs.mjs';
 
-const benchmarkPath = 'docs/evaluation/2026-10-21/benchmark.json';
 const liveDirectory = 'build/evaluation/live';
 const diagnosticsPath = `${liveDirectory}/diagnostics.json`;
 
@@ -19,6 +18,15 @@ export async function main(args = process.argv.slice(2)) {
   const { values } = parseArgs({
     args,
     options: {
+      config: { type: 'string', default: 'wrangler.evaluation.json' },
+      benchmark: {
+        type: 'string',
+        default: 'docs/evaluation/2026-10-21/benchmark.json',
+      },
+      wording: {
+        type: 'string',
+        default: 'docs/evaluation/2026-10-21/held-out-wording.json',
+      },
       'check-diagnostics': { type: 'boolean', default: false },
       'diagnose-format': { type: 'boolean', default: false },
       approval: {
@@ -32,6 +40,7 @@ export async function main(args = process.argv.slice(2)) {
     },
   });
   const checkDiagnostics = values['check-diagnostics'];
+  const benchmarkPath = values.benchmark;
   const approvalPath = values.approval;
   const diagnoseFormat = values['diagnose-format'];
   if (checkDiagnostics && diagnoseFormat)
@@ -86,12 +95,7 @@ export async function main(args = process.argv.slice(2)) {
   }
   let cases = [];
   if (!checkDiagnostics) {
-    const heldOut = JSON.parse(
-      await readFile(
-        'docs/evaluation/2026-10-21/held-out-wording.json',
-        'utf8',
-      ),
-    );
+    const heldOut = JSON.parse(await readFile(values.wording, 'utf8'));
     if (
       heldOut.benchmarkFingerprint !== approval.benchmarkFingerprint ||
       heldOut.profiles?.length !== 2
@@ -284,7 +288,7 @@ export async function main(args = process.argv.slice(2)) {
         'tail',
         'ai-sprint-recommender-llm-test',
         '--config',
-        'wrangler.evaluation.json',
+        values.config,
         '--env',
         '',
         '--format',

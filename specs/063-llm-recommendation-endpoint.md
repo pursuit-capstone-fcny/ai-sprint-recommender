@@ -69,3 +69,17 @@ Validation: mocked Anthropic requests, endpoint and storage tests; all CI checks
 Wrangler dry runs for the default and isolated runtime configurations. Live
 provider accuracy, approved pricing/token overhead, runtime provisioning and
 manual signed-out enabled/failure checks remain prerequisites for enablement.
+
+### Luna test candidate
+
+- Given Jason's remaining original $1 allowance, when the test worker uses
+  GPT-6 Luna low with standard reasoning and V7, then it uses the same public
+  catalog, schema and 4.5-second deadline as the comparison. OpenAI production
+  configuration is rejected before any provider call.
+- Given prior spend and unknown reservations, when a request reserves cost,
+  then a persistent cumulative limit carries them across day/month changes.
+  Known usage settles once, including reasoning tokens within output tokens;
+  unknown usage keeps the full $0.007 reservation.
+- Given the approved validation has finished, when cleanup runs, then calls
+  are disabled, cumulative spend is read through a runner-only test route,
+  and test provider secrets are removed. Production settings stay unchanged.

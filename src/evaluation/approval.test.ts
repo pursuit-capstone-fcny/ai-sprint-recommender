@@ -13,6 +13,7 @@ import {
   validateLiveApproval,
 } from './approval';
 import { runLiveTrials } from './live';
+import { LUNA_PRIOR_SPEND } from './luna-ledger';
 
 const benchmark = parseBenchmark(fixture);
 benchmark.approval = {
@@ -43,6 +44,41 @@ const approval = {
 };
 
 describe('paid evaluation approval preflight', () => {
+  it('requires Luna low to carry the original allowance and exact test workflow', () => {
+    vi.stubEnv('GITHUB_WORKFLOW', 'Validate Luna test deployment');
+    const luna = {
+      ...approval,
+      modelVersion: 'gpt-6-luna',
+      promptVersion: 'catalog-rank-v7',
+      reasoningEffort: 'low',
+      priorSpendMicrodollars: LUNA_PRIOR_SPEND,
+      totalAllowanceMicrodollars: 1000000,
+      allowanceMicrodollars: 1000000 - LUNA_PRIOR_SPEND,
+      maxRequestMicrodollars: 7000,
+    };
+    const now = Date.parse('2026-10-21T12:00:00Z');
+    expect(validateLiveApproval(benchmark, luna, checkout, now, 34)).toEqual(
+      luna,
+    );
+    for (const change of [
+      { priorSpendMicrodollars: 0 },
+      { allowanceMicrodollars: 1000000 },
+      { reasoningEffort: 'medium' },
+    ])
+      expect(() =>
+        validateLiveApproval(
+          benchmark,
+          { ...luna, ...change },
+          checkout,
+          now,
+          34,
+        ),
+      ).toThrow();
+    vi.stubEnv('GITHUB_WORKFLOW', 'Evaluate Anthropic test deployment');
+    expect(() =>
+      validateLiveApproval(benchmark, luna, checkout, now, 34),
+    ).toThrow('workflow');
+  });
   beforeEach(() => {
     vi.stubEnv(
       'GITHUB_REPOSITORY',

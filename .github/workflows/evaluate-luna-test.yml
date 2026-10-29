@@ -1,0 +1,155 @@
+name: Validate Luna test deployment
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+env:
+  WRANGLER_WRITE_LOGS: 'false'
+  CLOUDFLARE_SEND_METRICS: 'false'
+
+concurrency:
+  group: recommendation-evaluation
+  cancel-in-progress: false
+
+jobs:
+  evaluate:
+    if: >-
+      github.event.pull_request.number == 76 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.label.name == 'validate-luna-test'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - name: Install and verify
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm lint
+          pnpm test
+          pnpm evaluate --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --output build/evaluation/baseline
+
+      - name: Verify current owner approval before any test network work
+        env:
+          LLM_EVALUATION_APPROVAL: ${{ vars.LLM_EVALUATION_APPROVAL }}
+        run: |
+          node --input-type=module <<'JS'
+          import {writeFileSync} from 'node:fs';
+          import assert from 'node:assert/strict';
+          assert(process.env.LLM_EVALUATION_APPROVAL, 'An owner-approved LLM_EVALUATION_APPROVAL Actions variable is required');
+          writeFileSync(`${process.env.RUNNER_TEMP}/llm-evaluation-approval.json`, process.env.LLM_EVALUATION_APPROVAL, {mode: 0o600});
+          JS
+          node scripts/luna-deployment.mjs check
+
+      - name: Build test site
+        env:
+          VITE_CATALOG_URL: /api/catalog
+          VITE_CATALOG_SOURCE: remote
+          VITE_LLM_ENABLED: 'true'
+          VITE_LLM_PROVIDER: openai
+          VITE_USAGE_ENVIRONMENT: test
+          VITE_USAGE_ENABLED: 'false'
+          VITE_USAGE_TEST_URL: ''
+        run: pnpm build
+
+      - name: Deploy test site with provider calls disabled
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --config wrangler.luna-test.json
+
+      - name: Verify disabled endpoint
+        run: node scripts/verify-disabled-test.mjs
+
+      - name: Verify sanitized diagnostic capture without paid calls
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/run-live-evaluation.mjs --check-diagnostics --config wrangler.luna-test.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json"
+
+      - name: Deploy isolated synthetic failure checks
+        id: failuredeploy
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler deploy --config wrangler.failure-test.json
+
+      - name: Verify deployed failure handling without provider calls
+        run: node scripts/verify-failure-worker.mjs
+
+      - name: Enable approved Luna low test candidate
+        id: enable
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/luna-deployment.mjs enable
+
+      - name: Run approved endpoint trials and separate probes
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/run-live-evaluation.mjs --config wrangler.luna-test.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --wording docs/evaluation/2026-10-29-luna-deployed/wording.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline build/evaluation/baseline/report.json
+
+      - name: Disable test provider calls after evaluation
+        if: always() && (steps.enable.outcome == 'success' || steps.enable.outcome == 'failure')
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: |
+          pnpm exec wrangler deploy --config wrangler.luna-test.json
+          node scripts/verify-disabled-test.mjs
+
+      - name: Save durable cumulative Luna allowance after shutdown
+        if: always()
+        run: |
+          if [ -f "$RUNNER_TEMP/luna-test-secrets.json" ]; then
+            node scripts/luna-deployment.mjs budget
+          fi
+
+      - name: Remove remote test provider and rate-key bindings
+        if: always()
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: node scripts/cleanup-test-secrets.mjs
+
+      - name: Remove temporary provider secret file
+        if: always()
+        run: rm -f "$RUNNER_TEMP/luna-test-secrets.json" "$RUNNER_TEMP/llm-evaluation-approval.json"
+
+      - name: Remove isolated synthetic failure Worker
+        if: always() && steps.failuredeploy.outcome == 'success'
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: pnpm exec wrangler delete --config wrangler.failure-test.json --force
+
+      - name: Save evaluation reports and sanitized diagnostics
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: luna-deployed-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/evaluation/
+          retention-days: 30
+          if-no-files-found: warn
+
+      - name: Summarize test deployment
+        if: always()
+        run: |
+          echo 'Test site: https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/' >> "$GITHUB_STEP_SUMMARY"
+          echo 'Production deployment and logging configuration were not modified.' >> "$GITHUB_STEP_SUMMARY"

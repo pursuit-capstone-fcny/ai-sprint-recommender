@@ -110,3 +110,15 @@ the acceptance gate.
 - Production runtime/privacy/budget approval and #23 final demo evidence.
 
 Commands and report formats: [Evaluation guide](../docs/recommendation-evaluation.md).
+
+### October 29 deployed validation
+
+- Given the unchanged tagged benchmark and task-diversity gate, when Jason's
+  Luna low test deployment runs, then record three fresh ten-profile trials,
+  two separate wording probes and nonsense/injection checks. Wording inherits
+  existing labels and never changes the benchmark denominator.
+- Given the $0.337635 prior ceiling, when validation starts, then at most
+  $0.662365 remains. Pin approval to the clean source and workflow attempt,
+  save durable spend after shutdown, and preserve all historical results.
+
+Plan: [Luna test deployment](../docs/evaluation/2026-10-29-luna-deployed/test-plan.md).

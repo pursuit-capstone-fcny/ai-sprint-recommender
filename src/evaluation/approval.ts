@@ -2,6 +2,7 @@ import { execFileSync } from 'node:child_process';
 import { z } from 'zod';
 import { benchmarkFingerprint, type Benchmark } from './benchmark';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
+import { LUNA_PRIOR_SPEND } from './luna-ledger';
 
 export const TEST_EVALUATION_ENDPOINT =
   'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations';
@@ -23,6 +24,9 @@ export const LiveApprovalSchema = z
     budgetDecision: z.string().trim().min(1),
     allowanceMicrodollars: z.number().int().positive(),
     maxRequestMicrodollars: z.number().int().positive(),
+    reasoningEffort: z.literal('low').optional(),
+    priorSpendMicrodollars: z.number().int().nonnegative().optional(),
+    totalAllowanceMicrodollars: z.literal(1_000_000).optional(),
   })
   .refine(
     (value) => value.maxRequestMicrodollars * 30 <= value.allowanceMicrodollars,
@@ -73,6 +77,19 @@ export function validateLiveApproval(
   requestCount = 30,
 ) {
   const approval = LiveApprovalSchema.parse(value);
+  const luna = approval.modelVersion === 'gpt-6-luna';
+  if (
+    luna &&
+    (approval.reasoningEffort !== 'low' ||
+      approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
+      approval.totalAllowanceMicrodollars !== 1_000_000 ||
+      approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
+      approval.maxRequestMicrodollars !== 7_000 ||
+      approval.promptVersion !== 'catalog-rank-v7')
+  )
+    throw new Error(
+      'Luna deployment must preserve the candidate and remaining allowance.',
+    );
   if (
     benchmark.approval.status !== 'approved' ||
     approval.benchmarkFingerprint !== benchmarkFingerprint(benchmark)
@@ -93,7 +110,10 @@ export function validateLiveApproval(
   if (
     process.env.GITHUB_REPOSITORY !==
       'pursuit-capstone-fcny/ai-sprint-recommender' ||
-    process.env.GITHUB_WORKFLOW !== 'Evaluate Anthropic test deployment' ||
+    process.env.GITHUB_WORKFLOW !==
+      (luna
+        ? 'Validate Luna test deployment'
+        : 'Evaluate Anthropic test deployment') ||
     process.env.GITHUB_RUN_ID !== approval.approvedWorkflowRunId ||
     process.env.GITHUB_RUN_ATTEMPT !==
       String(approval.approvedWorkflowRunAttempt)

@@ -46,6 +46,7 @@ export const DiagnosticsSchema = z
       latencyMs: z.number().nonnegative(),
       inputTokens: z.number().int().nonnegative().optional(),
       outputTokens: z.number().int().nonnegative().optional(),
+      reasoningTokens: z.number().int().nonnegative().optional(),
       costMicrodollars: z.number().int().nonnegative().optional(),
       reservedMicrodollars: z.number().int().nonnegative().optional(),
       validationFailure: z
@@ -58,6 +59,7 @@ export const DiagnosticsSchema = z
           'schema',
           'duplicate',
           'out-of-range',
+          'candidate-or-usage-mismatch',
         ])
         .optional(),
       contentBlockCount: z.number().int().min(0).max(100).optional(),

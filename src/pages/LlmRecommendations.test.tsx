@@ -72,6 +72,14 @@ afterEach(() => {
 });
 
 describe('LLM submissions', () => {
+  it('names OpenAI when the test build uses Luna', () => {
+    vi.stubEnv('VITE_LLM_PROVIDER', 'openai');
+    render(<IntakeResults {...props} />);
+    expect(
+      screen.getByText(/send your goal and selected options to OpenAI/),
+    ).toBeTruthy();
+    expect(fetch).not.toHaveBeenCalled();
+  });
   it('makes one request per submit, preserves model order, and expands without another request or duplicate events', async () => {
     const logging = usage();
     const view = (

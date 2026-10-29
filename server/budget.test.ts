@@ -13,6 +13,40 @@ import { environment, TestStorage } from './test-helpers';
 const limits = readLimits(environment)!;
 afterEach(() => vi.useRealTimers());
 describe('atomic spend reservations', () => {
+  it('carries the lifetime floor and unknown spend across month changes without resetting or double refunds', () => {
+    const ledger = emptyLedger();
+    const constrained = {
+      ...limits,
+      LLM_ALLOWANCE_MICRODOLLARS: 1000,
+      LLM_PRIOR_MICRODOLLARS: 800,
+    };
+    const now = Date.parse('2026-10-31T23:59:59Z');
+    expect(
+      reserve(ledger, constrained, 'known', 'a', 100, now + 5000, now).ok,
+    ).toBe(true);
+    settle(ledger, 'known', 50);
+    settle(ledger, 'known', 0);
+    expect(ledger.total).toBe(850);
+    expect(
+      reserve(ledger, constrained, 'unknown', 'a', 100, now + 5000, now).ok,
+    ).toBe(true);
+    settle(ledger, 'unknown', null);
+    expireLedger(ledger, now + 120000);
+    settle(ledger, 'unknown', 0);
+    expect(ledger.total).toBe(950);
+    expect(
+      reserve(
+        ledger,
+        { ...constrained, LLM_PRIOR_MICRODOLLARS: 0 },
+        'new',
+        'a',
+        100,
+        now + 125000,
+        now + 120000,
+      ),
+    ).toEqual({ ok: false, reason: 'budget-exhausted' });
+    expect(ledger.total).toBe(950);
+  });
   it('serializes concurrent reservations before allowing dispatch', async () => {
     const storage = new TestStorage();
     const object = new RecommendationBudget(

@@ -12,7 +12,7 @@ env:
   CLOUDFLARE_SEND_METRICS: 'false'
 
 concurrency:
-  group: anthropic-test-evaluation
+  group: recommendation-evaluation
   cancel-in-progress: false
 
 jobs:
