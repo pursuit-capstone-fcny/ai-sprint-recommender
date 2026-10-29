@@ -28,3 +28,23 @@ provider/rate-key bindings and the one-time GitHub approval. Save fresh reports
 without overwriting earlier evidence. The test URL keeps the new code, with
 paid calls disabled after this bounded run. Production configuration and the
 benchmark labels remain unchanged regardless of the measured score.
+
+## First deployment attempt and correction
+
+Run 40908665576 attempt 2 reached the deployed endpoint but failed validation.
+Two calls returned provider-error; retained unknown reservations exhausted the
+concurrency slots, and the remaining 32 benchmark/probe requests fell back.
+The recorded benchmark scored 0/10 in all trials, with incomplete diagnostics.
+This is a failed deployment, not a Luna quality comparison.
+
+A local workerd reproduction through the actual adapter fails before outbound
+network I/O because Workers does not support `redirect: error`. The adapter now
+uses `manual` and rejects non-2xx responses, including redirects. The regression
+command `node scripts/test-luna-runtime.mjs` makes no external requests. Request
+body, model, prompt, selection and benchmark remain unchanged.
+
+The durable ledger conservatively retains $0.014 for the failed attempt.
+Cumulative ceiling is $0.351635, leaving at least $0.648365. The next clean
+revision/run will bind a new one-time execution record to the same existing
+user allowance. It repeats the full 30 fresh trials and four separate probes,
+with at most $0.238 in new reservations. The failed capture remains immutable.

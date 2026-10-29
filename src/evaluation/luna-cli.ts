@@ -1,4 +1,4 @@
-import { LUNA_SPEND_CAPTURES } from './luna-ledger';
+import { readLunaPriorSpend } from './luna-spend';
 import {
   readFileSync,
   writeFileSync,
@@ -7,13 +7,11 @@ import {
   renameSync,
 } from 'node:fs';
 import { resolve } from 'node:path';
-import { createHash } from 'node:crypto';
 import { parseBenchmark } from './benchmark';
 import { readCheckout } from './approval';
 import {
   LUNA_MODEL,
   LUNA_BENCHMARK_PATH,
-  LUNA_PRIOR_SPEND,
   lunaSpent,
   runLunaComparison,
   scoreLunaState,
@@ -36,14 +34,7 @@ export async function main() {
   );
   const key = process.env.OPENAI_API_KEY;
   if (!key) throw new Error('Add the OPENAI_API_KEY Actions secret.');
-  const priorSpend = LUNA_SPEND_CAPTURES.reduce((total, [path, hash]) => {
-    const capture = readFileSync(path);
-    if (createHash('sha256').update(capture).digest('hex') !== hash)
-      throw new Error('Prior Luna capture changed.');
-    return total + lunaSpent(JSON.parse(capture.toString('utf8')));
-  }, 0);
-  if (priorSpend !== LUNA_PRIOR_SPEND)
-    throw new Error('Prior Luna allowance evidence changed.');
+  readLunaPriorSpend();
   const directory = resolve('build/evaluation/luna');
   mkdirSync(directory, { recursive: true });
   const ledger = resolve(directory, 'capture.json');

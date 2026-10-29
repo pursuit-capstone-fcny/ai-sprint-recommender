@@ -1,3 +1,4 @@
+import { readLunaPriorSpend, deployedLunaSpend } from './luna-spend';
 import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { providerBody } from '../../server/anthropic';
@@ -259,6 +260,26 @@ describe('Luna comparison authorization', () => {
 });
 
 describe('Luna responses and costs', () => {
+  it('rejects a deployed budget that resets prior spend or refunds unknown charges', () => {
+    const record = {
+      kind: 'deployed-luna-budget',
+      allowanceMicrodollars: 1000000,
+      priorSpendMicrodollars: 337635,
+      spentMicrodollars: 344635,
+      additionalMicrodollars: 7000,
+      remainingMicrodollars: 655365,
+    };
+    expect(deployedLunaSpend(record, 337635)).toBe(7000);
+    for (const change of [
+      { priorSpendMicrodollars: 0 },
+      { spentMicrodollars: 337635 },
+      { remainingMicrodollars: 1000000 },
+      { additionalMicrodollars: -1 },
+    ])
+      expect(() =>
+        deployedLunaSpend({ ...record, ...change }, 337635),
+      ).toThrow();
+  });
   it('carries every completed run and unknown reservation into the remaining allowance', () => {
     const paths = [
       'docs/evaluation/2026-10-28-dedup/runs/40804527443-2/capture.json',
@@ -271,7 +292,8 @@ describe('Luna responses and costs', () => {
       (sum, path) => sum + lunaSpent(JSON.parse(readFileSync(path, 'utf8'))),
       0,
     );
-    expect(prior).toBe(LUNA_PRIOR_SPEND);
+    expect(prior).toBe(337_635);
+    expect(readLunaPriorSpend()).toBe(LUNA_PRIOR_SPEND);
     expect(1_000_000 - prior).toBe(662_365);
   });
   it('counts reasoning inside output once and maps positions to existing IDs', () => {

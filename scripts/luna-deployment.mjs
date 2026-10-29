@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { createHash, randomBytes } from 'node:crypto';
+import { randomBytes } from 'node:crypto';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { build } from 'esbuild';
@@ -11,7 +11,7 @@ try {
   const bundle = await build({
     stdin: {
       contents:
-        "export {LUNA_PRIOR_SPEND,LUNA_SPEND_CAPTURES} from './src/evaluation/luna-ledger';export {lunaSpent} from './src/evaluation/luna';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';",
+        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';",
       resolveDir: process.cwd(),
       loader: 'ts',
     },
@@ -34,12 +34,7 @@ try {
     Number(config.vars.LLM_PRIOR_MICRODOLLARS),
     contracts.LUNA_PRIOR_SPEND,
   );
-  const prior = contracts.LUNA_SPEND_CAPTURES.reduce((sum, [path, hash]) => {
-    const bytes = readFileSync(path);
-    assert.equal(createHash('sha256').update(bytes).digest('hex'), hash);
-    return sum + contracts.lunaSpent(JSON.parse(bytes));
-  }, 0);
-  assert.equal(prior, contracts.LUNA_PRIOR_SPEND);
+  const prior = contracts.readLunaPriorSpend();
   const approval = JSON.parse(
     readFileSync(
       `${process.env.RUNNER_TEMP}/llm-evaluation-approval.json`,

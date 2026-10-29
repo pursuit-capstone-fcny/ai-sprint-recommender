@@ -1,0 +1,130 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 5006,
+    "diagnostic": null
+  },
+  {
+    "trial": 1,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "eec45271-7883-4d74-8240-49ebaf0b5d29",
+    "status": 400,
+    "latencyMs": 232,
+    "diagnostic": null
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 48,
+    "diagnostic": null
+  },
+  {
+    "trial": 2,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "6ad8000e-00e1-40ee-86f8-06e1dfc26fe9",
+    "status": 400,
+    "latencyMs": 115,
+    "diagnostic": null
+  },
+  {
+    "trial": 3,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 88,
+    "diagnostic": null
+  },
+  {
+    "trial": 3,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "41d550fb-012d-4e9c-b294-402afa3d9d94",
+    "status": 400,
+    "latencyMs": 36,
+    "diagnostic": {
+      "requestId": "41d550fb-012d-4e9c-b294-402afa3d9d94",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 9,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  },
+  {
+    "trial": 4,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 175,
+    "diagnostic": null
+  },
+  {
+    "trial": 4,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "5baa93ff-bbea-4e6b-80bb-82114091747c",
+    "status": 400,
+    "latencyMs": 70,
+    "diagnostic": {
+      "requestId": "5baa93ff-bbea-4e6b-80bb-82114091747c",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 7,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  }
+]

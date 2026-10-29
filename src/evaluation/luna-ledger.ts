@@ -1,4 +1,10 @@
-export const LUNA_PRIOR_SPEND = 337_635;
+export const LUNA_PRIOR_SPEND = 351_635;
+export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
+  [
+    'docs/evaluation/2026-10-29-luna-deployed/runs/40908665576-2/state/luna-budget.json',
+    'fb4e6b9852e1331dac5a337fde0258e55f20a3970ff891f68e45701d50539251',
+  ],
+];
 export const LUNA_SPEND_CAPTURES = [
   [
     'docs/evaluation/2026-10-28-dedup/runs/40804527443-2/capture.json',

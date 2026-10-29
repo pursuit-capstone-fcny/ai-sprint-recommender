@@ -174,7 +174,8 @@ export function lunaProvider(
     const response = await fetcher(LUNA_ENDPOINT, {
       method: 'POST',
       signal,
-      redirect: 'error',
+      // workerd rejects `error` before dispatch; manual plus !ok rejects redirects.
+      redirect: 'manual',
       headers: {
         'content-type': 'application/json',
         Authorization: `Bearer ${key}`,

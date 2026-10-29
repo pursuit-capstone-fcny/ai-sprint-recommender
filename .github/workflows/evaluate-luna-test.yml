@@ -41,6 +41,7 @@ jobs:
           pnpm typecheck
           pnpm lint
           pnpm test
+          node scripts/test-luna-runtime.mjs
           pnpm evaluate --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --output build/evaluation/baseline
 
       - name: Verify current owner approval before any test network work

@@ -598,6 +598,10 @@ export async function main(args = process.argv.slice(2)) {
     throw error;
   } finally {
     await writeFile(
+      `${liveDirectory}/tail-health.json`,
+      `${JSON.stringify({ tailFailed, observedDiagnostics: observed.size, ...parser?.snapshot() }, null, 2)}\n`,
+    );
+    await writeFile(
       `${liveDirectory}/readiness.json`,
       `${JSON.stringify({ expectedOutcome, confirmed: readinessConfirmed, paidCalls: 0, probes: readinessProbes }, null, 2)}\n`,
     );
