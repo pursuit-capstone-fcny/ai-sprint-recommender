@@ -82,7 +82,14 @@ the target. This isolated provider run does not certify the deployed endpoint.
 
 The [October 27 prompt trials](../docs/evaluation/2026-10-27-luna-low/results.md)
 score V8 at 2/10, 3/10, 3/10 and V9 at 3/10 each. Both are rejected as quality
-improvements; V7 remains the default. Labels, catalog tags and the gate are unchanged.
+improvements; V7 remains the default. Those runs left labels, catalog tags and the gate unchanged.
+
+The [October 28 task-tag revision](../docs/evaluation/2026-10-28-task-tags/results.md)
+fills 79 missing task arrays without changing labels or the gate. Luna low scores
+6/10, 7/10, 7/10 with one invalid-response fallback and no timeouts. Rules falls
+to 5/10. Survey and slide-deck labels share primary tasks, so the unchanged
+one-per-task selector prevents those profiles from passing. This needs explicit
+review; neither retagging to game the score nor a threshold change is approved.
 
 - Three fresh passing trials for the reviewed implementation, under renewed
   approval for the exact source revision and workflow execution.

@@ -261,6 +261,7 @@ describe('Luna comparison authorization', () => {
 describe('Luna responses and costs', () => {
   it('carries every completed run and unknown reservation into the remaining allowance', () => {
     const paths = [
+      'docs/evaluation/2026-10-28-task-tags/runs/40794821513-2/capture.json',
       'docs/evaluation/2026-10-26-luna/runs/40445851804-2/capture.json',
       'docs/evaluation/2026-10-27-luna-low/runs/40545682960-2/capture.json',
       'docs/evaluation/2026-10-27-luna-low/runs/40547083724-2/capture.json',
@@ -270,7 +271,7 @@ describe('Luna responses and costs', () => {
       0,
     );
     expect(prior).toBe(LUNA_PRIOR_SPEND);
-    expect(1_000_000 - prior).toBe(738_040);
+    expect(1_000_000 - prior).toBe(700_140);
   });
   it('counts reasoning inside output once and maps positions to existing IDs', () => {
     const parsed = readLunaResponse(
