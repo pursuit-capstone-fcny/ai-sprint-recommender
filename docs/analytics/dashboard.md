@@ -4,6 +4,8 @@ Issue [#24](../specs/024-usage-dashboard.md) now uses a private React dashboard
 rather than requiring Looker Studio. The user confirmed this implementation on
 Oct 29, 2026. The producer from #88 still writes restricted aggregate Sheets;
 this PR adds the actual interactive app and its authenticated read-only service.
+The [isolated test deployment](test-deployment.md) records native Google consent,
+Sheet-link connection and browser-to-dashboard reconciliation.
 
 ## What ships
 

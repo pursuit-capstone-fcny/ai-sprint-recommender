@@ -1,6 +1,7 @@
 import { build } from 'esbuild';
 import { mkdir, readFile, writeFile, copyFile } from 'node:fs/promises';
-import { runInNewContext } from 'node:vm';
+import { runInNewContext, Script } from 'node:vm';
+import ts from 'typescript';
 import assert from 'node:assert/strict';
 const directory = 'build/apps-script-admin';
 await mkdir(directory, { recursive: true });
@@ -14,12 +15,31 @@ const client = await build({
   target: 'es2020',
   jsx: 'automatic',
   minify: true,
+  // HtmlService's inline-script processing misreads // within template literals.
+  supported: { 'template-literal': false },
   define: { 'process.env.NODE_ENV': '"production"' },
 });
 const script = client.outputFiles.find((file) =>
   file.path.endsWith('.js'),
 ).text;
 const css = client.outputFiles.find((file) => file.path.endsWith('.css')).text;
+// Parse the shipped inline script and guard the syntax HtmlService corrupts.
+new Script(script);
+const tree = ts.createSourceFile(
+  'admin.js',
+  script,
+  ts.ScriptTarget.Latest,
+  true,
+);
+function verifyInlineSyntax(node) {
+  assert.ok(
+    !ts.isTemplateExpression(node) && !ts.isNoSubstitutionTemplateLiteral(node),
+    'Apps Script HTML must not contain JavaScript template literals',
+  );
+  ts.forEachChild(node, verifyInlineSyntax);
+}
+verifyInlineSyntax(tree);
+
 await writeFile(
   `${directory}/Dashboard.html`,
   `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>${css.replaceAll('</style', '<\\/style')}</style></head><body><div id="root"></div><script>${script.replaceAll('</script', '<\\/script')}</script></body></html>`,
