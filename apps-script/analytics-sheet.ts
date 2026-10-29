@@ -389,20 +389,29 @@ export function refreshAnalytics() {
       refreshedAt,
     };
   } catch {
-    try {
-      if (report) {
-        // No stale personal-activity aggregates survive a failed refresh/retention check.
-        for (const name of [
-          'Analytics facts',
-          'Analytics videos',
-          'Analytics tags',
-          'Analytics associations',
-        ] as const) {
-          const sheet = table(report, name);
-          write(sheet, tableHeaders[name], []);
+    if (report) {
+      const failedReport = report;
+      const attemptCleanup = (operation: () => void) => {
+        try {
+          operation();
+        } catch {
+          console.info('analytics-refresh', 'cleanup-unavailable');
         }
+      };
+      // A damaged table must not prevent clearing the remaining owned datasets.
+      for (const name of [
+        'Analytics facts',
+        'Analytics videos',
+        'Analytics tags',
+        'Analytics associations',
+      ] as const) {
+        attemptCleanup(() =>
+          write(table(failedReport, name), tableHeaders[name], []),
+        );
+      }
+      attemptCleanup(() =>
         write(
-          table(report, 'Analytics status'),
+          table(failedReport, 'Analytics status'),
           tableHeaders['Analytics status'],
           [
             ['state', 'error'],
@@ -414,11 +423,9 @@ export function refreshAnalytics() {
               ) ?? 'unavailable',
             ],
           ],
-        );
-        SpreadsheetApp.flush();
-      }
-    } catch {
-      console.info('analytics-refresh', 'cleanup-unavailable');
+        ),
+      );
+      attemptCleanup(() => SpreadsheetApp.flush());
     }
     throw new Error(
       'Analytics refresh failed; inspect configuration and tables, not raw execution logs',
