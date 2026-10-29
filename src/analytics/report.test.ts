@@ -78,6 +78,52 @@ describe('MVP analytics aggregation', () => {
     ).toBe(3);
   });
 
+  it('retains cross-tool keyword associations when the video has different catalog tags', () => {
+    const report = run([search(1, { tools: ['Claude'] }), record(2)], {
+      ...window,
+      category: 'tool',
+      tag: 'Claude',
+    });
+    expect(report.associations).toHaveLength(1);
+    expect(report.associations[0]).toMatchObject({
+      tag: 'Claude',
+      youtubeId: catalog.items[0].youtubeId,
+      appearances: 1,
+    });
+    expect(report.videos).toEqual([]);
+  });
+
+  it('keeps ID-only video activity when both current and historical metadata are missing', () => {
+    const patch = {
+      youtubeId: 'fx99GoneVid',
+      catalogVersion: `sha256:${'2'.repeat(64)}`,
+    };
+    const report = run([
+      record(1, patch),
+      record(2, { ...patch, type: 'click', target: 'youtube' }),
+    ]);
+    expect(
+      report.videos.find((row) => row.youtubeId === patch.youtubeId),
+    ).toMatchObject({
+      title: 'Metadata unavailable',
+      appearances: 1,
+      youtubeClicks: 1,
+    });
+    expect(report.diagnostics.unmappedEvents).toBe(2);
+    expect(report.tags.every((row) => row.appearances === 0)).toBe(true);
+  });
+
+  it('deduplicates a retried search context before New York date filtering', () => {
+    const records = [
+      search(1, {}, '2026-10-20T03:59:59Z'),
+      search(2, {}, '2026-10-20T04:00:00Z'),
+    ];
+    expect(task(run(records)).searches).toBe(0);
+    expect(
+      task(run(records, { ...window, startDate: '2026-10-19' })).searches,
+    ).toBe(1);
+  });
+
   it('AC-24.2/.9/.10: counts appearances, canonical searches and associations without multiplying joins', () => {
     const events = [
       search(),
