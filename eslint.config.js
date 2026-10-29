@@ -18,6 +18,8 @@ export default tseslint.config(
       'apps-script/test-setup.ts',
       'apps-script/catalog-sheet.ts',
       'apps-script/usage-sheet.ts',
+      'apps-script/analytics-sheet.ts',
+      'apps-script/analytics-snapshots.ts',
     ],
     languageOptions: {
       globals: {
@@ -26,6 +28,7 @@ export default tseslint.config(
         LockService: 'readonly',
         ContentService: 'readonly',
         Utilities: 'readonly',
+        ScriptApp: 'readonly',
       },
     },
   },

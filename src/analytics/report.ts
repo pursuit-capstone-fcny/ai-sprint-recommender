@@ -60,12 +60,26 @@ export type AssociationRow = Tag & {
   embedClicks: number;
   youtubeClicks: number;
 };
+export type AnalyticsFact = Counts & {
+  activeInventory: boolean;
+  entity: 'video' | 'tag' | 'association';
+  dateKey: number;
+  source: string;
+  mode: string;
+  youtubeId: string;
+  title: string;
+  category: string;
+  tag: string;
+  searches: number;
+};
 export type AnalyticsReport = {
+  facts: AnalyticsFact[];
   videos: VideoRow[];
   tags: TagRow[];
   associations: AssociationRow[];
   diagnostics: {
     acceptedEvents: number;
+    selectedEvents: number;
     duplicateEvents: number;
     repeatedImpressions: number;
     unmappedEvents: number;
@@ -132,6 +146,8 @@ export function buildAnalyticsReport(
   },
   receivedDate: (value: string) => string = newYorkDate,
 ): AnalyticsReport {
+  if (input.records.length > 10_000)
+    throw new Error('Analytics row limit exceeded');
   const filter = ReportFilterSchema.parse(input.filter);
   const current = PublicCatalogSchema.parse(input.current);
   const catalogs = new Map<string, PublicCatalog>();
@@ -144,6 +160,7 @@ export function buildAnalyticsReport(
   }
   const diagnostics: AnalyticsReport['diagnostics'] = {
     acceptedEvents: 0,
+    selectedEvents: 0,
     duplicateEvents: 0,
     repeatedImpressions: 0,
     unmappedEvents: 0,
@@ -163,8 +180,6 @@ export function buildAnalyticsReport(
         unique.set(record.event.eventId, record);
     } else unique.set(record.event.eventId, record);
   }
-  if (input.records.length > 10_000)
-    throw new Error('Analytics row limit exceeded');
   const records = [...unique.values()].sort(
     (a, b) =>
       Date.parse(a.receivedAt) - Date.parse(b.receivedAt) ||
@@ -215,6 +230,56 @@ export function buildAnalyticsReport(
     ]),
   );
   const associations = new Map<string, AssociationRow>();
+  const activeVideos = new Set(current.items.map((item) => item.youtubeId));
+  const activeTags = new Set(catalogTags(current).map(tagKey));
+  const facts = new Map<string, AnalyticsFact>();
+  const fact = (
+    entity: AnalyticsFact['entity'],
+    day: string,
+    source: string,
+    mode: string,
+    video?: Pick<VideoRow, 'youtubeId' | 'title'>,
+    tag?: Tag,
+  ) => {
+    const id = key(
+      entity,
+      day,
+      source,
+      mode,
+      video?.youtubeId ?? '',
+      tag?.category ?? '',
+      tag?.tag ?? '',
+    );
+    if (!facts.has(id)) {
+      if (facts.size >= 100_000)
+        throw new Error('Analytics fact capacity reached');
+      facts.set(id, {
+        activeInventory:
+          entity === 'video'
+            ? activeVideos.has(video?.youtubeId ?? '')
+            : entity === 'tag'
+              ? Boolean(tag && activeTags.has(tagKey(tag)))
+              : activeVideos.has(video?.youtubeId ?? '') &&
+                Boolean(tag && activeTags.has(tagKey(tag))),
+        entity,
+        dateKey: day ? Number(day.replaceAll('-', '')) : 0,
+        source,
+        mode,
+        youtubeId: video?.youtubeId ?? '',
+        title: video?.title ?? '',
+        category: tag?.category ?? '',
+        tag: tag?.tag ?? '',
+        searches: 0,
+        ...counts(),
+      });
+    }
+    return facts.get(id)!;
+  };
+  // Zero-weight inventory rows survive parameter-based metric filtering in Looker.
+  current.items.forEach((item) => fact('video', '', '', '', item));
+  catalogTags(current).forEach((tag) =>
+    fact('tag', '', '', '', undefined, tag),
+  );
   const seenImpressions = new Set<string>();
   const matchesTag = (values: Tag[]) =>
     values.some(
@@ -266,6 +331,7 @@ export function buildAnalyticsReport(
       (filter.mode !== 'all' && e.mode !== filter.mode)
     )
       continue;
+    diagnostics.selectedEvents++;
     const catalog = catalogs.get(e.catalogVersion);
     if (!catalog) diagnostics.unmappedEvents++;
     if (e.type === 'search') {
@@ -280,7 +346,10 @@ export function buildAnalyticsReport(
         )
       )
         continue;
-      for (const tag of searchTags(e)) ensureTag(tag).searches++;
+      for (const tag of searchTags(e)) {
+        ensureTag(tag).searches++;
+        fact('tag', day, e.src, e.mode, undefined, tag).searches++;
+      }
       continue;
     }
     if (filter.youtubeId && e.youtubeId !== filter.youtubeId) continue;
@@ -295,8 +364,14 @@ export function buildAnalyticsReport(
         ...counts(),
       });
     const video = videos.get(e.youtubeId);
-    if (video) increment(video, e);
-    for (const tag of itemTags) increment(ensureTag(tag), e);
+    if (video) {
+      increment(video, e);
+      increment(fact('video', day, e.src, e.mode, video), e);
+    }
+    for (const tag of itemTags) {
+      increment(ensureTag(tag), e);
+      increment(fact('tag', day, e.src, e.mode, undefined, tag), e);
+    }
     const search = searches.get(contextKey(e));
     const impression = impressions.get(impressionKey(e));
     if (
@@ -325,6 +400,7 @@ export function buildAnalyticsReport(
           youtubeClicks: 0,
         });
       const association = associations.get(id)!;
+      increment(fact('association', day, e.src, e.mode, item, tag), e);
       if (e.type === 'impression') association.appearances++;
       else if (e.target === 'embed') association.embedClicks++;
       else association.youtubeClicks++;
@@ -352,6 +428,9 @@ export function buildAnalyticsReport(
   const byTag = (a: Tag, b: Tag) =>
     a.category.localeCompare(b.category) || a.tag.localeCompare(b.tag);
   return {
+    facts: [...facts.values()].sort((a, b) =>
+      JSON.stringify(a).localeCompare(JSON.stringify(b)),
+    ),
     videos: resultVideos.sort((a, b) => a.youtubeId.localeCompare(b.youtubeId)),
     tags: resultTags.sort(byTag),
     associations: [...associations.values()]

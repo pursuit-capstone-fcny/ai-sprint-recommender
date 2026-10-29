@@ -15,6 +15,12 @@ const exportedFunctions = [
   'doPost',
   'initializeUsageLog',
   'purgeUsageLog',
+  'clearAnalytics',
+  'initializeAnalytics',
+  'refreshAnalytics',
+  'installAnalyticsTriggers',
+  'refreshAnalyticsOnEdit',
+  'analyticsReportLinks',
 ];
 if (testBuild) exportedFunctions.push('initializeTestCatalog');
 await mkdir(directory, { recursive: true });

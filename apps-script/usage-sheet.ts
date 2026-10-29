@@ -1,5 +1,7 @@
 /// <reference types="google-apps-script" />
 import { z } from 'zod';
+import { type PublicCatalog } from '../src/contracts/publicCatalog';
+import { captureAnalyticsCatalog } from './analytics-snapshots';
 import { buildPublicCatalog } from './catalog';
 import { catalogVersion, readCatalogWorkbook } from './catalog-sheet';
 import {
@@ -72,6 +74,7 @@ export function doPost(event?: { postData?: UsageRequest }) {
     const properties = PropertiesService.getScriptProperties();
     enabled = properties.getProperty('USAGE_LOGGING_ENABLED') === 'true';
     let sheet: GoogleAppsScript.Spreadsheet.Sheet | undefined;
+    let acceptedCatalog: PublicCatalog | undefined;
     const openSheet = () => {
       if (!sheet) {
         sheet = usageBook(properties).getSheetByName('Usage') ?? undefined;
@@ -93,9 +96,20 @@ export function doPost(event?: { postData?: UsageRequest }) {
           catalogVersion,
         );
         if (!catalog) throw new Error('Invalid catalog configuration');
+        acceptedCatalog = catalog;
         return catalog;
       },
       append: (usage, receivedAt) => {
+        if (
+          properties.getProperty('ANALYTICS_ENABLED') === 'true' &&
+          acceptedCatalog
+        ) {
+          try {
+            captureAnalyticsCatalog(usageBook(properties), acceptedCatalog);
+          } catch {
+            console.info('analytics-snapshot', 'unavailable');
+          }
+        }
         const target = openSheet();
         const nextRow = target.getLastRow() + 1;
         const gridRows = target.getMaxRows();

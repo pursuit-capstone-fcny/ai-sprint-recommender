@@ -176,3 +176,12 @@ trigger running. A personal-data row is a stop-and-delete signal under #16.
 References: [web app request events](https://developers.google.com/apps-script/guides/web),
 [setValues formula handling](<https://developers.google.com/apps-script/reference/spreadsheet/range#setValues(Object)>),
 [flush before releasing a lock](https://developers.google.com/apps-script/reference/lock/lock).
+
+## MVP analytics
+
+The #24 reporting adapter builds restricted aggregate tables in a **separate**
+reporting spreadsheet and captures public catalog snapshots when opted in.
+See [dashboard setup and acceptance](../docs/analytics/dashboard.md) for explicit
+properties, per-view Looker filters, trigger authorization, retention, error
+recovery and the remaining FCNY deployment gates. No analytics read operation is
+added to the public web app, and production logging remains off.
