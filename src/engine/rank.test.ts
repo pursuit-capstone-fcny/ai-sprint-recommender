@@ -125,7 +125,7 @@ describe('rank', () => {
     );
   });
 
-  it('AC-11.5: top-N dedupe keeps at most one video per task and demotes the rest, without dropping them', () => {
+  it('AC-11.5: top-three dedupe keeps two same-task options and reserves another task without dropping videos', () => {
     const result = rank(
       fixtureCatalog,
       profile({
@@ -141,7 +141,10 @@ describe('rank', () => {
     const budgetTrackingCount = topThreeTasks.filter(
       (task) => task === 'budget tracking',
     ).length;
-    expect(budgetTrackingCount).toBeLessThanOrEqual(1);
+    expect(budgetTrackingCount).toBe(2);
+    expect(new Set(topThreeTasks.filter(Boolean)).size).toBeGreaterThanOrEqual(
+      2,
+    );
 
     const allIds = result.map((match) => match.item.youtubeId);
     expect(allIds).toContain('fx03BdgtXls');

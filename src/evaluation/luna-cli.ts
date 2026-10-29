@@ -103,7 +103,7 @@ export async function main() {
     '',
     `The catalog includes the October 28 task-tag completion. Profile inputs, labels and the distinct-task gate are unchanged; earlier snapshots and results are preserved. Prompt: ${approval.promptVersion}. Efforts: ${approval.efforts.join(', ')}. Each uses standard mode, no prompt caching, 2,000 total output tokens including reasoning, a 4.5-second deadline and no retries.`,
     '',
-    '| Effort | Trial passes | Rules fallbacks | Median / p95 latency | Known token cost | Unknown maximum reservations |',
+    '| Effort | Trial passes | Rules fallbacks | p50 / p95 latency | Known token cost | Unknown maximum reservations |',
     '| --- | --- | --- | --- | --- | --- |',
   ];
   for (const effort of approval.efforts) {

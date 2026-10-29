@@ -30,9 +30,9 @@ describe('final recommendation selection', () => {
     expect(selected.recommendationEngine).toBe('llm');
     expect(selected.results.map(({ item }) => item.youtubeId)).toEqual([
       'fx04BdgtSht',
-      'fx09IntroCt',
-      'fx01GrntRpt',
       'fx03BdgtXls',
+      'fx01GrntRpt',
+      'fx09IntroCt',
     ]);
     expect(
       selected.results.every(
@@ -104,7 +104,7 @@ describe('final recommendation selection', () => {
     expect(selected.llmFallbackReason).toBe(reason);
     expect(selected.results).toEqual(selectRulesResults(catalog, profile));
   });
-  it('shows two distinct tasks without letting the demoted duplicate fill slot three', () => {
+  it('keeps three distinct videos across two primary tasks instead of truncating to two cards', () => {
     const selected = select({
       ...success,
       youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls', 'fx01GrntRpt'],
@@ -112,6 +112,7 @@ describe('final recommendation selection', () => {
     expect(selected.recommendationEngine).toBe('llm');
     expect(selected.results.map(({ item }) => item.youtubeId)).toEqual([
       'fx04BdgtSht',
+      'fx03BdgtXls',
       'fx01GrntRpt',
     ]);
   });

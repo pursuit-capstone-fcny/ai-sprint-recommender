@@ -69,6 +69,13 @@
 
 ## Remaining evidence
 
+Jason requested a deduplication fix after the task-tag rerun. The
+[selection revision](../docs/evaluation/2026-10-28-dedup/test-plan.md) retains two
+same-task videos while reserving space for another primary task. Labels, task
+tags, the two-real-primary-task acceptance gate and scoring remain unchanged.
+Offline replay restores rules to 8/10 and scores saved Luna responses at
+9/10, 10/10, 9/10; these are new derived results, not fresh provider trials.
+
 Jason's initial labels remain unchanged. The [October 22 review replay](../docs/evaluation/2026-10-21/wording-timeout-rerun.md#october-22-review-fixes-and-unpaid-replay)
 scores rules 8/10 and the saved V7 LLM responses 3/10 in each trial, with seven
 complete rules fallbacks per trial. It supersedes the earlier numeric-readiness

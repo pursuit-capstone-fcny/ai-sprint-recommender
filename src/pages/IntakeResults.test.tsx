@@ -147,6 +147,27 @@ describe('IntakeResults', () => {
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
+  it('keeps the first three cards in place when revealing demoted same-task videos', () => {
+    const candidates = catalog.slice(0, 4).map((item, index) => ({
+      ...item,
+      tasks: [index < 3 ? 'attendance' : 'scheduling'],
+    }));
+    render(<IntakeResults catalog={candidates} />);
+    selectFundraising();
+    const titles = () =>
+      screen
+        .getAllByRole('listitem')
+        .map((card) => within(card).getByRole('heading').textContent);
+    const initial = titles();
+    expect(initial).toEqual([
+      candidates[0].title,
+      candidates[1].title,
+      candidates[3].title,
+    ]);
+    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
+    expect(titles()).toEqual([...initial, candidates[2].title]);
+  });
+
   it('narrows to one tool with the tool select, and "Any AI tool" undoes it', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();

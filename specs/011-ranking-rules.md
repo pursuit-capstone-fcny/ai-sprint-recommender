@@ -56,9 +56,12 @@ testable without string-matching logic inside the engine.
 - **When** ranked,
 - **Then** the video with the newer `addedAt` appears first.
 
-- **Given** three videos covering the same task in different tools,
+- **Given** ranked videos sharing a primary task and another tagged task,
 - **When** ranked,
-- **Then** the top picks contain at most one of them.
+- **Then** preserve relevance order while reserving enough of the first three
+  slots for two distinct primary tasks. Two same-task videos may remain;
+  demoted videos stay available afterward. Blank and secondary tags do not
+  establish diversity. A single-task catalog retains its order.
 
 ### AC-11.6: Every pick explains itself
 

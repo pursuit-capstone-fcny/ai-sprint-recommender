@@ -111,7 +111,7 @@ export function IntakeResults({
       return selection.results.length > visibleCount;
     if (isGlobalFallback) return false;
     const nextWindow = rank(catalog, profile, {
-      topN: visibleCount + PAGE_SIZE,
+      topN: PAGE_SIZE,
     });
     return nextWindow
       .slice(visibleCount, visibleCount + PAGE_SIZE)
