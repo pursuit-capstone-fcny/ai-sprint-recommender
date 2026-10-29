@@ -309,18 +309,19 @@ export function refreshAnalytics() {
       },
       receiptDate,
     );
+    const factsFilter = ReportFilterSchema.parse({
+      startDate: receiptDate(
+        new Date(now.getTime() - c.retentionDays * DAY).toISOString(),
+      ),
+      endDate: receiptDate(now.toISOString()),
+      includeTeam: true,
+    });
     const allData = buildAnalyticsReport(
       {
         records,
         current,
         snapshots: readAnalyticsSnapshots(snapshots),
-        filter: {
-          startDate: receiptDate(
-            new Date(now.getTime() - c.retentionDays * DAY).toISOString(),
-          ),
-          endDate: receiptDate(now.toISOString()),
-          includeTeam: true,
-        },
+        filter: factsFilter,
       },
       receiptDate,
     );
@@ -352,20 +353,28 @@ export function refreshAnalytics() {
     }
     const refreshedAt = now.toISOString();
     write(table(report, 'Analytics status'), tableHeaders['Analytics status'], [
-      ['state', result.diagnostics.selectedEvents ? 'ready' : 'empty'],
+      ['state', allData.diagnostics.selectedEvents ? 'ready' : 'empty'],
       ['lastSuccessAt', refreshedAt],
       ['attemptedAt', refreshedAt],
-      ['startDate', selected.startDate],
-      ['endDate', selected.endDate],
-      ['source', selected.source],
-      ['mode', selected.mode],
-      ['includeTeam', selected.includeTeam],
+      ['startDate', factsFilter.startDate],
+      ['selectionStartDate', selected.startDate],
+      ['endDate', factsFilter.endDate],
+      ['selectionEndDate', selected.endDate],
+      ['source', factsFilter.source],
+      ['selectionSource', selected.source],
+      ['mode', factsFilter.mode],
+      ['selectionMode', selected.mode],
+      ['includeTeam', factsFilter.includeTeam],
+      ['selectionIncludeTeam', selected.includeTeam],
+      ['selectionState', result.diagnostics.selectedEvents ? 'ready' : 'empty'],
+      ['selectionSelectedEvents', result.diagnostics.selectedEvents],
+      ['selectionUnmappedEvents', result.diagnostics.unmappedEvents],
       ['environment', c.environment],
       ['retentionDays', c.retentionDays],
       ['staleAfterHours', 26],
       ['staleAt', new Date(now.getTime() + 26 * 3_600_000).toISOString()],
       ['percentWatched', 'unavailable'],
-      ...Object.entries(result.diagnostics).map(([name, value]): Cell[] => [
+      ...Object.entries(allData.diagnostics).map(([name, value]): Cell[] => [
         name,
         value ?? 'unavailable',
       ]),
@@ -376,7 +385,7 @@ export function refreshAnalytics() {
       refreshedAt,
     );
     return {
-      state: result.diagnostics.selectedEvents ? 'ready' : 'empty',
+      state: allData.diagnostics.selectedEvents ? 'ready' : 'empty',
       refreshedAt,
     };
   } catch {
@@ -435,11 +444,16 @@ export function installAnalyticsTriggers() {
       .atHour(3)
       .inTimezone('America/New_York')
       .create();
-  if (
-    !existing.some(
-      (trigger) => trigger.getHandlerFunction() === 'refreshAnalyticsOnEdit',
-    )
-  )
+  const editTriggers = existing.filter(
+    (trigger) => trigger.getHandlerFunction() === 'refreshAnalyticsOnEdit',
+  );
+  const matchingEdit = editTriggers.some(
+    (trigger) => trigger.getTriggerSourceId() === c.reportId,
+  );
+  for (const trigger of editTriggers)
+    if (trigger.getTriggerSourceId() !== c.reportId)
+      ScriptApp.deleteTrigger(trigger);
+  if (!matchingEdit)
     ScriptApp.newTrigger('refreshAnalyticsOnEdit')
       .forSpreadsheet(c.reportId)
       .onEdit()

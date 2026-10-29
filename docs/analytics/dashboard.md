@@ -15,7 +15,7 @@ accepted #16 events + event-time public catalog snapshots
     Analytics videos         selected-window video totals
     Analytics tags           selected-window tag totals and search counts
     Analytics associations   selected-window video-keyword co-occurrences
-    Analytics status         refresh, coverage and error state
+    Analytics status         facts refresh, coverage and error state
     Analytics filters        shared owner verification controls
   FCNY-owned Looker report, restricted to named staff
 ```
@@ -55,7 +55,8 @@ in this PR.
    and the tests below before installing `installAnalyticsTriggers`. This helper
    first verifies a successful refresh, then installs one daily refresh in the
    03:00 America/New_York hour and one reporting-file edit trigger for the current
-   owner. Repeated calls by that owner do not add duplicates. Only one owner
+   owner. Repeated calls by that owner do not add duplicates. Replacing the reporting
+   workbook also replaces obsolete analytics edit triggers for that owner. Only one owner
    should install triggers; review/remove former owners' triggers during handoff.
 6. Run `analyticsReportLinks` in the editor and copy the returned **Analytics
    facts** link. Open it as the FCNY reporting owner and save the generated Looker
@@ -207,6 +208,11 @@ these shared controls.
   agreed catalog/traffic size before production.
 
 ## Refresh failures and rollback
+
+`Analytics status` health and unprefixed coverage/source/mode fields describe the
+all-retained-data facts dataset. `selectionState` and `selection...` fields
+describe the shared Sheet reconciliation controls independently, so an empty
+selection cannot hide activity or missing metadata in the Looker source.
 
 `Analytics status` records `ready`, `empty`, `error` or `cleared`, last successful
 refresh, attempted refresh, coverage and the explicit unavailable watched metric.

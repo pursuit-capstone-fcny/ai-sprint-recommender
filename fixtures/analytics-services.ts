@@ -173,19 +173,34 @@ export function analyticsServices() {
     }),
   });
   const triggers: string[] = [];
+  const triggerSources: (string | null)[] = [];
   vi.stubGlobal('ScriptApp', {
     getProjectTriggers: () =>
-      triggers.map((name) => ({ getHandlerFunction: () => name })),
+      triggers.map((name, index) => ({
+        getHandlerFunction: () => name,
+        getTriggerSourceId: () => triggerSources[index],
+        getUniqueId: () => String(index),
+      })),
+    deleteTrigger: (trigger: { getUniqueId: () => string }) => {
+      const index = Number(trigger.getUniqueId());
+      triggers.splice(index, 1);
+      triggerSources.splice(index, 1);
+    },
     newTrigger: (name: string) => {
+      let targetId: string | null = null;
       const builder = {
         timeBased: () => builder,
         everyDays: () => builder,
         atHour: () => builder,
         inTimezone: () => builder,
-        forSpreadsheet: () => builder,
+        forSpreadsheet: (id: string) => {
+          targetId = id;
+          return builder;
+        },
         onEdit: () => builder,
         create: () => {
           triggers.push(name);
+          triggerSources.push(targetId);
         },
       };
       return builder;
@@ -198,6 +213,7 @@ export function analyticsServices() {
     openById,
     flush,
     triggers,
+    triggerSources,
     setLock: (value: boolean) => {
       lockAvailable = value;
     },

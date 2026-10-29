@@ -37,6 +37,18 @@ function send(value: unknown) {
 }
 
 describe('private analytics reporting adapter', () => {
+  it('replaces obsolete edit triggers after the owner changes the reporting workbook', () => {
+    const { data, properties, triggers, triggerSources } = initialized();
+    installAnalyticsTriggers();
+    data['fixture-new-report'] = {};
+    properties.ANALYTICS_SPREADSHEET_ID = 'fixture-new-report';
+    initializeAnalytics();
+    installAnalyticsTriggers();
+    installAnalyticsTriggers();
+    expect(triggers).toEqual(['refreshAnalytics', 'refreshAnalyticsOnEdit']);
+    expect(triggerSources).toEqual([null, 'fixture-new-report']);
+  });
+
   it('prunes old unreferenced snapshots and preserves large public catalogs across JSON chunks', () => {
     const { data, openById } = initialized();
     data['fixture-catalog'].Catalog[1][2] =
@@ -76,6 +88,11 @@ describe('private analytics reporting adapter', () => {
         .slice(1)
         .every((row) => row[2] === 0),
     ).toBe(true);
+    expect(status(data)).toMatchObject({
+      state: 'ready',
+      selectedEvents: 1,
+      selectionState: 'empty',
+    });
     const facts = data['fixture-report']['Analytics facts'];
     const fields = facts[0];
     const appearance = fields.indexOf('appearances');
@@ -121,7 +138,8 @@ describe('private analytics reporting adapter', () => {
       state: 'empty',
       environment: 'test',
       percentWatched: 'unavailable',
-      includeTeam: false,
+      includeTeam: true,
+      selectionIncludeTeam: false,
     });
     expect(ops.at(-1)).toBe('unlock');
   });
