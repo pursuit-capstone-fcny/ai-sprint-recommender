@@ -14,6 +14,8 @@ describe('recommendation configuration', () => {
       { LLM_ENVIRONMENT: 'production' },
       { LLM_PRIOR_MICRODOLLARS: undefined },
       { LLM_MODEL: 'unapproved' },
+      { LLM_REASONING_EFFORT: undefined },
+      { LLM_REASONING_EFFORT: 'medium' },
       { LLM_MAX_OUTPUT_TOKENS: '513' },
       { LLM_INPUT_MICRODOLLARS_PER_MILLION: '1' },
     ])

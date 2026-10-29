@@ -54,6 +54,7 @@ try {
     'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev';
   assert.equal(approval.endpoint, `${endpoint}/api/recommendations`);
   assert.equal(approval.modelVersion, model);
+  assert.equal(approval.reasoningEffort, config.vars.LLM_REASONING_EFFORT);
   const secretPath = `${process.env.RUNNER_TEMP}/${candidate}-test-secrets.json`;
   if (action === 'budget') {
     // Read after disabling calls. It includes reservations even if diagnostics were lost.
@@ -161,7 +162,10 @@ try {
           access.capabilities?.thinking?.types?.disabled?.supported,
           true,
         );
-        assert.equal(access.capabilities?.effort?.medium?.supported, true);
+        assert.equal(
+          access.capabilities?.effort?.[approval.reasoningEffort]?.supported,
+          true,
+        );
       }
       writeFileSync(
         secretPath,

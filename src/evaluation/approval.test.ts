@@ -84,7 +84,7 @@ describe('paid evaluation approval preflight', () => {
       ...approval,
       modelVersion: 'claude-haiku-5-5',
       promptVersion: 'catalog-rank-v7',
-      reasoningEffort: 'medium',
+      reasoningEffort: 'low',
       thinking: 'disabled',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
       totalAllowanceMicrodollars: 1000000,
@@ -98,7 +98,8 @@ describe('paid evaluation approval preflight', () => {
     for (const change of [
       { priorSpendMicrodollars: 0 },
       { allowanceMicrodollars: 1000000 },
-      { reasoningEffort: 'low' },
+      { reasoningEffort: 'medium' },
+      { reasoningEffort: undefined },
       { thinking: undefined },
       { maxRequestMicrodollars: 7000 },
     ])

@@ -61,7 +61,7 @@ export function providerBody(
           additionalProperties: false,
         },
       },
-      ...(haiku55 ? { effort: 'medium' } : {}),
+      ...(haiku55 ? { effort: limits.LLM_REASONING_EFFORT ?? 'medium' } : {}),
     },
   };
   // This map stays on the server; the provider selects numbered candidates.

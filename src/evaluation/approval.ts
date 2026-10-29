@@ -82,7 +82,7 @@ export function validateLiveApproval(
   const haiku = approval.modelVersion === 'claude-haiku-5-5';
   if (
     (luna || haiku) &&
-    (approval.reasoningEffort !== (luna ? 'low' : 'medium') ||
+    (approval.reasoningEffort !== 'low' ||
       (haiku && approval.thinking !== 'disabled') ||
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
       approval.totalAllowanceMicrodollars !== 1_000_000 ||
