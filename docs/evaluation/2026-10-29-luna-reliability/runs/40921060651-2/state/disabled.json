@@ -1,0 +1,11 @@
+{
+  "confirmed": true,
+  "paidCalls": 0,
+  "attempts": [
+    {
+      "checkedAt": "2026-10-29T17:30:06.787Z",
+      "status": 200,
+      "reason": "disabled"
+    }
+  ]
+}

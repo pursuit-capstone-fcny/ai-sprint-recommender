@@ -1,0 +1,17 @@
+{
+  "kind": "deployed-luna-accounting-audit",
+  "runId": "40921060651",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "providerDispatches": 34,
+  "finalMeasuredRequests": 34,
+  "unknownReservations": 0,
+  "benchmarkCostMicrodollars": 37717,
+  "probeCostMicrodollars": 4829,
+  "totalMeasuredMicrodollars": 42546,
+  "durableAdditionalMicrodollars": 42546,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 161000,
+  "cumulativeCeilingMicrodollars": 441501,
+  "remainingAllowanceMicrodollars": 558499
+}

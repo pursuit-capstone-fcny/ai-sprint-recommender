@@ -125,7 +125,9 @@ pnpm evaluate --benchmark /path/to/approved-benchmark.json \
 
 The diagnostics input is a JSON array of #63 diagnostic records from the test
 environment. It contains request IDs, outcome, latency, versions, tokens and
-cost, with no goals or request bodies. Reports show missing measurements as
+cost, with no goals or request bodies. Bounded stage timings and explicit dispatch/
+final-accounting flags distinguish pre-dispatch zero cost from unknown paid usage.
+The runner waits for final accounting records. Reports show missing measurements as
 `null`, never zero. Uncertain paid failures may have a reservation without an
 actual cost; reconcile these before approval. Repeated request IDs across
 trials fail validation. Baseline and candidate must use identical benchmark
@@ -173,3 +175,9 @@ with synthetic responses and zero external calls.
 measured live diagnostics. It is not an enablement command. Every report keeps
 `productionEnablement: "pending-owner-review"`; the evaluator never changes
 deployment flags. Missing approval or evidence leaves the LLM path disabled.
+
+Latest deployed evidence: [October 29 Luna reliability rerun](evaluation/2026-10-29-luna-reliability/results.md).
+Three fresh trials score 10/10, 9/10, 9/10 with complete measured usage and no
+invalid responses or timeouts. The cumulative ceiling is $0.441501; at least
+$0.558499 remains. Strict validation, labels and the diversity gate are unchanged.
+Client review and production approvals remain pending; test calls are disabled.

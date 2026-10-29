@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Isolated Luna comparison passes; deployed evaluation and client approval pending
+- **Status:** Deployed Luna relevance and accounting pass; client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -103,8 +103,6 @@ one-per-task selector prevented those profiles from passing. The authorized
 selection revision above addresses that regression without retagging or changing
 the acceptance gate.
 
-- Three fresh passing deployed-endpoint trials for the reviewed implementation, under renewed
-  approval for the exact source revision and workflow execution.
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.
 - Fresh unseen wording checks, separate from these inspected regressions.
 - Production runtime/privacy/budget approval and #23 final demo evidence.
@@ -130,3 +128,16 @@ measured usage is incomplete, so the full evidence gate remains false. The
 cumulative Luna ceiling is $0.398955, leaving at least $0.601045. Calls were
 disabled and test keys removed. Client review and production approvals remain
 pending; production LLM calls and logging stay disabled.
+
+### October 29 reliability rerun
+
+- Given the unchanged labels and task-diversity gate, when the corrected test
+  endpoint runs three fresh trials, then retain all outcomes and final usage;
+  pre-dispatch failures cost zero and unknown dispatched usage stays reserved.
+- [Fresh results](../docs/evaluation/2026-10-29-luna-reliability/results.md):
+  **10/10, 9/10, 9/10**, no timeouts or invalid responses, measured accounting
+  for all 34 calls and `relevanceEvidenceComplete: true`. The earlier malformed
+  output's cause remains unresolved; strict rejection is unchanged.
+- Measured spend $0.042546; cumulative ceiling $0.441501; at least $0.558499
+  remains. Calls were disabled and test keys removed. Client review, unseen
+  wording, production approvals and demo evidence remain pending.

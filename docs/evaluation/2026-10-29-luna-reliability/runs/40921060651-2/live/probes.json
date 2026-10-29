@@ -1,0 +1,173 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v7",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "61d82e59-d44c-424f-91e5-2d0d7eeef254",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "0qSXFbGrQ90",
+          "m0mI6_g0V2g",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c",
+          "tIekXJLsm8g",
+          "5vR5cPnqT-Q",
+          "Uz6W_hJloK8",
+          "ZMPLTq-ptrE"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 2769,
+      "displayedIds": ["cwCVpchJHB4", "0qSXFbGrQ90", "8ahFA8ECM4c"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "61d82e59-d44c-424f-91e5-2d0d7eeef254",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2727,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 3,
+        "budgetMs": 195,
+        "providerMs": 2482,
+        "inputTokens": 11773,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1208,
+        "reservedMicrodollars": 7000,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "d795fdc2-779f-444c-8d64-e8e872c4eff4",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "7IYj3W4PdPE",
+          "ADF07rFbH8M",
+          "VQRVNYS1m3g",
+          "6EWc3MgRNFg",
+          "rjaMvND2IRU",
+          "ShikWPoBRac",
+          "jm9ZaKY1taA",
+          "3oX_M8AcBXk",
+          "FMQJH3c5cLc"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 2929,
+      "displayedIds": ["S_DQeIX2xz8", "7IYj3W4PdPE", "ADF07rFbH8M"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "d795fdc2-779f-444c-8d64-e8e872c4eff4",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2889,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 4,
+        "budgetMs": 49,
+        "providerMs": 2788,
+        "inputTokens": 11773,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1208,
+        "reservedMicrodollars": 7000,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "e5715dce-529f-4a5b-85b2-ae66654657d7",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1329,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "e5715dce-529f-4a5b-85b2-ae66654657d7",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1277,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 3,
+        "budgetMs": 52,
+        "providerMs": 1176,
+        "inputTokens": 11755,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1206,
+        "reservedMicrodollars": 7000,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "3e9c7554-eecb-45a3-92b7-12d3619719a6",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1567,
+      "displayedIds": ["Z8yOypmasGg", "33a0qYtCMvc", "wxJVc1q_nnY"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "3e9c7554-eecb-45a3-92b7-12d3619719a6",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1527,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 2,
+        "budgetMs": 51,
+        "providerMs": 1425,
+        "inputTokens": 11762,
+        "outputTokens": 60,
+        "reasoningTokens": 0,
+        "costMicrodollars": 1207,
+        "reservedMicrodollars": 7000,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v7"
+      }
+    }
+  ]
+}

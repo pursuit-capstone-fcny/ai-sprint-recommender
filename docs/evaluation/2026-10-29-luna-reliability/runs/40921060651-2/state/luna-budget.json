@@ -1,0 +1,12 @@
+{
+  "kind": "deployed-luna-budget",
+  "sourceRevision": "8669f2a4792a925b53397386059ea454f8a24547",
+  "runId": "40921060651",
+  "runAttempt": 2,
+  "checkedAt": "2026-10-29T17:30:07.307Z",
+  "priorSpendMicrodollars": 398955,
+  "allowanceMicrodollars": 1000000,
+  "spentMicrodollars": 441501,
+  "additionalMicrodollars": 42546,
+  "remainingMicrodollars": 558499
+}
