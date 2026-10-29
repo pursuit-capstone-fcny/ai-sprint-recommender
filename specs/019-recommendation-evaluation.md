@@ -60,6 +60,13 @@
   resetting the allowance. Make no deployment changes. Direct provider results do
   not satisfy the fresh deployed-endpoint gate.
 
+### AC-19.8: Catalog metadata revisions
+
+- **Given** explicit approval to complete catalog tags, **when** rerunning the
+  benchmark, **then** save a new catalog snapshot and fingerprint, preserve all
+  profile inputs and labels, and keep prior snapshots, results and the diversity
+  gate unchanged. Record description evidence for each added tag.
+
 ## Remaining evidence
 
 Jason's initial labels remain unchanged. The [October 22 review replay](../docs/evaluation/2026-10-21/wording-timeout-rerun.md#october-22-review-fixes-and-unpaid-replay)

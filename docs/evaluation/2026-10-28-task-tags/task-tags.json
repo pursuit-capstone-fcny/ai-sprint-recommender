@@ -1,0 +1,484 @@
+[
+  {
+    "youtubeId": "Z8yOypmasGg",
+    "title": "Turn a Repeated Task into a Reusable Claude Skill",
+    "tasks": ["workflow automation", "prompt instructions"],
+    "evidence": "repeatable \"Claude Skill\""
+  },
+  {
+    "youtubeId": "rKn6KASMk50",
+    "title": "Build an AI Agent for Accessible Course Content",
+    "tasks": ["curriculum development", "accessibility adaptation"],
+    "evidence": "personalized syllabus"
+  },
+  {
+    "youtubeId": "maR3ZerQIJU",
+    "title": "Automate Email Attachments with Google Workspace Studio",
+    "tasks": ["document organization", "workflow automation"],
+    "evidence": "files the attachments"
+  },
+  {
+    "youtubeId": "wxJVc1q_nnY",
+    "title": "Use Coding as an Adoption Tool",
+    "tasks": ["form creation", "workflow automation", "knowledge management"],
+    "evidence": "publish a live form"
+  },
+  {
+    "youtubeId": "Fz_zl467-QU",
+    "title": "Build an Activity Idea Generator for Lesson Planning (with Playlab)",
+    "tasks": ["lesson planning", "curriculum development"],
+    "evidence": "activity ideas for their lessons"
+  },
+  {
+    "youtubeId": "_pM0ua51qRI",
+    "title": "Quickly Find Unique Values in Spreadsheets with CHatGPT",
+    "tasks": ["data cleaning", "participation tracking"],
+    "evidence": "unique names across several spreadsheets"
+  },
+  {
+    "youtubeId": "zTcrktnmv48",
+    "title": "Build Evaluation Forms Automatically with AI",
+    "tasks": ["form creation", "program evaluation"],
+    "evidence": "feedback rubric into a fully working Google Form"
+  },
+  {
+    "youtubeId": "1yBNcKEISP0",
+    "title": "Using AI to Build & Understand Spreadsheet Formulas",
+    "tasks": ["spreadsheet formulas"],
+    "evidence": "build a formula"
+  },
+  {
+    "youtubeId": "5vR5cPnqT-Q",
+    "title": "Generate Meeting Minutes with ChatGPT",
+    "tasks": ["meeting minutes", "action planning"],
+    "evidence": "formal, ready-to-share minutes"
+  },
+  {
+    "youtubeId": "M-MqULy0DqM",
+    "title": "ChatGPT to Support and Optimize Data Collection",
+    "tasks": [
+      "spreadsheet formulas",
+      "participation tracking",
+      "data cleaning"
+    ],
+    "evidence": "formula that adds up hours by name"
+  },
+  {
+    "youtubeId": "R3JQqOh4tUQ",
+    "title": "Debugging website code using ChatGPT",
+    "tasks": ["code debugging"],
+    "evidence": "fix it without bringing in a developer"
+  },
+  {
+    "youtubeId": "AjI2GF1b6zo",
+    "title": "Build an HR Policy Bot with Perplexity",
+    "tasks": ["internal FAQ", "document querying"],
+    "evidence": "answers staff HR questions"
+  },
+  {
+    "youtubeId": "cwCVpchJHB4",
+    "title": "Turn Program Feedback into a Director-Ready Report with AI",
+    "tasks": ["survey analysis", "report drafting"],
+    "evidence": "key numbers and themes"
+  },
+  {
+    "youtubeId": "rtBkm7m6JCg",
+    "title": "Using Claude to Create an Employee Tracker",
+    "tasks": ["case tracking", "spreadsheet automation"],
+    "evidence": "custom Excel tracker"
+  },
+  {
+    "youtubeId": "ZMPLTq-ptrE",
+    "title": "Data Quality Reviewer Artifact in Claude",
+    "tasks": ["data cleaning", "quality management"],
+    "evidence": "flags missing values, fixes formatting issues"
+  },
+  {
+    "youtubeId": "dAqdQGqyNq8",
+    "title": "Improve How AI Describes Your Organization (GEO)",
+    "tasks": ["AI search visibility"],
+    "evidence": "see where its answers are wrong"
+  },
+  {
+    "youtubeId": "0qSXFbGrQ90",
+    "title": "Using CoPilot to Analyze Feedback",
+    "tasks": ["survey analysis", "report drafting"],
+    "evidence": "analyze survey responses"
+  },
+  {
+    "youtubeId": "tIekXJLsm8g",
+    "title": "Simple Charts with Gemini",
+    "tasks": ["chart creation", "survey analysis"],
+    "evidence": "building a chart and summary"
+  },
+  {
+    "youtubeId": "7IYj3W4PdPE",
+    "title": "Research Any Interview Subject with AI Deep Research",
+    "tasks": ["background research", "interview preparation"],
+    "evidence": "sourced background report"
+  },
+  {
+    "youtubeId": "4Wo_miqxgmE",
+    "title": "Turn Survey Data into Real Insights",
+    "tasks": ["survey analysis"],
+    "evidence": "analyzing responses in multiple languages"
+  },
+  {
+    "youtubeId": "tHf5uDqVvzo",
+    "title": "Understanding new bank terms and conditions",
+    "tasks": ["document review", "document comparison"],
+    "evidence": "comparing two versions"
+  },
+  {
+    "youtubeId": "BEGWkv3nrk0",
+    "title": "Pull Excel Data Automatically with AI-Written VBA",
+    "tasks": ["spreadsheet automation", "chart creation"],
+    "evidence": "pulls data from dozens of spreadsheets"
+  },
+  {
+    "youtubeId": "m0mI6_g0V2g",
+    "title": "Uncover Patterns in Survey Data with AI",
+    "tasks": ["survey analysis"],
+    "evidence": "pull key themes"
+  },
+  {
+    "youtubeId": "gzxiw5xdPPI",
+    "title": "Write Excel Formulas Instantly with AI",
+    "tasks": ["spreadsheet formulas"],
+    "evidence": "generates the formula instantly"
+  },
+  {
+    "youtubeId": "8ahFA8ECM4c",
+    "title": "Quick Charts from Survey",
+    "tasks": ["chart creation", "survey analysis", "report drafting"],
+    "evidence": "spreadsheet into charts"
+  },
+  {
+    "youtubeId": "Uz6W_hJloK8",
+    "title": "Organizing Messy Data",
+    "tasks": ["data cleaning"],
+    "evidence": "clean, downloadable spreadsheet"
+  },
+  {
+    "youtubeId": "jWdB3uOYoug",
+    "title": "Financial Document Analysis",
+    "tasks": ["financial analysis", "chart creation"],
+    "evidence": "trend analysis across revenue"
+  },
+  {
+    "youtubeId": "rjaMvND2IRU",
+    "title": "Breaking down an RFP with ChatGPT",
+    "tasks": ["grant opportunity review", "grant application drafting"],
+    "evidence": "check whether your organization qualifies"
+  },
+  {
+    "youtubeId": "ZlfTvy2PT1w",
+    "title": "Design a Polished Grant Flier with AI",
+    "tasks": ["flier design"],
+    "evidence": "grant summary PDF into a finished flier"
+  },
+  {
+    "youtubeId": "ShikWPoBRac",
+    "title": "Prepare a Winning RFP Response with AI",
+    "tasks": ["grant opportunity review", "cost estimation"],
+    "evidence": "highlight key requirements"
+  },
+  {
+    "youtubeId": "6EWc3MgRNFg",
+    "title": "Grant Letter of Inquiry",
+    "tasks": ["grant application drafting", "fundraising copy"],
+    "evidence": "draft three 200-word LOI essays"
+  },
+  {
+    "youtubeId": "S_DQeIX2xz8",
+    "title": "Grantmaker-Donor Role Play",
+    "tasks": ["roleplay simulation", "performance feedback"],
+    "evidence": "role-play partner"
+  },
+  {
+    "youtubeId": "ADF07rFbH8M",
+    "title": "Grantmaker Review Grantee",
+    "tasks": ["grantee assessment", "chart creation"],
+    "evidence": "think like a major donor"
+  },
+  {
+    "youtubeId": "VQRVNYS1m3g",
+    "title": "Government Grant Application",
+    "tasks": ["grant application drafting", "grant opportunity review"],
+    "evidence": "builds an application outline"
+  },
+  {
+    "youtubeId": "FMQJH3c5cLc",
+    "title": "How to Prompt with aiSPIRE",
+    "tasks": ["prompt refinement"],
+    "evidence": "five-step framework"
+  },
+  {
+    "youtubeId": "DP0rtrJVOvM",
+    "title": "Write and Edit Faster with MS Word Copilot",
+    "tasks": ["copy drafting", "document querying"],
+    "evidence": "draft new text"
+  },
+  {
+    "youtubeId": "YYxm3GCAK-0",
+    "title": "Supercharge Your Inbox with MS Outlook Copilot",
+    "tasks": ["email drafting", "email summarization", "meeting scheduling"],
+    "evidence": "turn a one-sentence note into a full reply"
+  },
+  {
+    "youtubeId": "Q0Vr4PnGoe4",
+    "title": "Prompt Nudges for AI",
+    "tasks": ["prompt refinement"],
+    "evidence": "five practical techniques"
+  },
+  {
+    "youtubeId": "bxfxzx-_MME",
+    "title": "Top 7 Concerns With AI",
+    "tasks": ["staff AI adoption"],
+    "evidence": "most common concerns"
+  },
+  {
+    "youtubeId": "UJZx6o69c-g",
+    "title": "Meta-Prompting",
+    "tasks": ["prompt refinement"],
+    "evidence": "prompt that improves other prompts"
+  },
+  {
+    "youtubeId": "rFhgVTsItlU",
+    "title": "Starter Skills: Reading, Writing, Chatting",
+    "tasks": ["AI basics", "copy drafting"],
+    "evidence": "reading, writing, and chatting"
+  },
+  {
+    "youtubeId": "3sui0H77srg",
+    "title": "Basic AI Vocabulary",
+    "tasks": ["AI basics"],
+    "evidence": "four terms worth knowing"
+  },
+  {
+    "youtubeId": "jm9ZaKY1taA",
+    "title": "Preparing for Tough Conversations with ChatGPT",
+    "tasks": ["roleplay simulation", "performance feedback"],
+    "evidence": "role-play a difficult performance conversation"
+  },
+  {
+    "youtubeId": "YACIPFCbGV8",
+    "title": "Using AI in Negotiations",
+    "tasks": ["market research", "negotiation preparation"],
+    "evidence": "check market rates"
+  },
+  {
+    "youtubeId": "9Np4JDDQvpA",
+    "title": "Track Your Strategic Plan Progress with AI",
+    "tasks": ["strategic planning", "action planning", "presentation creation"],
+    "evidence": "specific measurable outcomes"
+  },
+  {
+    "youtubeId": "C7wclvAF0Mc",
+    "title": "Using AI to Translate Technical Risks into Executive Action",
+    "tasks": ["executive communication", "risk communication"],
+    "evidence": "non-technical audience can understand"
+  },
+  {
+    "youtubeId": "3oX_M8AcBXk",
+    "title": "Role Play Difficult Staff Conversations",
+    "tasks": ["roleplay simulation", "performance feedback"],
+    "evidence": "practice a difficult conversation"
+  },
+  {
+    "youtubeId": "xpbFvf5lM-w",
+    "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+    "tasks": ["flier design", "accessibility adaptation"],
+    "evidence": "create a flyer"
+  },
+  {
+    "youtubeId": "LCZZLOrfwXc",
+    "title": "Design a Staff Process and Checklist with AI",
+    "tasks": ["procedure drafting", "staff checklists"],
+    "evidence": "produce a written procedure and checklist"
+  },
+  {
+    "youtubeId": "c5bL8ah2teE",
+    "title": "Turn Attendance Data into an Action plan",
+    "tasks": ["participation tracking", "action planning"],
+    "evidence": "ranked follow-up plan"
+  },
+  {
+    "youtubeId": "BiOpGsijKl8",
+    "title": "Plan the Perfect Team Retreat with AI",
+    "tasks": ["event planning"],
+    "evidence": "brainstorming breakout session ideas"
+  },
+  {
+    "youtubeId": "Kv0C743lCUw",
+    "title": "Design a Class Syllabus in Minutes with AI",
+    "tasks": ["curriculum development", "lesson planning"],
+    "evidence": "complete course outline"
+  },
+  {
+    "youtubeId": "QblW0rArEME",
+    "title": "Letter of Medical Necessity",
+    "tasks": ["client letter drafting", "document review"],
+    "evidence": "produces a template"
+  },
+  {
+    "youtubeId": "-zIvVmJ2XFw",
+    "title": "The 30-Second Front Door \u2014 Capturing Quick Client Contacts with AI",
+    "tasks": ["client intake", "form creation"],
+    "evidence": "bilingual quick-intake prototype"
+  },
+  {
+    "youtubeId": "lYzFro10bDM",
+    "title": "Build a Career Progression Framework with Claude",
+    "tasks": ["career framework design", "job description drafting"],
+    "evidence": "create career ladders"
+  },
+  {
+    "youtubeId": "89GrUhOThk4",
+    "title": "Can it write it a SOAP note?!",
+    "tasks": ["case note drafting"],
+    "evidence": "draft a SOAP note"
+  },
+  {
+    "youtubeId": "JzV9-_irHdI",
+    "title": "Build a Web App to Track Student Interventions",
+    "tasks": ["case tracking", "form creation", "workflow automation"],
+    "evidence": "record the goals and interventions"
+  },
+  {
+    "youtubeId": "W-j725bzPJU",
+    "title": "Using Perplexity AI in Human Services",
+    "tasks": ["policy research"],
+    "evidence": "find policy documents"
+  },
+  {
+    "youtubeId": "dooZWSQCNSs",
+    "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+    "tasks": ["lesson planning", "instructional design"],
+    "evidence": "full lesson routine"
+  },
+  {
+    "youtubeId": "VTycx1bgdPk",
+    "title": "Onboard Volunteers Faster with AI",
+    "tasks": ["volunteer onboarding", "video scripting"],
+    "evidence": "short orientation videos"
+  },
+  {
+    "youtubeId": "fCAYTD-hgU8",
+    "title": "Using AI to create engaging programming",
+    "tasks": ["lesson planning", "curriculum development"],
+    "evidence": "worksheets and answer keys"
+  },
+  {
+    "youtubeId": "7VjxCHhyAJE",
+    "title": "Document Supervision Sessions Automatically with AI",
+    "tasks": ["meeting minutes", "case note drafting"],
+    "evidence": "summary organized by topics and action items"
+  },
+  {
+    "youtubeId": "AmVG-vTsBOc",
+    "title": "Spanish Tutor",
+    "tasks": ["language practice", "roleplay simulation"],
+    "evidence": "personalized language tutor"
+  },
+  {
+    "youtubeId": "tAhSI5nok0s",
+    "title": "Job Applications",
+    "tasks": ["job application drafting", "interview practice"],
+    "evidence": "tailored cover letter"
+  },
+  {
+    "youtubeId": "NPl_WDdrKMU",
+    "title": "Draft a Client Letter to a Landlord with AI",
+    "tasks": ["client letter drafting"],
+    "evidence": "draft a response to an eviction threat"
+  },
+  {
+    "youtubeId": "0kMuHMGvhBE",
+    "title": "Amplify your impact with a song",
+    "tasks": ["song creation", "lyric drafting"],
+    "evidence": "original song with vocals"
+  },
+  {
+    "youtubeId": "wu6DHIkJH7k",
+    "title": "Build a Weekly Newsletter in Minutes",
+    "tasks": ["newsletter drafting", "accessibility adaptation"],
+    "evidence": "weekly newsletter"
+  },
+  {
+    "youtubeId": "6VQWti4-pLE",
+    "title": "Track Changing Language with ChatGPT + Co-Pilot",
+    "tasks": ["copy editing", "change tracking"],
+    "evidence": "find and replace flagged language"
+  },
+  {
+    "youtubeId": "smSNnphsmiw",
+    "title": "Classroom Storytelling with ChatGPT",
+    "tasks": ["educational storytelling", "image creation"],
+    "evidence": "weekly chapter stories"
+  },
+  {
+    "youtubeId": "vzeAxozbV6w",
+    "title": "Data Journalism",
+    "tasks": ["report drafting", "chart creation"],
+    "evidence": "data journalism report"
+  },
+  {
+    "youtubeId": "_wdiyBIC8uc",
+    "title": "Build a Slide Presentation with AI",
+    "tasks": ["presentation creation"],
+    "evidence": "outline a presentation"
+  },
+  {
+    "youtubeId": "kONzk7f2M5o",
+    "title": "Proofreading External Communications with Claude in Word",
+    "tasks": ["copy editing"],
+    "evidence": "flagging inconsistencies"
+  },
+  {
+    "youtubeId": "AMdAwWwdOzY",
+    "title": "Turning Source Materials into a Board-Ready Deck with AI",
+    "tasks": ["presentation creation"],
+    "evidence": "first-draft deck"
+  },
+  {
+    "youtubeId": "Xlvo2_eUBLo",
+    "title": "Transforming Print to Podcast",
+    "tasks": ["training content creation", "audio creation"],
+    "evidence": "short podcast episodes and explainer videos"
+  },
+  {
+    "youtubeId": "33a0qYtCMvc",
+    "title": "Develop a Slide Deck with Notebook LM",
+    "tasks": ["presentation creation", "document querying"],
+    "evidence": "turned into slide decks"
+  },
+  {
+    "youtubeId": "Hkj01weD_Hs",
+    "title": "Edit Photos Like a Pro with AI Coaching",
+    "tasks": ["photo editing"],
+    "evidence": "adjusting lighting, contrast, and color"
+  },
+  {
+    "youtubeId": "WtEV-VSDLFg",
+    "title": "AI as Your Graphic Design Partner",
+    "tasks": ["graphic design", "image creation", "accessibility adaptation"],
+    "evidence": "feedback on layouts"
+  },
+  {
+    "youtubeId": "t1yNb7iV6g4",
+    "title": "Unlock Better Ideas with AI Brainstorming",
+    "tasks": ["brainstorming"],
+    "evidence": "real naming decision"
+  },
+  {
+    "youtubeId": "MpkMYlaHU4k",
+    "title": "Fundraising Webinar and Social Media",
+    "tasks": [
+      "communications planning",
+      "social media drafting",
+      "event planning"
+    ],
+    "evidence": "full communications plan"
+  }
+]

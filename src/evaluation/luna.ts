@@ -13,8 +13,10 @@ import { evaluate, type Diagnostics, type Trials } from './report';
 
 export const LUNA_MODEL = 'gpt-6-luna';
 export const LUNA_ENDPOINT = 'https://api.openai.com/v1/responses';
+export const LUNA_BENCHMARK_PATH =
+  'docs/evaluation/2026-10-28-task-tags/benchmark.json';
 export const LUNA_FINGERPRINT =
-  '4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde';
+  '298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09';
 export const LUNA_DEADLINE_MS = 4_500;
 export const LUNA_MAX_INPUT = 60_000;
 export const LUNA_MAX_OUTPUT = 2_000;
@@ -67,7 +69,7 @@ export const LunaApprovalSchema = z
       .max(1_000_000),
     maxCalls: z.union([z.literal(30), z.literal(LUNA_CALLS)]),
     runtime: z.literal('isolated-github-provider-comparison'),
-    data: z.literal('unchanged-synthetic-benchmark-public-catalog'),
+    data: z.literal('unchanged-labels-public-catalog-task-tags'),
   })
   .refine(
     (approval) =>

@@ -11,6 +11,7 @@ import { parseBenchmark } from './benchmark';
 import { readCheckout } from './approval';
 import {
   LUNA_MODEL,
+  LUNA_BENCHMARK_PATH,
   LUNA_PRIOR_SPEND,
   lunaSpent,
   runLunaComparison,
@@ -24,9 +25,7 @@ export async function main() {
   if (!approvalPath || process.argv.length !== 2)
     throw new Error('Use the isolated Luna workflow.');
   const benchmark = parseBenchmark(
-    JSON.parse(
-      readFileSync('docs/evaluation/2026-10-21/benchmark.json', 'utf8'),
-    ),
+    JSON.parse(readFileSync(LUNA_BENCHMARK_PATH, 'utf8')),
   );
   const approval = validateLunaApproval(
     benchmark,
@@ -98,7 +97,7 @@ export async function main() {
     '',
     'Fresh provider calls from an isolated runner, scored with the existing browser selector. This does not test the deployed endpoint or establish production readiness. The nested reports score saved responses and are explicitly ineligible for the deployed relevance gate.',
     '',
-    `The frozen benchmark, catalog, distinct-task gate and labels are unchanged. Prompt: ${approval.promptVersion}. Efforts: ${approval.efforts.join(', ')}. Each uses standard mode, no prompt caching, 2,000 total output tokens including reasoning, a 4.5-second deadline and no retries.`,
+    `The catalog includes the October 28 task-tag completion. Profile inputs, labels and the distinct-task gate are unchanged; earlier snapshots and results are preserved. Prompt: ${approval.promptVersion}. Efforts: ${approval.efforts.join(', ')}. Each uses standard mode, no prompt caching, 2,000 total output tokens including reasoning, a 4.5-second deadline and no retries.`,
     '',
     '| Effort | Trial passes | Rules fallbacks | Median / p95 latency | Known token cost | Unknown maximum reservations |',
     '| --- | --- | --- | --- | --- | --- |',

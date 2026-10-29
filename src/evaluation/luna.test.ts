@@ -2,9 +2,10 @@ import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { providerBody } from '../../server/anthropic';
 import { readLimits } from '../../server/config';
-import { parseBenchmark } from './benchmark';
+import { benchmarkFingerprint, parseBenchmark } from './benchmark';
 import {
   LUNA_CALLS,
+  LUNA_BENCHMARK_PATH,
   LUNA_COMPACT_PROMPT,
   LUNA_ENDPOINT,
   LUNA_FINGERPRINT,
@@ -25,7 +26,7 @@ import {
 } from './luna';
 
 const benchmark = parseBenchmark(
-  JSON.parse(readFileSync('docs/evaluation/2026-10-21/benchmark.json', 'utf8')),
+  JSON.parse(readFileSync(LUNA_BENCHMARK_PATH, 'utf8')),
 );
 const limits = JSON.parse(
   readFileSync('wrangler.evaluation.json', 'utf8'),
@@ -46,7 +47,7 @@ const approval: LunaApproval = {
   priorSpendMicrodollars: LUNA_PRIOR_SPEND,
   maxCalls: LUNA_CALLS,
   runtime: 'isolated-github-provider-comparison',
-  data: 'unchanged-synthetic-benchmark-public-catalog',
+  data: 'unchanged-labels-public-catalog-task-tags',
 };
 const now = () => Date.parse('2026-10-27T02:00:00Z');
 const environment = {
@@ -84,6 +85,43 @@ function response() {
 afterEach(() => vi.useRealTimers());
 
 describe('Luna comparison authorization', () => {
+  it('fills only missing task metadata and preserves the frozen labels', () => {
+    const original = parseBenchmark(
+      JSON.parse(
+        readFileSync('docs/evaluation/2026-10-21/benchmark.json', 'utf8'),
+      ),
+    );
+    expect(benchmarkFingerprint(original)).toBe(
+      '4ab7cb1d8eaa76b1e79d0b3f0fe675740bce9da4076be8a86d63f36fda519dde',
+    );
+    expect(benchmarkFingerprint(benchmark)).toBe(LUNA_FINGERPRINT);
+    expect(benchmark.profiles).toEqual(original.profiles);
+    const plan: { youtubeId: string; tasks: string[]; evidence: string }[] =
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/task-tags.json',
+          'utf8',
+        ),
+      );
+    expect(plan).toHaveLength(79);
+    const expected = structuredClone(original.catalog);
+    for (const change of plan) {
+      const item = expected.items.find(
+        (item) => item.youtubeId === change.youtubeId,
+      )!;
+      expect(item.tasks).toEqual([]);
+      expect(item.description).toContain(change.evidence);
+      item.tasks = change.tasks;
+      for (const task of change.tasks)
+        if (!expected.tasks.includes(task)) expected.tasks.push(task);
+    }
+    expected.catalogVersion = benchmark.catalog.catalogVersion;
+    expect(benchmark.catalog).toEqual(expected);
+    expect(benchmark.catalog.items.every((item) => item.tasks.length > 0)).toBe(
+      true,
+    );
+  });
+
   it('changes only prompt text for the compact candidate and preserves every catalog field', () => {
     for (const profile of benchmark.profiles) {
       const original = providerBody(
