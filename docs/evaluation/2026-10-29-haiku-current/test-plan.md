@@ -19,8 +19,8 @@ Benchmark fingerprint:
   reported separately. Reused wording is not unseen validation.
 - Keep the 4.5-second server and five-second client deadlines, no paid retries,
   no prompt-cache directives and no result cache.
-- Reserve **$0.006256** before each call from a 60,000-input / 512-output token
-  bound. At most 34 calls reserve **$0.212704**, within the remaining allowance.
+- Reserve **$0.006756** before each call from a 65,000-input / 512-output token
+  bound. At most 34 calls reserve **$0.229704**, within the remaining allowance.
 - Bind approval to the exact clean source, workflow run and attempt. Verify
   Anthropic model access/capabilities without generation before enabling calls.
 - Save final measured usage, unknown reservations, failures and durable budget
@@ -38,3 +38,11 @@ The historical Haiku V7 run cost $0.069949 for 34 calls, about $0.002057 each.
 Its reported 10/10 scores used the old selector and cannot establish current
 readiness. The saved Luna run and this new Haiku run occur at different times;
 latency and sampling differences are not a randomized head-to-head experiment.
+
+The first attempt, [40924730321](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/40924730321),
+rejected every request before provider dispatch. The full tagged catalog's
+conservative wire bound was 60,102–60,150 tokens, just above the old 60,000
+limit. Its durable budget increase was zero. A regression test reproduces this
+with the full benchmark; a 65,000 bound now covers it without changing or
+truncating the input. Preflight checks every profile before deployment.
+The failed run's saved requests are deployment evidence, not Haiku quality results.

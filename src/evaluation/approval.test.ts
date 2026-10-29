@@ -89,7 +89,7 @@ describe('paid evaluation approval preflight', () => {
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
       totalAllowanceMicrodollars: 1000000,
       allowanceMicrodollars: 1000000 - LUNA_PRIOR_SPEND,
-      maxRequestMicrodollars: 6256,
+      maxRequestMicrodollars: 6756,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');
     expect(validateLiveApproval(benchmark, haiku, checkout, now, 34)).toEqual(

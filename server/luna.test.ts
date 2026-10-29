@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { parseBenchmark } from '../src/evaluation/benchmark';
 import haikuConfig from '../wrangler.evaluation.json';
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
@@ -169,6 +171,48 @@ describe('deployed Luna low candidate', () => {
       );
       expect(fetcher).toHaveBeenCalledTimes(2);
     }
+  });
+  it('accepts every full tagged benchmark request under the Haiku guard before dispatch', async () => {
+    const benchmark = parseBenchmark(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
+        ),
+      ),
+    );
+    const haikuEnv = {
+      ...haikuConfig.vars,
+      LLM_ENABLED: 'true',
+      LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
+      ANTHROPIC_API_KEY: 'fixture-only',
+      LLM_RATE_KEY: 'x'.repeat(32),
+    };
+    const provider = vi.fn(async () => ({
+      value: {
+        youtubeIds: benchmark.catalog.items.slice(0, 3).map((x) => x.youtubeId),
+      },
+      inputTokens: 20000,
+      outputTokens: 72,
+    }));
+    for (const profile of benchmark.profiles) {
+      const request = new Request('https://test.example/api/recommendations', {
+        method: 'POST',
+        body: JSON.stringify({
+          ...profile.input,
+          catalogVersion: benchmark.catalog.catalogVersion,
+        }),
+      });
+      const response = await recommend(request, haikuEnv, {
+        fetch: async () => Response.json(benchmark.catalog),
+        provider,
+        clientKey: async () => 'a'.repeat(64),
+        budget: { reserve: async () => ({ ok: true }), settle: async () => {} },
+        diagnostic: () => {},
+      });
+      expect((await response.json()).outcome).toBe('success');
+    }
+    expect(provider).toHaveBeenCalledTimes(10);
   });
   it('carries Luna spend into Haiku on the same object and preserves the allowance ceiling', async () => {
     const storage = new TestStorage();

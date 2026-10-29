@@ -19,7 +19,7 @@ try {
   const bundle = await build({
     stdin: {
       contents:
-        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';",
+        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaBody} from './server/luna';",
       resolveDir: process.cwd(),
       loader: 'ts',
     },
@@ -95,15 +95,33 @@ try {
       'Durable cumulative comparison allowance readback saved. No provider call.',
     );
   } else {
-    contracts.validateLiveApproval(
-      contracts.parseBenchmark(
-        JSON.parse(
-          readFileSync(
-            'docs/evaluation/2026-10-28-task-tags/benchmark.json',
-            'utf8',
-          ),
+    const benchmark = contracts.parseBenchmark(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
         ),
       ),
+    );
+    const limits = contracts.readLimits(config.vars);
+    for (const profile of benchmark.profiles) {
+      const body = contracts.providerBody(
+        { ...profile.input, catalogVersion: benchmark.catalog.catalogVersion },
+        benchmark.catalog,
+        limits,
+      );
+      const bound = haiku
+        ? contracts.inputTokenBound(body)
+        : new TextEncoder().encode(
+            JSON.stringify(contracts.lunaBody(body, 'low')),
+          ).length + 1024;
+      assert(
+        bound <= limits.LLM_MAX_INPUT_TOKENS,
+        'Full benchmark exceeds the candidate input bound',
+      );
+    }
+    contracts.validateLiveApproval(
+      benchmark,
       approval,
       undefined,
       Date.now(),

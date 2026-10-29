@@ -87,7 +87,7 @@ export function validateLiveApproval(
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
       approval.totalAllowanceMicrodollars !== 1_000_000 ||
       approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
-      approval.maxRequestMicrodollars !== (luna ? 7_000 : 6_256) ||
+      approval.maxRequestMicrodollars !== (luna ? 7_000 : 6_756) ||
       approval.promptVersion !== 'catalog-rank-v7')
   )
     throw new Error(

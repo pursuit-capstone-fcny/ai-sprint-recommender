@@ -1,0 +1,136 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v7",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "699e2732-3e33-4988-b81b-ad7c681d0105",
+      "response": {
+        "outcome": "fallback",
+        "reason": "catalog-too-large",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 51,
+      "displayedIds": ["i22v2xwT6k4", "zTcrktnmv48", "4LMIC-v5xZ0"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "catalog-too-large",
+      "diagnostic": {
+        "requestId": "699e2732-3e33-4988-b81b-ad7c681d0105",
+        "environment": "test",
+        "outcome": "catalog-too-large",
+        "latencyMs": 5,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "catalog",
+        "catalogMs": 5,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "cc4f4bc6-5820-4805-886d-2bab13690c9d",
+      "response": {
+        "outcome": "fallback",
+        "reason": "catalog-too-large",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 51,
+      "displayedIds": ["_9QqyTbwisc", "ADF07rFbH8M", "ZlfTvy2PT1w"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "catalog-too-large",
+      "diagnostic": {
+        "requestId": "cc4f4bc6-5820-4805-886d-2bab13690c9d",
+        "environment": "test",
+        "outcome": "catalog-too-large",
+        "latencyMs": 4,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "catalog",
+        "catalogMs": 4,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "bff07cd1-51a9-437b-9dd2-647b39678ba6",
+      "response": {
+        "outcome": "fallback",
+        "reason": "catalog-too-large",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 41,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "catalog-too-large",
+      "diagnostic": {
+        "requestId": "bff07cd1-51a9-437b-9dd2-647b39678ba6",
+        "environment": "test",
+        "outcome": "catalog-too-large",
+        "latencyMs": 5,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "catalog",
+        "catalogMs": 5,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "02f74e86-a217-4a56-a2bd-d2a0f3f039be",
+      "response": {
+        "outcome": "fallback",
+        "reason": "catalog-too-large",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 60,
+      "displayedIds": ["Z8yOypmasGg", "33a0qYtCMvc", "wxJVc1q_nnY"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "catalog-too-large",
+      "diagnostic": {
+        "requestId": "02f74e86-a217-4a56-a2bd-d2a0f3f039be",
+        "environment": "test",
+        "outcome": "catalog-too-large",
+        "latencyMs": 5,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "catalog",
+        "catalogMs": 5,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    }
+  ]
+}

@@ -14,7 +14,7 @@
     "LLM_ENVIRONMENT": "test",
     "LLM_MODEL": "claude-haiku-5-5",
     "LLM_CATALOG_URL": "https://script.google.com/macros/s/AKfycbz-MZXRuXo997pUlBO_bZa3ClUAp-vZSOHbpszXcHJ7N6BtqCdeGi4CNXUxWy39pTev/exec",
-    "LLM_MAX_INPUT_TOKENS": "60000",
+    "LLM_MAX_INPUT_TOKENS": "65000",
     "LLM_MAX_OUTPUT_TOKENS": "512",
     "LLM_REQUESTS_PER_MINUTE": "60",
     "LLM_CLIENT_REQUESTS_PER_MINUTE": "60",

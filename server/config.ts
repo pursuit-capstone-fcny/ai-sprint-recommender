@@ -60,7 +60,7 @@ export function readLimits(env: Variables): Limits | null {
       limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS ||
       (limits.LLM_PROVIDER === 'anthropic' &&
         (limits.LLM_MODEL !== 'claude-haiku-5-5' ||
-          limits.LLM_MAX_INPUT_TOKENS !== 60_000 ||
+          limits.LLM_MAX_INPUT_TOKENS !== 65_000 ||
           limits.LLM_MAX_OUTPUT_TOKENS !== 512 ||
           limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
           limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000)))
