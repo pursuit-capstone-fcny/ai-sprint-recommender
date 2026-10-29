@@ -1,0 +1,25 @@
+{
+  "expectedOutcome": "not-requested",
+  "confirmed": true,
+  "paidCalls": 0,
+  "probes": [
+    {
+      "checkedAt": "2026-10-29T20:25:57.877Z",
+      "requestId": "8fea9945-8d14-488d-9ca7-709b4611d86d",
+      "httpStatus": 200,
+      "outcome": "not-requested"
+    },
+    {
+      "checkedAt": "2026-10-29T20:25:59.914Z",
+      "requestId": "213a6611-5aab-4ea0-8b1e-812e7fbd5a53",
+      "httpStatus": 200,
+      "outcome": "not-requested"
+    },
+    {
+      "checkedAt": "2026-10-29T20:26:01.970Z",
+      "requestId": "e6d697f9-ef9c-4756-ae87-a2d4eeae63f4",
+      "httpStatus": 200,
+      "outcome": "not-requested"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "2c1588dbdda2b07aa38c53056f9e45f7f74ddaf5",
+  "approvedWorkflowRunId": "40948211908",
+  "approvedWorkflowRunAttempt": 3,
+  "expiresAt": "2026-10-29T21:08:46Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v7",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Jason explicitly requested Haiku 5.5 at low effort on the test endpoint, with thinking disabled and unchanged labels and task-diversity gate.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Spend only the remaining $0.485665 of the October 26 comparison allowance. Preserve the existing shared durable counter and all historical unknown reservations; no reset or extension.",
+  "allowanceMicrodollars": 485665,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 514335,
+  "totalAllowanceMicrodollars": 1000000,
+  "thinking": "disabled"
+}

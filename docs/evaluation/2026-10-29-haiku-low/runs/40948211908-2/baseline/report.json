@@ -1,0 +1,145 @@
+{
+  "schemaVersion": 1,
+  "benchmarkId": "fcny-89-task-tags-2026-10-28",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+  "sourceRevision": "2c1588dbdda2b07aa38c53056f9e45f7f74ddaf5",
+  "evaluationSourceRevision": "2c1588dbdda2b07aa38c53056f9e45f7f74ddaf5",
+  "evidence": {
+    "kind": "replay"
+  },
+  "approval": {
+    "status": "approved",
+    "approvedBy": "Jason",
+    "approvedAt": "2026-10-28",
+    "evidence": "Jason requested filling missing catalog task tags and rerunning Luna low within the remaining allowance. Original October 21 profile inputs and ideal/good labels are unchanged; only task metadata and catalog version differ."
+  },
+  "modelVersion": null,
+  "promptVersion": null,
+  "trialKind": null,
+  "rules": {
+    "passedProfiles": 8,
+    "passed": true,
+    "profiles": [
+      {
+        "profileId": "leadership-01",
+        "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "nBAaIIz9QFg"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true
+      },
+      {
+        "profileId": "leadership-02",
+        "displayedIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true
+      },
+      {
+        "profileId": "operations-01",
+        "displayedIds": ["cwCVpchJHB4", "8ahFA8ECM4c", "0qSXFbGrQ90"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true
+      },
+      {
+        "profileId": "operations-02",
+        "displayedIds": ["AjI2GF1b6zo", "UdWR8KKxVDU", "33a0qYtCMvc"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true
+      },
+      {
+        "profileId": "programs-01",
+        "displayedIds": ["fCAYTD-hgU8", "Fz_zl467-QU", "Kv0C743lCUw"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true
+      },
+      {
+        "profileId": "programs-02",
+        "displayedIds": ["JzV9-_irHdI", "c5bL8ah2teE", "xpbFvf5lM-w"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true
+      },
+      {
+        "profileId": "communications-01",
+        "displayedIds": ["Xlvo2_eUBLo", "sLAu2FqUZyE", "wu6DHIkJH7k"],
+        "hits": 1,
+        "misses": 2,
+        "passed": false
+      },
+      {
+        "profileId": "communications-02",
+        "displayedIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "89GrUhOThk4"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true
+      },
+      {
+        "profileId": "fundraising-01",
+        "displayedIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true
+      },
+      {
+        "profileId": "fundraising-02",
+        "displayedIds": ["_9QqyTbwisc", "ShikWPoBRac", "6EWc3MgRNFg"],
+        "hits": 0,
+        "misses": 3,
+        "passed": false
+      }
+    ]
+  },
+  "llm": [],
+  "variation": [
+    {
+      "profileId": "leadership-01",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "leadership-02",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "operations-01",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "operations-02",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "programs-01",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "programs-02",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "communications-01",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "communications-02",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "fundraising-01",
+      "distinctResults": 0
+    },
+    {
+      "profileId": "fundraising-02",
+      "distinctResults": 0
+    }
+  ],
+  "warnings": [
+    "Three fresh live trials have not been recorded.",
+    "Measured usage or cost evidence is incomplete."
+  ],
+  "relevanceEvidenceComplete": false,
+  "productionEnablement": "pending-owner-review"
+}

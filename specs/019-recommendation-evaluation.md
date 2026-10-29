@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Deployed Luna and Haiku benchmarks pass; client approval pending
+- **Status:** Luna and Haiku medium meet the numeric target; Haiku low evidence incomplete; client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -155,3 +155,17 @@ pending; production LLM calls and logging stay disabled.
   $0.485665 remains. The initial input-limit failure spent zero. The expired
   original Haiku allowance stays closed. Test calls are disabled, keys removed,
   and production LLM calls and logging remain off. Human review is still pending.
+
+### October 29 Haiku low comparison
+
+- Given the requested low effort and unchanged labels/diversity gate, when the
+  test endpoint runs three trials, then preserve all outcomes and spend within
+  the same remaining allowance.
+- [Results](../docs/evaluation/2026-10-29-haiku-low/results.md): **9/10 each**, no
+  benchmark fallbacks, timeouts or invalid responses. Median latency 1.159s;
+  34 calls cost $0.072834, identical to medium. Programs-02 misses in every trial;
+  the separate operations wording probe drops to one label hit.
+- All 34 paid calls reconcile, but one unpaid cache-check diagnostic is missing;
+  full fresh validation remains incomplete. Saved-input replay does not repair
+  that gap. Cumulative ceiling $0.587169; at least $0.412831 remains. Test calls
+  are disabled and keys removed. Production LLM calls and logging stay off.

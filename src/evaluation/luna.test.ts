@@ -40,11 +40,11 @@ const approval: LunaApproval = {
   benchmarkFingerprint: LUNA_FINGERPRINT,
   endpoint: LUNA_ENDPOINT,
   model: LUNA_MODEL,
-  efforts: ['low', 'medium'],
+  efforts: ['low'],
   promptVersion: 'catalog-rank-v7',
   allowanceMicrodollars: 1_000_000,
   priorSpendMicrodollars: LUNA_PRIOR_SPEND,
-  maxCalls: LUNA_CALLS,
+  maxCalls: 30,
   runtime: 'isolated-github-provider-comparison',
   data: 'unchanged-labels-public-catalog-task-tags',
 };
@@ -423,7 +423,7 @@ describe('Luna paid dispatch boundaries using mocks', () => {
       LUNA_PRIOR_SPEND + 75_000,
     );
   });
-  it('runs exactly 60 fresh calls, reserves before dispatch and never certifies a deployment', async () => {
+  it('runs exactly 30 fresh calls, reserves before dispatch and never certifies a deployment', async () => {
     let saved: LunaState | undefined;
     const fetcher = vi.fn<typeof fetch>(async (url, init) => {
       expect(url).toBe(LUNA_ENDPOINT);
@@ -445,23 +445,40 @@ describe('Luna paid dispatch boundaries using mocks', () => {
         saved = structuredClone(value);
       },
     });
-    expect(fetcher).toHaveBeenCalledTimes(60);
-    expect(new Set(state.records.map((row) => row.requestId)).size).toBe(60);
-    expect(state.records.slice(0, 2).map((row) => row.effort)).toEqual([
-      'low',
-      'medium',
-    ]);
-    expect(state.records.slice(20, 22).map((row) => row.effort)).toEqual([
-      'medium',
-      'low',
-    ]);
-    expect(lunaSpent(state)).toBe(150_000);
+    expect(fetcher).toHaveBeenCalledTimes(30);
+    expect(new Set(state.records.map((row) => row.requestId)).size).toBe(30);
+    expect(state.records.every((row) => row.effort === 'low')).toBe(true);
+    expect(lunaSpent(state)).toBe(75_000);
     for (const effort of approval.efforts) {
       const scored = scoreLunaState(benchmark, state, effort);
       expect(scored.report.llm).toHaveLength(3);
       expect(scored.report.relevanceEvidenceComplete).toBe(false);
       expect(scored.report.evidence.kind).toBe('replay');
     }
+  });
+  it('rejects a two-effort run before dispatch when the shared remainder cannot reserve 60 calls', async () => {
+    const fetcher = vi.fn<typeof fetch>();
+    const save = vi.fn();
+    expect(LUNA_PRIOR_SPEND + LUNA_CALLS * LUNA_RESERVATION).toBeGreaterThan(
+      1_000_000,
+    );
+    await expect(
+      runLunaComparison({
+        benchmark,
+        approval: {
+          ...approval,
+          efforts: ['low', 'medium'],
+          maxCalls: LUNA_CALLS,
+        },
+        limits,
+        key: 'synthetic',
+        now,
+        fetcher,
+        save,
+      }),
+    ).rejects.toThrow('remaining allowance');
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(save).not.toHaveBeenCalled();
   });
   it('makes no requests if reservation persistence fails or key is absent', async () => {
     const fetcher = vi.fn<typeof fetch>();

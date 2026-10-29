@@ -1,0 +1,168 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v7",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "2ab467ff-31bf-409f-ae75-b55592ebad3b",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "m0mI6_g0V2g",
+          "4Wo_miqxgmE",
+          "cwCVpchJHB4",
+          "0qSXFbGrQ90",
+          "8ahFA8ECM4c",
+          "tIekXJLsm8g",
+          "ZMPLTq-ptrE",
+          "AjI2GF1b6zo"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1305,
+      "displayedIds": ["m0mI6_g0V2g", "4Wo_miqxgmE", "8ahFA8ECM4c"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "2ab467ff-31bf-409f-ae75-b55592ebad3b",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1240,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 8,
+        "budgetMs": 44,
+        "providerMs": 1154,
+        "inputTokens": 21069,
+        "outputTokens": 72,
+        "costMicrodollars": 2143,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "24d187b1-4db1-4995-9ff3-8bc333c55754",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "VQRVNYS1m3g",
+          "ADF07rFbH8M",
+          "ZlfTvy2PT1w",
+          "rjaMvND2IRU",
+          "6EWc3MgRNFg",
+          "ShikWPoBRac",
+          "_9QqyTbwisc",
+          "jm9ZaKY1taA",
+          "3oX_M8AcBXk"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1158,
+      "displayedIds": ["S_DQeIX2xz8", "VQRVNYS1m3g", "ADF07rFbH8M"],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "24d187b1-4db1-4995-9ff3-8bc333c55754",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1126,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 11,
+        "budgetMs": 45,
+        "providerMs": 1038,
+        "inputTokens": 21070,
+        "outputTokens": 72,
+        "costMicrodollars": 2143,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "c7a0ff88-1322-4620-b594-a4a42e66e727",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1676,
+      "displayedIds": ["-zIvVmJ2XFw", "0kMuHMGvhBE", "0qSXFbGrQ90"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "c7a0ff88-1322-4620-b594-a4a42e66e727",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1590,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 10,
+        "budgetMs": 41,
+        "providerMs": 1507,
+        "inputTokens": 21033,
+        "outputTokens": 72,
+        "costMicrodollars": 2140,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "957ad65c-9894-4906-9d73-99f3873e3b91",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      },
+      "latencyMs": 1535,
+      "displayedIds": ["Z8yOypmasGg", "33a0qYtCMvc", "wxJVc1q_nnY"],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "957ad65c-9894-4906-9d73-99f3873e3b91",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1505,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 8,
+        "budgetMs": 40,
+        "providerMs": 1426,
+        "inputTokens": 21056,
+        "outputTokens": 72,
+        "costMicrodollars": 2142,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-v7"
+      }
+    }
+  ]
+}

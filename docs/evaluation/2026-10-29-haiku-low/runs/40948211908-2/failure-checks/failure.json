@@ -1,0 +1,26 @@
+{
+  "passed": false,
+  "scope": "Deployed Worker with isolated synthetic dependencies; not live Anthropic safety evidence.",
+  "worker": "https://ai-sprint-recommender-failure-test.jason-zeng151.workers.dev",
+  "checkedAt": "2026-10-29T20:22:53.998Z",
+  "completedChecks": 0,
+  "failedCheck": {
+    "scenario": "success",
+    "phase": "http-status",
+    "classification": "http-status",
+    "attempts": [
+      {
+        "attempt": 1,
+        "startedAt": "2026-10-29T20:22:51.484Z",
+        "httpStatus": 404
+      },
+      {
+        "attempt": 2,
+        "startedAt": "2026-10-29T20:22:53.622Z",
+        "httpStatus": 500
+      }
+    ],
+    "httpStatus": 500
+  },
+  "checks": []
+}

@@ -1,0 +1,31 @@
+{
+  "confirmed": true,
+  "paidCalls": 0,
+  "attempts": [
+    {
+      "checkedAt": "2026-10-29T20:27:17.970Z",
+      "status": 400,
+      "reason": "unavailable"
+    },
+    {
+      "checkedAt": "2026-10-29T20:27:18.989Z",
+      "status": 400,
+      "reason": "unavailable"
+    },
+    {
+      "checkedAt": "2026-10-29T20:27:20.009Z",
+      "status": 400,
+      "reason": "unavailable"
+    },
+    {
+      "checkedAt": "2026-10-29T20:27:21.033Z",
+      "status": 400,
+      "reason": "unavailable"
+    },
+    {
+      "checkedAt": "2026-10-29T20:27:22.180Z",
+      "status": 200,
+      "reason": "disabled"
+    }
+  ]
+}
