@@ -516,18 +516,35 @@ export function clearAnalytics() {
   if (!lock.tryLock(1500)) throw new Error('Analytics busy');
   try {
     const report = SpreadsheetApp.openById(c.reportId);
+    let failed = false;
+    const attempt = (operation: () => void) => {
+      try {
+        operation();
+      } catch {
+        failed = true;
+      }
+    };
     for (const name of [
       'Analytics facts',
       'Analytics videos',
       'Analytics tags',
       'Analytics associations',
-    ] as const)
-      write(table(report, name), tableHeaders[name], []);
-    write(table(report, 'Analytics status'), tableHeaders['Analytics status'], [
-      ['state', 'cleared'],
-      ['attemptedAt', new Date().toISOString()],
-    ]);
-    SpreadsheetApp.flush();
+    ] as const) {
+      attempt(() => write(table(report, name), tableHeaders[name], []));
+    }
+    attempt(() =>
+      write(
+        table(report, 'Analytics status'),
+        tableHeaders['Analytics status'],
+        [
+          ['state', failed ? 'error' : 'cleared'],
+          ['operation', 'clear'],
+          ['attemptedAt', new Date().toISOString()],
+        ],
+      ),
+    );
+    attempt(() => SpreadsheetApp.flush());
+    if (failed) throw new Error('Incomplete analytics clearing');
   } catch {
     throw new Error('Analytics clearing failed; verify owned tables');
   } finally {

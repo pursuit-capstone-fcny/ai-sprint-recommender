@@ -37,41 +37,55 @@ function send(value: unknown) {
 }
 
 describe('private analytics reporting adapter', () => {
-  it.each([
-    'Analytics facts',
-    'Analytics videos',
-    'Analytics tags',
-    'Analytics associations',
-    'Analytics status',
-  ])('isolates cleanup failure in a damaged %s table', (damaged) => {
-    const { data } = initialized();
-    vi.spyOn(console, 'info').mockImplementation(() => {});
-    send(searchEvent);
-    send({
-      ...impressionEvent,
-      mode: 'recommendations',
-      recommendationEngine: 'rules',
-      llmFallbackReason: 'not-requested',
-    });
-    refreshAnalytics();
-    const output = data['fixture-report'];
-    const source = JSON.stringify(data['fixture-usage']);
-    output[damaged][0][0] = 'Damaged header';
-    const preserved = JSON.stringify(output[damaged]);
-    expect(() => refreshAnalytics()).toThrow('Analytics refresh failed');
-    expect(JSON.stringify(output[damaged])).toBe(preserved);
-    for (const name of [
-      'Analytics facts',
-      'Analytics videos',
-      'Analytics tags',
-      'Analytics associations',
-    ]) {
-      if (name !== damaged) expect(output[name]).toHaveLength(1);
-    }
-    if (damaged !== 'Analytics status')
-      expect(status(data).state).toBe('error');
-    expect(JSON.stringify(data['fixture-usage'])).toBe(source);
-  });
+  it.each(
+    ['refresh', 'clear'].flatMap((operation) =>
+      [
+        'Analytics facts',
+        'Analytics videos',
+        'Analytics tags',
+        'Analytics associations',
+        'Analytics status',
+      ].map((damaged) => ({ operation, damaged })),
+    ),
+  )(
+    '$operation isolates a damaged $damaged table',
+    ({ operation, damaged }) => {
+      const { data, properties } = initialized();
+      vi.spyOn(console, 'info').mockImplementation(() => {});
+      send(searchEvent);
+      send({
+        ...impressionEvent,
+        mode: 'recommendations',
+        recommendationEngine: 'rules',
+        llmFallbackReason: 'not-requested',
+      });
+      refreshAnalytics();
+      const output = data['fixture-report'];
+      const source = JSON.stringify(data['fixture-usage']);
+      output[damaged][0][0] = 'Damaged header';
+      const preserved = JSON.stringify(output[damaged]);
+      if (operation === 'clear') properties.ANALYTICS_ENABLED = 'false';
+      expect(() =>
+        operation === 'clear' ? clearAnalytics() : refreshAnalytics(),
+      ).toThrow(
+        operation === 'clear'
+          ? 'Analytics clearing failed'
+          : 'Analytics refresh failed',
+      );
+      expect(JSON.stringify(output[damaged])).toBe(preserved);
+      for (const name of [
+        'Analytics facts',
+        'Analytics videos',
+        'Analytics tags',
+        'Analytics associations',
+      ]) {
+        if (name !== damaged) expect(output[name]).toHaveLength(1);
+      }
+      if (damaged !== 'Analytics status')
+        expect(status(data).state).toBe('error');
+      expect(JSON.stringify(data['fixture-usage'])).toBe(source);
+    },
+  );
 
   it('replaces obsolete edit triggers after the owner changes the reporting workbook', () => {
     const { data, properties, triggers, triggerSources } = initialized();
