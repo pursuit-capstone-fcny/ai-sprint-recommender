@@ -1,0 +1,18 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "claude-haiku-5-5",
+  "runId": "40925921428",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "providerDispatches": 34,
+  "finalMeasuredRequests": 34,
+  "unknownReservations": 0,
+  "benchmarkCostMicrodollars": 64266,
+  "probeCostMicrodollars": 8568,
+  "totalMeasuredMicrodollars": 72834,
+  "durableAdditionalMicrodollars": 72834,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 161000,
+  "cumulativeCeilingMicrodollars": 514335,
+  "remainingAllowanceMicrodollars": 485665
+}

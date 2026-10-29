@@ -181,3 +181,24 @@ Three fresh trials score 10/10, 9/10, 9/10 with complete measured usage and no
 invalid responses or timeouts. The cumulative ceiling is $0.441501; at least
 $0.558499 remains. Strict validation, labels and the diversity gate are unchanged.
 Client review and production approvals remain pending; test calls are disabled.
+
+### Retest Haiku on the current catalog
+
+The `evaluate-llm-test` label on #76 runs the current Haiku workflow, with the
+same approval and shutdown process. Its approval uses `modelVersion:
+"claude-haiku-5-5"`, `reasoningEffort: "medium"`, `thinking: "disabled"`, the
+current shared `priorSpendMicrodollars` and remaining allowance, and
+`maxRequestMicrodollars: 6756`. The 65,000-input bound includes the completed
+catalog tags. Both providers verify every full benchmark request before deployment.
+
+The existing Durable Object name and historical `luna-ledger.ts` names are
+retained to preserve the counter and evidence chain. They now cover the shared
+October 26 comparison allowance, including the requested Haiku rerun. Never
+create a fresh per-provider counter, reopen the expired October 21 allowance,
+or reuse a prior approval. Both configurations stay disabled at rest.
+
+[Current Haiku comparison](evaluation/2026-10-29-haiku-current/results.md):
+8/10, 8/10, 9/10, three diversity fallbacks and complete measured usage. Haiku
+cost $0.072834 for 34 calls versus Luna's $0.042546, with lower median latency.
+The cumulative ceiling is $0.514335, leaving at least $0.485665. Labels and the
+diversity gate are unchanged; client review and production approvals remain pending.

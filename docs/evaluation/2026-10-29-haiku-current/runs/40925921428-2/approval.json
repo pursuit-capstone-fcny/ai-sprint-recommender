@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "938c6cb1e8db1eeec375514b9bb9b1a676651e52",
+  "approvedWorkflowRunId": "40925921428",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-29T18:41:03Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v7",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Jason requested a fresh Haiku 5.5 benchmark with the current catalog and recommendation logic on the test endpoint only.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Spend only the remaining $0.558499 of the October 26 comparison allowance. Share the existing durable counter with Luna; do not reopen the expired Haiku allowance or reset any balance.",
+  "allowanceMicrodollars": 558499,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "medium",
+  "priorSpendMicrodollars": 441501,
+  "totalAllowanceMicrodollars": 1000000,
+  "thinking": "disabled"
+}

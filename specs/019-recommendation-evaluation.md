@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Deployed Luna relevance and accounting pass; client approval pending
+- **Status:** Deployed Luna and Haiku benchmarks pass; client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -141,3 +141,17 @@ pending; production LLM calls and logging stay disabled.
 - Measured spend $0.042546; cumulative ceiling $0.441501; at least $0.558499
   remains. Calls were disabled and test keys removed. Client review, unseen
   wording, production approvals and demo evidence remain pending.
+
+### October 29 current Haiku comparison
+
+- Given Jason's request to retest Haiku, when using the current tagged catalog,
+  selector and unchanged labels/gate, then run three fresh deployed trials and
+  account for them within the same remaining comparison allowance as Luna.
+- [Haiku results](../docs/evaluation/2026-10-29-haiku-current/results.md):
+  **8/10, 8/10, 9/10**, three task-diversity fallbacks, no timeouts or invalid
+  responses, and complete measured usage. Luna's corresponding scores remain
+  10/10, 9/10, 9/10. Haiku is faster but costs 71% more per call in these samples.
+- Haiku spend $0.072834; cumulative comparison ceiling $0.514335; at least
+  $0.485665 remains. The initial input-limit failure spent zero. The expired
+  original Haiku allowance stays closed. Test calls are disabled, keys removed,
+  and production LLM calls and logging remain off. Human review is still pending.
