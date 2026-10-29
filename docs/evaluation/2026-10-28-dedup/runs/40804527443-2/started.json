@@ -1,0 +1,20 @@
+{
+  "approval": {
+    "approvedBy": "Jason",
+    "approvedAt": "2026-10-28",
+    "expiresAt": "2026-10-29T02:38:26.383Z",
+    "approvedSourceRevision": "ec0d3e330b7e6b6e06c9a5a58f230c56bc1b7566",
+    "approvedWorkflowRunId": "40804527443",
+    "approvedWorkflowRunAttempt": 2,
+    "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+    "endpoint": "https://api.openai.com/v1/responses",
+    "model": "gpt-6-luna",
+    "efforts": ["low"],
+    "promptVersion": "catalog-rank-v7",
+    "priorSpendMicrodollars": 299860,
+    "allowanceMicrodollars": 1000000,
+    "maxCalls": 30,
+    "runtime": "isolated-github-provider-comparison",
+    "data": "unchanged-labels-public-catalog-task-tags"
+  }
+}

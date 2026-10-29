@@ -37,6 +37,10 @@ export async function main() {
   if (!key) throw new Error('Add the OPENAI_API_KEY Actions secret.');
   const previousRuns = [
     [
+      'docs/evaluation/2026-10-28-dedup/runs/40804527443-2/capture.json',
+      '0ce5c705cef2782daec43107ac13b92e41c86b48dc2969b4a57fef67ed3b43ec',
+    ],
+    [
       'docs/evaluation/2026-10-28-task-tags/runs/40794821513-2/capture.json',
       'e7d496e8adf052460f76818bc06d6ca777987c5b15f4a7b3f1bc66d4e3533c4c',
     ],

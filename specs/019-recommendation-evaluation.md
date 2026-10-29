@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Relevance gate not met after review replay; fresh evaluation and client approval pending
+- **Status:** Isolated Luna comparison passes; deployed evaluation and client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -75,6 +75,10 @@ same-task videos while reserving space for another primary task. Labels, task
 tags, the two-real-primary-task acceptance gate and scoring remain unchanged.
 Offline replay restores rules to 8/10 and scores saved Luna responses at
 9/10, 10/10, 9/10; these are new derived results, not fresh provider trials.
+The subsequent [fresh Luna low run](../docs/evaluation/2026-10-28-dedup/results.md)
+scores 9/10, 9/10, 8/10, with one invalid-response fallback and no timeouts.
+It meets the isolated numeric target, not the deployed-endpoint gate. Cumulative
+Luna cost is at most $0.337635, leaving at least $0.662365 of the original $1.
 
 Jason's initial labels remain unchanged. The [October 22 review replay](../docs/evaluation/2026-10-21/wording-timeout-rerun.md#october-22-review-fixes-and-unpaid-replay)
 scores rules 8/10 and the saved V7 LLM responses 3/10 in each trial, with seven
@@ -95,10 +99,11 @@ The [October 28 task-tag revision](../docs/evaluation/2026-10-28-task-tags/resul
 fills 79 missing task arrays without changing labels or the gate. Luna low scores
 6/10, 7/10, 7/10 with one invalid-response fallback and no timeouts. Rules falls
 to 5/10. Survey and slide-deck labels share primary tasks, so the unchanged
-one-per-task selector prevents those profiles from passing. This needs explicit
-review; neither retagging to game the score nor a threshold change is approved.
+one-per-task selector prevented those profiles from passing. The authorized
+selection revision above addresses that regression without retagging or changing
+the acceptance gate.
 
-- Three fresh passing trials for the reviewed implementation, under renewed
+- Three fresh passing deployed-endpoint trials for the reviewed implementation, under renewed
   approval for the exact source revision and workflow execution.
 - Ali/Eliot's final label/catalog, semantic and weak-profile review.
 - Fresh unseen wording checks, separate from these inspected regressions.
