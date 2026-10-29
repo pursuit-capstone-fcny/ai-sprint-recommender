@@ -257,6 +257,10 @@ export function buildAnalyticsReport(
       }
       seenImpressions.add(impressionKey(e));
     }
+    if (e.type === 'search') {
+      if (seenSearches.has(contextKey(e))) continue;
+      seenSearches.add(contextKey(e));
+    }
     const day = receivedDate(record.receivedAt);
     if (
       day < filter.startDate ||
@@ -269,8 +273,6 @@ export function buildAnalyticsReport(
     const catalog = catalogs.get(e.catalogVersion);
     if (!catalog) diagnostics.unmappedEvents++;
     if (e.type === 'search') {
-      if (seenSearches.has(contextKey(e))) continue;
-      seenSearches.add(contextKey(e));
       if (!catalog) continue;
       // Video filters use the displayed-video relation, not every catalog video carrying a keyword.
       if (
@@ -286,17 +288,17 @@ export function buildAnalyticsReport(
     if (filter.youtubeId && e.youtubeId !== filter.youtubeId) continue;
     const item = catalog?.items.find((item) => item.youtubeId === e.youtubeId);
     const itemTags = item ? videoTags(item) : [];
-    if ((filter.category || filter.tag) && !matchesTag(itemTags)) continue;
-    eligibleVideos.add(e.youtubeId);
-    if (!videos.has(e.youtubeId) && item)
-      videos.set(e.youtubeId, {
-        youtubeId: item.youtubeId,
-        title: item.title,
-        ...counts(),
-      });
-    const video = videos.get(e.youtubeId);
-    if (video) increment(video, e);
-    for (const tag of itemTags) increment(ensureTag(tag), e);
+    if (!(filter.category || filter.tag) || matchesTag(itemTags)) {
+      eligibleVideos.add(e.youtubeId);
+      if (!videos.has(e.youtubeId))
+        videos.set(e.youtubeId, {
+          youtubeId: e.youtubeId,
+          title: item?.title ?? 'Metadata unavailable',
+          ...counts(),
+        });
+      increment(videos.get(e.youtubeId)!, e);
+      for (const tag of itemTags) increment(ensureTag(tag), e);
+    }
     const search = searches.get(contextKey(e));
     const impression = impressions.get(impressionKey(e));
     if (
