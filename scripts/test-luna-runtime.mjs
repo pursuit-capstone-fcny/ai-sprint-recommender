@@ -8,6 +8,7 @@ import { createTestHarness } from 'wrangler';
 // Construct real workerd Requests at the adapter seam; all responses are synthetic.
 const directory = await mkdtemp(join(tmpdir(), 'luna-runtime-'));
 const main = join(directory, 'worker.mjs');
+const haiku = process.argv[2] === 'haiku';
 let server;
 try {
   await build({
@@ -15,17 +16,18 @@ try {
       resolveDir: process.cwd(),
       loader: 'ts',
       contents: `
-        import {lunaProvider} from './server/luna';
+        import {${haiku ? 'anthropicProvider' : 'lunaProvider'} as makeProvider} from './server/${haiku ? 'anthropic' : 'luna'}';
         export default {async fetch(request) {
           let calls=0;
           try {
             const redirect=new URL(request.url).pathname==='/redirect';
-            const provider=lunaProvider('synthetic-key',async(url,init)=>{
+            const provider=makeProvider('synthetic-key',async(url,init)=>{
               calls++;
               const outbound=new Request(url,init);
               if(outbound.redirect!=='manual')throw new Error('Redirects must not be followed');
               if(redirect)return new Response(null,{status:302,headers:{location:'https://example.com/'}});
-              return Response.json({id:'synthetic',model:'gpt-6-luna',status:'completed',usage:{input_tokens:100,output_tokens:50},output:[{type:'message',content:[{type:'output_text',text:JSON.stringify(Object.fromEntries(Array.from({length:10},(_,i)=>['rank'+(i+1),i===0?0:null])))}]}]});
+              const text=JSON.stringify(Object.fromEntries(Array.from({length:10},(_,i)=>['rank'+(i+1),i===0?0:null])));
+              return Response.json(${haiku ? "{stop_reason:'end_turn',usage:{input_tokens:100,output_tokens:50},content:[{type:'text',text}]}" : "{id:'synthetic',model:'gpt-6-luna',status:'completed',usage:{input_tokens:100,output_tokens:50},output:[{type:'message',content:[{type:'output_text',text}]}]}"});
             });
             const result=await provider({catalogIds:['abcdefghijk'],request:{system:'Synthetic runtime test',messages:[],output_config:{format:{schema:{}}}}},new AbortController().signal);
             return Response.json({ok:true,calls,ids:result.value.youtubeIds});
@@ -62,7 +64,7 @@ try {
     error: 'Provider failed',
   });
   console.log(
-    'Cloudflare runtime accepts Luna requests and rejects redirects without retries. External requests: 0.',
+    `Cloudflare runtime accepts ${haiku ? 'Haiku' : 'Luna'} requests and rejects redirects without retries. External requests: 0.`,
   );
 } finally {
   await server?.close();

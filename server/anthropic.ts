@@ -134,6 +134,7 @@ export function anthropicProvider(
     const response = await fetcher('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       signal,
+      redirect: 'manual',
       headers: {
         'content-type': 'application/json',
         'anthropic-version': '2023-06-01',

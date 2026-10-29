@@ -24,7 +24,7 @@ import {
 } from './catalog-cache';
 import { type Budget } from './budget';
 import { durableBudget, type BudgetNamespace } from './budget-object';
-import { callCost, readLimits, type Variables } from './config';
+import { callCost, readLimits, budgetKey, type Variables } from './config';
 
 export interface WorkerEnv extends Variables {
   ASSETS?: { fetch(request: Request): Promise<Response> };
@@ -230,12 +230,7 @@ export async function recommend(
       return fallback('catalog-too-large');
     const budget =
       deps.budget ??
-      durableBudget(
-        env.RECOMMENDATION_BUDGET!,
-        limits.LLM_PROVIDER === 'openai'
-          ? 'test:gpt-6-luna'
-          : limits.LLM_ENVIRONMENT,
-      );
+      durableBudget(env.RECOMMENDATION_BUDGET!, budgetKey(limits));
     const provider =
       deps.provider ??
       (limits.LLM_PROVIDER === 'openai'

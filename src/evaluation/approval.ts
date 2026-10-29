@@ -24,7 +24,8 @@ export const LiveApprovalSchema = z
     budgetDecision: z.string().trim().min(1),
     allowanceMicrodollars: z.number().int().positive(),
     maxRequestMicrodollars: z.number().int().positive(),
-    reasoningEffort: z.literal('low').optional(),
+    reasoningEffort: z.enum(['low', 'medium']).optional(),
+    thinking: z.literal('disabled').optional(),
     priorSpendMicrodollars: z.number().int().nonnegative().optional(),
     totalAllowanceMicrodollars: z.literal(1_000_000).optional(),
   })
@@ -78,17 +79,19 @@ export function validateLiveApproval(
 ) {
   const approval = LiveApprovalSchema.parse(value);
   const luna = approval.modelVersion === 'gpt-6-luna';
+  const haiku = approval.modelVersion === 'claude-haiku-5-5';
   if (
-    luna &&
-    (approval.reasoningEffort !== 'low' ||
+    (luna || haiku) &&
+    (approval.reasoningEffort !== (luna ? 'low' : 'medium') ||
+      (haiku && approval.thinking !== 'disabled') ||
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
       approval.totalAllowanceMicrodollars !== 1_000_000 ||
       approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
-      approval.maxRequestMicrodollars !== 7_000 ||
+      approval.maxRequestMicrodollars !== (luna ? 7_000 : 6_256) ||
       approval.promptVersion !== 'catalog-rank-v7')
   )
     throw new Error(
-      'Luna deployment must preserve the candidate and remaining allowance.',
+      'Model comparison must preserve the candidate and remaining allowance.',
     );
   if (
     benchmark.approval.status !== 'approved' ||

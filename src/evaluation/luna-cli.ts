@@ -60,7 +60,7 @@ export async function main() {
     throw new Error(
       `Luna model access check failed with HTTP ${access.status}; no generation requested.`,
     );
-  const config = JSON.parse(readFileSync('wrangler.evaluation.json', 'utf8'));
+  const config = JSON.parse(readFileSync('wrangler.luna-test.json', 'utf8'));
   const state = await runLunaComparison({
     benchmark,
     approval,

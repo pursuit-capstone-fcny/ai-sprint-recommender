@@ -29,9 +29,7 @@ import {
 const benchmark = parseBenchmark(
   JSON.parse(readFileSync(LUNA_BENCHMARK_PATH, 'utf8')),
 );
-const limits = JSON.parse(
-  readFileSync('wrangler.evaluation.json', 'utf8'),
-).vars;
+const limits = JSON.parse(readFileSync('wrangler.luna-test.json', 'utf8')).vars;
 const approval: LunaApproval = {
   approvedBy: 'Jason',
   approvedAt: '2026-10-26',

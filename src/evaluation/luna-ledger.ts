@@ -1,3 +1,5 @@
+// Original Luna names are retained for historical captures. This $1 allowance
+// now also covers the explicitly requested Haiku rerun; it is never reset.
 export const LUNA_PRIOR_SPEND = 441_501;
 export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
   [

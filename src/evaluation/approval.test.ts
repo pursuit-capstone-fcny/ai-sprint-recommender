@@ -79,6 +79,43 @@ describe('paid evaluation approval preflight', () => {
       validateLiveApproval(benchmark, luna, checkout, now, 34),
     ).toThrow('workflow');
   });
+  it('requires the Haiku rerun to spend the remaining comparison allowance without changing effort', () => {
+    const haiku = {
+      ...approval,
+      modelVersion: 'claude-haiku-5-5',
+      promptVersion: 'catalog-rank-v7',
+      reasoningEffort: 'medium',
+      thinking: 'disabled',
+      priorSpendMicrodollars: LUNA_PRIOR_SPEND,
+      totalAllowanceMicrodollars: 1000000,
+      allowanceMicrodollars: 1000000 - LUNA_PRIOR_SPEND,
+      maxRequestMicrodollars: 6256,
+    };
+    const now = Date.parse('2026-10-21T12:00:00Z');
+    expect(validateLiveApproval(benchmark, haiku, checkout, now, 34)).toEqual(
+      haiku,
+    );
+    for (const change of [
+      { priorSpendMicrodollars: 0 },
+      { allowanceMicrodollars: 1000000 },
+      { reasoningEffort: 'low' },
+      { thinking: undefined },
+      { maxRequestMicrodollars: 7000 },
+    ])
+      expect(() =>
+        validateLiveApproval(
+          benchmark,
+          { ...haiku, ...change },
+          checkout,
+          now,
+          34,
+        ),
+      ).toThrow();
+    vi.stubEnv('GITHUB_WORKFLOW', 'Validate Luna test deployment');
+    expect(() =>
+      validateLiveApproval(benchmark, haiku, checkout, now, 34),
+    ).toThrow('workflow');
+  });
   beforeEach(() => {
     vi.stubEnv(
       'GITHUB_REPOSITORY',

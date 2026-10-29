@@ -1,3 +1,4 @@
+import haikuConfig from '../wrangler.evaluation.json';
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 import config from '../wrangler.luna-test.json';
@@ -168,6 +169,83 @@ describe('deployed Luna low candidate', () => {
       );
       expect(fetcher).toHaveBeenCalledTimes(2);
     }
+  });
+  it('carries Luna spend into Haiku on the same object and preserves the allowance ceiling', async () => {
+    const storage = new TestStorage();
+    const priorTotal = LUNA_PRIOR_SPEND + 200;
+    await storage.put('ledger', {
+      day: '',
+      month: '',
+      daily: 0,
+      monthly: 0,
+      total: priorTotal,
+      minute: 0,
+      requests: 0,
+      clients: {},
+      reservations: {},
+    });
+    const haikuEnv = {
+      ...haikuConfig.vars,
+      LLM_ENABLED: 'true',
+      LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
+      ANTHROPIC_API_KEY: 'fixture-only',
+      LLM_RATE_KEY: 'x'.repeat(32),
+    };
+    const object = new RecommendationBudget({ storage }, haikuEnv);
+    const namespace: BudgetNamespace = {
+      idFromName: vi.fn((name) => name),
+      get: () => object,
+    };
+    const fetcher = vi.fn<typeof fetch>(async (url) =>
+      String(url).includes('script.google.com')
+        ? Response.json(catalog)
+        : Response.json({
+            stop_reason: 'end_turn',
+            usage: { input_tokens: 1000, output_tokens: 100 },
+            content: [
+              {
+                type: 'text',
+                text: JSON.stringify(
+                  Object.fromEntries(
+                    Array.from({ length: 10 }, (_, i) => [
+                      'rank' + (i + 1),
+                      i < 3 ? i : null,
+                    ]),
+                  ),
+                ),
+              },
+            ],
+          }),
+    );
+    const response = await recommend(
+      request(),
+      { ...haikuEnv, RECOMMENDATION_BUDGET: namespace },
+      { fetch: fetcher, diagnostic: () => {} },
+    );
+    expect((await response.json()).outcome).toBe('success');
+    expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
+    expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 150);
+    const saved = (await storage.get<Ledger>('ledger'))!;
+    saved.total = 999_999;
+    await storage.put('ledger', saved);
+    fetcher.mockClear();
+    const blocked = await recommend(
+      request(),
+      { ...haikuEnv, RECOMMENDATION_BUDGET: namespace },
+      { fetch: fetcher, diagnostic: () => {} },
+    );
+    expect((await blocked.json()).reason).toBe('budget-exhausted');
+    expect(fetcher).toHaveBeenCalledTimes(1);
+    const summary = await worker.fetch(
+      new Request('https://test.example/api/test-budget', {
+        headers: { Authorization: 'Bearer ' + haikuEnv.LLM_RATE_KEY },
+      }),
+      { ...haikuEnv, LLM_ENABLED: 'false', RECOMMENDATION_BUDGET: namespace },
+    );
+    expect(await summary.json()).toEqual({
+      allowanceMicrodollars: 1000000,
+      spentMicrodollars: 999999,
+    });
   });
   it('restricts budget readback to the test runner and exposes only cumulative amounts', async () => {
     const { namespace } = budgetObject();

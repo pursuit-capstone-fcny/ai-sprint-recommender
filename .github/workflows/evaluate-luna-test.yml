@@ -54,7 +54,7 @@ jobs:
           assert(process.env.LLM_EVALUATION_APPROVAL, 'An owner-approved LLM_EVALUATION_APPROVAL Actions variable is required');
           writeFileSync(`${process.env.RUNNER_TEMP}/llm-evaluation-approval.json`, process.env.LLM_EVALUATION_APPROVAL, {mode: 0o600});
           JS
-          node scripts/luna-deployment.mjs check
+          node scripts/model-test-deployment.mjs check
 
       - name: Build test site
         env:
@@ -98,7 +98,7 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/luna-deployment.mjs enable
+        run: node scripts/model-test-deployment.mjs enable
 
       - name: Run approved endpoint trials and separate probes
         env:
@@ -119,7 +119,7 @@ jobs:
         if: always()
         run: |
           if [ -f "$RUNNER_TEMP/luna-test-secrets.json" ]; then
-            node scripts/luna-deployment.mjs budget
+            node scripts/model-test-deployment.mjs budget
           fi
 
       - name: Remove remote test provider and rate-key bindings

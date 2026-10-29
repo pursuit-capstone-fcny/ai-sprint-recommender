@@ -49,6 +49,23 @@ export function readLimits(env: Variables): Limits | null {
   const result = schema.safeParse(env);
   if (!result.success) return null;
   const limits = result.data;
+  const boundedComparison =
+    limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined ||
+    limits.LLM_PRIOR_MICRODOLLARS !== undefined;
+  if (
+    boundedComparison &&
+    (limits.LLM_ENVIRONMENT !== 'test' ||
+      limits.LLM_ALLOWANCE_MICRODOLLARS === undefined ||
+      limits.LLM_PRIOR_MICRODOLLARS === undefined ||
+      limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS ||
+      (limits.LLM_PROVIDER === 'anthropic' &&
+        (limits.LLM_MODEL !== 'claude-haiku-5-5' ||
+          limits.LLM_MAX_INPUT_TOKENS !== 60_000 ||
+          limits.LLM_MAX_OUTPUT_TOKENS !== 512 ||
+          limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
+          limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000)))
+  )
+    return null;
   // Luna is approved only for the bounded test candidate. No production opt-in.
   if (
     limits.LLM_PROVIDER === 'openai' &&
@@ -87,4 +104,13 @@ export function callCost(
   const output = outputTokens * limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION;
   if (![input, output, input + output].every(Number.isSafeInteger)) return NaN;
   return Math.ceil((input + output) / 1_000_000);
+}
+
+// Keep the existing object name: changing it would reset the approved comparison
+// allowance. Haiku reruns now spend from the same remaining $1 as Luna.
+export function budgetKey(limits: Limits): string {
+  return limits.LLM_ENVIRONMENT === 'test' &&
+    limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined
+    ? 'test:gpt-6-luna'
+    : limits.LLM_ENVIRONMENT;
 }

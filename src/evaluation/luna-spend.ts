@@ -11,7 +11,7 @@ import { lunaSpent } from './luna';
 
 const amount = z.number().int().nonnegative().max(1_000_000);
 const deployedBudget = z.object({
-  kind: z.literal('deployed-luna-budget'),
+  kind: z.enum(['deployed-luna-budget', 'deployed-model-budget']),
   allowanceMicrodollars: z.literal(1_000_000),
   priorSpendMicrodollars: amount,
   spentMicrodollars: amount,

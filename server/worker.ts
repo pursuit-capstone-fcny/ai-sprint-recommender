@@ -1,3 +1,4 @@
+import { readLimits, budgetKey } from './config';
 import { RECOMMENDATION_PATH } from '../src/contracts/recommendation';
 import { recommend, type WorkerEnv } from './recommendations';
 import { CATALOG_PATH, serveCatalog } from './catalog-route';
@@ -11,10 +12,12 @@ export default {
     const path = new URL(request.url).pathname;
     // Runner-only readback accounts for every call, including unobserved traffic.
     if (path === '/api/test-budget') {
+      const limits = readLimits(env);
       if (
         request.method !== 'GET' ||
         env.LLM_ENVIRONMENT !== 'test' ||
-        env.LLM_PROVIDER !== 'openai' ||
+        !limits ||
+        limits.LLM_ALLOWANCE_MICRODOLLARS === undefined ||
         typeof env.LLM_RATE_KEY !== 'string' ||
         env.LLM_RATE_KEY.length < 32 ||
         request.headers.get('Authorization') !== `Bearer ${env.LLM_RATE_KEY}` ||
@@ -22,7 +25,7 @@ export default {
       )
         return new Response('Not found', { status: 404 });
       const object = env.RECOMMENDATION_BUDGET.get(
-        env.RECOMMENDATION_BUDGET.idFromName('test:gpt-6-luna'),
+        env.RECOMMENDATION_BUDGET.idFromName(budgetKey(limits)),
       );
       const response = await object.fetch(
         new Request('https://budget/summary', { method: 'POST' }),
