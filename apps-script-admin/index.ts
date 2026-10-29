@@ -6,11 +6,14 @@ import {
   type DashboardResponse,
 } from '../src/admin/snapshot';
 
-function authorizedBook() {
-  const p = PropertiesService.getScriptProperties();
+import { parseSheetLink, sheetLink } from '../src/admin/sheetLink';
+import { readLibraryDashboard } from './library';
+
+function authorizeUser() {
   if (
-    p.getProperty('ANALYTICS_ADMIN_ENABLED') !== 'true' ||
-    p.getProperty('ANALYTICS_ACCESS_APPROVED') !== 'true'
+    PropertiesService.getScriptProperties().getProperty(
+      'ANALYTICS_ADMIN_ENABLED',
+    ) === 'false'
   )
     throw new Error('Denied');
   const email = Session.getActiveUser().getEmail().trim().toLowerCase();
@@ -19,22 +22,12 @@ function authorizedBook() {
     Session.getEffectiveUser().getEmail().trim().toLowerCase() !== email
   )
     throw new Error('Denied');
-  const allowed = z
-    .array(z.email())
-    .min(1)
-    .max(100)
-    .parse(JSON.parse(p.getProperty('ANALYTICS_ADMIN_EMAILS') ?? '[]'));
-  if (!allowed.some((value) => value.toLowerCase() === email))
-    throw new Error('Denied');
-  const id = z
-    .string()
-    .regex(/^[A-Za-z0-9_-]{10,150}$/)
-    .parse(p.getProperty('ANALYTICS_SPREADSHEET_ID'));
-  // USER_ACCESSING deployment also enforces the signed-in reader's real file ACL.
-  const environment = z
-    .enum(['test', 'production'])
-    .parse(p.getProperty('ANALYTICS_ADMIN_ENVIRONMENT'));
-  return { book: SpreadsheetApp.openById(id), environment };
+}
+function connectedBook(id: string) {
+  // Restricted file membership replaces a duplicated, manually managed app allowlist.
+  if (DriveApp.getFileById(id).getSharingAccess() !== DriveApp.Access.PRIVATE)
+    throw new Error('Sharing too broad');
+  return SpreadsheetApp.openById(id);
 }
 function readStatus(book: GoogleAppsScript.Spreadsheet.Spreadsheet) {
   const sheet = book.getSheetByName('Analytics status');
@@ -72,44 +65,43 @@ function snapshotStatus(values: Record<string, unknown>) {
 }
 export function doGet() {
   try {
-    authorizedBook();
+    authorizeUser();
     return HtmlService.createHtmlOutputFromFile('Dashboard')
       .setTitle('FCNY · Library analytics')
       .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   } catch {
     return HtmlService.createHtmlOutput(
-      '<h1>Admin access required</h1><p>Sign in with an approved FCNY Google account that can read the reporting workbook. Contact the reporting owner if access is missing.</p>',
-    ).setTitle('FCNY · Access required');
+      '<h1>Google sign-in required</h1><p>Use your Google account to connect a private library Sheet you can access.</p>',
+    ).setTitle('FCNY · Sign-in required');
   }
 }
-export function readDashboard(): DashboardResponse {
-  let access: ReturnType<typeof authorizedBook>;
+function loadBook(
+  book: GoogleAppsScript.Spreadsheet.Spreadsheet,
+): DashboardResponse {
   try {
-    access = authorizedBook();
-  } catch {
-    return { ok: false, error: 'ACCESS_DENIED' };
-  }
-  try {
-    const book = access.book;
+    const connection = {
+      title: book.getName(),
+      url: sheetLink(book.getId()),
+      kind: book.getSheetByName('Analytics facts')
+        ? ('report' as const)
+        : ('library' as const),
+    };
+    if (connection.kind === 'library')
+      return { ok: true, snapshot: readLibraryDashboard(book), connection };
     const before = readStatus(book),
       health = snapshotStatus(before);
-    if (
-      health.environment !== null &&
-      health.environment !== access.environment
-    )
-      throw new Error('Environment mismatch');
     if (!['ready', 'empty'].includes(String(health.state)))
       return {
         ok: true,
+        connection,
         snapshot: DashboardSnapshotSchema.parse({ ...health, facts: [] }),
       };
     const validated = DashboardSnapshotSchema.parse({ ...health, facts: [] });
-    if (validated.environment !== access.environment)
-      throw new Error('Environment mismatch');
     if (Date.parse(validated.staleAt!) <= Date.now())
       return {
         ok: true,
         snapshot: { ...validated, state: 'stale', facts: [] },
+        connection,
       };
     const sheet = book.getSheetByName('Analytics facts');
     if (
@@ -130,6 +122,7 @@ export function readDashboard(): DashboardResponse {
       throw new Error('Refresh in progress');
     return {
       ok: true,
+      connection,
       snapshot: DashboardSnapshotSchema.parse({
         ...health,
         facts: rows.map((row) =>
@@ -139,5 +132,79 @@ export function readDashboard(): DashboardResponse {
     };
   } catch {
     return { ok: false, error: 'REPORT_UNAVAILABLE' };
+  }
+}
+
+export function readDashboard(): DashboardResponse {
+  try {
+    authorizeUser();
+  } catch {
+    return { ok: false, error: 'ACCESS_DENIED' };
+  }
+  const id = PropertiesService.getUserProperties().getProperty(
+    'ANALYTICS_CONNECTED_SHEET',
+  );
+  if (!id) return { ok: false, error: 'SHEET_NOT_CONNECTED' };
+  try {
+    return loadBook(connectedBook(id));
+  } catch {
+    return { ok: false, error: 'ACCESS_DENIED' };
+  }
+}
+export function connectSheet(value: unknown): DashboardResponse {
+  try {
+    authorizeUser();
+  } catch {
+    return { ok: false, error: 'ACCESS_DENIED' };
+  }
+  let id: string;
+  try {
+    id = parseSheetLink(value);
+  } catch {
+    return { ok: false, error: 'INVALID_SHEET_LINK' };
+  }
+  const lock = LockService.getUserLock();
+  if (!lock.tryLock(1500)) return { ok: false, error: 'REPORT_UNAVAILABLE' };
+  try {
+    let book: GoogleAppsScript.Spreadsheet.Spreadsheet;
+    try {
+      if (
+        DriveApp.getFileById(id).getSharingAccess() !== DriveApp.Access.PRIVATE
+      )
+        return { ok: false, error: 'SHARING_TOO_BROAD' };
+      book = SpreadsheetApp.openById(id);
+    } catch {
+      return { ok: false, error: 'ACCESS_DENIED' };
+    }
+    const result = loadBook(book);
+    if (!result.ok) return { ok: false, error: 'UNSUPPORTED_SHEET' };
+    PropertiesService.getUserProperties().setProperty(
+      'ANALYTICS_CONNECTED_SHEET',
+      id,
+    );
+    return result;
+  } catch {
+    return { ok: false, error: 'REPORT_UNAVAILABLE' };
+  } finally {
+    lock.releaseLock();
+  }
+}
+export function disconnectSheet() {
+  try {
+    authorizeUser();
+  } catch {
+    return { ok: false };
+  }
+  const lock = LockService.getUserLock();
+  if (!lock.tryLock(1500)) return { ok: false };
+  try {
+    PropertiesService.getUserProperties().deleteProperty(
+      'ANALYTICS_CONNECTED_SHEET',
+    );
+    return { ok: true };
+  } catch {
+    return { ok: false };
+  } finally {
+    lock.releaseLock();
   }
 }

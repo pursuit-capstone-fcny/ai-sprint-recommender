@@ -7,11 +7,33 @@ import {
   type DashboardRow,
   type DashboardView,
 } from './query';
-import type { DashboardResponse, DashboardSnapshot } from './snapshot';
-import { loadPrivateDashboard } from './transport';
+import type {
+  DashboardResponse,
+  DashboardSnapshot,
+  SheetConnection,
+} from './snapshot';
+import {
+  loadPrivateDashboard,
+  connectPrivateSheet,
+  disconnectPrivateSheet,
+} from './transport';
+import { parseSheetLink } from './sheetLink';
 import '../pages/global.css';
 import './dashboard.css';
 
+const connectionErrors = {
+  ACCESS_DENIED:
+    'Google access required. Sign in with an account that can read the private Sheet.',
+  REPORT_UNAVAILABLE:
+    'The Sheet could not be loaded. Reload data to try again.',
+  SHEET_NOT_CONNECTED: '',
+  INVALID_SHEET_LINK:
+    'Paste a Google Sheets link beginning with https://docs.google.com/spreadsheets/d/.',
+  UNSUPPORTED_SHEET:
+    'This Sheet does not contain a supported library or analytics report. Check the link with the library owner.',
+  SHARING_TOO_BROAD:
+    'The Sheet must use Restricted sharing with named people. Ask its owner to update sharing, then reconnect.',
+};
 const realClock = () => Date.now();
 const views: { id: DashboardView; label: string; description: string }[] = [
   {
@@ -65,17 +87,39 @@ const stateCopy = {
   cleared:
     'The reporting owner has cleared this report. There is no data to display.',
   stale:
-    'This report is out of date. Ask the reporting owner to refresh it, then reload.',
+    'This report is out of date. Reload data to read the Sheet again. If it stays stale, contact the reporting owner.',
 };
 export function AnalyticsDashboard({
   load = loadPrivateDashboard,
+  connect = connectPrivateSheet,
+  disconnect = disconnectPrivateSheet,
   clock = realClock,
   demo = false,
 }: {
   load?: () => Promise<DashboardResponse>;
+  connect?: (link: string) => Promise<DashboardResponse>;
+  disconnect?: () => Promise<boolean>;
   clock?: () => number;
   demo?: boolean;
 }) {
+  const [connection, setConnection] = useState<SheetConnection | null>(null);
+  const [sheetUrl, setSheetUrl] = useState('');
+  const [editingConnection, setEditingConnection] = useState(false);
+  const acceptResponse = (response: DashboardResponse, reset = false) => {
+    if (!response.ok) {
+      setError(connectionErrors[response.error]);
+      setEditingConnection(true);
+      return;
+    }
+    const next = response.snapshot;
+    setSnapshot(next);
+    setConnection(response.connection ?? null);
+    setEditingConnection(false);
+    setSheetUrl('');
+    setPage(0);
+    setDraft((current) => (reset || !current ? defaults(next) : current));
+    setFilters((current) => (reset || !current ? defaults(next) : current));
+  };
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null),
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
@@ -99,18 +143,7 @@ export function AnalyticsDashboard({
     load()
       .then((response) => {
         if (!active) return;
-        if (!response.ok) {
-          setError(
-            response.error === 'ACCESS_DENIED'
-              ? 'Admin access required. Open the private admin app with an approved Google account that can read the reporting workbook.'
-              : 'The report could not be loaded. Try again or contact the reporting owner.',
-          );
-          return;
-        }
-        const next = response.snapshot;
-        setSnapshot(next);
-        setDraft((current) => current ?? defaults(next));
-        setFilters((current) => current ?? defaults(next));
+        acceptResponse(response);
       })
       .catch(() => {
         if (active)
@@ -124,6 +157,7 @@ export function AnalyticsDashboard({
     return () => {
       active = false;
     };
+    // Only a loader/reload change starts a request; response handling uses state setters.
   }, [load, reload]);
   useEffect(() => {
     const timer = setInterval(() => setTick((t) => t + 1), 60_000);
@@ -276,11 +310,121 @@ export function AnalyticsDashboard({
             ? 'Production reporting'
             : snapshot?.environment === 'test'
               ? 'Test reporting'
-              : 'Private staff reporting'}
+              : snapshot?.environment === 'connected'
+                ? 'Connected Sheet'
+                : 'Private staff reporting'}
         </span>
         <span>Updated {dateLabel(snapshot?.refreshedAt ?? null)}</span>
         <span>Reporting dates use America/New_York</span>
       </div>
+      {!demo && (
+        <section className="analytics-connection" aria-label="Connected Sheet">
+          {connection && (
+            <p>
+              Connected to{' '}
+              <a href={connection.url} target="_blank" rel="noreferrer">
+                {connection.title}
+              </a>
+            </p>
+          )}
+          {!connection || editingConnection ? (
+            <form
+              onSubmit={async (event) => {
+                event.preventDefault();
+                try {
+                  parseSheetLink(sheetUrl);
+                } catch {
+                  setError(connectionErrors.INVALID_SHEET_LINK);
+                  return;
+                }
+                setLoading(true);
+                setError('');
+                setSnapshot(null);
+                try {
+                  acceptResponse(await connect(sheetUrl), true);
+                } catch {
+                  setError(connectionErrors.REPORT_UNAVAILABLE);
+                } finally {
+                  setLoading(false);
+                }
+              }}
+            >
+              <h2>
+                {connection
+                  ? 'Change your Sheet'
+                  : 'Connect your library Sheet'}
+              </h2>
+              <p>
+                Paste its link once. Your Google account must have access to the
+                Sheet. The connection is saved only for you.
+              </p>
+              <label htmlFor="analytics-sheet-link">Google Sheets link</label>
+              <div className="analytics-connection-fields">
+                <input
+                  id="analytics-sheet-link"
+                  type="url"
+                  required
+                  maxLength={2048}
+                  value={sheetUrl}
+                  disabled={loading}
+                  placeholder="https://docs.google.com/spreadsheets/d/…"
+                  onChange={(e) => setSheetUrl(e.target.value)}
+                />
+                <button
+                  className="analytics-button analytics-primary"
+                  disabled={loading}
+                  type="submit"
+                >
+                  {loading ? 'Please wait…' : 'Connect Sheet'}
+                </button>
+              </div>
+              <p className="analytics-connection-hint">
+                Connecting reads the Sheet. It does not edit files, change
+                sharing, or enable visitor tracking.
+              </p>
+            </form>
+          ) : (
+            <div className="analytics-connection-actions">
+              <button
+                className="analytics-reset"
+                disabled={loading}
+                onClick={() => setEditingConnection(true)}
+              >
+                Change Sheet
+              </button>
+              <button
+                className="analytics-reset"
+                disabled={loading}
+                onClick={async () => {
+                  setLoading(true);
+                  setSnapshot(null);
+                  setError('');
+                  try {
+                    if (await disconnect()) {
+                      setConnection(null);
+                      setDraft(null);
+                      setFilters(null);
+                      setSheetUrl('');
+                      setEditingConnection(true);
+                    } else
+                      setError(
+                        'Could not disconnect. Reload data and try again.',
+                      );
+                  } catch {
+                    setError(
+                      'Could not disconnect. Reload data and try again.',
+                    );
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
+              >
+                Disconnect
+              </button>
+            </div>
+          )}
+        </section>
+      )}
       {error && (
         <div className="analytics-notice analytics-error" role="alert">
           {error}
@@ -311,7 +455,27 @@ export function AnalyticsDashboard({
               guessed tags.
             </div>
           )}
-          {snapshot.state === 'empty' && (
+          {!snapshot.collectionAvailable && (
+            <div className="analytics-notice" role="note">
+              Usage collection is not available in this Sheet. Inventory is
+              shown below, but usage counts and unused-content filters are
+              unavailable until usage events are collected.
+            </div>
+          )}
+          {snapshot.pendingTagReviews > 0 && (
+            <div className="analytics-notice" role="note">
+              {snapshot.pendingTagReviews} videos have tags awaiting approval.
+              Proposed tags are excluded from canonical tag analytics.
+            </div>
+          )}
+          {snapshot.conservativeWindow && (
+            <div className="analytics-notice" role="note">
+              No approved reporting policy was found. Any available usage is
+              limited to the last 24 hours. Connecting does not enable tracking
+              or extend retention.
+            </div>
+          )}
+          {snapshot.state === 'empty' && snapshot.collectionAvailable && (
             <div className="analytics-notice" role="note">
               No retained usage events yet. Active videos and tags are listed
               with zero recorded activity.
@@ -344,6 +508,7 @@ export function AnalyticsDashboard({
                   <input
                     type="date"
                     required
+                    disabled={snapshot?.collectionAvailable === false}
                     value={draft.startDate}
                     onChange={(e) => update('startDate', e.target.value)}
                   />
@@ -353,6 +518,7 @@ export function AnalyticsDashboard({
                   <input
                     type="date"
                     required
+                    disabled={snapshot?.collectionAvailable === false}
                     value={draft.endDate}
                     onChange={(e) => update('endDate', e.target.value)}
                   />
@@ -360,6 +526,7 @@ export function AnalyticsDashboard({
                 <label>
                   Traffic source
                   <select
+                    disabled={snapshot?.collectionAvailable === false}
                     value={draft.source}
                     onChange={(e) =>
                       update(
@@ -388,6 +555,7 @@ export function AnalyticsDashboard({
                 <label>
                   Discovery mode
                   <select
+                    disabled={snapshot?.collectionAvailable === false}
                     value={draft.mode}
                     onChange={(e) =>
                       update('mode', e.target.value as DashboardFilters['mode'])
@@ -459,6 +627,7 @@ export function AnalyticsDashboard({
                 <label>
                   Recorded activity
                   <select
+                    disabled={snapshot?.collectionAvailable === false}
                     value={draft.activity}
                     onChange={(e) =>
                       update(
@@ -480,6 +649,7 @@ export function AnalyticsDashboard({
                 <label className="analytics-check">
                   <input
                     type="checkbox"
+                    disabled={snapshot?.collectionAvailable === false}
                     checked={draft.includeTeam}
                     onChange={(e) => update('includeTeam', e.target.checked)}
                   />
@@ -673,7 +843,11 @@ export function AnalyticsDashboard({
                             ) : f.key === 'category' ? (
                               categoryName(row.category)
                             ) : typeof row[f.key] === 'number' ? (
-                              number(row[f.key] as number)
+                              snapshot?.collectionAvailable === false ? (
+                                'Unavailable'
+                              ) : (
+                                number(row[f.key] as number)
+                              )
                             ) : (
                               String(row[f.key])
                             )}

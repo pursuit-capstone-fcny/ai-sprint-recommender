@@ -16,6 +16,7 @@ export default tseslint.config(
     files: [
       'apps-script/index.ts',
       'apps-script-admin/index.ts',
+      'apps-script-admin/library.ts',
       'apps-script/test-setup.ts',
       'apps-script/catalog-sheet.ts',
       'apps-script/usage-sheet.ts',
@@ -32,6 +33,7 @@ export default tseslint.config(
         ScriptApp: 'readonly',
         Session: 'readonly',
         HtmlService: 'readonly',
+        DriveApp: 'readonly',
       },
     },
   },

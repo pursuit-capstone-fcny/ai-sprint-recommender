@@ -14,7 +14,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Goal
 
-- Deliver the required MVP analytics dashboard for authorized FCNY admins using #16 usage events, a restricted aggregate Google Sheet and an FCNY-owned private admin app.
+- Deliver the required MVP analytics dashboard for authorized FCNY admins using #16 usage events, a connected private library or aggregate Google Sheet and an FCNY-owned private admin app.
 - MVP covers basic video/tag data: appearance frequency, keyword association, keyword frequency and filters for unused content. Percentage watched is optional pending feasibility and collection approval. The user confirmed a private app dashboard in place of Looker Studio on Oct 29, 2026.
 
 ### Work order
@@ -34,9 +34,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 ### Acceptance criteria
 
 - AC-24.1 FCNY-owned restricted dashboard
-  - Given the FCNY-owned private admin app and a restricted aggregate Sheet derived from #16
+  - Given the FCNY-owned private admin app and a private library or aggregate Sheet derived from #16
   - When an authorized Sprint admin opens it without YouTube channel access
-  - Then the report shows only aggregate video/tag data and public catalog metadata; named staff can read it, unauthorized visitors cannot, and no raw event log is published. Each page and data request checks Google-authenticated identity against a server-side staff allowlist and enforces the visitor's reporting-file access; use a separate app deployment executing as the visiting user, never the anonymous catalog endpoint.
+  - Then the report shows only aggregate video/tag data and public catalog metadata; named staff can read it, unauthorized visitors cannot, and no raw event log is published. Each page and data request checks Google-authenticated identity and enforces the visitor's actual file permission with Restricted sharing and named members; use a separate app deployment executing as the visiting user, never the anonymous catalog endpoint.
 - AC-24.2 Video appearance frequency
   - Given accepted production impression and click events in the selected reporting period
   - When video totals are calculated
@@ -48,7 +48,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-24.4 Filters and unused content
   - Given the complete active video catalog and canonical tag dictionary left-joined to usage aggregates
   - When an admin selects a date range, video/tag, tag category, source or recommendation/topic mode and an activity filter in sortable, paginated video/tag/association views
-  - Then the view can show all items, zero appearances, appearances with zero clicks, and tags with zero searches. Include videos/tags with no event rows as zeros, distinguish these states, and label them as no recorded activity in the selected period rather than never used. Tag clicks derive from the clicked videos catalog tags without inflating video click totals.
+  - Then the view can show all items, zero appearances, appearances with zero clicks, and tags with zero searches. When collection exists, include videos/tags with no retained event rows as zeros; if collection is missing, show usage as unavailable and disable unused-content filters. With collection present, distinguish these states, and label them as no recorded activity in the selected period rather than never used. Tag clicks derive from the clicked videos catalog tags without inflating video click totals.
 - AC-24.5 Required for MVP
   - Given the confirmed MVP scope
   - When MVP readiness is reviewed
@@ -63,7 +63,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Then record whether embedded YouTube playback APIs can supply reliable observed progress with approved collection and retention, accounting for seeking/replays, duration, external YouTube opens and missing observations. If feasible, separately agree instrumentation and metric semantics before adding it. Otherwise show unavailable or omit it; never infer percentage watched or completion from clicks, and do not block the basic MVP dashboard.
 - AC-24.8 Reporting operations
   - Given the restricted aggregate pipeline and approved production logging
-  - When a scheduled daily refresh runs
+  - When a scheduled daily report refresh or an on-demand connected-Sheet read runs
   - Then deduplicate accepted events before joins, use receivedAt dates in America/New_York, exclude team and isolated test/preview traffic by default, and expose last successful refresh, reporting coverage, stale/error and empty states. Name the FCNY refresh/access/retention owner and document refresh failures and recovery. Keep the restricted Sheet-to-private-app approach; Airtable is not an MVP dependency.
 - AC-24.9 Canonical keyword frequency
   - Given search events carrying allowlisted functionArea, tools and tasks
@@ -73,6 +73,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given a search event and displayed-video impressions sharing sessionId and searchId within the same catalogVersion
   - When an admin views associations for a video or keyword
   - Then join the search canonical keywords to displayed videos and show distinct search/video occurrence counts for each video-keyword pair, with clicks as separate counts. Deduplicate before joining and prevent multi-tag fan-out from multiplying totals. Label associations as co-occurrence with a search keyword, not proof that the keyword caused the recommendation; direct or unjoinable events remain unattributed rather than guessing keywords.
+
+- AC-24.11 Connect with a Sheet link
+  - Given the private app has been deployed once by the technical owner
+  - When Ali or Eliot signs in and supplies the Google Sheets link
+  - Then validate the file under that user's Google identity, save only that account's connection, and load inventory/aggregates without asking for file IDs, Script Properties, a separate report file or an app email allowlist. Support normalized catalog/usage workbooks, the integration library's tag-review format and existing aggregate reports. A failed connection must preserve the previous binding; disconnect must only forget the current user's connection. Reject public/link/domain sharing and inaccessible files. Never edit the source or enable collection while connecting. Proposed tags require explicit Approved status; missing usage collection and unapproved tags remain visibly unavailable. Direct reads use an approved workbook reporting policy or a labeled conservative 24-hour window, and do not publish raw events. The public preview remains fictional and cannot connect real data.
 
 ### Open questions
 

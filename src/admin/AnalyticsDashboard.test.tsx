@@ -27,6 +27,85 @@ describe('admin analytics UI', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Apply filters' }));
     await screen.findByText('10 videos');
   });
+  it('resets pagination when a reloaded snapshot has fewer videos', async () => {
+    const load = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, snapshot: dashboardDemo })
+      .mockResolvedValueOnce({
+        ok: true,
+        snapshot: {
+          ...dashboardDemo,
+          facts: dashboardDemo.facts
+            .filter(
+              (f) =>
+                f.youtubeId !== 'demo0000001' && f.youtubeId !== 'demo0000002',
+            )
+            .slice(0, 20),
+        },
+      });
+    render(<AnalyticsDashboard load={load} clock={clock} />);
+    await screen.findByText('38 videos');
+    fireEvent.click(screen.getByRole('button', { name: 'Next' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Reload data' }));
+    await waitFor(() => expect(screen.queryByText('38 videos')).toBeNull());
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Previous' })).toHaveProperty(
+        'disabled',
+        true,
+      ),
+    );
+    expect(screen.queryByText(/26–/)).toBeNull();
+  });
+  it('connects from a single Sheet link and hides usage metrics when collection is absent', async () => {
+    const connect = vi.fn().mockResolvedValue({
+      ok: true,
+      connection: {
+        title: 'Fictional library',
+        url: 'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
+        kind: 'library',
+      },
+      snapshot: {
+        ...dashboardDemo,
+        collectionAvailable: false,
+        pendingTagReviews: 10,
+        conservativeWindow: true,
+      },
+    });
+    const disconnect = vi.fn().mockResolvedValue(true);
+    render(
+      <AnalyticsDashboard
+        clock={clock}
+        load={async () => ({ ok: false, error: 'SHEET_NOT_CONNECTED' })}
+        connect={connect}
+        disconnect={disconnect}
+      />,
+    );
+    const input = await screen.findByLabelText('Google Sheets link');
+    await waitFor(() => expect(input).toHaveProperty('disabled', false));
+    fireEvent.change(input, {
+      target: {
+        value: 'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
+      },
+    });
+    fireEvent.click(screen.getByRole('button', { name: 'Connect Sheet' }));
+    await screen.findByRole('link', { name: 'Fictional library' });
+    expect(connect).toHaveBeenCalledWith(
+      'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
+    );
+    expect(screen.getByLabelText('Recorded activity')).toHaveProperty(
+      'disabled',
+      true,
+    );
+    expect(
+      screen.getAllByRole('cell', { name: 'Unavailable' }).length,
+    ).toBeGreaterThan(0);
+    expect(
+      screen.getByText(/10 videos have tags awaiting approval/),
+    ).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
+    await screen.findByRole('heading', { name: 'Connect your library Sheet' });
+    expect(screen.queryByRole('table')).toBeNull();
+  });
   it('shows canonical keyword frequency and navigates from a video to associations', async () => {
     render(<AnalyticsDashboard load={loader} clock={clock} />);
     await screen.findByText('38 videos');

@@ -116,6 +116,8 @@ export function analyticsServices() {
     if (!data[id]) throw new Error('Unknown fixture workbook');
     const book = {
       getId: () => id,
+      getName: () => `Fixture ${id}`,
+      getDeveloperMetadata: () => [],
       getSheetByName: (name: string) => {
         if (!data[id][name]) return null;
         const key = `${id}/${name}`;

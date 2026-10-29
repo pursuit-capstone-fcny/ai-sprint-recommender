@@ -93,6 +93,9 @@ export const DashboardFactSchema = z
 export type DashboardFact = z.infer<typeof DashboardFactSchema>;
 export const DashboardSnapshotSchema = z
   .strictObject({
+    collectionAvailable: z.boolean().default(true),
+    pendingTagReviews: z.number().int().min(0).default(0),
+    conservativeWindow: z.boolean().default(false),
     state: z.enum([
       'ready',
       'empty',
@@ -108,7 +111,7 @@ export const DashboardSnapshotSchema = z
     endDate: z.iso.date().nullable(),
     retainedFrom: z.iso.datetime().nullable(),
     retainedThrough: z.iso.datetime().nullable(),
-    environment: z.enum(['test', 'production']).nullable(),
+    environment: z.enum(['test', 'production', 'connected']).nullable(),
     unmappedEvents: count,
     unattributedEvents: count,
     facts: z.array(DashboardFactSchema).max(100_000),
@@ -146,6 +149,20 @@ export const DashboardSnapshotSchema = z
     }
   });
 export type DashboardSnapshot = z.infer<typeof DashboardSnapshotSchema>;
+export type SheetConnection = {
+  title: string;
+  url: string;
+  kind: 'report' | 'library';
+};
 export type DashboardResponse =
-  | { ok: true; snapshot: DashboardSnapshot }
-  | { ok: false; error: 'ACCESS_DENIED' | 'REPORT_UNAVAILABLE' };
+  | { ok: true; snapshot: DashboardSnapshot; connection?: SheetConnection }
+  | {
+      ok: false;
+      error:
+        | 'ACCESS_DENIED'
+        | 'REPORT_UNAVAILABLE'
+        | 'SHEET_NOT_CONNECTED'
+        | 'INVALID_SHEET_LINK'
+        | 'UNSUPPORTED_SHEET'
+        | 'SHARING_TOO_BROAD';
+    };

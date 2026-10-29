@@ -406,3 +406,52 @@
   color: var(--ink-2);
   font-size: 12px;
 }
+
+.analytics-connection {
+  padding: 1.5rem 2rem;
+  background: #fff;
+  border-bottom: 1px solid #ccd5dc;
+}
+.analytics-connection h2 {
+  margin: 0 0 0.5rem;
+  font-size: 1.25rem;
+}
+.analytics-connection p {
+  max-width: 72ch;
+  margin: 0 0 1rem;
+}
+.analytics-connection label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.analytics-connection-fields {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 52rem;
+}
+.analytics-connection-fields input {
+  min-width: 0;
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #607583;
+  border-radius: 4px;
+  font: inherit;
+}
+.analytics-connection .analytics-connection-hint {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  color: #445866;
+}
+.analytics-connection-actions {
+  display: flex;
+  gap: 1.5rem;
+}
+@media (max-width: 640px) {
+  .analytics-connection {
+    padding: 1.25rem;
+  }
+  .analytics-connection-fields {
+    flex-direction: column;
+  }
+}

@@ -33,7 +33,7 @@ await build({
   platform: 'browser',
   target: 'es2020',
   footer: {
-    js: 'function doGet() { return AdminApp.doGet(); }\nfunction readDashboard() { return AdminApp.readDashboard(); }',
+    js: 'function doGet() { return AdminApp.doGet(); }\nfunction readDashboard() { return AdminApp.readDashboard(); }\nfunction connectSheet(link) { return AdminApp.connectSheet(link); }\nfunction disconnectSheet() { return AdminApp.disconnectSheet(); }',
   },
 });
 await copyFile(
@@ -46,6 +46,8 @@ runInNewContext(await readFile(`${directory}/Code.js`, 'utf8'), context, {
 });
 assert.equal(typeof context.doGet, 'function');
 assert.equal(typeof context.readDashboard, 'function');
+assert.equal(typeof context.connectSheet, 'function');
+assert.equal(typeof context.disconnectSheet, 'function');
 for (const name of [
   'doPost',
   'refreshAnalytics',
@@ -57,5 +59,5 @@ const manifest = JSON.parse(await readFile(`${directory}/appsscript.json`));
 assert.equal(manifest.webapp.executeAs, 'USER_ACCESSING');
 assert.equal(manifest.webapp.access, 'ANYONE');
 console.log(
-  `Private admin bundle built at ${directory}; only authenticated doGet/readDashboard exported.`,
+  `Private admin bundle built at ${directory}; authenticated read and per-user connection helpers exported.`,
 );

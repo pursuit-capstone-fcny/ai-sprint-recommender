@@ -29,8 +29,8 @@ this PR adds the actual interactive app and its authenticated read-only service.
 ```text
 Public recommender deployment                 Private admin deployment
 catalog GET / usage POST                      Google sign-in, execute as visitor
-no analytics read endpoint                    exact server-side email allowlist
-synthetic preview only                        visitor's reporting-file permission
+no analytics read endpoint                    per-user saved Sheet link
+synthetic preview only                        visitor's restricted Sheet permission
                                               readDashboard -> aggregates only
 ```
 
@@ -40,20 +40,21 @@ Build with `pnpm build:admin`, or the normal `pnpm build`. The generated
 folder. Do not upload the admin bundle to the public catalog/usage project or
 serve the HTML through its anonymous `doGet`.
 
-The admin bundle exports only `doGet` and `readDashboard`; it has no logging,
-refresh, clear, trigger-installation or other mutation RPC. Each page/data request
-checks the Google-authenticated active identity against the configured allowlist.
-It also requires active and effective identities to match, rejecting deployment
-as an owner on behalf of another user. An absent identity or config fails closed.
-Reading the workbook runs as the visitor, so its actual Google file ACL is a
-second independent check. Do not treat an unlisted URL as authorization.
+The admin bundle exports `doGet`, `readDashboard`, `connectSheet` and
+`disconnectSheet`. Connection helpers only change the current user's binding in
+Apps Script User Properties. They never edit a Sheet, alter sharing, enable
+collection, install triggers or call producer maintenance operations. Every RPC
+requires a Google identity and matching active/effective users, rejecting an
+owner-executed deployment. File reads execute as the visiting user and require
+actual Google file permission. The reader also rejects public, domain and link
+sharing. Named membership of the private file authorizes its dashboard data.
 
 The manifest pins `executeAs=USER_ACCESSING` and `access=ANYONE`, meaning Google
 account authentication, **not** `ANYONE_ANONYMOUS`. Review both in the deployment
 UI. Google Workspace policy and OAuth consent must allow the intended staff.
-The admin project requests email identity and Spreadsheet service access; the
+The admin project requests email identity, Spreadsheet service access and Drive read-only access to verify sharing; the
 latter is broad at Google's scope level even though this code only reads the
-configured aggregate file. Each admin must review/authorize those scopes. No
+user-selected file. Each admin must review/authorize those scopes. No
 credentials, emails or workbook IDs belong in frontend code or this repository.
 The built app contains no external scripts/fonts, analytics beacons or browser
 storage. Reporting facts exist only in page memory and are not logged.
@@ -92,39 +93,68 @@ validates every returned field, expected headers, row limits, and the generation
 before/after reading facts. In-progress, failed, cleared or stale reports do not
 return fact rows. A mixed-generation read yields a recoverable load error.
 
-## Admin setup
+## Staff setup: one Sheet link
 
-1. Verify the **entire reporting file** is restricted. Disable link, domain and
-   public sharing. Grant named dashboard staff **viewer** access to this aggregate
-   file; they do not need raw usage-file or YouTube channel access. Hidden tabs
-   are not an access boundary.
-2. Create the separate FCNY admin project from `build/apps-script-admin/` and set
-   these properties in that project only:
+After the technical team deploys the private app, Ali and Eliot each sign in with
+Google, authorize the app, paste their Google Sheets link and choose **Connect
+Sheet**. The app remembers that connection for that Google account. No file ID,
+Script Property, duplicate email allowlist, reporting workbook or refresh trigger
+is required from them. **Change Sheet** validates the new file before replacing
+the saved connection. **Disconnect** forgets only that account's binding.
 
-   | Admin property                | Value                                                                                |
-   | ----------------------------- | ------------------------------------------------------------------------------------ |
-   | `ANALYTICS_ADMIN_ENABLED`     | Literal `true` after setup; absent/false disables page/data access                   |
-   | `ANALYTICS_ACCESS_APPROVED`   | Literal `true` after the reporting-file ACL check                                    |
-   | `ANALYTICS_ADMIN_EMAILS`      | JSON array of exact approved Google emails, at most 100; no wildcard/domain matching |
-   | `ANALYTICS_ADMIN_ENVIRONMENT` | Expected `test` or `production`; a mismatched dataset is rejected                    |
-   | `ANALYTICS_SPREADSHEET_ID`    | The corresponding aggregate reporting file                                           |
+Supported inputs are a normalized `Catalog`/`Dictionary` workbook, the integration
+library's `First 10  -Tag Review` format, or an existing aggregate workbook with
+`Analytics facts` and `Analytics status`. The source file must use Restricted
+sharing with named people. Connecting cannot grant missing Google access.
 
-3. Deploy as **User accessing the web app** with Google sign-in required. Let
-   staff authorize Google's requested scopes themselves. Confirm both allowlist
-   and file access; neither alone is sufficient. Do not accept an anonymous or
-   owner-executed deployment as equivalent.
-4. Test signed-out/unlisted users, listed users without file access, and an
-   authorized staff viewer without YouTube access. Confirm they cannot call any
-   producer maintenance operation through the admin app.
-5. Record the private deployment URL, FCNY owner and evidence in the private
-   deployment record. Do not close #24 until native authorization and live
-   synthetic reconciliation are verified. The PR preview validates the UI, not
-   Google's deployment/consent configuration.
+For the integration format, only published videos are included. Proposed
+function-area/tool/task tags become canonical only when their row's Approval
+Status is Approved. The report labels pending reviews and excludes unapproved
+proposals. It reads only the recognized public catalog and approval columns,
+never review notes or unrelated tabs.
 
-Changing access requires updating the server allowlist/file ACL, then reloading.
-The UI clears facts before each reload, including failures. Revocation cannot
-recall a response already delivered to a page; data is hidden at its stale
-expiry, and no response is persisted in browser storage.
+A source workbook can be connected before it has a `Usage` tab. Inventory loads,
+but usage counts display **Unavailable** and unused-content/date/source/mode
+controls stay disabled. An existing, valid but empty `Usage` table instead means
+zero retained recorded events. Connecting does not create that table or turn on
+production logging. The collection owner must still deploy and approve #16's
+event collection. Events must be in the selected source workbook to be read
+there. Existing multi-file producer deployments can use their aggregate workbook
+link instead.
+
+Direct source reads aggregate on each reload and expire after 15 minutes. If the
+owner supplies approved reporting policy as workbook developer metadata
+`FCNY_ANALYTICS_POLICY_V1`, JSON
+`{"schemaVersion":1,"retentionDays":30,"environment":"production"}`, the reader
+uses that policy. This is optional technical owner configuration, never a staff
+onboarding field. Without it the reader conservatively includes only receipts
+from the last 24 hours and labels the coverage. It does not extend retention or
+approve collection. Historical versions without a matching snapshot stay
+explicitly unmapped. Precomputed report links keep the producer's published
+retention/environment/refresh metadata.
+
+## Technical deployment, once
+
+1. Create a separate FCNY-owned Apps Script project from
+   `build/apps-script-admin/`. No Script Properties are needed for normal admin
+   onboarding. The optional `ANALYTICS_ADMIN_ENABLED=false` kill switch disables
+   access. Never deploy this bundle on the public catalog/usage endpoint.
+2. Deploy as **User accessing the web app**, with Google sign-in required. Each
+   staff member authorizes Google's scopes. Review Workspace/OAuth policy with
+   the FCNY owner. Test missing identity, incorrect owner execution, revoked file
+   access, broadly shared files and per-account binding isolation.
+3. Verify an authorized viewer can connect using only the Sheet URL and can
+   inspect aggregates without YouTube channel access. Confirm no raw event
+   records or private review notes reach the browser. Test disconnect/reconnect
+   and reload after revocation.
+4. Record the private deployment URL, owner and native reconciliation evidence
+   in the private deployment record. The public synthetic preview validates UI;
+   it cannot validate Google sign-in or connect a real Sheet. Do not close #24
+   until native deployment/consent and live reconciliation have been verified.
+
+Changing access uses Google's file sharing controls. Every reload rechecks it
+and clears visible facts first. Revocation cannot recall an already-delivered
+response; facts hide at their stale expiry and never persist in browser storage.
 
 ## Metrics and limits
 
@@ -144,8 +174,8 @@ never-used content. Coverage and missing/unattributed counts are visible.
 Producer limits: 10,000 usage rows, 8 MiB retained event bodies, 500 public-catalog
 chunks of 10,000 characters, and 100,000 rows per output table. Admin reads at most
 100,000 strict aggregate facts, renders 25 rows at a time, and bounds RPC waiting
-to 15 seconds. Load-test the agreed scale before production. Aggregates refresh
-daily; approve derived-data retention as well as raw-log retention. Stale data is
+to 30 seconds. Load-test the agreed scale before production. Precomputed aggregates refresh
+daily; direct source reads refresh on reload. approve derived-data retention as well as raw-log retention. Stale data is
 not served by the admin reader. Snapshots contain public metadata only.
 
 `Analytics filters` still provides a shared owner reconciliation view in Sheets.
@@ -163,7 +193,7 @@ also fail, the previous last-success deadline and trigger failure notifications
 remain the external operational backstop.
 
 For access exposure or wrong totals, first disable the admin app with
-`ANALYTICS_ADMIN_ENABLED=false` and remove the affected allowlist/file access.
+`ANALYTICS_ADMIN_ENABLED=false` and remove the affected file access.
 Run producer `clearAnalytics`, disable producer analytics and its triggers as
 appropriate, and keep the raw usage purge running. None of these code changes
 enable production logging or change Google permissions automatically.
