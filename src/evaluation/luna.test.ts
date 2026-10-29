@@ -312,6 +312,23 @@ describe('Luna responses and costs', () => {
       benchmark.catalog.items.slice(0, 3).map((item) => item.youtubeId),
     );
   });
+  it('identifies duplicate selections without collapsing them into a content error', () => {
+    const duplicate = response();
+    duplicate.output[1].content![0].text = JSON.stringify({
+      ...ranks,
+      rank2: 0,
+    });
+    expect(
+      readLunaResponse(
+        duplicate,
+        benchmark.catalog.items.map((x) => x.youtubeId),
+      ),
+    ).toMatchObject({
+      youtubeIds: null,
+      validation: { validationFailure: 'duplicate', duplicateCount: 1 },
+      costMicrodollars: 2500,
+    });
+  });
   it('preserves usage for incomplete, refusal and duplicate outputs', () => {
     const incomplete = response();
     incomplete.status = 'incomplete';

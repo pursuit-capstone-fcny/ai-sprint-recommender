@@ -515,7 +515,9 @@ export async function main(args = process.argv.slice(2)) {
     const diagnosticIds = [...allIds, ...warmupIds];
     const diagnosticsDeadline = Date.now() + 15_000;
     while (
-      diagnosticIds.some((id) => !observed.has(id)) &&
+      diagnosticIds.some(
+        (id) => !observed.has(id) || observed.get(id).accountingFinal === false,
+      ) &&
       Date.now() < diagnosticsDeadline
     )
       await pause(200);
@@ -530,7 +532,9 @@ export async function main(args = process.argv.slice(2)) {
         approval,
         diagnoseFormat ? 1 : 4,
       ) ||
-      diagnosticIds.some((id) => !observed.has(id))
+      diagnosticIds.some(
+        (id) => !observed.has(id) || observed.get(id).accountingFinal === false,
+      )
     )
       throw new Error(
         'Some diagnostic evidence is missing; comparison retains incomplete metrics.',

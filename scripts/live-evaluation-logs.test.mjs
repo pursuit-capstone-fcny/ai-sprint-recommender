@@ -45,6 +45,29 @@ it('retains bounded validation categories without raw provider text', () => {
     diagnosticsFromEnvelope(envelope({ ...invalid, duplicateCount: 101 })),
   ).toEqual([]);
 });
+it('keeps bounded stage timings and final accounting without copying extra data', () => {
+  const record = {
+    ...diagnostic,
+    providerDispatched: true,
+    accountingFinal: true,
+    phase: 'validation',
+    requestedCatalogVersion: diagnostic.catalogVersion,
+    catalogMs: 5,
+    budgetMs: 10,
+    providerMs: 225,
+  };
+  expect(
+    diagnosticsFromEnvelope(envelope({ ...record, rawOutput: 'PRIVATE' })),
+  ).toEqual([record]);
+  for (const bad of [
+    { providerMs: 600001 },
+    { phase: 'PRIVATE' },
+    { requestedCatalogVersion: 'PRIVATE' },
+  ])
+    expect(diagnosticsFromEnvelope(envelope({ ...record, ...bad }))).toEqual(
+      [],
+    );
+});
 function envelope(candidate = diagnostic) {
   return {
     event: {

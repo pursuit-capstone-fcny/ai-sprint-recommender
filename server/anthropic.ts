@@ -81,6 +81,7 @@ export const ProviderValidationSchema = z.object({
     'out-of-range',
     'candidate-or-usage-mismatch',
   ]),
+  messageCount: count,
   contentBlockCount: count,
   selectionCount: count,
   invalidSelectionCount: count,

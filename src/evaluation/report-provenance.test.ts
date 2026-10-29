@@ -90,6 +90,43 @@ describe('saved trial provenance', () => {
     );
   });
 
+  it('counts a verified pre-dispatch fallback as zero, while preserving unknown dispatched usage', () => {
+    const { benchmark, trials, diagnostics } = passingInputs();
+    trials.trials[0].calls[0].response = {
+      outcome: 'fallback',
+      reason: 'timeout',
+    };
+    const row = diagnostics[0];
+    Object.assign(row, {
+      outcome: 'timeout',
+      providerDispatched: false,
+      accountingFinal: true,
+      requestedCatalogVersion: benchmark.catalog.catalogVersion,
+      inputTokens: 0,
+      outputTokens: 0,
+      costMicrodollars: 0,
+    });
+    delete row.catalogVersion;
+    const measured = () =>
+      evaluate(benchmark, { sourceRevision: revision, trials, diagnostics })
+        .llm[0].profiles[0];
+    expect(measured().metricsComplete).toBe(true);
+    row.providerDispatched = true;
+    delete row.costMicrodollars;
+    expect(measured().metricsComplete).toBe(false);
+    expect(measured().costMicrodollars).toBeNull();
+    Object.assign(row, {
+      providerDispatched: false,
+      costMicrodollars: 0,
+      requestedCatalogVersion: 'sha256:' + 'f'.repeat(64),
+    });
+    expect(measured().metricsComplete).toBe(false);
+    Object.assign(row, {
+      requestedCatalogVersion: benchmark.catalog.catalogVersion,
+      accountingFinal: false,
+    });
+    expect(measured().metricsComplete).toBe(false);
+  });
   it('keeps CLI saved inputs replay-only even with complete synthetic metrics', async () => {
     const { benchmark, trials, diagnostics } = passingInputs();
     const directory = await mkdtemp(join(tmpdir(), 'evaluation-replay-'));

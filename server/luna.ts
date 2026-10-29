@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { RECOMMENDATION_PROMPT_VERSION } from '../src/contracts/recommendation';
-import type { Provider, ProviderBody } from './anthropic';
+import type { Provider, ProviderBody, ProviderValidation } from './anthropic';
 import { boundedJson } from './bounded-json';
 
 export const LUNA_MODEL = 'gpt-6-luna';
@@ -92,6 +92,7 @@ const envelopeSchema = z.object({
   status: z.string(),
   usage: usageSchema,
   output: z.unknown(),
+  incomplete_details: z.object({ reason: z.string() }).nullish(),
 });
 const rankKeys = Array.from({ length: 10 }, (_, index) => `rank${index + 1}`);
 const ranksSchema = z.strictObject(
@@ -113,37 +114,74 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
     costMicrodollars > LUNA_RESERVATION ||
     (usage.input_tokens_details?.cached_tokens ?? 0) !== 0;
   let youtubeIds: string[] | null = null;
-  let invalid = 'incomplete';
-  if (!mismatch && parsed.status === 'completed') {
+  let validation: ProviderValidation | undefined;
+  if (mismatch)
+    validation = { validationFailure: 'candidate-or-usage-mismatch' };
+  else if (parsed.status !== 'completed')
+    validation = {
+      validationFailure:
+        parsed.incomplete_details?.reason === 'max_output_tokens'
+          ? 'max-tokens'
+          : 'stop-reason',
+    };
+  else {
     const blocks = z
       .array(z.object({ type: z.string(), content: z.unknown().optional() }))
       .safeParse(parsed.output);
     const messages = blocks.success
       ? blocks.data.filter((block) => block.type === 'message')
       : [];
-    const content = z
-      .array(
-        z.object({
-          type: z.literal('output_text'),
-          text: z.string().max(2_048),
-        }),
-      )
-      .length(1)
+    const contents = z
+      .array(z.object({ type: z.string(), text: z.string().optional() }))
       .safeParse(messages.length === 1 ? messages[0].content : null);
-    invalid = 'invalid-output';
-    if (content.success) {
+    validation = {
+      validationFailure: 'content',
+      messageCount: Math.min(100, messages.length),
+      ...(contents.success
+        ? { contentBlockCount: Math.min(100, contents.data.length) }
+        : {}),
+    };
+    if (
+      contents.success &&
+      contents.data.some((part) => part.type === 'refusal')
+    )
+      validation.validationFailure = 'refusal';
+    else if (
+      contents.success &&
+      contents.data.length === 1 &&
+      contents.data[0].type === 'output_text' &&
+      typeof contents.data[0].text === 'string' &&
+      contents.data[0].text.length <= 2048
+    ) {
+      let json: unknown;
       try {
-        const ranks = ranksSchema.parse(JSON.parse(content.data[0].text));
-        const positions = rankKeys
-          .map((key) => ranks[key])
-          .filter((position) => position !== null);
-        if (
-          new Set(positions).size === positions.length &&
-          positions.every((position) => position < catalogIds.length)
-        )
-          youtubeIds = positions.map((position) => catalogIds[position]);
+        json = JSON.parse(contents.data[0].text);
       } catch {
-        /* Retain measured usage for invalid output. */
+        validation.validationFailure = 'json';
+      }
+      if (json !== undefined) {
+        const ranks = ranksSchema.safeParse(json);
+        if (!ranks.success) validation.validationFailure = 'schema';
+        else {
+          const positions = rankKeys
+            .map((key) => ranks.data[key])
+            .filter((position) => position !== null);
+          const duplicateCount = positions.length - new Set(positions).size;
+          const outOfRangeCount = positions.filter(
+            (position) => position >= catalogIds.length,
+          ).length;
+          if (duplicateCount || outOfRangeCount)
+            validation = {
+              validationFailure: duplicateCount ? 'duplicate' : 'out-of-range',
+              selectionCount: positions.length,
+              duplicateCount,
+              outOfRangeCount,
+            };
+          else {
+            youtubeIds = positions.map((position) => catalogIds[position]);
+            validation = undefined;
+          }
+        }
       }
     }
   }
@@ -159,9 +197,12 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
     failure: mismatch
       ? 'candidate-or-usage-mismatch'
       : youtubeIds === null
-        ? invalid
+        ? parsed.status === 'completed'
+          ? 'invalid-output'
+          : 'incomplete'
         : null,
     fatal: mismatch,
+    validation,
   };
 }
 
@@ -197,15 +238,7 @@ export function lunaProvider(
       ...(measured.reasoningTokens === null
         ? {}
         : { reasoningTokens: measured.reasoningTokens }),
-      ...(measured.failure
-        ? {
-            validationFailure: measured.fatal
-              ? ('candidate-or-usage-mismatch' as const)
-              : measured.failure === 'incomplete'
-                ? ('stop-reason' as const)
-                : ('content' as const),
-          }
-        : {}),
+      ...measured.validation,
     };
   };
 }

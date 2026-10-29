@@ -44,6 +44,18 @@ export const DiagnosticsSchema = z
       environment: z.literal('test'),
       outcome: z.string().min(1).max(80),
       latencyMs: z.number().nonnegative(),
+      providerDispatched: z.boolean().optional(),
+      requestedCatalogVersion: z
+        .string()
+        .regex(/^sha256:[a-f0-9]{64}$/)
+        .optional(),
+      accountingFinal: z.boolean().optional(),
+      phase: z
+        .enum(['request', 'catalog', 'budget', 'provider', 'validation'])
+        .optional(),
+      catalogMs: z.number().nonnegative().max(600_000).optional(),
+      budgetMs: z.number().nonnegative().max(600_000).optional(),
+      providerMs: z.number().nonnegative().max(600_000).optional(),
       inputTokens: z.number().int().nonnegative().optional(),
       outputTokens: z.number().int().nonnegative().optional(),
       reasoningTokens: z.number().int().nonnegative().optional(),
@@ -62,6 +74,7 @@ export const DiagnosticsSchema = z
           'candidate-or-usage-mismatch',
         ])
         .optional(),
+      messageCount: z.number().int().min(0).max(100).optional(),
       contentBlockCount: z.number().int().min(0).max(100).optional(),
       selectionCount: z.number().int().min(0).max(100).optional(),
       invalidSelectionCount: z.number().int().min(0).max(100).optional(),
@@ -181,7 +194,15 @@ export function evaluate(
           metric !== undefined &&
           metric.outcome ===
             (response.outcome === 'success' ? 'success' : response.reason) &&
-          metric.catalogVersion === benchmark.catalog.catalogVersion &&
+          metric.accountingFinal !== false &&
+          (metric.catalogVersion === benchmark.catalog.catalogVersion ||
+            (response.outcome === 'fallback' &&
+              metric.providerDispatched === false &&
+              metric.requestedCatalogVersion ===
+                benchmark.catalog.catalogVersion &&
+              metric.inputTokens === 0 &&
+              metric.outputTokens === 0 &&
+              metric.costMicrodollars === 0)) &&
           metric.modelVersion === trials.modelVersion &&
           metric.promptVersion === trials.promptVersion &&
           metric.inputTokens !== undefined &&

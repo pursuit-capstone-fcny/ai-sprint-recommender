@@ -20,6 +20,18 @@ const DiagnosticSchema = z.strictObject({
     'unavailable',
   ]),
   latencyMs: z.number().nonnegative().max(600_000),
+  providerDispatched: z.boolean().optional(),
+  requestedCatalogVersion: z
+    .string()
+    .regex(/^sha256:[a-f0-9]{64}$/)
+    .optional(),
+  accountingFinal: z.boolean().optional(),
+  phase: z
+    .enum(['request', 'catalog', 'budget', 'provider', 'validation'])
+    .optional(),
+  catalogMs: z.number().nonnegative().max(600_000).optional(),
+  budgetMs: z.number().nonnegative().max(600_000).optional(),
+  providerMs: z.number().nonnegative().max(600_000).optional(),
   inputTokens: count.optional(),
   outputTokens: count.optional(),
   reasoningTokens: count.optional(),
@@ -38,6 +50,7 @@ const DiagnosticSchema = z.strictObject({
       'candidate-or-usage-mismatch',
     ])
     .optional(),
+  messageCount: z.number().int().min(0).max(100).optional(),
   contentBlockCount: z.number().int().min(0).max(100).optional(),
   selectionCount: z.number().int().min(0).max(100).optional(),
   invalidSelectionCount: z.number().int().min(0).max(100).optional(),

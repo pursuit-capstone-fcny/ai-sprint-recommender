@@ -38,6 +38,13 @@ export interface Diagnostic extends Partial<ProviderValidation> {
   inputTokens?: number;
   outputTokens?: number;
   reasoningTokens?: number;
+  providerDispatched?: boolean;
+  requestedCatalogVersion?: string;
+  catalogMs?: number;
+  budgetMs?: number;
+  providerMs?: number;
+  accountingFinal?: boolean;
+  phase?: 'request' | 'catalog' | 'budget' | 'provider' | 'validation';
   costMicrodollars?: number;
   reservedMicrodollars?: number;
   catalogVersion?: string;
@@ -107,6 +114,8 @@ export async function recommend(
         : 'unconfigured',
     outcome: 'unavailable',
     latencyMs: 0,
+    providerDispatched: false,
+    phase: 'request',
   };
   let status = 200;
   const fallback = (
@@ -166,11 +175,14 @@ export async function recommend(
       status = 400;
       return fallback('unavailable');
     }
+    diagnostic.requestedCatalogVersion = input.catalogVersion;
     active();
     if (!input.functionArea && !input.goal && input.tools.length === 0)
       return fallback('not-requested');
     const fetcher = deps.fetch ?? fetch;
     let catalog;
+    diagnostic.phase = 'catalog';
+    const catalogStarted = Date.now();
     try {
       catalog = await readCatalogSnapshot({
         origin: new URL(request.url).origin,
@@ -187,6 +199,8 @@ export async function recommend(
           ? 'timeout'
           : 'unavailable',
       );
+    } finally {
+      diagnostic.catalogMs = Date.now() - catalogStarted;
     }
     active();
     diagnostic.catalogVersion = catalog.catalogVersion;
@@ -235,12 +249,15 @@ export async function recommend(
       limits.LLM_MAX_INPUT_TOKENS,
       limits.LLM_MAX_OUTPUT_TOKENS,
     );
+    diagnostic.phase = 'budget';
+    const budgetStarted = Date.now();
     const permission = await budget.reserve(
       requestId,
       identifier,
       reserved,
       deadline,
     );
+    diagnostic.budgetMs = Date.now() - budgetStarted;
     if (!permission.ok) return fallback(permission.reason);
     diagnostic.reservedMicrodollars = reserved;
     let actual: number | null = 0;
@@ -249,7 +266,13 @@ export async function recommend(
       // Recheck after asynchronous catalog/budget work before any paid dispatch.
       if (testExpired(env)) return fallback('disabled');
       actual = null; // Dispatch can be billed even when the connection fails or is aborted.
-      const result = await provider(body, abort.signal);
+      diagnostic.providerDispatched = true;
+      diagnostic.phase = 'provider';
+      const providerStarted = Date.now();
+      const result = await provider(body, abort.signal).finally(() => {
+        diagnostic.providerMs = Date.now() - providerStarted;
+      });
+      diagnostic.phase = 'validation';
       if (
         !Number.isSafeInteger(result.inputTokens) ||
         result.inputTokens < 0 ||
@@ -319,28 +342,41 @@ export async function recommend(
       resolve(fallback('timeout'));
     }, SERVER_DEADLINE_MS);
   });
-  const result = await Promise.race([
-    execute().catch(() =>
+  let finished = false;
+  const execution = execute()
+    .catch(() =>
       fallback(
         abort.signal.aborted || Date.now() >= deadline
           ? 'timeout'
           : 'unavailable',
       ),
-    ),
-    timeout,
-  ]);
+    )
+    .finally(() => {
+      finished = true;
+    });
+  const result = await Promise.race([execution, timeout]);
   clearTimeout(timer);
   diagnostic.outcome = result.outcome === 'success' ? 'success' : result.reason;
   diagnostic.latencyMs = Date.now() - started;
-  (
+  const record =
     deps.diagnostic ??
     ((entry) => {
       if (env.LLM_DIAGNOSTICS_ENABLED === 'true')
         console.info(JSON.stringify(entry));
-    })
-  )({
-    ...diagnostic,
-  });
+    });
+  const emit = () =>
+    record({
+      ...diagnostic,
+      accountingFinal: finished,
+      // Active() prevents any later dispatch after the response deadline.
+      ...(!diagnostic.providerDispatched
+        ? { inputTokens: 0, outputTokens: 0, costMicrodollars: 0 }
+        : {}),
+    });
+  emit();
+  // Keep abort/settlement work alive after returning the bounded browser response.
+  // Late known usage updates accounting only; it never changes the displayed picks.
+  if (!finished && deps.waitUntil) deps.waitUntil(execution.then(emit));
   return new Response(JSON.stringify(result), {
     status,
     headers: { ...headers, 'x-recommendation-request-id': requestId },

@@ -75,6 +75,53 @@ describe('recommendation endpoint', () => {
     expect((await (await pending).json()).reason).toBe('timeout');
     expect(provider.mock.calls[0][1].aborted).toBe(true);
   });
+  it('keeps late usage settlement alive without delaying or replacing a timeout response', async () => {
+    vi.useFakeTimers();
+    const { deps, provider, budget, diagnostic } = setup();
+    provider.mockImplementation(async () => {
+      await new Promise((resolve) => setTimeout(resolve, 5000));
+      return {
+        value: { youtubeIds: [catalog.items[0].youtubeId] },
+        inputTokens: 100,
+        outputTokens: 20,
+      };
+    });
+    const tasks: Promise<unknown>[] = [];
+    const pending = recommend(request(), environment, {
+      ...deps,
+      waitUntil: (task) => {
+        tasks.push(task);
+      },
+    });
+    await vi.advanceTimersByTimeAsync(4500);
+    expect(await (await pending).json()).toMatchObject({
+      outcome: 'fallback',
+      reason: 'timeout',
+    });
+    expect(diagnostic).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        providerDispatched: true,
+        accountingFinal: false,
+      }),
+    );
+    expect(diagnostic.mock.lastCall![0].costMicrodollars).toBeUndefined();
+    expect(tasks).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(500);
+    await tasks[0];
+    expect(provider).toHaveBeenCalledTimes(1);
+    expect(budget.settle).toHaveBeenCalledWith(expect.any(String), 120);
+    expect(diagnostic).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        outcome: 'timeout',
+        latencyMs: 4500,
+        providerMs: 5000,
+        inputTokens: 100,
+        outputTokens: 20,
+        costMicrodollars: 120,
+        accountingFinal: true,
+      }),
+    );
+  });
   it('warms a validated version without paid calls and validates intake and IDs on cache hits', async () => {
     const { deps, fetcher, provider, budget } = setup();
     const entries = new Map<string, Response>();
@@ -416,6 +463,14 @@ describe('recommendation endpoint', () => {
     expect((await (await pending).json()).reason).toBe('timeout');
     expect(provider).not.toHaveBeenCalled();
     expect(budget.reserve).not.toHaveBeenCalled();
+    expect(deps.diagnostic).toHaveBeenCalledWith(
+      expect.objectContaining({
+        providerDispatched: false,
+        inputTokens: 0,
+        outputTokens: 0,
+        costMicrodollars: 0,
+      }),
+    );
   });
   it('does not dispatch after a slow reservation outlives the deadline', async () => {
     vi.useFakeTimers();

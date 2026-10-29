@@ -37,6 +37,8 @@ export async function readCatalogSnapshot(options: {
   fetcher: typeof fetch;
   cache?: CatalogCache;
   waitUntil?: (task: Promise<unknown>) => void;
+  // An unpaid catalog load should leave enough freshness for the next submission.
+  minimumFreshMs?: number;
 }): Promise<PublicCatalog> {
   const { origin, source, requestedVersion, signal, fetcher, cache } = options;
   if (cache) {
@@ -52,13 +54,14 @@ export async function readCatalogSnapshot(options: {
         cached?.ok &&
         Number.isSafeInteger(storedAt) &&
         age >= 0 &&
-        age < CATALOG_CACHE_SECONDS * 1_000
+        age < CATALOG_CACHE_SECONDS * 1_000 - (options.minimumFreshMs ?? 0)
       ) {
         const catalog = parsePublicCatalog(
           await boundedJson(cached, MAX_CATALOG_BYTES),
         );
         if (
-          Date.now() - storedAt < CATALOG_CACHE_SECONDS * 1_000 &&
+          Date.now() - storedAt <
+            CATALOG_CACHE_SECONDS * 1_000 - (options.minimumFreshMs ?? 0) &&
           (!requestedVersion || catalog.catalogVersion === requestedVersion)
         )
           return catalog;

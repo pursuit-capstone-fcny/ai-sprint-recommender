@@ -40,6 +40,7 @@ export async function serveCatalog(
         signal: abort.signal,
         fetcher: fetch,
         cache: defaultCatalogCache(),
+        minimumFreshMs: 30_000,
       })
         .then((catalog) => Response.json(catalog, { headers }))
         .catch(() => unavailable()),

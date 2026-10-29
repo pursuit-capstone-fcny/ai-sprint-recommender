@@ -103,6 +103,24 @@ describe('test catalog route', () => {
     expect(await response.json()).toEqual(catalog);
     expect(fetcher.mock.calls[0][0]).toBe(environment.LLM_CATALOG_URL);
   });
+  it('refreshes an aging catalog before a new submission window without extending stale data', async () => {
+    vi.useFakeTimers();
+    const entries = new Map<string, Response>();
+    vi.stubGlobal('caches', {
+      default: {
+        match: async (key: Request) => entries.get(key.url)?.clone(),
+        put: async (key: Request, value: Response) => {
+          entries.set(key.url, value.clone());
+        },
+      },
+    });
+    const fetcher = vi.fn(async () => Response.json(catalog));
+    vi.stubGlobal('fetch', fetcher);
+    await get();
+    await vi.advanceTimersByTimeAsync(50_000);
+    await get();
+    expect(fetcher).toHaveBeenCalledTimes(2);
+  });
   it('loads a slow cold catalog before submission and refreshes expired snapshots before the next submission', async () => {
     vi.useFakeTimers();
     const entries = new Map<string, Response>();
