@@ -1,0 +1,21 @@
+{
+  "approvedSourceRevision": "736384a1adb3c45989a051d32c1a212c8346093d",
+  "approvedWorkflowRunId": "40910291157",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-29T17:04:02Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v7",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "User authorized Luna low on the existing test endpoint only.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use the remaining original $1 allowance after all known costs and unknown reservations. No reset.",
+  "allowanceMicrodollars": 648365,
+  "maxRequestMicrodollars": 7000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 351635,
+  "totalAllowanceMicrodollars": 1000000
+}

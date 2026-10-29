@@ -137,6 +137,24 @@ and matching diagnostics receive fresh source/run provenance.
 
 ## Owner review before enabling production LLM
 
+The [Luna test deployment plan](evaluation/2026-10-29-luna-deployed/test-plan.md)
+uses the same endpoint with `wrangler.luna-test.json`. Its `Validate Luna test
+deployment` workflow accepts only GPT-6 Luna low, standard reasoning and V7.
+The `validate-luna-test` label on #76 starts the unpaid preflight. An approved
+attempt uses `LLM_EVALUATION_APPROVAL`, including `reasoningEffort: "low"`,
+`priorSpendMicrodollars`, `totalAllowanceMicrodollars: 1000000`, remaining
+`allowanceMicrodollars` and a `maxRequestMicrodollars` reservation of 7000.
+Read the current hashed ledger in `src/evaluation/luna-ledger.ts`; never reuse
+an older balance or reset the original allowance.
+
+The cumulative Durable Object budget survives date changes and redeployments.
+After shutdown the runner saves its authenticated budget readback, then removes
+both provider keys and the rate-key binding. Future runs verify the entire
+spend chain, including unknown reservations. Test builds name OpenAI in the
+disclosure and disable usage logging. Production rejects the Luna configuration.
+Run `node scripts/test-luna-runtime.mjs` to verify the actual adapter in workerd
+with synthetic responses and zero external calls.
+
 - Review two semantic-match examples and the weakest profiles with Ali or
   Eliot. Record the report, candidate revision, versions and approved limits.
 - Keep reviewed new wording in a separate held-out file. Report it separately;

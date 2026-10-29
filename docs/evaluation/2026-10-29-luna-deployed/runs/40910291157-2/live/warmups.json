@@ -1,0 +1,146 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 6325,
+    "diagnostic": null
+  },
+  {
+    "trial": 1,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "9ccbfcf5-16b3-44e0-91db-96a8cbd56aec",
+    "status": 400,
+    "latencyMs": 61,
+    "diagnostic": {
+      "requestId": "9ccbfcf5-16b3-44e0-91db-96a8cbd56aec",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 4,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  },
+  {
+    "trial": 2,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 51,
+    "diagnostic": null
+  },
+  {
+    "trial": 2,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "c4a63a96-3a7a-438b-a9de-7654dafbccd9",
+    "status": 400,
+    "latencyMs": 34,
+    "diagnostic": {
+      "requestId": "c4a63a96-3a7a-438b-a9de-7654dafbccd9",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 3,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  },
+  {
+    "trial": 3,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 107,
+    "diagnostic": null
+  },
+  {
+    "trial": 3,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "7276738e-287f-4ca7-9c04-4625c70b60cb",
+    "status": 400,
+    "latencyMs": 53,
+    "diagnostic": {
+      "requestId": "7276738e-287f-4ca7-9c04-4625c70b60cb",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 4,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  },
+  {
+    "trial": 4,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 203,
+    "diagnostic": null
+  },
+  {
+    "trial": 4,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    },
+    "requestId": "ed90d6a8-3485-45cb-885f-8a8ab5426b1a",
+    "status": 400,
+    "latencyMs": 103,
+    "diagnostic": {
+      "requestId": "ed90d6a8-3485-45cb-885f-8a8ab5426b1a",
+      "environment": "test",
+      "outcome": "unavailable",
+      "latencyMs": 8,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "gpt-6-luna",
+      "promptVersion": "catalog-rank-v7"
+    }
+  }
+]

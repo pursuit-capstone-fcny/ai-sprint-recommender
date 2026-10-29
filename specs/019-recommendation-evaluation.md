@@ -122,3 +122,11 @@ Commands and report formats: [Evaluation guide](../docs/recommendation-evaluatio
   save durable spend after shutdown, and preserve all historical results.
 
 Plan: [Luna test deployment](../docs/evaluation/2026-10-29-luna-deployed/test-plan.md).
+
+Results: [deployed Luna validation](../docs/evaluation/2026-10-29-luna-deployed/results.md)
+scores rules 8/10 and fresh Luna 9/10, 8/10, 8/10. Both new wording probes
+reach two existing label hits. One invalid response and two timeouts remain;
+measured usage is incomplete, so the full evidence gate remains false. The
+cumulative Luna ceiling is $0.398955, leaving at least $0.601045. Calls were
+disabled and test keys removed. Client review and production approvals remain
+pending; production LLM calls and logging stay disabled.
