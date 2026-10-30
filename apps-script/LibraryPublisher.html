@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <base target="_blank" />
+    <meta charset="utf-8" />
+    <style>
+      body {
+        font:
+          14px/1.5 system-ui,
+          sans-serif;
+        color: #10253f;
+        padding: 12px;
+      }
+      button {
+        font: inherit;
+        min-height: 44px;
+        padding: 8px 14px;
+        border: 1px solid #10253f;
+        border-radius: 4px;
+        background: #10253f;
+        color: white;
+        cursor: pointer;
+      }
+      button:disabled {
+        opacity: 0.6;
+        cursor: wait;
+      }
+      button:focus-visible,
+      a:focus-visible {
+        outline: 3px solid #007f80;
+        outline-offset: 3px;
+      }
+      #check {
+        background: white;
+        color: #10253f;
+        margin-top: 12px;
+      }
+      p {
+        max-width: 65ch;
+        overflow-wrap: anywhere;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Publish library</h1>
+    <p>
+      Publish approved videos and tags to the website. Draft edits stay private
+      until the deployment succeeds. Usage logs are never published.
+    </p>
+    <button id="publish">Publish library</button
+    ><button id="check">Check status</button>
+    <p id="status" role="status" aria-live="polite">
+      Ready to check publication status.
+    </p>
+    <a id="run" hidden rel="noopener noreferrer">Open publishing job</a>
+    <script>
+      var publish = document.getElementById('publish'),
+        check = document.getElementById('check'),
+        statusMessage = document.getElementById('status'),
+        run = document.getElementById('run');
+      function busy(value) {
+        publish.disabled = value;
+        check.disabled = value;
+      }
+      function result(value) {
+        busy(false);
+        run.hidden = true;
+        if (!value || !value.ok) {
+          statusMessage.textContent =
+            (value && value.message) ||
+            'Could not verify publishing. Check status again.';
+          return;
+        }
+        var labels = {
+          idle: 'No publication has been requested.',
+          queued:
+            'Publication queued. The previous catalog remains live. Check status shortly.',
+          running: 'Publishing. The previous catalog remains live.',
+          verifying: 'Checking the deployed catalog.',
+          succeeded:
+            'Published successfully. The website, recommendation engines and analytics use this catalog.',
+          unknown:
+            'Queueing could not be confirmed. Check the publishing job before retrying.',
+          failed:
+            'Publication failed or its live version could not be verified. Check the job before retrying.',
+        };
+        statusMessage.textContent =
+          labels[value.status] || 'Status unavailable.';
+        if (
+          value.runUrl &&
+          /^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+\/actions\/runs\/\d+$/.test(
+            value.runUrl,
+          )
+        ) {
+          run.href = value.runUrl;
+          run.hidden = false;
+        }
+        publish.disabled =
+          ['queued', 'running', 'verifying', 'unknown'].indexOf(
+            value.status,
+          ) !== -1;
+      }
+      function failure() {
+        busy(false);
+        statusMessage.textContent =
+          'Request interrupted. Check status before publishing again.';
+      }
+      publish.onclick = function () {
+        busy(true);
+        statusMessage.textContent = 'Validating and queuing publication…';
+        google.script.run
+          .withSuccessHandler(result)
+          .withFailureHandler(failure)
+          .publishLibrary();
+      };
+      check.onclick = function () {
+        busy(true);
+        google.script.run
+          .withSuccessHandler(result)
+          .withFailureHandler(failure)
+          .libraryPublishStatus();
+      };
+      check.onclick();
+    </script>
+  </body>
+</html>

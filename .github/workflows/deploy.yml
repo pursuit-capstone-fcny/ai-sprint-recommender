@@ -23,18 +23,20 @@ jobs:
 
       - name: Install and build
         env:
-          VITE_CATALOG_URL: ${{ vars.CATALOG_PRODUCTION_URL }}
-          VITE_CATALOG_SOURCE: remote
+          VITE_LIBRARY_ORIGIN: ${{ vars.LIBRARY_PRODUCTION_ORIGIN }}
+          VITE_CATALOG_SOURCE: static
           VITE_USAGE_ENVIRONMENT: production
           VITE_USAGE_ENABLED: 'false'
           VITE_USAGE_TEST_URL: ''
         run: |
+          [[ -n "$VITE_LIBRARY_ORIGIN" ]]
           pnpm install --frozen-lockfile
           pnpm build
+          node scripts/configure-library-app.mjs
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: deploy
+          command: deploy --config wrangler.library.jsonc

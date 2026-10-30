@@ -14,13 +14,16 @@
     "skipLibCheck": true,
     "noEmit": true,
     "types": ["vite/client", "node"],
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "allowImportingTsExtensions": true
   },
   "include": [
     "src",
     "fixtures",
     "apps-script",
     "vite.config.ts",
-    "eslint.config.js"
+    "eslint.config.js",
+    "apps-script-admin",
+    "server"
   ]
 }

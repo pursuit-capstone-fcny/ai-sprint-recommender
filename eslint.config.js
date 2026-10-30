@@ -15,9 +15,16 @@ export default tseslint.config(
   {
     files: [
       'apps-script/index.ts',
+      'apps-script/published-library.ts',
+      'apps-script/library-publisher.ts',
+      'apps-script/library-source.ts',
+      'apps-script-admin/index.ts',
+      'apps-script-admin/library.ts',
       'apps-script/test-setup.ts',
       'apps-script/catalog-sheet.ts',
       'apps-script/usage-sheet.ts',
+      'apps-script/analytics-sheet.ts',
+      'apps-script/analytics-snapshots.ts',
     ],
     languageOptions: {
       globals: {
@@ -26,6 +33,11 @@ export default tseslint.config(
         LockService: 'readonly',
         ContentService: 'readonly',
         Utilities: 'readonly',
+        ScriptApp: 'readonly',
+        Session: 'readonly',
+        HtmlService: 'readonly',
+        DriveApp: 'readonly',
+        UrlFetchApp: 'readonly',
       },
     },
   },
@@ -45,5 +57,12 @@ export default tseslint.config(
   {
     ...jsxA11y.flatConfigs.recommended,
     files: ['**/*.{tsx,jsx}'],
+  },
+  {
+    files: ['src/admin/AnalyticsDashboard.tsx'],
+    rules: {
+      // Horizontal data tables must be focusable for keyboard scrolling.
+      'jsx-a11y/no-noninteractive-tabindex': ['error', { roles: ['region'] }],
+    },
   },
 );

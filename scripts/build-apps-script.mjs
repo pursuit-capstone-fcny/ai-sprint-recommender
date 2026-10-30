@@ -11,10 +11,21 @@ const entryPoints = testBuild
   ? ['apps-script/test-entry.ts']
   : ['apps-script/index.ts'];
 const exportedFunctions = [
+  'publishLibrary',
+  'libraryPublishStatus',
+  'showLibraryMenu',
+  'openLibraryPublisher',
+  'installLibraryPublisher',
   'doGet',
   'doPost',
   'initializeUsageLog',
   'purgeUsageLog',
+  'clearAnalytics',
+  'initializeAnalytics',
+  'refreshAnalytics',
+  'installAnalyticsTriggers',
+  'refreshAnalyticsOnEdit',
+  'analyticsReportLinks',
 ];
 if (testBuild) exportedFunctions.push('initializeTestCatalog');
 await mkdir(directory, { recursive: true });
@@ -32,13 +43,23 @@ await build({
       .join('\n'),
   },
 });
+await copyFile(
+  'apps-script/LibraryPublisher.html',
+  `${directory}/LibraryPublisher.html`,
+);
 await copyFile('apps-script/appsscript.json', `${directory}/appsscript.json`);
 const context = {};
 runInNewContext(await readFile(`${directory}/Code.js`, 'utf8'), context, {
   timeout: 5000,
 });
-for (const name of exportedFunctions)
+for (const name of exportedFunctions) {
   assert.equal(typeof context[name], 'function');
+  assert.equal(
+    typeof context.CatalogApp[name],
+    'function',
+    `Missing bundled handler: ${name}`,
+  );
+}
 if (!testBuild) assert.equal(context.initializeTestCatalog, undefined);
 // A callable wrapper that drops the POST event would reject every real request.
 const request = { postData: { type: 'text/plain', contents: '{}' } };
