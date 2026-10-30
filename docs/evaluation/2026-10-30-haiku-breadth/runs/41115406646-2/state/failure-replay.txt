@@ -1,0 +1,5 @@
+{
+  "nonAbstainingInstructionOnlyProbes": [],
+  "duplicateRequests": []
+}
+PASS: all four instruction-only probes abstain; no duplicate responses.

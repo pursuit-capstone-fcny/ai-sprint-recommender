@@ -61,3 +61,26 @@ accounting. Expanded picks remain unreviewed unless the existing labels cover th
 Always disable test calls, save durable cumulative spend, remove remote keys
 and remove the temporary approval/trigger after the run. This frozen-catalog
 test does not validate the separately migrated Apps Script integration.
+
+## V13 result and V14 revision
+
+V13 run 41115406646 attempt 2 increases breadth to 24/30 and preserves all four
+injection controls and uniqueness. It regresses to 9/10 in every trial because
+Fundraising-02 puts a labeled match below the top three. Blank browsing returns
+an empty provider list. The supplemental audit fails; its failure, every response
+and the $0.079586 charge are retained. All 40 calls reconcile. The cumulative
+ceiling is $1.367462 and $0.632538 remains. Test calls are disabled and keys removed.
+
+The first two hypotheses are instruction order and applying work-specific
+expansion to blank browsing. The third is sampling variation, which requires
+another complete run rather than selectively replacing failed cases. V14 moves
+the unchanged breadth instruction before the existing targeted-ranking text for
+nonblank goals. That leaves specific ranking priorities after the general breadth
+pass. For blank goals it omits the new instruction, reproducing V12's request
+exactly. Each input type has only one change from V13; inputs are not rewritten.
+
+The request-order test fails before the change and passes afterward. All words
+in V12's final eligibility/uniqueness instruction remain unchanged. All targets
+above remain fixed. Run another forty requests, maximum reservation $0.270240,
+under the remaining $0.632538 with a new exact-source/attempt approval. Preserve
+V13 as a failed candidate and carry its full cost forward.

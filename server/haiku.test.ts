@@ -11,6 +11,7 @@ import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
 import { haikuDeployedBody } from './haiku';
 import { lunaDeployedBody } from './luna';
+import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
@@ -53,7 +54,16 @@ describe('optimized Haiku low request', () => {
       expect(
         haiku.request.system.endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
-      expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+      if (profile.input.goal.trim()) {
+        expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+        expect(
+          haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION),
+        ).toBeLessThan(
+          haiku.request.system.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
+        );
+      } else {
+        expect(haiku.request.system).not.toContain(HAIKU_BREADTH_INSTRUCTION);
+      }
       const v12System = haiku.request.system.replace(
         ` ${HAIKU_BREADTH_INSTRUCTION}`,
         '',

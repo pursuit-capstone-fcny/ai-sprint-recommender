@@ -1,5 +1,6 @@
 import type { ProviderBody } from './anthropic';
 import { compactRanking } from './compact-ranking';
+import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
@@ -16,11 +17,17 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
       'Return exactly the eight named fields rank1 through rank8, best match first. Put a distinct catalog position in each useful rank and null in every unused rank. Select six to eight useful videos when available.',
     )
     .replace('an empty array when none fit', 'all nulls when none fit');
+  const rankedSystem = body.data.goal.trim()
+    ? system.replace(
+        LUNA_TARGETED_RANKING_INSTRUCTION,
+        `${HAIKU_BREADTH_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
+      )
+    : system;
   return {
     ...body,
     request: {
       ...body.request,
-      system: `${system} ${HAIKU_BREADTH_INSTRUCTION} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
+      system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
       messages: [{ role: 'user', content: compact.content }],
     },
   };

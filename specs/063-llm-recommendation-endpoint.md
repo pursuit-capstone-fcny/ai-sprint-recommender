@@ -110,6 +110,9 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
   Keep direct matches first and preserve V12's exact eligibility/uniqueness
   instruction, strict validation and diversity gate. Never pad unrelated picks.
   See the [breadth plan](../docs/evaluation/2026-10-30-haiku-breadth/test-plan.md).
+- Given the V14 revision, when adding breadth guidance, then place it before
+  existing targeted-ranking priorities and omit it for blank browsing. Preserve
+  the exact V12 eligibility/uniqueness instruction and all fixed evaluation gates.
 
 - Given the Haiku V12 test, when selecting ranks, then check work eligibility
   before breadth and select each integer position only once. Instruction-only

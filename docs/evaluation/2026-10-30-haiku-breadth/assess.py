@@ -57,7 +57,7 @@ assessment = {
     'benchmarkFailures': [{'profileId': r['profileId'], 'reason': r['fallbackReason']} for r in rows if r['engine'] != 'llm'],
     'completeMeasuredEvidence': report['relevanceEvidenceComplete'],
     'comparison': {
-        'haiku-v13': costs(folder),
+        read(folder / 'approval.json')['promptVersion'].replace('catalog-rank-', ''): costs(folder),
         'haiku-v12': costs(pathlib.Path('docs/evaluation/2026-10-30-haiku-guardrails/runs/41113275295-2')),
         'luna-v15-fast': costs(pathlib.Path('docs/evaluation/2026-10-30-luna-injection/runs/41107209300-2')),
     },
