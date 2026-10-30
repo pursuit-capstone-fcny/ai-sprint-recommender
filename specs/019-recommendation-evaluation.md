@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Luna scores 9/10 in each trial; one provider timeout and unknown usage remain; client approval pending
+- **Status:** Luna scores 9/10, 8/10, 10/10 with complete fresh evidence; smaller lists and client approval need review
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [compact Luna rerun](../docs/evaluation/2026-10-30-luna-compact/results.md)
+scores 9/10, 8/10 and 10/10 with no timeouts or invalid responses. All 34 calls
+have measured usage and diagnostics, and fresh relevance evidence is complete.
+Only eight accepted lists contain six to eight videos, down from 23; one case
+falls back under the unchanged task-diversity gate. Expanded-set and client
+review remain pending. The cumulative ceiling is $0.810414, leaving at least
+$0.189586. Test calls are disabled and keys removed. Production LLM calls and
+usage logging stay disabled. Historical results below stay intact.
 
 The [Luna diagnostic and timeout rerun](../docs/evaluation/2026-10-29-luna-streaming/results.md)
 scores 9/10 in each trial with complete request and cache diagnostics. One

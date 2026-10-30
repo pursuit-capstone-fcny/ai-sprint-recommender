@@ -1,0 +1,14 @@
+{
+  "sourceRevision": "5731dae0d0357f463b59c96b1a310e596e50e054",
+  "deploymentRunId": "41087494022",
+  "conclusion": "success",
+  "deploymentCompletedAt": "2026-10-30T16:11:24Z",
+  "changesSincePreviousProduction": ["docs/specs/024-usage-dashboard.md"],
+  "config": "wrangler.jsonc",
+  "hosting": "static assets, no server code",
+  "VITE_USAGE_ENABLED": "false",
+  "VITE_USAGE_ENVIRONMENT": "production",
+  "VITE_USAGE_TEST_URL": "",
+  "paidCalls": 0,
+  "productionChangesByThisTask": false
+}

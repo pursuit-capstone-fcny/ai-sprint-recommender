@@ -16,7 +16,7 @@ import { runLiveTrials } from './live';
 import { LUNA_PRIOR_SPEND } from './luna-ledger';
 
 // Approval behavior must not assume the real, monotonically spent allowance
-// still funds another run. Hashes and the actual balance are checked in luna.test.ts.
+// still funds another run. Hashes and the actual balance are checked in luna-spend.test.ts.
 vi.mock('./luna-ledger', () => ({ LUNA_PRIOR_SPEND: 700_000 }));
 
 const benchmark = parseBenchmark(fixture);

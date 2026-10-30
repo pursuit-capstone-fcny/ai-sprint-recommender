@@ -1,0 +1,95 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v11",
+  "reasoningEffort": "low",
+  "runId": "41085742178",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 34,
+  "totalMeasuredMicrodollars": 31765,
+  "durableAdditionalMicrodollars": 31765,
+  "unreconciledMicrodollars": 0,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 203000,
+  "cumulativeCeilingMicrodollars": 810414,
+  "remainingAllowanceMicrodollars": 189586,
+  "inputTokens": 307787,
+  "outputTokens": 1947,
+  "medianClientLatencyMs": 1713.0,
+  "p95ClientLatencyMs": 3450,
+  "maxClientLatencyMs": 3553,
+  "topThreeScores": [9, 8, 10],
+  "fallbacks": 1,
+  "sixToEightCount": 9,
+  "acceptedLlmSixToEightCount": 8,
+  "acceptedLlmThinCount": 21,
+  "expandedCounts": [
+    5, 3, 6, 5, 7, 4, 6, 4, 4, 4, 5, 4, 6, 4, 5, 5, 7, 8, 3, 4, 4, 4, 6, 5, 6,
+    5, 7, 4, 4, 3
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 6
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 4
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": true,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 34,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [],
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 203000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 0,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    }
+  ],
+  "responseHeaderRequestCount": 34,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [],
+  "probeCooldowns": [],
+  "providerHeadersMs": {
+    "count": 34,
+    "median": 538.0,
+    "max": 2029
+  },
+  "providerBodyMs": {
+    "count": 34,
+    "median": 733.5,
+    "max": 2951
+  },
+  "recoveryCacheChecks": 0,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": []
+}

@@ -1,0 +1,164 @@
+{
+  "attempt": 2,
+  "conclusion": "success",
+  "databaseId": 41085742178,
+  "headSha": "b906fd388fd9ed2f30442522904d9051cb92135e",
+  "jobs": [
+    {
+      "conclusion": "success",
+      "name": "evaluate",
+      "steps": [
+        {
+          "completedAt": "2026-10-30T16:01:49Z",
+          "conclusion": "success",
+          "name": "Set up job",
+          "startedAt": "2026-10-30T16:01:48Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:01:50Z",
+          "conclusion": "success",
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "startedAt": "2026-10-30T16:01:49Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:01:55Z",
+          "conclusion": "success",
+          "name": "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413",
+          "startedAt": "2026-10-30T16:01:50Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:01:59Z",
+          "conclusion": "success",
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "startedAt": "2026-10-30T16:01:55Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:00Z",
+          "conclusion": "success",
+          "name": "Install and verify",
+          "startedAt": "2026-10-30T16:01:59Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:00Z",
+          "conclusion": "success",
+          "name": "Verify current owner approval before any test network work",
+          "startedAt": "2026-10-30T16:03:00Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:07Z",
+          "conclusion": "success",
+          "name": "Build test site",
+          "startedAt": "2026-10-30T16:03:00Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:16Z",
+          "conclusion": "success",
+          "name": "Deploy test site with provider calls disabled",
+          "startedAt": "2026-10-30T16:03:07Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:16Z",
+          "conclusion": "success",
+          "name": "Verify disabled endpoint",
+          "startedAt": "2026-10-30T16:03:16Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:21Z",
+          "conclusion": "success",
+          "name": "Verify sanitized diagnostic capture without paid calls",
+          "startedAt": "2026-10-30T16:03:16Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:27Z",
+          "conclusion": "success",
+          "name": "Deploy isolated synthetic failure checks",
+          "startedAt": "2026-10-30T16:03:21Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:32Z",
+          "conclusion": "success",
+          "name": "Verify deployed failure handling without provider calls",
+          "startedAt": "2026-10-30T16:03:27Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:03:41Z",
+          "conclusion": "success",
+          "name": "Enable approved Luna low test candidate",
+          "startedAt": "2026-10-30T16:03:32Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:15Z",
+          "conclusion": "success",
+          "name": "Run approved endpoint trials and separate probes",
+          "startedAt": "2026-10-30T16:03:41Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:22Z",
+          "conclusion": "success",
+          "name": "Disable test provider calls after evaluation",
+          "startedAt": "2026-10-30T16:05:15Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:23Z",
+          "conclusion": "success",
+          "name": "Save durable cumulative Luna allowance after shutdown",
+          "startedAt": "2026-10-30T16:05:22Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:24Z",
+          "conclusion": "success",
+          "name": "Remove remote test provider and rate-key bindings",
+          "startedAt": "2026-10-30T16:05:23Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:24Z",
+          "conclusion": "success",
+          "name": "Remove temporary provider secret file",
+          "startedAt": "2026-10-30T16:05:24Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:27Z",
+          "conclusion": "success",
+          "name": "Remove isolated synthetic failure Worker",
+          "startedAt": "2026-10-30T16:05:24Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:28Z",
+          "conclusion": "success",
+          "name": "Save evaluation reports and sanitized diagnostics",
+          "startedAt": "2026-10-30T16:05:27Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:28Z",
+          "conclusion": "success",
+          "name": "Summarize test deployment",
+          "startedAt": "2026-10-30T16:05:28Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:29Z",
+          "conclusion": "success",
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "startedAt": "2026-10-30T16:05:28Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:29Z",
+          "conclusion": "success",
+          "name": "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413",
+          "startedAt": "2026-10-30T16:05:29Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:29Z",
+          "conclusion": "success",
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "startedAt": "2026-10-30T16:05:29Z"
+        },
+        {
+          "completedAt": "2026-10-30T16:05:29Z",
+          "conclusion": "success",
+          "name": "Complete job",
+          "startedAt": "2026-10-30T16:05:29Z"
+        }
+      ]
+    }
+  ]
+}
