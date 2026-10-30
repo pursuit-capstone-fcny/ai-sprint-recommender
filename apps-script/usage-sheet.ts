@@ -2,8 +2,7 @@
 import { z } from 'zod';
 import { type PublicCatalog } from '../src/contracts/publicCatalog';
 import { captureAnalyticsCatalog } from './analytics-snapshots';
-import { buildPublicCatalog } from './catalog';
-import { catalogVersion, readCatalogWorkbook } from './catalog-sheet';
+import { publishedCatalog } from './published-library';
 import {
   expiredUsageRows,
   MAX_USAGE_ROWS,
@@ -89,13 +88,7 @@ export function doPost(event?: { postData?: UsageRequest }) {
       lock: LockService.getScriptLock(),
       records: () => readRecords(openSheet()),
       catalog: () => {
-        const id = properties.getProperty('CATALOG_SPREADSHEET_ID');
-        if (!id) throw new Error('Missing catalog configuration');
-        const { catalog } = buildPublicCatalog(
-          readCatalogWorkbook(SpreadsheetApp.openById(id)),
-          catalogVersion,
-        );
-        if (!catalog) throw new Error('Invalid catalog configuration');
+        const catalog = publishedCatalog();
         acceptedCatalog = catalog;
         return catalog;
       },

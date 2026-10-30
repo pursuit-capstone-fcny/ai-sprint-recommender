@@ -1,4 +1,5 @@
 import {
+  act,
   fireEvent,
   render,
   screen,
@@ -16,7 +17,9 @@ afterEach(() => {
 });
 describe('admin analytics UI', () => {
   it('renders data with paging and applies unused-content filters', async () => {
-    render(<AnalyticsDashboard load={loader} clock={clock} />);
+    await act(async () => {
+      render(<AnalyticsDashboard load={loader} clock={clock} />);
+    });
     await screen.findByText('38 videos');
     expect(screen.getByText('1–25 of 38')).toBeTruthy();
     fireEvent.click(screen.getByRole('button', { name: 'Next' }));

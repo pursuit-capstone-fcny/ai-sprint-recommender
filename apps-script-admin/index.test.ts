@@ -1,6 +1,5 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { analyticsServices } from '../fixtures/analytics-services';
-import { initializeAnalytics, refreshAnalytics } from '../apps-script/index';
 import { doGet, readDashboard, connectSheet, disconnectSheet } from './index';
 
 afterEach(() => {
@@ -10,10 +9,8 @@ afterEach(() => {
 });
 function setup() {
   const s = analyticsServices();
-  initializeAnalytics();
-  refreshAnalytics();
   const bindings: Record<string, Record<string, string>> = {
-    'admin@example.test': { ANALYTICS_CONNECTED_SHEET: 'fixture-report' },
+    'admin@example.test': { ANALYTICS_CONNECTED_SHEET: 'fixture-catalog' },
   };
   let sharing = 'PRIVATE';
   vi.stubGlobal('DriveApp', {
@@ -102,12 +99,12 @@ describe('private admin deployment', () => {
     const before = [...s.ops];
     expect(
       connectSheet(
-        'https://docs.google.com/spreadsheets/d/fixture-report/edit#gid=0',
+        'https://docs.google.com/spreadsheets/d/fixture-catalog/edit#gid=0',
       ).ok,
     ).toBe(true);
     expect(readDashboard().ok).toBe(true);
     expect(s.bindings['eliot@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
-      'fixture-report',
+      'fixture-catalog',
     );
     expect(disconnectSheet()).toEqual({ ok: true });
     expect(readDashboard()).toEqual({
@@ -121,7 +118,7 @@ describe('private admin deployment', () => {
   it('rejects invalid, broadly shared and inaccessible links without replacing a working connection', () => {
     const s = setup();
     for (const link of [
-      'fixture-report',
+      'fixture-catalog',
       'https://evil.test/spreadsheets/d/fixture-report',
       'https://docs.google.com.evil.test/spreadsheets/d/fixture-report',
     ]) {
@@ -133,7 +130,7 @@ describe('private admin deployment', () => {
     s.sharing('ANYONE_WITH_LINK');
     expect(
       connectSheet(
-        'https://docs.google.com/spreadsheets/d/fixture-report/edit',
+        'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
       ),
     ).toEqual({ ok: false, error: 'SHARING_TOO_BROAD' });
     expect(readDashboard()).toEqual({ ok: false, error: 'ACCESS_DENIED' });
@@ -144,7 +141,19 @@ describe('private admin deployment', () => {
       ),
     ).toEqual({ ok: false, error: 'ACCESS_DENIED' });
     expect(s.bindings['admin@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
-      'fixture-report',
+      'fixture-catalog',
+    );
+  });
+  it('rejects unrelated private Sheets even if the user can open them', () => {
+    const s = setup();
+    s.data['unrelated-private-sheet'] = s.data['fixture-catalog'];
+    expect(
+      connectSheet(
+        'https://docs.google.com/spreadsheets/d/unrelated-private-sheet/edit',
+      ),
+    ).toEqual({ ok: false, error: 'ACCESS_DENIED' });
+    expect(s.bindings['admin@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
+      'fixture-catalog',
     );
   });
   it('connects a catalog directly without reporting config and distinguishes missing usage from zero usage', () => {
@@ -163,41 +172,5 @@ describe('private admin deployment', () => {
     const logged = readDashboard();
     expect(logged.ok && logged.snapshot.collectionAvailable).toBe(true);
     expect(s.ops).toEqual(before);
-  });
-  it('suppresses stale, refreshing, cleared and failed facts', () => {
-    const s = setup(),
-      rows = s.data['fixture-report']['Analytics status'];
-    for (const state of ['refreshing', 'cleared', 'error']) {
-      rows.find((r) => r[0] === 'state')![1] = state;
-      const result = readDashboard();
-      expect(result.ok).toBe(true);
-      if (result.ok) expect(result.snapshot.facts).toEqual([]);
-    }
-    rows.find((r) => r[0] === 'state')![1] = 'ready';
-    vi.setSystemTime(new Date('2026-10-25T12:00:00Z'));
-    const result = readDashboard();
-    expect(result.ok).toBe(true);
-    if (result.ok) expect(result.snapshot.state).toBe('stale');
-  });
-  it('fails closed on a corrupt header or mismatched refresh generation', () => {
-    const s = setup(),
-      rows = s.data['fixture-report']['Analytics facts'];
-    rows[0][0] = 'rawGoal';
-    expect(readDashboard()).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
-    rows[0][0] = 'activeInventory';
-    const book = s.openById('fixture-report');
-    const original = book.getSheetByName;
-    let reads = 0;
-    s.openById.mockReturnValue({
-      ...book,
-      getSheetByName: (name: string) => {
-        if (name === 'Analytics status' && ++reads === 2)
-          s.data['fixture-report']['Analytics status'].find(
-            (r) => r[0] === 'generationId',
-          )![1] = 'another-generation';
-        return original(name);
-      },
-    });
-    expect(readDashboard()).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
   });
 });

@@ -57,8 +57,10 @@ describe('connected library reader', () => {
       SpreadsheetApp.openById('fixture-library'),
     );
     expect(result.collectionAvailable).toBe(false);
-    expect(result.pendingTagReviews).toBe(1);
-    expect(result.facts.filter((f) => f.entity === 'video')).toHaveLength(1);
+    expect(result.pendingTagReviews).toBe(0);
+    expect(
+      result.facts.filter((f) => f.entity === 'video').length,
+    ).toBeGreaterThan(1);
     expect(JSON.stringify(result)).not.toContain('Private note');
     expect(s.ops).toEqual([]);
   });

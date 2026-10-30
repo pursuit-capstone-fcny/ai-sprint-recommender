@@ -1,3 +1,4 @@
+import { publishFixture } from './mock-published-library';
 import { createHash } from 'node:crypto';
 import { vi } from 'vitest';
 import publicCatalog from './public-catalog.json';
@@ -210,7 +211,20 @@ export function analyticsServices() {
       return builder;
     },
   });
+  const publish = () =>
+    publishFixture(
+      data[
+        'fixture-catalog'
+      ] as unknown as import('../apps-script/catalog').Workbook,
+    );
+  publishFixture(
+    data[
+      'fixture-catalog'
+    ] as unknown as import('../apps-script/catalog').Workbook,
+    true,
+  );
   return {
+    publish,
     properties,
     data,
     ops,

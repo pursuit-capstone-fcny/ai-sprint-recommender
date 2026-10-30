@@ -1,24 +1,18 @@
 /// <reference types="google-apps-script" />
 import { z } from 'zod';
-import { buildPublicCatalog } from '../apps-script/catalog';
-import { catalogVersion } from '../apps-script/catalog-sheet';
-import { readAnalyticsRecords } from '../apps-script/analytics-sheet';
 import {
-  readAnalyticsSnapshots,
-  SNAPSHOT_TABLE,
-} from '../apps-script/analytics-snapshots';
+  publishedCatalog,
+  publishedHistory,
+} from '../apps-script/published-library';
+import { readAnalyticsRecords } from '../apps-script/analytics-sheet';
 import { buildAnalyticsReport } from '../src/analytics/report';
 import { DashboardSnapshotSchema } from '../src/admin/snapshot';
 const DAY = 86_400_000;
-import { libraryCatalog } from '../apps-script/library-source';
 export { importLibraryRows } from '../apps-script/library-source';
 export function readLibraryDashboard(
   book: GoogleAppsScript.Spreadsheet.Spreadsheet,
 ) {
-  const { pending, workbook } = libraryCatalog(book);
-  const { catalog, problems } = buildPublicCatalog(workbook, catalogVersion);
-  if (!catalog || problems.length)
-    throw new Error('Library catalog is invalid');
+  const catalog = publishedCatalog();
   const policySchema = z.strictObject({
     schemaVersion: z.literal(1),
     retentionDays: z.number().int().min(1).max(365),
@@ -35,8 +29,10 @@ export function readLibraryDashboard(
     now = new Date();
   const log = book.getSheetByName('Usage');
   const records = log ? readAnalyticsRecords(log, now, days) : [];
-  const snapshotSheet = book.getSheetByName(SNAPSHOT_TABLE);
-  const snapshots = snapshotSheet ? readAnalyticsSnapshots(snapshotSheet) : [];
+  const snapshots = publishedHistory(
+    records.map((record) => record.event.catalogVersion),
+    catalog,
+  );
   const date = (value: string) =>
     Utilities.formatDate(new Date(value), 'America/New_York', 'yyyy-MM-dd');
   const startDate = date(new Date(now.getTime() - days * DAY).toISOString()),
@@ -64,7 +60,7 @@ export function readLibraryDashboard(
     unattributedEvents: result.diagnostics.unattributedEvents,
     facts: result.facts,
     collectionAvailable: Boolean(log),
-    pendingTagReviews: pending,
+    pendingTagReviews: 0,
     conservativeWindow: !policy,
   });
 }

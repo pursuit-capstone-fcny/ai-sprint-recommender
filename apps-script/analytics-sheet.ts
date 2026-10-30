@@ -6,14 +6,16 @@ import {
   ReportFilterSchema,
   type AcceptedUsage,
 } from '../src/analytics/report';
-import { buildPublicCatalog } from './catalog';
-import { catalogVersion, readCatalogWorkbook } from './catalog-sheet';
+import {
+  publishedCatalog,
+  publishedHistory,
+  configuredLibrarySheet,
+} from './published-library';
 import { MAX_USAGE_ROWS, usageBodyBytes } from './usage';
 import { usageHeaders } from './usage-sheet';
 import {
   captureAnalyticsCatalog,
   pruneAnalyticsSnapshots,
-  readAnalyticsSnapshots,
   SNAPSHOT_TABLE,
   snapshotHeaders,
 } from './analytics-snapshots';
@@ -150,12 +152,9 @@ function table(book: Book, name: keyof typeof tableHeaders, create = false) {
   return sheet;
 }
 function currentCatalog(id: string) {
-  const result = buildPublicCatalog(
-    readCatalogWorkbook(SpreadsheetApp.openById(id)),
-    catalogVersion,
-  );
-  if (!result.catalog) throw new Error('Invalid catalog');
-  return result.catalog;
+  if (id !== configuredLibrarySheet())
+    throw new Error('Catalog source does not match publisher');
+  return publishedCatalog();
 }
 const receiptDate = (value: string) =>
   Utilities.formatDate(new Date(value), 'America/New_York', 'yyyy-MM-dd');
@@ -300,11 +299,15 @@ export function refreshAnalytics() {
     ]);
     pruneAnalyticsSnapshots(snapshots, versions);
     captureAnalyticsCatalog(usage, current);
+    const publishedSnapshots = publishedHistory(
+      records.map((record) => record.event.catalogVersion),
+      current,
+    );
     const result = buildAnalyticsReport(
       {
         records,
         current,
-        snapshots: readAnalyticsSnapshots(snapshots),
+        snapshots: publishedSnapshots,
         filter: selected,
       },
       receiptDate,
@@ -320,7 +323,7 @@ export function refreshAnalytics() {
       {
         records,
         current,
-        snapshots: readAnalyticsSnapshots(snapshots),
+        snapshots: publishedSnapshots,
         filter: factsFilter,
       },
       receiptDate,
@@ -367,6 +370,7 @@ export function refreshAnalytics() {
     const refreshedAt = now.toISOString();
     write(table(report, 'Analytics status'), tableHeaders['Analytics status'], [
       ['state', allData.diagnostics.selectedEvents ? 'ready' : 'empty'],
+      ['catalogVersion', current.catalogVersion],
       ['generationId', generationId],
       ['lastSuccessAt', refreshedAt],
       ['attemptedAt', refreshedAt],
