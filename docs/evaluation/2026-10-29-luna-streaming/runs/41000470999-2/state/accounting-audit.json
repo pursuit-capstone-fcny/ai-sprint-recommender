@@ -1,0 +1,124 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "reasoningEffort": "low",
+  "runId": "41000470999",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 33,
+  "totalMeasuredMicrodollars": 39867,
+  "durableAdditionalMicrodollars": 46867,
+  "unreconciledMicrodollars": 7000,
+  "reconciled": false,
+  "historicalUnknownReservationsMicrodollars": 196000,
+  "cumulativeCeilingMicrodollars": 778649,
+  "remainingAllowanceMicrodollars": 221351,
+  "inputTokens": 379622,
+  "outputTokens": 3774,
+  "medianClientLatencyMs": 1381.0,
+  "p95ClientLatencyMs": 3634,
+  "maxClientLatencyMs": 4541,
+  "topThreeScores": [9, 9, 9],
+  "fallbacks": 1,
+  "sixToEightCount": 24,
+  "acceptedLlmSixToEightCount": 23,
+  "acceptedLlmThinCount": 6,
+  "expandedCounts": [
+    8, 5, 5, 6, 6, 7, 8, 6, 6, 7, 6, 4, 6, 6, 6, 7, 8, 6, 5, 7, 7, 7, 6, 5, 7,
+    7, 8, 6, 5, 7
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 6
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 7
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 33,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": ["2769555a-65de-4a94-9b3d-b32e10319c20"],
+  "newUnknownReservationsMicrodollars": 7000,
+  "cumulativeUnknownReservationsMicrodollars": 203000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 1,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    }
+  ],
+  "responseHeaderRequestCount": 34,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [
+    {
+      "requestId": "2769555a-65de-4a94-9b3d-b32e10319c20",
+      "reason": "timeout",
+      "delayMs": 61000
+    }
+  ],
+  "probeCooldowns": [],
+  "providerHeadersMs": {
+    "count": 33,
+    "median": 387,
+    "max": 911
+  },
+  "providerBodyMs": {
+    "count": 33,
+    "median": 695,
+    "max": 2971
+  },
+  "recoveryCacheChecks": 1,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": [
+    {
+      "profileId": "leadership-01",
+      "diagnostic": {
+        "requestId": "2769555a-65de-4a94-9b3d-b32e10319c20",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "provider",
+        "catalogMs": 16,
+        "budgetMs": 189,
+        "providerMs": 4295,
+        "providerHeadersMs": 1225,
+        "providerBodyMs": 3070,
+        "reservedMicrodollars": 7000,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      }
+    }
+  ]
+}

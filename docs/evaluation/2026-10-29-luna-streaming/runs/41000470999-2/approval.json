@@ -1,0 +1,21 @@
+{
+  "approvedSourceRevision": "be17fb4389a8e46777553f2daf28a5403d806873",
+  "approvedWorkflowRunId": "41000470999",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T04:45:55Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Continue the user-requested Luna timeout and diagnostic fix after run 40999051079 exposed catalog expiry during cooldown. GPT-6 Luna low standard, unchanged V10 prompt, at most eight videos, frozen labels and task-diversity gate. Reload and verify the catalog through the unpaid route after cooldowns; retain each failed request and never retry a paid request within a trial.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the remaining $0.268218 of the shared $1 allowance. Carry $0.731782 including $0.196000 unresolved reservations. A full 34-request validation reserves at most $0.238000. Preserve the zero-spend and failed first-trial captures. No reset, refund, increased allowance or automatic paid retry.",
+  "allowanceMicrodollars": 268218,
+  "maxRequestMicrodollars": 7000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 731782,
+  "totalAllowanceMicrodollars": 1000000
+}

@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Latest expanded-output validation incomplete; reliability rerun pending; client approval pending
+- **Status:** Luna scores 9/10 in each trial; one provider timeout and unknown usage remain; client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,14 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Luna diagnostic and timeout rerun](../docs/evaluation/2026-10-29-luna-streaming/results.md)
+scores 9/10 in each trial with complete request and cache diagnostics. One
+provider timeout retains its unknown reservation, so full validation remains
+incomplete. Catalog recovery stops the timeout cascade without changing labels,
+the diversity gate or deadlines. The cumulative ceiling is $0.778649, leaving
+at least $0.221351. Test calls are disabled and keys removed; production LLM
+calls and usage logging remain disabled. Historical results below stay intact.
 
 Jason requested a deduplication fix after the task-tag rerun. The
 [selection revision](../docs/evaluation/2026-10-28-dedup/test-plan.md) retains two
