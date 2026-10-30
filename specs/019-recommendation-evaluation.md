@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V15 Fast fixes observed injection behavior and retains quality/breadth; expanded-set and client review pending
+- **Status:** Haiku V11 improves ranking but fails two injection controls; Luna V15 retains stronger breadth; client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,13 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Haiku V11 transfer](../docs/evaluation/2026-10-30-haiku-optimized/results.md)
+scores 9/10, 10/10 and 10/10, with 22/30 six-to-eight lists. Two instruction-only
+controls fail; one duplicate response correctly falls back. All 40 calls have
+measured usage and diagnostics. The $0.076318 cost leaves $0.790199 under the
+unchanged shared cap. Labels and the diversity gate remain unchanged. Test calls
+are disabled and keys removed; production LLM calls and logging remain off.
 
 The [V15 injection rerun](../docs/evaluation/2026-10-30-luna-injection/results.md)
 scores 10/10 in all three trials, with 29/30 six-to-eight lists. Four

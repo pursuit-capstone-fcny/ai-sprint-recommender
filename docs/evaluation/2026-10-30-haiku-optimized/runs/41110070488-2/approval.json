@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "bbf1080a6e6f1562af539ee3282ba68f44e58475",
+  "approvedWorkflowRunId": "41110070488",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T19:49:24Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v11",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized applying Luna optimizations to Haiku low and rerunning within the remaining allowance. V11 transfers compact catalog data and ranking, breadth and goal-eligibility instructions, adapting only the eight required nullable rank slots. Run 30 frozen benchmark requests and the same 10 separate behavioral probes as Luna V15. Preserve all 89 items, labels, task-diversity gate, low effort, disabled thinking, 512 output cap, 65000 conservative input bound and deadlines. No per-case paid retries. Use the identical frozen public catalog on the isolated test Worker; this does not validate the separately migrated Apps Script integration.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the existing combined $2 allowance, now authorized for Haiku too. Carry forward $1.133483 including $0.225000 unresolved historical reservations. Remaining $0.866517. No new money, reset, refund or repricing. Reserve $0.006756 per request and at most $0.270240 for 40 calls. Settle known usage at existing Haiku rates; retain full reservations for unknown usage.",
+  "allowanceMicrodollars": 866517,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1133483,
+  "totalAllowanceMicrodollars": 2000000,
+  "thinking": "disabled"
+}

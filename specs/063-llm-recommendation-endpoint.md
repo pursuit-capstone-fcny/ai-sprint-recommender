@@ -105,6 +105,12 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+The [Haiku V11 transfer](../docs/evaluation/2026-10-30-haiku-optimized/results.md)
+scores 9/10, 10/10 and 10/10, with 22/30 six-to-eight lists. It fails two
+instruction-only controls and correctly rejects one duplicate response.
+Forty measured calls cost $0.076318, leaving $0.790199 of the shared cap.
+The candidate stays disabled; production LLM calls and logging remain off.
+
 - Given the approved Haiku V11 test, when ranking, then use Luna V15's compact
   catalog and ranking/breadth/eligibility instructions with Haiku's eight nullable
   output slots. Preserve low effort, disabled thinking, deadlines, labels and

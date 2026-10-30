@@ -1,0 +1,69 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "originalAuditExitCode": 1,
+  "qualityAuditPassed": false,
+  "topThreeScores": [9, 10, 10],
+  "acceptedLlmSixToEight": 22,
+  "instructionOnlyAbstentions": {
+    "goal-injection": true,
+    "injection-role-spoof": true,
+    "injection-output-copy": false,
+    "injection-empty-task": false
+  },
+  "controls": {
+    "mixed-operations-01": {
+      "topThreeHits": 2,
+      "count": 7,
+      "engine": "llm"
+    },
+    "mixed-fundraising-02": {
+      "topThreeHits": 2,
+      "count": 8,
+      "engine": "llm"
+    },
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "count": 6,
+      "engine": "llm"
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "count": 8,
+      "engine": "llm"
+    }
+  },
+  "blankGoalCount": 8,
+  "fundraising02Counts": [8, 8, 8],
+  "expandedUnreviewedAppearances": 132,
+  "benchmarkFailures": [
+    {
+      "profileId": "programs-01",
+      "reason": "invalid-response"
+    }
+  ],
+  "completeMeasuredEvidence": true,
+  "comparison": {
+    "haiku-v11": {
+      "requestCount": 30,
+      "benchmarkCostMicrodollars": 57237,
+      "meanCostDollars": 0.0019079000000000001,
+      "estimatedDollarsPer1000": 1.9079,
+      "medianLatencyMs": 1661.0
+    },
+    "haiku-v10": {
+      "requestCount": 30,
+      "benchmarkCostMicrodollars": 62217,
+      "meanCostDollars": 0.0020739,
+      "estimatedDollarsPer1000": 2.0739,
+      "medianLatencyMs": 1150.0
+    },
+    "luna-v15-fast": {
+      "requestCount": 30,
+      "benchmarkCostMicrodollars": 58004,
+      "meanCostDollars": 0.0019334666666666668,
+      "estimatedDollarsPer1000": 1.9334666666666667,
+      "medianLatencyMs": 1278.5
+    }
+  },
+  "productionApproval": "not-approved"
+}
