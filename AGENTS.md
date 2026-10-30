@@ -7,8 +7,10 @@ Decisions behind these rules live in `docs/adr/` (read ADRs 0001-0003 first).
 
 React 19 + TypeScript + Vite + Vitest, React Router v8 as a library (SPA,
 no SSR). pnpm on Node 24 LTS. Hosted on Cloudflare Workers (static assets).
-Data comes from a Google Apps Script web app bound to the FCNY Sheet;
-ranking runs in the browser.
+Catalog data comes from versioned Cloudflare static assets published from the FCNY
+Sheet. Apps Script collects private usage and hosts private analytics. See
+`docs/adr/0004-published-library-catalog.md` for the requested catalog architecture;
+LLM integration remains gated by its existing specs.
 
 ## Commands
 
