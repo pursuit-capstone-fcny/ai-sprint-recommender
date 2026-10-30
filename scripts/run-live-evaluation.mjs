@@ -29,6 +29,7 @@ export async function main(args = process.argv.slice(2)) {
       },
       'check-diagnostics': { type: 'boolean', default: false },
       'diagnose-format': { type: 'boolean', default: false },
+      'injection-probes': { type: 'boolean', default: false },
       approval: {
         type: 'string',
         default: 'docs/evaluation/2026-10-21/approval.json',
@@ -49,6 +50,7 @@ export async function main(args = process.argv.slice(2)) {
   const bundled = await build({
     stdin: {
       contents: `
+    export { injectionProbes } from './src/evaluation/injection-probes';
     export { afterEvaluationCall } from './src/evaluation/cooldown';
     export { evaluationFetch, mergeDiagnostic } from './src/evaluation/diagnostic-fetch';
     export { DiagnosticSchema } from './src/contracts/evaluationDiagnostic';
@@ -79,6 +81,17 @@ export async function main(args = process.argv.slice(2)) {
     JSON.parse(await readFile(benchmarkPath, 'utf8')),
   );
   const endpoint = new URL(approval.endpoint);
+  if (
+    values['injection-probes'] &&
+    (checkDiagnostics ||
+      diagnoseFormat ||
+      approval.modelVersion !== 'gpt-6-luna')
+  )
+    throw new Error('Injection controls require the full Luna endpoint trial.');
+  const extraCases = values['injection-probes']
+    ? contracts.injectionProbes(benchmark)
+    : [];
+  const requestCount = 34 + extraCases.length;
   // Disabled diagnostics use only a blank intake; all paid modes require a clean, pinned, unexpired candidate.
   if (!checkDiagnostics)
     contracts.validateLiveApproval(
@@ -86,13 +99,14 @@ export async function main(args = process.argv.slice(2)) {
       approval,
       undefined,
       Date.now(),
-      34,
+      requestCount,
     );
   if (
     benchmark.approval.status !== 'approved' ||
     contracts.benchmarkFingerprint(benchmark) !==
       approval.benchmarkFingerprint ||
-    approval.maxRequestMicrodollars * 34 > approval.allowanceMicrodollars
+    approval.maxRequestMicrodollars * requestCount >
+      approval.allowanceMicrodollars
   ) {
     throw new Error('Approved test configuration is required.');
   }
@@ -130,6 +144,7 @@ export async function main(args = process.argv.slice(2)) {
                 tools: [],
               },
             },
+            ...extraCases,
           ]
     ).map((entry) => ({
       id: z
@@ -141,6 +156,8 @@ export async function main(args = process.argv.slice(2)) {
         catalogVersion: benchmark.catalog.catalogVersion,
       }),
     }));
+    if (new Set(cases.map((entry) => entry.id)).size !== cases.length)
+      throw new Error('Probe IDs must be unique.');
     // Fail before spending if the baseline is absent; comparison uses the same frozen labels.
     contracts.parseEvaluationReport(
       JSON.parse(await readFile(values.baseline, 'utf8')),
@@ -627,7 +644,7 @@ export async function main(args = process.argv.slice(2)) {
       await pause(200);
     await saveDiagnostics();
     if (
-      allIds.length !== (diagnoseFormat ? 2 : 34) ||
+      allIds.length !== (diagnoseFormat ? 2 : requestCount) ||
       new Set(allIds).size !== allIds.length ||
       !contracts.hasCompleteWarmupEvidence(
         warmups,

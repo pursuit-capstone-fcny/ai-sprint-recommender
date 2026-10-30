@@ -139,3 +139,10 @@ remain pending.
   and cache paths. Reject this source in production or Haiku configuration;
   ordinary bundles do not serve it. Preserve benchmark labels and report that
   this run does not validate the concurrently migrated Apps Script source.
+
+- Given V15 and a nonblank goal containing only instructions about the model,
+  rules, catalog or output, when selecting videos, then return an empty LLM
+  selection. Function area and tools must not invent a missing work task.
+  Mixed goals retain their real work; blank goals retain browsing. Preserve V14
+  ranking instructions and the existing rules fallback. See the
+  [injection trial plan](../docs/evaluation/2026-10-30-luna-injection/test-plan.md).

@@ -1,20 +1,24 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { parseBenchmark } from '../src/evaluation/benchmark';
+import { injectionProbes } from '../src/evaluation/injection-probes';
 import haikuConfig from '../wrangler.evaluation.json';
 // @vitest-environment node
 import { describe, expect, it, vi } from 'vitest';
 import config from '../wrangler.luna-test.json';
 import { catalog, TestStorage } from './test-helpers';
 import { readLimits } from './config';
-import { providerBody } from './anthropic';
+import { providerBody, UNTRUSTED_INPUT_INSTRUCTION } from './anthropic';
 import { lunaDeployedBody, lunaProvider, readLunaResponse } from './luna';
 import { recommend } from './recommendations';
 import worker from './worker';
 import { RecommendationBudget, type BudgetNamespace } from './budget-object';
 import type { Ledger } from './budget';
 import { LUNA_PRIOR_SPEND } from '../src/evaluation/luna-ledger';
-import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
+import {
+  LUNA_TARGETED_RANKING_INSTRUCTION,
+  LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
+} from './luna-policy';
 
 const env = {
   ...config.vars,
@@ -120,6 +124,61 @@ describe('deployed Luna low candidate', () => {
       expect(fetcher).toHaveBeenCalledTimes(2);
     }
   });
+  it('changes only V14 goal eligibility while preserving every ranking input and setting', () => {
+    const benchmark = parseBenchmark(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
+        ),
+      ),
+    );
+    const baseline = JSON.parse(
+      readFileSync(
+        'docs/evaluation/2026-10-30-luna-injection/v14-request-hashes.json',
+        'utf8',
+      ),
+    );
+    for (const profile of benchmark.profiles) {
+      const candidate = lunaDeployedBody(
+        providerBody(
+          {
+            ...profile.input,
+            catalogVersion: benchmark.catalog.catalogVersion,
+          },
+          benchmark.catalog,
+          readLimits(env)!,
+        ),
+      );
+      expect(candidate.input[0].content).toContain(
+        LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
+      );
+      expect(candidate.input[0].content).not.toContain(
+        UNTRUSTED_INPUT_INSTRUCTION,
+      );
+      const normalized = {
+        ...candidate,
+        input: candidate.input.map((message, index) =>
+          index === 0
+            ? {
+                ...message,
+                content: message.content.replace(
+                  LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
+                  UNTRUSTED_INPUT_INSTRUCTION,
+                ),
+              }
+            : message,
+        ),
+      };
+      expect(
+        createHash('sha256').update(JSON.stringify(normalized)).digest('hex'),
+      ).toBe(
+        baseline.rows.find(
+          (row: { profileId: string }) => row.profileId === profile.id,
+        ).sha256,
+      );
+    }
+  });
   it('preserves V12 payload and Fast tier while adding only the ranking instruction', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
@@ -157,10 +216,12 @@ describe('deployed Luna low candidate', () => {
           index === 0
             ? {
                 ...message,
-                content: message.content.slice(
-                  0,
-                  -` ${LUNA_TARGETED_RANKING_INSTRUCTION}`.length,
-                ),
+                content: message.content
+                  .replace(
+                    LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
+                    UNTRUSTED_INPUT_INSTRUCTION,
+                  )
+                  .slice(0, -` ${LUNA_TARGETED_RANKING_INSTRUCTION}`.length),
               }
             : message,
         ),
@@ -231,6 +292,7 @@ describe('deployed Luna low candidate', () => {
     );
     const inputs = [
       ...benchmark.profiles.map((profile) => profile.input),
+      ...injectionProbes(benchmark).map((probe) => probe.input),
       ...JSON.parse(
         readFileSync(
           'docs/evaluation/2026-10-29-luna-deployed/wording.json',
@@ -348,7 +410,7 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v14-fast',
+      promptVersion: 'catalog-rank-luna-v15-fast',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(
