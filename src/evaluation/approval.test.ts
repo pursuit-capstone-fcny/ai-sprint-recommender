@@ -53,7 +53,7 @@ describe('paid evaluation approval preflight', () => {
     const luna = {
       ...approval,
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v13-fast',
+      promptVersion: 'catalog-rank-luna-v14-fast',
       reasoningEffort: 'low',
       serviceTier: 'fast',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,

@@ -348,7 +348,7 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v13-fast',
+      promptVersion: 'catalog-rank-luna-v14-fast',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(

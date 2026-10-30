@@ -98,3 +98,23 @@ This isolates ranking evaluation from the concurrent migration. Catalog load
 latency is no longer an Apps Script measurement, and the rerun cannot certify
 the migrated catalog's end-to-end integration. Provider latency and scoring
 remain measured; record the source change alongside every result.
+
+## V13 outcome and V14 correction
+
+Run 41099659709 attempt 2 scored 10/9/9. Fundraising-02 improved to two
+passing trials, with 8/6/6 picks, but one trial still placed the direct
+counterparty-question demonstration fourth behind general research and staff
+practice. Accepted six-to-eight lists regressed from 27/30 to 23/30. One
+Operations-01 response repeated a position and correctly fell back. All 34
+charges reconciled to $0.065372, bringing the ceiling to $0.990746 and leaving
+$1.009254. No timeouts or new unknown reservations occurred. Retain the failed
+candidate and its complete evidence; it does not meet the experiment targets.
+
+V14 replaces only the appended instruction. It separates candidate selection
+from ordering so that a stronger top three does not shrink useful later picks.
+It distinguishes anticipating the counterparty's questions from researching
+questions to ask them, and keeps missing tool tags from overriding direct
+content evidence. A final duplicate-position check retains the strict parser.
+It contains no IDs, titles or labels. This remains benchmark-informed tuning,
+not unseen validation. All previous controls and targets remain fixed. Reserve
+at most $0.374 for another complete 34-call trial; no per-case paid retries.
