@@ -29,7 +29,6 @@ export function testUsageEndpoint(source: 'remote' | 'fixture'): string | null {
     import.meta.env.VITE_USAGE_ENABLED !== 'true' ||
     import.meta.env.VITE_USAGE_ENVIRONMENT !== 'test' ||
     !url ||
-    url !== import.meta.env.VITE_CATALOG_URL?.trim() ||
     !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(
       url,
     )

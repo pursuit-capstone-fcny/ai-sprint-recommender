@@ -1,5 +1,6 @@
 import { useCatalog } from '../data/useCatalog';
 import { IntakeResults } from './IntakeResults';
+import { recommendationsEnabled } from '../recommendations/requestRecommendations';
 import { getUsageSession } from '../usage/usageSession';
 import './global.css';
 import './intake-results.css';
@@ -8,6 +9,11 @@ export function IntakeResultsPage() {
   const catalog = useCatalog();
   const usageSession =
     catalog.status === 'ready' ? getUsageSession(catalog.source) : null;
+
+  const llmEnabled =
+    recommendationsEnabled() &&
+    catalog.status === 'ready' &&
+    catalog.source === 'remote';
 
   return (
     <>
@@ -77,7 +83,11 @@ export function IntakeResultsPage() {
                 </div>
               ) : (
                 <IntakeResults
+                  key={catalog.catalog.catalogVersion}
                   catalog={catalog.items}
+                  recommendationCatalog={
+                    catalog.source === 'remote' ? catalog.catalog : undefined
+                  }
                   availableFunctionAreas={catalog.catalog.functionAreas}
                   availableTools={catalog.catalog.tools}
                   usage={
@@ -94,9 +104,9 @@ export function IntakeResultsPage() {
             <section className="info-panel" aria-labelledby="how-it-works">
               <h2 id="how-it-works">How we pick videos</h2>
               <p>
-                We look at your area first, then what you want to learn, then
-                your tools. If nothing fits exactly, we show the closest videos
-                and say so.
+                {llmEnabled
+                  ? "AI suggestions compare your goal with the video catalog. We use standard matching if AI suggestions aren't available. Cards always use the catalog's titles, descriptions and links."
+                  : 'We look at your area first, then what you want to learn, then your tools. If nothing fits exactly, we show the closest videos and say so.'}
               </p>
             </section>
             <section className="info-panel" aria-labelledby="about-library">

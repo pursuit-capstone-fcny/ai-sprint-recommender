@@ -1,3 +1,5 @@
+import { readPublishedCatalog } from '../library/read';
+import { libraryOrigin } from '../library/catalog';
 import catalogFixture from '../../fixtures/public-catalog.json';
 import { toCatalogItem, type CatalogItem } from '../contracts/catalogItem';
 import {
@@ -65,6 +67,60 @@ export function parseCatalogResponse(value: unknown): PublicCatalog {
 export async function loadCatalog({
   signal,
 }: { signal?: AbortSignal } = {}): Promise<CatalogLoadResult> {
+  if (import.meta.env.VITE_CATALOG_SOURCE === 'static') {
+    const controller = new AbortController();
+    const abort = () => controller.abort();
+    signal?.addEventListener('abort', abort, { once: true });
+    if (signal?.aborted) controller.abort();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let timedOut = false;
+    try {
+      const origin = import.meta.env.VITE_LIBRARY_ORIGIN?.trim();
+      const manifestUrl = origin
+        ? `${libraryOrigin(origin)}/catalog/current.json`
+        : '/catalog/current.json';
+      const cancelled = new Promise<never>((_, reject) => {
+        const cancel = () => reject(new Error('Cancelled'));
+        if (controller.signal.aborted) cancel();
+        else
+          controller.signal.addEventListener('abort', cancel, { once: true });
+        timer = setTimeout(() => {
+          timedOut = true;
+          controller.abort();
+        }, CATALOG_TIMEOUT_MS);
+      });
+      const catalog = await Promise.race([
+        readPublishedCatalog({ manifestUrl, signal: controller.signal }),
+        cancelled,
+      ]);
+      return {
+        status: 'ready',
+        catalog,
+        items: catalog.items.map(toCatalogItem),
+        source:
+          import.meta.env.VITE_LIBRARY_DEMO === 'true' ? 'fixture' : 'remote',
+      };
+    } catch {
+      return {
+        status: 'error',
+        message: timedOut
+          ? 'The catalog took too long to load. Please try again.'
+          : 'Could not load the published video catalog. Please try again.',
+      };
+    } finally {
+      clearTimeout(timer);
+      signal?.removeEventListener('abort', abort);
+    }
+  }
+  if (
+    !import.meta.env.DEV &&
+    import.meta.env.MODE !== 'test' &&
+    import.meta.env.VITE_CATALOG_SOURCE !== 'fixture'
+  )
+    return {
+      status: 'error',
+      message: 'The published video catalog is not configured.',
+    };
   const url = import.meta.env.VITE_CATALOG_URL?.trim();
   const fixtureMode =
     import.meta.env.VITE_CATALOG_SOURCE === 'fixture' ||

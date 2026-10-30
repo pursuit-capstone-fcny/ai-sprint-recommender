@@ -1,0 +1,39 @@
+{
+  // Opt-in runtime configuration. Do not use until #1/#8 approvals are recorded.
+  // The normal CI preview/production workflow uses wrangler.jsonc and stays disabled.
+  "name": "ai-sprint-recommender-llm-test",
+  "main": "server/enabled-worker.ts",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+    "not_found_handling": "single-page-application",
+  },
+  "vars": { "LLM_ENABLED": "false", "LLM_ENVIRONMENT": "test" },
+  "durable_objects": {
+    "bindings": [
+      { "name": "RECOMMENDATION_BUDGET", "class_name": "RecommendationBudget" },
+    ],
+  },
+  "migrations": [
+    {
+      "tag": "recommendation-budget-v1",
+      "new_sqlite_classes": ["RecommendationBudget"],
+    },
+  ],
+  "env": {
+    "production": {
+      "name": "ai-sprint-recommender-llm-production",
+      "vars": { "LLM_ENABLED": "false", "LLM_ENVIRONMENT": "production" },
+      "durable_objects": {
+        "bindings": [
+          {
+            "name": "RECOMMENDATION_BUDGET",
+            "class_name": "RecommendationBudget",
+          },
+        ],
+      },
+    },
+  },
+}

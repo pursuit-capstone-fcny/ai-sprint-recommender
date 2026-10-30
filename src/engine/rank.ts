@@ -5,6 +5,7 @@ import { buildComparator } from './compare';
 import { applyDedupe } from './dedupe';
 import { computeMatch, resolveAreaMode } from './match';
 import type { VideoMatch } from './match';
+import { taskRelevance } from './relevance';
 import { buildReason } from './reasons';
 
 export interface RankOptions {
@@ -23,9 +24,13 @@ export function rank(
     return [];
   }
 
+  const relevance = taskRelevance(active, profile.goalWords);
   const matches = new Map<string, VideoMatch>();
   for (const video of active) {
-    matches.set(video.youtubeId, computeMatch(video, profile));
+    matches.set(video.youtubeId, {
+      ...computeMatch(video, profile),
+      taskRelevance: relevance.get(video.youtubeId) ?? 0,
+    });
   }
 
   const areaMode = resolveAreaMode(profile, active, matches);

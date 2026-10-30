@@ -15,6 +15,15 @@ describe('normalizeWord', () => {
 });
 
 describe('expandSynonyms', () => {
+  it('excludes grammatical words without removing short or common task words', () => {
+    for (const word of ['a', 'AND', 'the!', 'with', 'this', 'does', '']) {
+      expect(expandSynonyms(word)).toEqual([]);
+    }
+    for (const word of ['AI', 'HR', 'use', 'help', 'report']) {
+      expect(expandSynonyms(word)).toContain(normalizeWord(word));
+    }
+  });
+
   it('includes the canonical word plus its mapped synonyms', () => {
     expect(expandSynonyms('deck').sort()).toEqual(
       ['deck', 'presentation', 'slide'].sort(),
