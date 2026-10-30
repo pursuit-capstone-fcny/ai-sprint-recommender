@@ -1,0 +1,13 @@
+{
+  "sourceRevision": "6f019c5905e4144fd9e53d9ec94547201153c34a",
+  "deploymentRunId": "41091337101",
+  "deploymentCompletedAt": "2026-10-30T16:36:36Z",
+  "conclusion": "success",
+  "config": "wrangler.library.jsonc generated from wrangler.jsonc",
+  "LLM_ENABLED": "false",
+  "VITE_USAGE_ENABLED": "false",
+  "VITE_USAGE_ENVIRONMENT": "production",
+  "VITE_USAGE_TEST_URL": "",
+  "paidCalls": 0,
+  "productionChangesByThisTask": false
+}

@@ -1,0 +1,24 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [
+    7,
+    8,
+    10
+  ],
+  "acceptedLlmSixToEight": 20,
+  "acceptedLlmThin": 6,
+  "fallbackCount": 4,
+  "rawCounts": {
+    "0": 4,
+    "3": 1,
+    "6": 14,
+    "5": 3,
+    "8": 3,
+    "7": 3,
+    "4": 2
+  },
+  "acceptedListsTrimmedByBrowser": 0,
+  "timeouts": 4,
+  "maxMeasuredOutputTokens": 270
+}
+FAIL: breadth must recover to at least 23/30 without timeouts or a top-three threshold regression.

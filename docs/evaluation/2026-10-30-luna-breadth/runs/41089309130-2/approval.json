@@ -1,0 +1,21 @@
+{
+  "approvedSourceRevision": "925e4d1669a1293bdca947ae3a57f48d354a9961",
+  "approvedWorkflowRunId": "41089309130",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T17:23:06Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v12",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason requested improving Luna recommendation breadth without reintroducing timeouts and rerunning within the remaining allowance. Test GPT-6 Luna low standard with explicit complementary-match instructions, unchanged compact rows, all 89 videos, benchmark labels, task-diversity gate, eight-video cap and deadlines. Enforce a 1000-token output cap. Record catalog-rank-luna-v12. No paid case retries; retain all failures and diagnostics.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the remaining $0.189586 of the original shared $1 allowance. Carry forward $0.810414 including $0.203000 unresolved reservations. The enforced 50000-input-token byte bound and 1000-output-token cap reserve at most $0.0055 per call, $0.187 for all 34 calls. Do not reprice or refund historical reservations, reset counters, or increase the allowance.",
+  "allowanceMicrodollars": 189586,
+  "maxRequestMicrodollars": 5500,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 810414,
+  "totalAllowanceMicrodollars": 1000000
+}

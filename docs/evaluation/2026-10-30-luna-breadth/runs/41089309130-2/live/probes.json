@@ -1,0 +1,206 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v12",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "a9a647c7-153a-43c2-8a0d-0a64cb44cbe4",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "m0mI6_g0V2g",
+          "0qSXFbGrQ90",
+          "cwCVpchJHB4",
+          "4Wo_miqxgmE",
+          "8ahFA8ECM4c",
+          "tIekXJLsm8g"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      },
+      "latencyMs": 3072,
+      "displayedIds": [
+        "m0mI6_g0V2g",
+        "0qSXFbGrQ90",
+        "8ahFA8ECM4c",
+        "cwCVpchJHB4",
+        "4Wo_miqxgmE",
+        "tIekXJLsm8g"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "a9a647c7-153a-43c2-8a0d-0a64cb44cbe4",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2980,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 4,
+        "budgetMs": 80,
+        "providerMs": 2821,
+        "providerHeadersMs": 1768,
+        "providerBodyMs": 1053,
+        "inputTokens": 9178,
+        "outputTokens": 23,
+        "reasoningTokens": 0,
+        "costMicrodollars": 930,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "8ac4d4b4-a1cf-4a1b-9823-90f383a2d0f3",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "ADF07rFbH8M",
+          "nBAaIIz9QFg",
+          "VQRVNYS1m3g",
+          "6EWc3MgRNFg",
+          "7IYj3W4PdPE"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      },
+      "latencyMs": 1803,
+      "displayedIds": [
+        "S_DQeIX2xz8",
+        "ADF07rFbH8M",
+        "nBAaIIz9QFg",
+        "VQRVNYS1m3g",
+        "6EWc3MgRNFg",
+        "7IYj3W4PdPE"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "8ac4d4b4-a1cf-4a1b-9823-90f383a2d0f3",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1716,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 9,
+        "budgetMs": 77,
+        "providerMs": 1559,
+        "providerHeadersMs": 695,
+        "providerBodyMs": 864,
+        "inputTokens": 9178,
+        "outputTokens": 23,
+        "reasoningTokens": 0,
+        "costMicrodollars": 930,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "3619f1b2-bb6f-49ee-8b44-6d9a9b05e7e8",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      },
+      "latencyMs": 1515,
+      "displayedIds": [
+        "-zIvVmJ2XFw",
+        "0kMuHMGvhBE",
+        "0qSXFbGrQ90",
+        "1yBNcKEISP0",
+        "33a0qYtCMvc",
+        "3oX_M8AcBXk",
+        "3sui0H77srg",
+        "4LMIC-v5xZ0"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "3619f1b2-bb6f-49ee-8b44-6d9a9b05e7e8",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1453,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 5,
+        "budgetMs": 76,
+        "providerMs": 1304,
+        "providerHeadersMs": 649,
+        "providerBodyMs": 655,
+        "inputTokens": 9160,
+        "outputTokens": 12,
+        "reasoningTokens": 0,
+        "costMicrodollars": 922,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "d2bc8d61-c1d3-424e-9c40-7f4aadcfdd7d",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      },
+      "latencyMs": 1208,
+      "displayedIds": [
+        "Z8yOypmasGg",
+        "33a0qYtCMvc",
+        "wxJVc1q_nnY",
+        "4LMIC-v5xZ0",
+        "W-j725bzPJU",
+        "ZMPLTq-ptrE",
+        "jWdB3uOYoug",
+        "6d2bKhdmqqA"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "d2bc8d61-c1d3-424e-9c40-7f4aadcfdd7d",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1143,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 5,
+        "budgetMs": 77,
+        "providerMs": 989,
+        "providerHeadersMs": 317,
+        "providerBodyMs": 672,
+        "inputTokens": 9167,
+        "outputTokens": 12,
+        "reasoningTokens": 0,
+        "costMicrodollars": 923,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    }
+  ]
+}

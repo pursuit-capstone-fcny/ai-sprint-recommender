@@ -104,7 +104,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/run-live-evaluation.mjs --config wrangler.luna-test.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --wording docs/evaluation/2026-10-29-luna-deployed/wording.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline docs/evaluation/2026-10-30-luna-compact/runs/41085742178-2/comparison/report.json
+        run: node scripts/run-live-evaluation.mjs --config wrangler.luna-test.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --wording docs/evaluation/2026-10-29-luna-deployed/wording.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline docs/evaluation/2026-10-29-luna-streaming/runs/41000470999-2/comparison/report.json
 
       - name: Disable test provider calls after evaluation
         if: always() && (steps.enable.outcome == 'success' || steps.enable.outcome == 'failure')
@@ -144,7 +144,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: luna-breadth-${{ github.run_id }}-${{ github.run_attempt }}
+          name: luna-compact-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/evaluation/
           retention-days: 30
           if-no-files-found: warn

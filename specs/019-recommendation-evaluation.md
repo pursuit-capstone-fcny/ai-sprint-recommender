@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Luna scores 9/10, 8/10, 10/10 with complete fresh evidence; smaller lists and client approval need review
+- **Status:** Breadth candidate rejected after four timeouts; V11 restored; breadth and client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,14 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Luna breadth trial](../docs/evaluation/2026-10-30-luna-breadth/results.md)
+raises six-to-eight accepted lists from 8/30 to 20/30, but scores 7/10, 8/10
+and 10/10 with four provider timeouts. V12 is rejected and the repository's
+V11 default restored. All diagnostics are saved; four unknown charges remain
+reserved. The cumulative ceiling is $0.861150, leaving at least $0.138850,
+which cannot reserve another full run. Test calls are disabled, keys removed,
+and production LLM calls and logging remain off. Labels and the gate are unchanged.
 
 The [compact Luna rerun](../docs/evaluation/2026-10-30-luna-compact/results.md)
 scores 9/10, 8/10 and 10/10 with no timeouts or invalid responses. All 34 calls

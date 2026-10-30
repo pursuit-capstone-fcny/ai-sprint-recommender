@@ -66,39 +66,6 @@ function budgetObject() {
   return { storage, object, namespace };
 }
 describe('deployed Luna low candidate', () => {
-  it('enforces the smaller output budget without accepting truncated rankings', async () => {
-    const body = providerBody(intake, catalog, readLimits(env)!);
-    const fetcher = vi.fn<typeof fetch>(async () => Response.json(output()));
-    await lunaProvider('fixture-key', fetcher)(
-      body,
-      new AbortController().signal,
-    );
-    expect(
-      JSON.parse(String(fetcher.mock.calls[0][1]?.body)).max_output_tokens,
-    ).toBe(1000);
-    const payload = output();
-    payload.usage.output_tokens = 1001;
-    expect(
-      readLunaResponse(payload, body.catalogIds, 'positions'),
-    ).toMatchObject({
-      fatal: true,
-      youtubeIds: null,
-      outputTokens: 1001,
-    });
-    const truncated = {
-      ...output(),
-      status: 'incomplete',
-      incomplete_details: { reason: 'max_output_tokens' },
-    };
-    truncated.usage.output_tokens = 1000;
-    expect(
-      readLunaResponse(truncated, body.catalogIds, 'positions'),
-    ).toMatchObject({
-      youtubeIds: null,
-      costMicrodollars: 600,
-      validation: { validationFailure: 'max-tokens' },
-    });
-  });
   it.each([
     { positions: [1, 1] },
     { positions: [-1] },
@@ -179,7 +146,7 @@ describe('deployed Luna low candidate', () => {
         ),
       ).toEqual(body.data.catalog);
       expect(candidate.reasoning).toEqual({ effort: 'low', mode: 'standard' });
-      expect(candidate.max_output_tokens).toBe(1000);
+      expect(candidate.max_output_tokens).toBe(2000);
     }
   });
   it('accepts compact positions without changing order or catalog IDs', async () => {
@@ -260,7 +227,7 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v12',
+      promptVersion: 'catalog-rank-luna-v11',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(
@@ -271,7 +238,7 @@ describe('deployed Luna low candidate', () => {
         costMicrodollars: 200,
         outputTokens: 200,
         reasoningTokens: 150,
-        reservedMicrodollars: 5500,
+        reservedMicrodollars: 6000,
       }),
     );
     expect(fetcher).toHaveBeenCalledTimes(2);
@@ -318,7 +285,7 @@ describe('deployed Luna low candidate', () => {
         mode === 'duplicate' ? 'invalid-response' : 'provider-error',
       );
       expect((await storage.get<Ledger>('ledger'))?.total).toBe(
-        LUNA_PRIOR_SPEND + (mode === 'duplicate' ? 200 : 5500),
+        LUNA_PRIOR_SPEND + (mode === 'duplicate' ? 200 : 6000),
       );
       expect(fetcher).toHaveBeenCalledTimes(2);
     }

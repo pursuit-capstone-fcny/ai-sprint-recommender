@@ -1,0 +1,210 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v12",
+  "reasoningEffort": "low",
+  "runId": "41089309130",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 30,
+  "totalMeasuredMicrodollars": 28736,
+  "durableAdditionalMicrodollars": 50736,
+  "unreconciledMicrodollars": 22000,
+  "reconciled": false,
+  "historicalUnknownReservationsMicrodollars": 203000,
+  "cumulativeCeilingMicrodollars": 861150,
+  "remainingAllowanceMicrodollars": 138850,
+  "inputTokens": 275093,
+  "outputTokens": 2435,
+  "medianClientLatencyMs": 1812.5,
+  "p95ClientLatencyMs": 4601,
+  "maxClientLatencyMs": 4639,
+  "topThreeScores": [7, 8, 10],
+  "fallbacks": 4,
+  "sixToEightCount": 24,
+  "acceptedLlmSixToEightCount": 20,
+  "acceptedLlmThinCount": 6,
+  "expandedCounts": [
+    8, 3, 8, 6, 5, 6, 8, 6, 8, 6, 7, 6, 6, 6, 8, 5, 6, 5, 6, 6, 7, 4, 7, 8, 6,
+    6, 8, 6, 4, 6
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 6
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 6
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 30,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [
+    "dd4600c1-d8ff-456d-938b-a85018711dac",
+    "e015686c-1204-4b7f-bd0c-62791f4c682b",
+    "01aefdbc-10dc-4ef2-b1e6-3c5cbe663a67",
+    "a591f018-39cf-450a-9f01-e79956470271"
+  ],
+  "newUnknownReservationsMicrodollars": 22000,
+  "cumulativeUnknownReservationsMicrodollars": 225000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 4,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    }
+  ],
+  "responseHeaderRequestCount": 34,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [
+    {
+      "requestId": "dd4600c1-d8ff-456d-938b-a85018711dac",
+      "reason": "timeout",
+      "delayMs": 61000
+    },
+    {
+      "requestId": "e015686c-1204-4b7f-bd0c-62791f4c682b",
+      "reason": "timeout",
+      "delayMs": 61000
+    },
+    {
+      "requestId": "01aefdbc-10dc-4ef2-b1e6-3c5cbe663a67",
+      "reason": "timeout",
+      "delayMs": 61000
+    },
+    {
+      "requestId": "a591f018-39cf-450a-9f01-e79956470271",
+      "reason": "timeout",
+      "delayMs": 61000
+    }
+  ],
+  "probeCooldowns": [],
+  "providerHeadersMs": {
+    "count": 30,
+    "median": 408.0,
+    "max": 1768
+  },
+  "providerBodyMs": {
+    "count": 30,
+    "median": 856.5,
+    "max": 3900
+  },
+  "recoveryCacheChecks": 4,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": [
+    {
+      "profileId": "leadership-01",
+      "diagnostic": {
+        "requestId": "dd4600c1-d8ff-456d-938b-a85018711dac",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "provider",
+        "catalogMs": 11,
+        "budgetMs": 189,
+        "providerMs": 4300,
+        "providerHeadersMs": 1268,
+        "providerBodyMs": 3032,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "profileId": "operations-01",
+      "diagnostic": {
+        "requestId": "e015686c-1204-4b7f-bd0c-62791f4c682b",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "provider",
+        "catalogMs": 11,
+        "budgetMs": 106,
+        "providerMs": 4383,
+        "providerHeadersMs": 786,
+        "providerBodyMs": 3597,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "profileId": "fundraising-01",
+      "diagnostic": {
+        "requestId": "01aefdbc-10dc-4ef2-b1e6-3c5cbe663a67",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "provider",
+        "catalogMs": 15,
+        "budgetMs": 105,
+        "providerMs": 4380,
+        "providerHeadersMs": 286,
+        "providerBodyMs": 4094,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    },
+    {
+      "profileId": "programs-01",
+      "diagnostic": {
+        "requestId": "a591f018-39cf-450a-9f01-e79956470271",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "provider",
+        "catalogMs": 19,
+        "budgetMs": 113,
+        "providerMs": 4369,
+        "providerHeadersMs": 1281,
+        "providerBodyMs": 3088,
+        "reservedMicrodollars": 5500,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-luna-v12"
+      }
+    }
+  ]
+}

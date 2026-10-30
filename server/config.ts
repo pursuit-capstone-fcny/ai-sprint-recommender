@@ -1,8 +1,5 @@
 import { z } from 'zod';
-import {
-  LUNA_DEPLOYED_MAX_INPUT,
-  LUNA_DEPLOYED_MAX_OUTPUT,
-} from './luna-policy';
+import { LUNA_DEPLOYED_MAX_INPUT } from './luna-policy';
 
 const positive = z.coerce
   .number()
@@ -78,7 +75,7 @@ export function readLimits(env: Variables): Limits | null {
       limits.LLM_MODEL !== 'gpt-6-luna' ||
       limits.LLM_REASONING_EFFORT !== 'low' ||
       limits.LLM_MAX_INPUT_TOKENS !== LUNA_DEPLOYED_MAX_INPUT ||
-      limits.LLM_MAX_OUTPUT_TOKENS !== LUNA_DEPLOYED_MAX_OUTPUT ||
+      limits.LLM_MAX_OUTPUT_TOKENS !== 2_000 ||
       limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
       limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000 ||
       limits.LLM_ALLOWANCE_MICRODOLLARS === undefined ||

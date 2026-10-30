@@ -43,13 +43,11 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   non-null positions in rank order to the same trusted snapshot's IDs.
   Missing or extra slots, duplicates, nonintegers, out-of-range and malformed
   selections reject the whole result without truncation.
-- Given Luna candidate `catalog-rank-luna-v12`, when preparing its request, then
+- Given Luna candidate `catalog-rank-luna-v11`, when preparing its request, then
   encode the same ranking fields as rows with explicit field names and request
   a strict `positions` array of at most eight distinct catalog positions.
-  Keep the strongest direct matches first, then seek complementary useful
-  demonstrations before returning fewer than six. Never pad or invent tags.
-  Preserve low effort with a 1,000-token output cap. Reject input exceeding
-  a 50,000-token byte bound before reserving $0.0055;
+  Preserve V10's ranking instructions, low effort and the 2,000-token output
+  cap. Reject input exceeding a 50,000-token byte bound before reserving $0.006;
   retain all older charges at their original amounts. Partial, duplicate or
   invalid output still rejects the whole result. Production remains disabled.
 - Given sufficient rate, concurrency and spend allowance, when a call is
@@ -104,3 +102,10 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 - Given the approved validation has finished, when cleanup runs, then calls
   are disabled, cumulative spend is read through a runner-only test route,
   and test provider secrets are removed. Production settings stay unchanged.
+
+## Candidate evaluation
+
+The [V12 breadth trial](../docs/evaluation/2026-10-30-luna-breadth/results.md)
+increased list sizes but reintroduced four provider timeouts. V11 remains the
+default candidate. Historical V12 charges keep their original $0.0055 reservation;
+all production LLM calls and usage logging remain disabled.
