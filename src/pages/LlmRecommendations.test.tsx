@@ -72,7 +72,7 @@ afterEach(() => {
 });
 
 describe('LLM submissions', () => {
-  it('makes one request per submit, preserves model order, and expands without another request or duplicate events', async () => {
+  it('makes one request per submit, preserves model order, and displays the complete capped set without duplicate events', async () => {
     const logging = usage();
     const view = (
       <StrictMode>
@@ -95,11 +95,11 @@ describe('LLM submissions', () => {
     );
     expect(logging.session.sender.send).not.toHaveBeenCalled();
     await screen.findByText('AI suggestions');
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       '[Fixture] Budget sheet',
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     rerender(view);
     goal('unsubmitted-private-goal');
@@ -121,7 +121,7 @@ describe('LLM submissions', () => {
     expect(events[0]).toMatchObject({
       modelVersion: 'fixture-model',
       promptVersion: 'fixture-prompt',
-      resultCount: 3,
+      resultCount: 4,
     });
     expect(new Set(events.map((event) => event.searchId)).size).toBe(1);
     expect(JSON.stringify(events)).not.toContain('private-goal');
@@ -183,7 +183,7 @@ describe('LLM submissions', () => {
       await screen.findByText('Standard matching');
       // The status commits before the passive effect sends usage events.
       await waitFor(() =>
-        expect(logging.session.sender.send).toHaveBeenCalledTimes(4),
+        expect(logging.session.sender.send).toHaveBeenCalledTimes(5),
       );
       expect(
         screen.getAllByRole('listitem').map((item) => item.textContent),
@@ -193,7 +193,7 @@ describe('LLM submissions', () => {
         recommendationEngine: 'rules',
         llmFallbackReason: reason,
       });
-      expect(logging.session.sender.send).toHaveBeenCalledTimes(4);
+      expect(logging.session.sender.send).toHaveBeenCalledTimes(5);
     },
   );
   it('keeps only the latest submitted result and never logs the earlier response', async () => {

@@ -9,8 +9,6 @@ interface ResultsListProps {
   loading?: boolean;
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
-  canShowMore: boolean;
-  onShowMore: () => void;
   showClosestMatch?: boolean;
   feedback?: {
     question: string;
@@ -28,24 +26,21 @@ export function ResultsList({
   loading = false,
   playingId,
   onPlay,
-  canShowMore,
-  onShowMore,
   showClosestMatch = true,
   onVideoClick,
   feedback,
 }: ResultsListProps) {
   return (
-    <section
-      aria-busy={loading}
-      aria-live="polite"
-      aria-labelledby={RESULTS_HEADING_ID}
-    >
+    <section aria-busy={loading} aria-labelledby={RESULTS_HEADING_ID}>
       <div className="results-head">
         <h2 id={RESULTS_HEADING_ID} tabIndex={-1}>
           Videos to start with
         </h2>
-        <p className="pill results-count">
+        <p className="pill results-count" aria-live="polite" aria-atomic="true">
           {results.length} {results.length === 1 ? 'video' : 'videos'}
+          <span className="sr-only">
+            {`, including ${results.filter((match) => match.matchType === 'fallback').length} fallback suggestions`}
+          </span>
         </p>
       </div>
       <ul className="video-card-grid">
@@ -71,17 +66,6 @@ export function ResultsList({
           />
         ))}
       </ul>
-      {canShowMore && (
-        <div className="show-more-row">
-          <button
-            type="button"
-            className="btn btn-secondary show-more"
-            onClick={onShowMore}
-          >
-            Show more
-          </button>
-        </div>
-      )}
     </section>
   );
 }

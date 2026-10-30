@@ -104,7 +104,7 @@ describe('final recommendation selection', () => {
     expect(selected.llmFallbackReason).toBe(reason);
     expect(selected.results).toEqual(selectRulesResults(catalog, profile));
   });
-  it('shows two distinct tasks without letting the demoted duplicate fill slot three', () => {
+  it('retains distinct videos sharing a task and adds labeled fallback picks', () => {
     const selected = select({
       ...success,
       youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls', 'fx01GrntRpt'],
@@ -113,7 +113,10 @@ describe('final recommendation selection', () => {
     expect(selected.results.map(({ item }) => item.youtubeId)).toEqual([
       'fx04BdgtSht',
       'fx01GrntRpt',
+      'fx03BdgtXls',
+      'fx09IntroCt',
     ]);
+    expect(selected.results[3].matchType).toBe('fallback');
   });
   it.each([
     ['two untagged picks', [[], []]],

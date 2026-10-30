@@ -70,3 +70,10 @@ videos or Enter submission uses the same request and fallback behavior above.
 The matching explainer describes this flow; provider disclosure and existing
 privacy protections continue to apply. This does not enable LLM calls or change
 the separate #83 result-count policy.
+
+### Result-count policy update
+
+Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
+and Show-more requirements. Display at most eight matches; fill fewer than six
+with labeled fallback videos to six, subject to the eligible catalog size.
+The existing model validation gates remain separate from this display minimum.

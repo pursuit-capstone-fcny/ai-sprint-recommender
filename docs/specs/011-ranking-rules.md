@@ -95,3 +95,10 @@ for deterministic ties.
 
 Generic regression tests use explicit fictional public items alongside the
 original frozen fixture. Benchmark labels and IDs are never ranking inputs.
+
+### Result-count policy update
+
+Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
+and Show-more requirements. Display at most eight matches; fill fewer than six
+with labeled fallback videos to six, subject to the eligible catalog size.
+The existing model validation gates remain separate from this display minimum.
