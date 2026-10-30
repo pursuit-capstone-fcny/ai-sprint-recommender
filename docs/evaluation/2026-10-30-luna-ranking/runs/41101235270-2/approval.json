@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "ba504fd32b3cb8f43472d0bbb7d47870d77891b6",
+  "approvedWorkflowRunId": "41101235270",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T18:45:23Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v14-fast",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason requested fixing Fundraising-02 ranking misses without losing breadth. Test V14 Fast: select the useful expanded set before ordering it; preserve the direction of counterparty questions, direct content evidence over missing tool tags, and useful supporting choices. Preserve all 89 frozen catalog items, labels, task-diversity gate, low effort, Fast processing, token caps and deadlines. No per-case paid retries. The test-only Worker serves the identical frozen public catalog independently of the migrated shared Apps Script deployment; it does not certify that migration.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the existing combined $2 Luna allowance. Carry forward $0.990746 including $0.225000 unresolved historical reservations without reset, refund or repricing. Available $1.009254. Reserve $0.011 per request and at most $0.374 for 34 calls. Charge actual known service tier; retain full reservations when usage or tier is unknown.",
+  "allowanceMicrodollars": 1009254,
+  "maxRequestMicrodollars": 11000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 990746,
+  "totalAllowanceMicrodollars": 2000000,
+  "serviceTier": "fast"
+}

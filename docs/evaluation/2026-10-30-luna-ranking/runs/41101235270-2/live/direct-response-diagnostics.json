@@ -1,0 +1,17 @@
+[
+  {
+    "requestId": "67bb57d1-03a7-4dcc-9d37-707303ffd19f",
+    "environment": "test",
+    "outcome": "not-requested",
+    "latencyMs": 0,
+    "providerDispatched": false,
+    "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+    "accountingFinal": true,
+    "phase": "request",
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "costMicrodollars": 0,
+    "modelVersion": "gpt-6-luna",
+    "promptVersion": "catalog-rank-luna-v14-fast"
+  }
+]

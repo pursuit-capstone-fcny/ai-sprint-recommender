@@ -153,8 +153,10 @@ it.each([lunaConfig, haikuConfig])(
   'does not charge historical monthly spend twice in the shared comparison config',
   (configuration) => {
     const configured = {
-      ...readLimits(configuration.vars)!,
-      LLM_PRIOR_MICRODOLLARS: 676554,
+      ...readLimits({
+        ...configuration.vars,
+        LLM_PRIOR_MICRODOLLARS: '676554',
+      })!,
     }; // Replay the saved October 30 balance.
     const now = Date.parse('2026-10-30T03:45:00Z');
     const ledger = {

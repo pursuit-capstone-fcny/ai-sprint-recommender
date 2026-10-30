@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V12 Fast passes fresh timeout, breadth and numeric checks; expanded-set and client review pending
+- **Status:** V14 Fast fixes Fundraising-02 and retains breadth; expanded-set and client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,18 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [V14 ranking rerun](../docs/evaluation/2026-10-30-luna-ranking/results.md)
+scores 10/10 in all three trials. Fundraising-02 has both labeled matches in
+its first two positions with 7/6/6 videos; accepted six-to-eight lists increase
+from 27/30 to 28/30. No benchmark timeout, invalid response or fallback occurs.
+All 34 calls have reconciled usage and diagnostics. The two paid ranking
+revisions cost $0.131065; the $1.056439 cumulative ceiling leaves $0.943561.
+Labels and the diversity gate are unchanged. The test-only Worker serves the
+identical frozen catalog; this does not validate the migrated Apps Script
+source. Expanded picks and injection non-abstention need semantic review.
+Test calls are disabled and keys removed; production LLM calls and logging
+remain off. Historical results below stay intact.
 
 The [V12 Fast rerun](../docs/evaluation/2026-10-30-luna-fast/results.md) scores
 10/10, 9/10 and 9/10 with zero timeouts or invalid responses. Changing only

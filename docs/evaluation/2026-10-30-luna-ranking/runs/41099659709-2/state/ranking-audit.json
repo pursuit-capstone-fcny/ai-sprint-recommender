@@ -1,0 +1,87 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [10, 9, 9],
+  "fundraising02TopThreeHits": [2, 1, 2],
+  "fundraising02Counts": [8, 6, 6],
+  "acceptedLlmSixToEight": 23,
+  "timeouts": 0,
+  "invalidResponses": 1,
+  "completeEvidence": true,
+  "fundraising02": [
+    {
+      "trial": 1,
+      "rawOrder": [
+        "S_DQeIX2xz8",
+        "ADF07rFbH8M",
+        "7IYj3W4PdPE",
+        "nBAaIIz9QFg",
+        "rjaMvND2IRU",
+        "VQRVNYS1m3g",
+        "ShikWPoBRac",
+        "FMQJH3c5cLc"
+      ],
+      "displayedOrder": [
+        "S_DQeIX2xz8",
+        "ADF07rFbH8M",
+        "7IYj3W4PdPE",
+        "nBAaIIz9QFg",
+        "rjaMvND2IRU",
+        "VQRVNYS1m3g",
+        "ShikWPoBRac",
+        "FMQJH3c5cLc"
+      ],
+      "referencePositions": {
+        "S_DQeIX2xz8": 1,
+        "ADF07rFbH8M": 2
+      }
+    },
+    {
+      "trial": 2,
+      "rawOrder": [
+        "S_DQeIX2xz8",
+        "nBAaIIz9QFg",
+        "7IYj3W4PdPE",
+        "ADF07rFbH8M",
+        "rjaMvND2IRU",
+        "VQRVNYS1m3g"
+      ],
+      "displayedOrder": [
+        "S_DQeIX2xz8",
+        "nBAaIIz9QFg",
+        "7IYj3W4PdPE",
+        "ADF07rFbH8M",
+        "rjaMvND2IRU",
+        "VQRVNYS1m3g"
+      ],
+      "referencePositions": {
+        "S_DQeIX2xz8": 1,
+        "ADF07rFbH8M": 4
+      }
+    },
+    {
+      "trial": 3,
+      "rawOrder": [
+        "S_DQeIX2xz8",
+        "ADF07rFbH8M",
+        "7IYj3W4PdPE",
+        "nBAaIIz9QFg",
+        "VQRVNYS1m3g",
+        "rjaMvND2IRU"
+      ],
+      "displayedOrder": [
+        "S_DQeIX2xz8",
+        "ADF07rFbH8M",
+        "7IYj3W4PdPE",
+        "nBAaIIz9QFg",
+        "VQRVNYS1m3g",
+        "rjaMvND2IRU"
+      ],
+      "referencePositions": {
+        "S_DQeIX2xz8": 1,
+        "ADF07rFbH8M": 2
+      }
+    }
+  ],
+  "expandedLabelHits": 84,
+  "expandedUnreviewedAppearances": 95
+}

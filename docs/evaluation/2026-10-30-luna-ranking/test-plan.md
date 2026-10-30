@@ -118,3 +118,14 @@ content evidence. A final duplicate-position check retains the strict parser.
 It contains no IDs, titles or labels. This remains benchmark-informed tuning,
 not unseen validation. All previous controls and targets remain fixed. Reserve
 at most $0.374 for another complete 34-call trial; no per-case paid retries.
+
+## Final sample
+
+V14 run 41102285741 attempt 2 scores 10/10 in all three trials and meets the
+unchanged supplemental ranking/breadth targets. Fundraising-02 has both
+references in its first two positions with 7/6/6 videos. Accepted six-to-eight
+lists total 28/30. All 34 measured charges sum to $0.065693; both paid revisions
+together cost $0.131065, leaving $0.943561. See [results](results.md) for raw
+orders, the preserved zero-call setup/transport failures, unreviewed picks and
+the injection probe's valid-catalog non-abstention. No further paid run is needed
+for this request. Expanded-set, unseen wording and client review remain pending.

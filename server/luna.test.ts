@@ -425,6 +425,7 @@ describe('deployed Luna low candidate', () => {
     );
     const haikuEnv = {
       ...haikuConfig.vars,
+      LLM_PRIOR_MICRODOLLARS: '700000',
       LLM_ENABLED: 'true',
       LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
       ANTHROPIC_API_KEY: 'fixture-only',
@@ -456,9 +457,29 @@ describe('deployed Luna low candidate', () => {
     }
     expect(provider).toHaveBeenCalledTimes(10);
   });
+  it('refuses Haiku dispatch after the shared spend exceeds its original allowance', async () => {
+    const fetcher = vi.fn<typeof fetch>();
+    const response = await recommend(
+      request(),
+      {
+        ...haikuConfig.vars,
+        LLM_PRIOR_MICRODOLLARS: '1000001',
+        LLM_ENABLED: 'true',
+        LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
+        ANTHROPIC_API_KEY: 'fixture-only',
+        LLM_RATE_KEY: 'x'.repeat(32),
+      },
+      { fetch: fetcher, diagnostic: () => {} },
+    );
+    expect(await response.json()).toMatchObject({
+      outcome: 'fallback',
+      reason: 'unavailable',
+    });
+    expect(fetcher).not.toHaveBeenCalled();
+  });
   it('carries Luna spend into Haiku on the same object and preserves the allowance ceiling', async () => {
     const storage = new TestStorage();
-    const priorTotal = LUNA_PRIOR_SPEND + 400;
+    const priorTotal = 700_400; // Synthetic pre-exhaustion provider-switch balance.
     await storage.put('ledger', {
       day: '',
       month: '',
@@ -472,6 +493,7 @@ describe('deployed Luna low candidate', () => {
     });
     const haikuEnv = {
       ...haikuConfig.vars,
+      LLM_PRIOR_MICRODOLLARS: '700000',
       LLM_ENABLED: 'true',
       LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
       ANTHROPIC_API_KEY: 'fixture-only',

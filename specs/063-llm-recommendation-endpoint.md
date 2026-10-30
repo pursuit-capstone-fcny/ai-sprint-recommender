@@ -105,9 +105,16 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+The [V14 ranking trial](../docs/evaluation/2026-10-30-luna-ranking/results.md)
+scores 10/10 in all three trials, fixes Fundraising-02's two ranking misses,
+and retains breadth at 28/30 six-to-eight lists. No benchmark timeout, invalid
+response or fallback occurs. V14 is the disabled candidate. The cumulative
+ceiling is $1.056439, leaving $0.943561; production LLM calls and logging stay
+off. Expanded-set and client review remain pending.
+
 The [V12 Fast trial](../docs/evaluation/2026-10-30-luna-fast/results.md) scores
 10/10, 9/10 and 9/10 with no timeouts or invalid responses. Six-to-eight lists
-increase from V12 Standard's 20/30 to 27/30. V12 Fast is the disabled test
+increase from V12 Standard's 20/30 to 27/30. V12 Fast was the prior disabled test
 candidate. Historical charges retain their original reservations; production
 LLM calls and usage logging remain disabled. Expanded-set and client review
 remain pending.
