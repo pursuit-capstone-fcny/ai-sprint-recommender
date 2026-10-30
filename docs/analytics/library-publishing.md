@@ -180,6 +180,13 @@ still the earlier deployment; its old end-to-end evidence does not certify this
 cutover.
 
 ![Static catalog preview](screenshots/static-catalog-preview.png)
+
 Preview usage collection remains disabled in the shared-consumer PR until the
 collector migration in the next stacked PR. An origin and old collector URL
 alone do not establish compatible usage validation.
+
+In the final analytics PR, preview collection also requires the repository
+variable `LIBRARY_TEST_COLLECTION_READY=true`. Set it only after deploying the
+updated collector and verifying its published origin and accepted test event.
+Without that explicit cutover flag, both real-origin and fictional previews
+keep usage off. Production logging remains off independently.

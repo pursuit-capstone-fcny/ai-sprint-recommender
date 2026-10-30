@@ -8,7 +8,7 @@ import { readLibraryDashboard } from '../apps-script-admin/library';
 import { doGet } from './index';
 
 afterEach(() => vi.unstubAllGlobals());
-function setup() {
+function setup(publicOrigin = 'https://library.example.test') {
   const catalog = parsePublicCatalog(structuredClone(fixture));
   catalog.catalogVersion =
     'sha256:' +
@@ -46,7 +46,7 @@ function setup() {
     getScriptProperties: () => ({
       getProperty: (key: string) =>
         ({
-          LIBRARY_PUBLIC_ORIGIN: 'https://library.example.test',
+          LIBRARY_PUBLIC_ORIGIN: publicOrigin,
           CATALOG_PUBLIC_ENABLED: 'true',
         })[key as 'LIBRARY_PUBLIC_ORIGIN'] ?? null,
     }),
@@ -69,30 +69,33 @@ function setup() {
   });
   return { catalog, bodies, origin, fetch };
 }
-it('uses one verified version for the public adapter and private analytics without reading draft catalog cells', () => {
-  const s = setup();
-  const draftRead = vi.fn(() => {
-    throw new Error('Must not read draft catalog');
-  });
-  const book = {
-    getDeveloperMetadata: () => [],
-    getSheetByName: (name: string) => (name === 'Usage' ? null : draftRead()),
-  };
-  expect(publishedCatalog()).toEqual(s.catalog);
-  expect(JSON.parse(doGet().getContent())).toEqual(s.catalog);
-  const report = readLibraryDashboard(
-    book as unknown as GoogleAppsScript.Spreadsheet.Spreadsheet,
-  );
-  expect(report.facts.filter((fact) => fact.entity === 'video')).toHaveLength(
-    s.catalog.items.length,
-  );
-  expect(report.collectionAvailable).toBe(false);
-  expect(draftRead).not.toHaveBeenCalled();
-  expect(s.fetch.mock.calls[0][1]).toEqual({
-    muteHttpExceptions: true,
-    followRedirects: false,
-  });
-});
+it.each(['https://library.example.test', 'https://library.example.test/'])(
+  'uses one verified version with configured origin %s without reading draft catalog cells',
+  (origin) => {
+    const s = setup(origin);
+    const draftRead = vi.fn(() => {
+      throw new Error('Must not read draft catalog');
+    });
+    const book = {
+      getDeveloperMetadata: () => [],
+      getSheetByName: (name: string) => (name === 'Usage' ? null : draftRead()),
+    };
+    expect(publishedCatalog()).toEqual(s.catalog);
+    expect(JSON.parse(doGet().getContent())).toEqual(s.catalog);
+    const report = readLibraryDashboard(
+      book as unknown as GoogleAppsScript.Spreadsheet.Spreadsheet,
+    );
+    expect(report.facts.filter((fact) => fact.entity === 'video')).toHaveLength(
+      s.catalog.items.length,
+    );
+    expect(report.collectionAvailable).toBe(false);
+    expect(draftRead).not.toHaveBeenCalled();
+    expect(s.fetch.mock.calls[0][1]).toEqual({
+      muteHttpExceptions: true,
+      followRedirects: false,
+    });
+  },
+);
 it('rejects tampered or private data and never substitutes current metadata for missing historical versions', () => {
   const s = setup();
   expect(publishedHistory(['sha256:' + '0'.repeat(64)], s.catalog)).toEqual([
@@ -132,4 +135,15 @@ it('bounds history and rejects redirects, non-JSON and oversized responses', () 
     getContentText: () => ' '.repeat(4097),
   });
   expect(() => publishedCatalog()).toThrow('capacity');
+});
+
+it.each([
+  'https://library.example.test/private',
+  'https://library.example.test:8443',
+  'https://user:pass@library.example.test',
+  'https://library.example.test?x=1',
+])('rejects unsafe configured origin %s before any fetch', (origin) => {
+  const s = setup(origin);
+  expect(() => publishedCatalog()).toThrow('not configured');
+  expect(s.fetch).not.toHaveBeenCalled();
 });

@@ -17,12 +17,12 @@ export function configuredLibrarySheet() {
   );
 }
 function origin() {
-  const value = PropertiesService.getScriptProperties().getProperty(
-    'LIBRARY_PUBLIC_ORIGIN',
-  );
-  if (!value || !/^https:\/\/[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/i.test(value))
+  const value = PropertiesService.getScriptProperties()
+    .getProperty('LIBRARY_PUBLIC_ORIGIN')
+    ?.trim();
+  if (!value || !/^https:\/\/[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?\/?$/i.test(value))
     throw new Error('Published library is not configured');
-  return value;
+  return value.replace(/\/$/, '');
 }
 function json(url: string, limit: number) {
   const response = UrlFetchApp.fetch(url, {
