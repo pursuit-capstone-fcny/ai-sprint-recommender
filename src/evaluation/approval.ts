@@ -88,7 +88,7 @@ export function validateLiveApproval(
       approval.totalAllowanceMicrodollars !== 1_000_000 ||
       approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
       approval.maxRequestMicrodollars !== (luna ? 7_000 : 6_756) ||
-      approval.promptVersion !== 'catalog-rank-v7')
+      approval.promptVersion !== 'catalog-rank-v10')
   )
     throw new Error(
       'Model comparison must preserve the candidate and remaining allowance.',

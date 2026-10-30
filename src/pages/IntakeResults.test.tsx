@@ -77,12 +77,12 @@ function selectFundraising() {
 }
 
 describe('IntakeResults', () => {
-  it('shows 3 cards with reasons after picking an area', () => {
+  it('shows the four eligible cards with reasons after picking an area', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();
 
     const cards = screen.getAllByRole('listitem');
-    expect(cards).toHaveLength(3);
+    expect(cards).toHaveLength(4);
     for (const card of cards) {
       expect(card.textContent).toMatch(/fundraising|about|made with/i);
     }
@@ -127,45 +127,43 @@ describe('IntakeResults', () => {
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
-  it('shows at most 3 cards on first render even with more strong matches available', () => {
-    render(<IntakeResults catalog={catalog} />);
+  it('caps abundant matches at eight and offers no further expansion', () => {
+    const candidates = Array.from({ length: 10 }, (_, index) => ({
+      ...catalog[index % 4],
+      youtubeId: `video00000${index}`,
+      title: `Video ${index}`,
+    }));
+    render(<IntakeResults catalog={candidates} />);
     selectFundraising();
-
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
-    expect(screen.getByRole('button', { name: /show more/i })).toBeTruthy();
+    expect(screen.getAllByRole('listitem')).toHaveLength(8);
+    expect(screen.getByText('8 videos')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
-  it('"Show more" reveals the next strong match and never a fallback card', () => {
+  it('does not pad a smaller strong set with fallback cards', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();
-
-    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
-
-    const cards = screen.getAllByRole('listitem');
-    expect(cards).toHaveLength(4);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
     expect(screen.queryByText('Closest match')).toBeNull();
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
-  it('keeps the first three cards in place when revealing demoted same-task videos', () => {
+  it('preserves the original top-three diversity order within the expanded set', () => {
     const candidates = catalog.slice(0, 4).map((item, index) => ({
       ...item,
       tasks: [index < 3 ? 'attendance' : 'scheduling'],
     }));
     render(<IntakeResults catalog={candidates} />);
     selectFundraising();
-    const titles = () =>
-      screen
-        .getAllByRole('listitem')
-        .map((card) => within(card).getByRole('heading').textContent);
-    const initial = titles();
-    expect(initial).toEqual([
+    const titles = screen
+      .getAllByRole('listitem')
+      .map((card) => within(card).getByRole('heading').textContent);
+    expect(titles).toEqual([
       candidates[0].title,
       candidates[1].title,
       candidates[3].title,
+      candidates[2].title,
     ]);
-    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
-    expect(titles()).toEqual([...initial, candidates[2].title]);
   });
 
   it('narrows to one tool with the tool select, and "Any AI tool" undoes it', () => {
@@ -209,14 +207,13 @@ describe('IntakeResults', () => {
     selectFundraising();
     fireEvent.change(goal, { target: { value: 'gizmo' } });
     fireEvent.change(tool, { target: { value: 'Claude' } });
-    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
     expect(area.value).toBe('');
     expect(goal.value).toBe('');
     expect(tool.value).toBe('');
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 
   it('"Find videos" moves focus to the results heading', () => {

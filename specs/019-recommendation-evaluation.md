@@ -169,3 +169,14 @@ pending; production LLM calls and logging stay disabled.
   full fresh validation remains incomplete. Saved-input replay does not repair
   that gap. Cumulative ceiling $0.587169; at least $0.412831 remains. Test calls
   are disabled and keys removed. Production LLM calls and logging stay off.
+
+### Expanded-output comparison
+
+- Given Jason's eight-video maximum, when the V10 candidate runs with Haiku low
+  and Luna low, then both use identical prompt, catalog, frozen labels and the
+  existing task-diversity gate. Preserve the original top-three score.
+- Report all displayed IDs, count, known-good IDs and unreviewed IDs separately.
+  The full-set quality threshold remains pending client review; do not derive
+  one from the existing sparse top-three labels.
+- Run candidates sequentially on the test endpoint and carry measured spend
+  and unknown reservations forward. Production calls and logging remain off.

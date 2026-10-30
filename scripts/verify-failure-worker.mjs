@@ -27,7 +27,7 @@ export function verifyFailureCase(expected, actual) {
   const versions =
     expected.reason === 'disabled'
       ? {}
-      : { modelVersion: 'fixture-model', promptVersion: 'catalog-rank-v7' };
+      : { modelVersion: 'fixture-model', promptVersion: 'catalog-rank-v10' };
   const expectsCatalogVersion =
     expected.catalogReads && expected.name !== 'retired-catalog';
   const catalogVersion = expectsCatalogVersion

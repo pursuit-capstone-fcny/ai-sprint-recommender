@@ -20,7 +20,7 @@ const body = providerBody(
 );
 function slots(values: unknown[] = []) {
   return Object.fromEntries(
-    Array.from({ length: 10 }, (_, index) => [
+    Array.from({ length: 8 }, (_, index) => [
       `rank${index + 1}`,
       values[index] ?? null,
     ]),
@@ -87,7 +87,7 @@ describe('Anthropic adapter', () => {
       fullCatalog.items.map((item) => item.youtubeId),
     );
   });
-  it('accepts exactly ten, no, or partial ranked selections using every required slot', async () => {
+  it('accepts exactly eight, no, or partial ranked selections using every required slot', async () => {
     const larger = {
       ...catalog,
       items: Array.from({ length: 12 }, (_, position) => ({
@@ -106,7 +106,7 @@ describe('Anthropic adapter', () => {
       readLimits(environment)!,
     );
     for (const values of [
-      Array.from({ length: 10 }, (_, index) => 9 - index),
+      Array.from({ length: 8 }, (_, index) => 7 - index),
       [],
       [3, null, 0],
     ]) {
@@ -177,7 +177,7 @@ describe('Anthropic adapter', () => {
       })),
     );
     const schema = wire.output_config.format.schema;
-    const keys = Array.from({ length: 10 }, (_, index) => `rank${index + 1}`);
+    const keys = Array.from({ length: 8 }, (_, index) => `rank${index + 1}`);
     expect(schema.required).toEqual(keys);
     expect(Object.keys(schema.properties)).toEqual(keys);
     expect(schema.additionalProperties).toBe(false);

@@ -33,9 +33,13 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   and v6's medium effort with thinking disabled. The JSON user message puts
   every catalog candidate before the intact intake fields. Existing caps still
   apply; it uses area and tools when the goal is blank.
+- Given candidate `catalog-rank-v10`, when the model ranks a goal, then it covers
+  each requested activity and deliverable, distinguishes qualitative feedback
+  from numerical analysis, and aims for six to eight useful picks without padding.
+  Haiku low and Luna low use the same instructions; production remains disabled.
 - Given a provider request, when candidates are encoded, then every catalog
-  item has a numeric position constrained by a schema enum. Ten required
-  nullable slots, `rank1` through `rank10`, bound the output. The server maps
+  item has a numeric position constrained by a schema enum. Eight required
+  nullable slots, `rank1` through `rank8`, bound the output. The server maps
   non-null positions in rank order to the same trusted snapshot's IDs.
   Missing or extra slots, duplicates, nonintegers, out-of-range and malformed
   selections reject the whole result without truncation.
@@ -45,7 +49,7 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   cannot reuse that allowance. Missing limits or exhausted allowances make no
   paid request.
 - Given a provider result, when the endpoint validates it, then only a strict
-  object of up to ten distinct active IDs is accepted. Unknown IDs, duplicates,
+  object of up to eight distinct active IDs is accepted. Unknown IDs, duplicates,
   extra properties, malformed output and truncation reject the whole result.
   Empty lists are valid and let the browser use its insufficient-results policy.
 - Given a failure or slow dependency, when 4.5 seconds elapse from request

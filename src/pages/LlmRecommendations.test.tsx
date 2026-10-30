@@ -80,7 +80,7 @@ describe('LLM submissions', () => {
     ).toBeTruthy();
     expect(fetch).not.toHaveBeenCalled();
   });
-  it('makes one request per submit, preserves model order, and expands without another request or duplicate events', async () => {
+  it('makes one request per submit, preserves model order, and shows a thin set without another request or duplicate events', async () => {
     const logging = usage();
     const view = (
       <StrictMode>
@@ -103,11 +103,11 @@ describe('LLM submissions', () => {
     );
     expect(logging.session.sender.send).not.toHaveBeenCalled();
     await screen.findByText('AI suggestions');
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       '[Fixture] Budget sheet',
     );
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     rerender(view);
     goal('unsubmitted-private-goal');
@@ -129,7 +129,7 @@ describe('LLM submissions', () => {
     expect(events[0]).toMatchObject({
       modelVersion: 'fixture-model',
       promptVersion: 'fixture-prompt',
-      resultCount: 3,
+      resultCount: 4,
     });
     expect(new Set(events.map((event) => event.searchId)).size).toBe(1);
     expect(JSON.stringify(events)).not.toContain('private-goal');
@@ -142,6 +142,49 @@ describe('LLM submissions', () => {
       matchType: 'semantic',
       rank: 1,
     });
+  });
+  it('shows and logs exactly eight validated cards without expansion or a second paid request', async () => {
+    const items = Array.from({ length: 9 }, (_, index) => ({
+      ...publicCatalog.items[index % publicCatalog.items.length],
+      youtubeId: `bound00000${index}`,
+      title: `Bounded video ${index}`,
+      status: 'active' as const,
+      tasks:
+        index % 2 ? publicCatalog.items[0].tasks : publicCatalog.items[2].tasks,
+    }));
+    const expandedCatalog = { ...publicCatalog, items };
+    const logging = { ...usage(), catalog: expandedCatalog };
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({
+        ...success,
+        youtubeIds: items.slice(0, 8).map((item) => item.youtubeId),
+      }),
+    );
+    render(
+      <IntakeResults
+        catalog={items.map(toCatalogItem)}
+        recommendationCatalog={expandedCatalog}
+        usage={logging}
+      />,
+    );
+    logging.session.sender.send.mockClear();
+    goal();
+    submit();
+    await screen.findByText('AI suggestions');
+    await waitFor(() =>
+      expect(logging.session.sender.send).toHaveBeenCalledTimes(9),
+    );
+    expect(screen.getAllByRole('listitem')).toHaveLength(8);
+    expect(screen.getByText('8 videos')).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
+    const events = logging.session.sender.send.mock.calls.map(([event]) =>
+      UsageEventSchema.parse(event),
+    );
+    expect(events[0]).toMatchObject({ type: 'search', resultCount: 8 });
+    expect(events.filter((event) => event.type === 'impression')).toHaveLength(
+      8,
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
   it('skips all-blank submissions and disabled calls, while blank goal with an area is valid', async () => {
     render(<IntakeResults {...props} />);
@@ -190,7 +233,9 @@ describe('LLM submissions', () => {
       await screen.findByText('Standard matching');
       // The status commits before the passive effect sends usage events.
       await waitFor(() =>
-        expect(logging.session.sender.send).toHaveBeenCalledTimes(4),
+        expect(logging.session.sender.send).toHaveBeenCalledTimes(
+          initial.length + 1,
+        ),
       );
       expect(
         screen.getAllByRole('listitem').map((item) => item.textContent),
@@ -200,7 +245,9 @@ describe('LLM submissions', () => {
         recommendationEngine: 'rules',
         llmFallbackReason: reason,
       });
-      expect(logging.session.sender.send).toHaveBeenCalledTimes(4);
+      expect(logging.session.sender.send).toHaveBeenCalledTimes(
+        initial.length + 1,
+      );
     },
   );
   it('keeps only the latest submitted result and never logs the earlier response', async () => {

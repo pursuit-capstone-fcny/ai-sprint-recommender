@@ -4,6 +4,7 @@ import type { Benchmark, BenchmarkProfile } from './benchmark';
 import { benchmarkFingerprint, BenchmarkSchema } from './benchmark';
 import {
   RecommendationResponseSchema,
+  MAX_RECOMMENDATIONS,
   RecommendationFallbackReasonSchema,
 } from '../contracts/recommendation';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
@@ -123,6 +124,23 @@ export function scorePicks(profile: BenchmarkProfile, ids: string[]) {
   };
 }
 
+// Existing labels are not exhaustive judgments for the expanded set.
+export function scoreExpandedPicks(profile: BenchmarkProfile, ids: string[]) {
+  const displayedIds = ids.slice(0, MAX_RECOMMENDATIONS);
+  const good = new Set(
+    [...profile.ideal, ...profile.good].map((pick) => pick.youtubeId),
+  );
+  const knownGoodIds = displayedIds.filter((id) => good.has(id));
+  return {
+    displayedIds,
+    count: displayedIds.length,
+    withinPreferredRange: displayedIds.length >= 6,
+    knownGoodIds,
+    unreviewedIds: displayedIds.filter((id) => !good.has(id)),
+    qualityApproval: 'pending-client-review' as const,
+  };
+}
+
 export function evaluate(
   benchmark: Benchmark,
   options: {
@@ -150,14 +168,15 @@ export function evaluate(
   const metrics = new Map(diagnostics.map((row) => [row.requestId, row]));
   const usedRequests = new Set<string>();
   const catalog = benchmark.catalog.items.map(toCatalogItem);
-  const rules = benchmark.profiles.map((profile) =>
-    scorePicks(
-      profile,
-      selectRulesResults(catalog, intake(profile), 3).map(
-        (match) => match.item.youtubeId,
-      ),
-    ),
-  );
+  const rules = benchmark.profiles.map((profile) => {
+    const ids = selectRulesResults(catalog, intake(profile)).map(
+      (match) => match.item.youtubeId,
+    );
+    return {
+      ...scorePicks(profile, ids),
+      expanded: scoreExpandedPicks(profile, ids),
+    };
+  });
   const llm =
     trials?.trials.map((trial, index) => {
       if (new Set(trial.calls.map((call) => call.profileId)).size !== 10)
@@ -210,6 +229,10 @@ export function evaluate(
           metric.costMicrodollars !== undefined;
         return {
           ...score,
+          expanded: scoreExpandedPicks(
+            profile,
+            selection.results.map((match) => match.item.youtubeId),
+          ),
           passed: score.passed && selection.recommendationEngine === 'llm',
           engine: selection.recommendationEngine,
           fallbackReason: selection.llmFallbackReason,
@@ -305,6 +328,19 @@ const scoreSchema = z.strictObject({
   hits: z.number().int().min(0).max(3),
   misses: z.number().int().min(0).max(3),
   passed: z.boolean(),
+  // Optional so historical reports retain their original shape.
+  expanded: z
+    .strictObject({
+      displayedIds: z
+        .array(z.string().regex(/^[A-Za-z0-9_-]{11}$/))
+        .max(MAX_RECOMMENDATIONS),
+      count: z.number().int().min(0).max(MAX_RECOMMENDATIONS),
+      withinPreferredRange: z.boolean(),
+      knownGoodIds: z.array(z.string()),
+      unreviewedIds: z.array(z.string()),
+      qualityApproval: z.literal('pending-client-review'),
+    })
+    .optional(),
 });
 const llmScoreSchema = scoreSchema.extend({
   engine: z.enum(['llm', 'rules']),
@@ -386,6 +422,23 @@ export const EvaluationReportSchema = z
         invalid();
       for (const row of summary.profiles) {
         const eligible = !('engine' in row) || row.engine === 'llm';
+        if (row.expanded) {
+          const expanded = row.expanded;
+          const allIds = [...expanded.knownGoodIds, ...expanded.unreviewedIds];
+          if (
+            expanded.count !== expanded.displayedIds.length ||
+            expanded.withinPreferredRange !== expanded.count >= 6 ||
+            new Set(expanded.displayedIds).size !== expanded.count ||
+            new Set(allIds).size !== expanded.count ||
+            allIds.length !== expanded.count ||
+            allIds.some((id) => !expanded.displayedIds.includes(id)) ||
+            !isDeepStrictEqual(
+              expanded.displayedIds.slice(0, 3),
+              row.displayedIds,
+            )
+          )
+            invalid();
+        }
         if (
           row.hits + row.misses !== 3 ||
           row.hits > row.displayedIds.length ||
@@ -486,6 +539,15 @@ export function parseEvaluationReport(
       );
       if (!profile || row.displayedIds.some((id) => !active.has(id)))
         throw new Error('Baseline contains unknown profile or catalog IDs.');
+      if (
+        row.expanded &&
+        (row.expanded.displayedIds.some((id) => !active.has(id)) ||
+          !isDeepStrictEqual(
+            row.expanded,
+            scoreExpandedPicks(profile, row.expanded.displayedIds),
+          ))
+      )
+        throw new Error('Expanded results differ from frozen labels.');
       const expected = scorePicks(profile, row.displayedIds);
       if (row.hits !== expected.hits || row.misses !== expected.misses)
         throw new Error('Baseline scores differ from frozen labels.');
@@ -554,6 +616,26 @@ export function renderReport(
     lines.push(
       `| ${profile.profileId} | ${before?.hits ?? 'not run'} | ${profile.hits} | ${beforeLlm || 'not run'} | ${results.join(', ') || 'not run'} | ${report.variation.find((row) => row.profileId === profile.profileId)!.distinctResults} |`,
     );
+  }
+  if (report.rules.profiles.some((row) => row.expanded)) {
+    lines.push(
+      '',
+      '## Expanded results',
+      '',
+      'At most eight cards. Known-good IDs use the original labels; unreviewed IDs are not automatically irrelevant. Full-set quality approval remains pending client review. The original top-three score is unchanged.',
+      '',
+      '| Profile | Rules count / known-good hits | LLM counts by trial | LLM known-good hits by trial |',
+      '| --- | --- | --- | --- |',
+    );
+    for (const row of report.rules.profiles) {
+      const expanded = report.llm.map(
+        (trial) =>
+          trial.profiles.find((p) => p.profileId === row.profileId)?.expanded,
+      );
+      lines.push(
+        `| ${row.profileId} | ${row.expanded?.count ?? 'not recorded'} / ${row.expanded?.knownGoodIds.length ?? 'not recorded'} | ${expanded.map((e) => e?.count ?? 'not recorded').join(', ')} | ${expanded.map((e) => e?.knownGoodIds.length ?? 'not recorded').join(', ')} |`,
+      );
+    }
   }
   lines.push(
     '',

@@ -41,6 +41,26 @@ describe('final recommendation selection', () => {
     ).toBe(true);
     expect(selected.results[0].item).toBe(catalog[2]);
   });
+  it('rejects nine model picks and caps rules results even when more are requested', () => {
+    const candidates = Array.from({ length: 9 }, (_, index) => ({
+      ...catalog[index % catalog.length],
+      youtubeId: `bound00000${index}`,
+      status: 'active' as const,
+    }));
+    expect(
+      selectRecommendations(candidates, profile, envelope.catalogVersion, {
+        ...success,
+        youtubeIds: candidates.map((item) => item.youtubeId),
+      }).llmFallbackReason,
+    ).toBe('invalid-response');
+    expect(
+      selectRulesResults(
+        candidates,
+        { functionArea: null, goalWords: [], tools: [] },
+        100,
+      ),
+    ).toHaveLength(8);
+  });
   it('labels cross-area selections without claiming that the catalog lacks an in-area video', () => {
     const selected = selectRecommendations(
       catalog,

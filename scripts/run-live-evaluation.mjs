@@ -54,7 +54,7 @@ export async function main(args = process.argv.slice(2)) {
     export { validateLiveApproval, assertApprovalWindow } from './src/evaluation/approval';
     export { parseEvaluationReport, evaluate, renderReport, TrialsSchema, DiagnosticsSchema } from './src/evaluation/report';
     export { RecommendationRequestSchema, RecommendationResponseSchema } from './src/contracts/recommendation';
-    export { selectRecommendations } from './src/recommendations/selectRecommendations';
+    export { selectRecommendations, RECOMMENDATION_PAGE_SIZE } from './src/recommendations/selectRecommendations';
     export { toCatalogItem } from './src/contracts/catalogItem';
   `,
       resolveDir: process.cwd(),
@@ -488,7 +488,7 @@ export async function main(args = process.argv.slice(2)) {
         response,
         latencyMs: Math.round(performance.now() - started),
         displayedIds: selection.results
-          .slice(0, 3)
+          .slice(0, contracts.RECOMMENDATION_PAGE_SIZE)
           .map((match) => match.item.youtubeId),
         recommendationEngine: selection.recommendationEngine,
         fallbackReason: selection.llmFallbackReason,

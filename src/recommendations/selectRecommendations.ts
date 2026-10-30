@@ -3,6 +3,7 @@ import type { IntakeProfile } from '../contracts/intakeProfile';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import {
   RecommendationResponseSchema,
+  MAX_RECOMMENDATIONS,
   type RecommendationFallbackReason,
 } from '../contracts/recommendation';
 import type { RecommendationVersion } from '../contracts/usageEvent';
@@ -10,7 +11,9 @@ import { rank } from '../engine';
 import { applyDedupe } from '../engine/dedupe';
 import { computeMatch } from '../engine/match';
 
-export const RECOMMENDATION_PAGE_SIZE = 3;
+export const RECOMMENDATION_PAGE_SIZE = MAX_RECOMMENDATIONS;
+// Preserve the original top-three ordering and two-primary-task gate.
+const DIVERSITY_WINDOW = 3;
 export interface RecommendationSelection extends Partial<RecommendationVersion> {
   results: RankedMatch[];
   recommendationEngine: 'llm' | 'rules';
@@ -23,10 +26,10 @@ export function selectRulesResults(
   profile: IntakeProfile,
   count = RECOMMENDATION_PAGE_SIZE,
 ): RankedMatch[] {
-  // Expanding results reveals the existing order instead of re-ranking cards.
+  // Keep the original ranking window while displaying up to eight cards.
   const matches = rank(catalog, profile, {
-    topN: RECOMMENDATION_PAGE_SIZE,
-  }).slice(0, count);
+    topN: DIVERSITY_WINDOW,
+  }).slice(0, Math.min(count, MAX_RECOMMENDATIONS));
   return matches[0]?.matchType === 'fallback'
     ? matches
     : matches.filter((match) => match.matchType === 'strong');
@@ -98,7 +101,7 @@ export function selectRecommendations(
     return rulesSelection(catalog, profile, 'invalid-response', versions);
   const results = applyDedupe(
     result.youtubeIds.map((id) => semanticMatch(active.get(id)!, profile)),
-    RECOMMENDATION_PAGE_SIZE,
+    DIVERSITY_WINDOW,
   );
   const distinctTasks = new Set(
     results

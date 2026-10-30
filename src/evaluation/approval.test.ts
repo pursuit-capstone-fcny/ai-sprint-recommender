@@ -49,7 +49,7 @@ describe('paid evaluation approval preflight', () => {
     const luna = {
       ...approval,
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-v7',
+      promptVersion: 'catalog-rank-v10',
       reasoningEffort: 'low',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
       totalAllowanceMicrodollars: 1000000,
@@ -83,7 +83,7 @@ describe('paid evaluation approval preflight', () => {
     const haiku = {
       ...approval,
       modelVersion: 'claude-haiku-5-5',
-      promptVersion: 'catalog-rank-v7',
+      promptVersion: 'catalog-rank-v10',
       reasoningEffort: 'low',
       thinking: 'disabled',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,

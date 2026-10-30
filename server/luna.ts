@@ -1,5 +1,8 @@
 import { z } from 'zod';
-import { RECOMMENDATION_PROMPT_VERSION } from '../src/contracts/recommendation';
+import {
+  MAX_RECOMMENDATIONS,
+  RECOMMENDATION_PROMPT_VERSION,
+} from '../src/contracts/recommendation';
 import type { Provider, ProviderBody, ProviderValidation } from './anthropic';
 import { boundedJson } from './bounded-json';
 
@@ -9,7 +12,7 @@ export const LUNA_MAX_INPUT = 60_000;
 export const LUNA_MAX_OUTPUT = 2_000;
 export const LUNA_RESERVATION = 7_000;
 // Retained for reproducibility. Neither experiment beat V7 in the frozen
-// benchmark; V7 remains the default and no candidate is production-approved.
+// benchmark. V10 is the current expanded-output candidate; production stays off.
 export const LUNA_RERUN_PROMPT = 'catalog-rank-luna-v8';
 export const LUNA_COMPACT_PROMPT = 'catalog-rank-luna-v9';
 const compactPrompt = [
@@ -94,7 +97,10 @@ const envelopeSchema = z.object({
   output: z.unknown(),
   incomplete_details: z.object({ reason: z.string() }).nullish(),
 });
-const rankKeys = Array.from({ length: 10 }, (_, index) => `rank${index + 1}`);
+const rankKeys = Array.from(
+  { length: MAX_RECOMMENDATIONS },
+  (_, index) => `rank${index + 1}`,
+);
 const ranksSchema = z.strictObject(
   Object.fromEntries(
     rankKeys.map((key) => [key, z.number().int().nonnegative().nullable()]),

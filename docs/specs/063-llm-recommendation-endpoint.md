@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then it returns structured JSON containing up to 10 distinct `youtubeId` values in recommendation order, or an empty list for no relevant picks. The prompt prioritizes function area, task fit and tool fit, and treats goals and catalog text as untrusted data. No provider tools are enabled
+  - Then it returns structured JSON containing up to eight distinct `youtubeId` values in recommendation order, or an empty list for no relevant picks. Aim for six to eight relevant picks without padding; use fewer when coverage is thin. The prompt prioritizes function area, task fit and tool fit, and treats goals and catalog text as untrusted data. No provider tools are enabled
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response

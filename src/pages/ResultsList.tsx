@@ -9,7 +9,7 @@ interface ResultsListProps {
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
   canShowMore: boolean;
-  onShowMore: () => void;
+  onShowMore?: () => void;
   showClosestMatch?: boolean;
   onVideoClick?: (
     match: RankedMatch,

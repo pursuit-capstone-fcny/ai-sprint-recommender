@@ -41,7 +41,7 @@ const approval: LunaApproval = {
   endpoint: LUNA_ENDPOINT,
   model: LUNA_MODEL,
   efforts: ['low'],
-  promptVersion: 'catalog-rank-v7',
+  promptVersion: 'catalog-rank-v10',
   allowanceMicrodollars: 1_000_000,
   priorSpendMicrodollars: LUNA_PRIOR_SPEND,
   maxCalls: 30,
@@ -56,7 +56,7 @@ const environment = {
   GITHUB_RUN_ATTEMPT: '2',
 };
 const ranks = Object.fromEntries(
-  Array.from({ length: 10 }, (_, index) => [
+  Array.from({ length: 8 }, (_, index) => [
     `rank${index + 1}`,
     index < 3 ? index : null,
   ]),

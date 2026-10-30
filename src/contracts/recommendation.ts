@@ -1,9 +1,10 @@
 import { z } from 'zod';
 import { RecommendationVersionSchema } from './usageEvent';
 
+export const MAX_RECOMMENDATIONS = 8;
 export const RECOMMENDATION_PATH = '/api/recommendations';
 export const RECOMMENDATION_DEADLINE_MS = 5_000;
-export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v7';
+export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v10';
 
 const catalogVersion = z.string().regex(/^sha256:[a-f0-9]{64}$/);
 const tag = z.string().min(1).max(120);
@@ -34,7 +35,7 @@ export const RecommendationFallbackReasonSchema = z.enum([
 
 export const RecommendationIdsSchema = z
   .array(z.string().regex(/^[A-Za-z0-9_-]{11}$/))
-  .max(10)
+  .max(MAX_RECOMMENDATIONS)
   .refine((ids) => new Set(ids).size === ids.length);
 
 export const RecommendationResponseSchema = z.discriminatedUnion('outcome', [

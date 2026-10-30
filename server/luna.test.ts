@@ -46,7 +46,7 @@ const output = (positions = [1, 2, 3]) => ({
           type: 'output_text',
           text: JSON.stringify(
             Object.fromEntries(
-              Array.from({ length: 10 }, (_, i) => [
+              Array.from({ length: 8 }, (_, i) => [
                 `rank${i + 1}`,
                 positions[i] ?? null,
               ]),
@@ -109,7 +109,7 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-v7',
+      promptVersion: 'catalog-rank-v10',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(
@@ -251,7 +251,7 @@ describe('deployed Luna low candidate', () => {
                 type: 'text',
                 text: JSON.stringify(
                   Object.fromEntries(
-                    Array.from({ length: 10 }, (_, i) => [
+                    Array.from({ length: 8 }, (_, i) => [
                       'rank' + (i + 1),
                       i < 3 ? i : null,
                     ]),

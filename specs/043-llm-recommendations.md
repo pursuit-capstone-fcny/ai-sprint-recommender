@@ -14,14 +14,14 @@ Live calls remain disabled pending #8 provider, privacy and budget approval and
   with an area or tool remains valid. Loading is announced and focus moves to
   the results heading.
 - Given a success response, when the page selects cards, then all IDs are
-  active in the same catalog version. The first three preserve model order while
+  active in the same catalog version, with at most eight displayed. The first three preserve model order while
   reserving slots for two primary tasks; two same-task videos may remain.
-  Demoted videos stay available through Show more. Fewer than two distinct primary task tags causes
+  Demoted videos follow within the eight-card cap; there is no further expansion. Fewer than two distinct primary task tags causes
   complete rules fallback; untagged picks and secondary tags do not count toward
   that minimum. Unknown, duplicate or retired IDs reject the whole response.
 - Given semantic picks, when cards render, then their content and links come
   from the catalog. Reasons cite matched tags or say "Suggested for your goal".
-  Cross-area picks are labeled. Show more uses the same validated response.
+  Cross-area picks are labeled. Smaller valid sets are not padded.
 - Given a disabled endpoint, invalid response, version mismatch, thin result
   set, provider failure or five-second deadline, when selection completes,
   then standard matching replaces the entire result set. Empty catalogs retain
@@ -41,7 +41,7 @@ Live calls remain disabled pending #8 provider, privacy and budget approval and
 ## Validation
 
 Automated tests cover semantic ordering, catalog and task validation, complete
-fallback, a stalled response body, cancellation, rapid resubmission, expansion,
+fallback, a stalled response body, cancellation, rapid resubmission, the eight-card cap,
 StrictMode event counts and default-disabled behavior. CI makes no paid calls.
 
 Before enablement: approve the disclosure under #8, pass #19, then set both the
