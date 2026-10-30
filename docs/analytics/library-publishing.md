@@ -74,3 +74,48 @@ production logging is enabled just to change catalog transport.
    the existing LLM PR branch, preserving its work and explicit dependency.
 4. Published inventory for private analytics and usage validation, failure tests,
    deployment/handoff instructions and preview verification.
+
+## Publisher installation
+
+Copy `library/config.example.json` to ignored `library/config.local.json` as the
+one-time handoff record. Do not put credentials in that file. Configure the
+Sheet-bound collector project's server-side properties:
+
+| Property                    | Value                                                                 |
+| --------------------------- | --------------------------------------------------------------------- |
+| `LIBRARY_SOURCE_SHEET_URL`  | The source Sheet link, matching the bound workbook                    |
+| `LIBRARY_GITHUB_REPOSITORY` | `OWNER/REPOSITORY`                                                    |
+| `LIBRARY_GITHUB_TOKEN`      | Repository-scoped Contents/Actions write credential, server-side only |
+| `LIBRARY_DATA_BRANCH`       | `library-data-test` for test, `library-data` for production           |
+| `LIBRARY_WORKFLOW_REF`      | Reviewed workflow branch; production requires `main`                  |
+| `LIBRARY_ENVIRONMENT`       | `test` or `production`                                                |
+| `LIBRARY_PUBLIC_ORIGIN`     | HTTPS origin of the matching static catalog Worker                    |
+
+Build the producer bundle and upload `Code.js`, `LibraryPublisher.html` and the
+manifest, preserving unrelated project files. Review the added external-request
+and container-UI scopes. Run `installLibraryPublisher` once as the technical
+owner. It adds one installable Sheet-open trigger without replacing an existing
+`onOpen` handler. Staff reopen the Sheet, choose **Library → Publish library**,
+and press the sidebar's **Publish library** button. **Check status** reports the
+job outcome and verifies the live manifest before confirming success.
+
+The first publish creates an orphan data branch containing only public catalog
+files. Later publishes append immutable versions and update its manifest in one
+non-force Git commit. The workflow file must first be available on the repository's
+default branch for GitHub workflow dispatch. Configure GitHub test/production
+environments with the existing Cloudflare deployment credentials and any required
+production reviewer restrictions. This source change does not create or reveal
+those credentials. Catalog publishing deploys `ai-sprint-library-test` or
+`ai-sprint-library`, never the recommender Worker.
+
+If dispatch times out, status stays unknown and repeated clicks cannot start a
+new publication. The owner checks GitHub runs for the recorded request before
+clearing `LIBRARY_PUBLISH_STATE` to recover a confirmed missing job. Never clear
+that state while a matching job is running. Validation/deployment failures leave
+the last deployed assets intact. Roll back by publishing the approved older
+snapshot through the same validated workflow. The workflow unions the selected
+commit's snapshots with the newest data-branch archive, validates every snapshot,
+and changes only the selected current manifest. A rollback cannot remove newer
+immutable snapshot URLs. Old immutable snapshots remain
+public after retirement; publishing retirement removes them from current
+recommendations, not from the historical archive.

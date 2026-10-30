@@ -59,3 +59,11 @@ export function doGet() {
     ContentService.MimeType.JSON,
   );
 }
+
+export {
+  publishLibrary,
+  libraryPublishStatus,
+  showLibraryMenu,
+  openLibraryPublisher,
+  installLibraryPublisher,
+} from './library-publisher';
