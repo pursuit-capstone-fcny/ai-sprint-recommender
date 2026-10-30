@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "6ef964e2d6cd684e6f546aac5f126eb0a88722bc",
+  "approvedWorkflowRunId": "41129845902",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T22:17:35Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v20",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized Haiku transport/diagnostic fixes and mixed Operations breadth. V19 fixes those observed failures but narrows ordinary benchmark lists. V20 moves the same mixed-goal paragraph inside the existing mixed-goal clause, preserving every original eligibility and uniqueness sentence in order. Transport changes stay fixed. Removing the added text restores V18 requests. No profile IDs, video IDs, labels, catalog fields, task-diversity rules, model effort, output schema, caps or deadlines change. Run the same thirty benchmark requests and ten probes with no per-case retries. Preserve V19 as a failed supplemental-breadth candidate.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Approved shared $3 test cap, carrying forward $1.842975 including $0.225000 historical unknown reservations and V19 cost $0.080040. Remaining $1.157025. At most forty reservations of $0.006756, total $0.270240. No reset, refund or repricing. This attempt authorizes Haiku only; production LLM calls and logging stay disabled.",
+  "allowanceMicrodollars": 1157025,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1842975,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}

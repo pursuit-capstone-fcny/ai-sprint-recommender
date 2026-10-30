@@ -206,3 +206,6 @@ remain pending.
 - Given a mixed goal, when Haiku V20 applies breadth guidance, then scope that
   guidance within the mixed-goal instruction and retain every original
   eligibility and uniqueness rule. Preserve ordinary-goal breadth in evaluation.
+
+- Given a mixed goal, when Haiku V21 selects candidates, then restate its real
+  work before the breadth pass and retain the original final validation checks.

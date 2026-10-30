@@ -1,0 +1,7 @@
+{
+  "runId": "41129845902",
+  "runAttempt": 1,
+  "failedStep": "Verify current owner approval before any test network work",
+  "paidCalls": 0,
+  "note": "The approval variable was absent in the first-attempt snapshot. The exact approval permits attempt 2 only."
+}

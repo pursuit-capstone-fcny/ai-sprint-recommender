@@ -89,9 +89,7 @@ describe('optimized Haiku low request', () => {
       if (profile.input.goal.trim()) {
         expect(
           haiku.request.system.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION),
-        ).toBeGreaterThan(
-          haiku.request.system.indexOf('Final selection procedure'),
-        );
+        ).toBeLessThan(haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION));
         expect(haiku.request.system).toContain(
           ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
         );

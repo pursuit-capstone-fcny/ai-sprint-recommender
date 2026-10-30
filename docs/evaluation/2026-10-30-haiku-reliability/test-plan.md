@@ -81,3 +81,20 @@ Every original V12 final-check sentence stays in its original order, and removin
 only the inserted paragraph restores exact V18 requests. The placement test
 fails before the change. Transport, model settings and every fixed target above
 remain unchanged. Run another forty cases with at most $0.270240 reserved.
+
+## V20 result and V21 sequence check
+
+V20 run 41129845902 attempt 2 keeps 10/10 each, forty final diagnostics, no
+transport failures and four injection abstentions. It regresses mixed Operations
+and the Operations wording control to five cards. Overall breadth is 22/30,
+still below the fixed 24/30 target. It fails the supplemental audit and is
+retained. Cost $0.080044 brings task spend to $0.160084, cumulative ceiling
+$1.923019 and remaining allowance $1.076981. Shutdown and key removal pass.
+
+The leading hypothesis is that classifying mixed text after selection narrows
+the selected set. Alternatives remain conflicting breadth priorities and sample
+variation. V21 moves the same paragraph before the breadth procedure, so scope
+precedes candidate selection. It changes no words, model settings or validation
+targets. The original final checks are again contiguous and last. A placement
+test goes red before the change; removing the added paragraph still reproduces
+V18 request hashes. Repeat the same forty cases with at most $0.270240 reserved.
