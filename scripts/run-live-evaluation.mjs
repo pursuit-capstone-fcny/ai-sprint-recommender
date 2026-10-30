@@ -49,6 +49,9 @@ export async function main(args = process.argv.slice(2)) {
   const bundled = await build({
     stdin: {
       contents: `
+    export { afterEvaluationCall } from './src/evaluation/cooldown';
+    export { evaluationFetch, mergeDiagnostic } from './src/evaluation/diagnostic-fetch';
+    export { DiagnosticSchema } from './src/contracts/evaluationDiagnostic';
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
     export { validateLiveApproval, assertApprovalWindow } from './src/evaluation/approval';
@@ -148,9 +151,30 @@ export async function main(args = process.argv.slice(2)) {
   const abort = new AbortController();
   const overallTimer = setTimeout(() => abort.abort(), 600_000);
   const observed = new Map();
+  const directDiagnostics = new Map();
+  let rateKey;
+  if (!checkDiagnostics) {
+    const candidate = approval.modelVersion === 'gpt-6-luna' ? 'luna' : 'haiku';
+    const secrets = JSON.parse(
+      await readFile(
+        `${process.env.RUNNER_TEMP}/${candidate}-test-secrets.json`,
+        'utf8',
+      ),
+    );
+    rateKey = secrets.LLM_RATE_KEY;
+    if (!rateKey)
+      throw new Error('Authenticated diagnostic capture is required');
+  }
+  const captureFetch = rateKey
+    ? contracts.evaluationFetch(approval.endpoint, rateKey, (entry) => {
+        contracts.mergeDiagnostic(observed, entry);
+        contracts.mergeDiagnostic(directDiagnostics, entry);
+      })
+    : fetch;
   const probeIds = new Set();
   const readinessProbes = [];
   const extraResults = [];
+  const probeCooldowns = [];
   let evaluator;
   let tail;
   let tailFailed = false;
@@ -188,7 +212,10 @@ export async function main(args = process.argv.slice(2)) {
       ['scripts/evaluate-recommendations.mjs', ...args],
       {
         stdio: 'ignore',
-        env: process.env,
+        env: {
+          ...process.env,
+          ...(rateKey ? { LLM_EVALUATION_RATE_KEY: rateKey } : {}),
+        },
       },
     );
     const exitCode = await new Promise((resolveExit) => {
@@ -201,6 +228,25 @@ export async function main(args = process.argv.slice(2)) {
       throw new Error('Evaluator failed; partial progress is preserved.');
   }
   async function saveDiagnostics() {
+    await writeFile(
+      `${liveDirectory}/direct-response-diagnostics.json`,
+      `${JSON.stringify([...directDiagnostics.values()], null, 2)}\n`,
+    );
+    try {
+      const saved = JSON.parse(
+        await readFile(`${liveDirectory}/response-diagnostics.json`, 'utf8'),
+      );
+      for (const entry of z
+        .array(contracts.DiagnosticSchema)
+        .max(100)
+        .parse(saved))
+        contracts.mergeDiagnostic(observed, entry);
+    } catch (error) {
+      if (error?.code !== 'ENOENT')
+        throw new Error('Invalid response diagnostic capture', {
+          cause: error,
+        });
+    }
     let trialIds = new Set();
     try {
       const progress = JSON.parse(
@@ -320,7 +366,7 @@ export async function main(args = process.argv.slice(2)) {
     parser = createDiagnosticStream((entry) => {
       if (observed.size >= 500 && !observed.has(entry.requestId))
         throw new Error('Too many diagnostic records.');
-      observed.set(entry.requestId, entry);
+      contracts.mergeDiagnostic(observed, entry);
     });
     tail.stdout.setEncoding('utf8');
     tail.stdout.on('data', (chunk) => {
@@ -339,7 +385,7 @@ export async function main(args = process.argv.slice(2)) {
       checkRunning();
       ready = hasReadyDiagnostic(observed, probeIds, expectedOutcome);
       if (ready) break;
-      const response = await fetch(endpoint, {
+      const response = await captureFetch(endpoint, {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         credentials: 'omit',
@@ -427,7 +473,7 @@ export async function main(args = process.argv.slice(2)) {
     await contracts.warmCatalog(
       benchmark,
       approval,
-      fetch,
+      captureFetch,
       async (rows) =>
         writeFile(
           `${liveDirectory}/warmups.json`,
@@ -443,7 +489,7 @@ export async function main(args = process.argv.slice(2)) {
       let requestId = null;
       let response;
       try {
-        const result = await fetch(endpoint, {
+        const result = await captureFetch(endpoint, {
           method: 'POST',
           headers: { 'content-type': 'application/json' },
           body: JSON.stringify(testCase.input),
@@ -500,6 +546,18 @@ export async function main(args = process.argv.slice(2)) {
           response.promptVersion !== approval.promptVersion)
       )
         throw new Error('Probe candidate configuration changed.');
+      await contracts.afterEvaluationCall(
+        response,
+        requestId,
+        async (entry) => {
+          probeCooldowns.push(entry);
+          await writeFile(
+            `${liveDirectory}/probe-cooldowns.json`,
+            `${JSON.stringify(probeCooldowns, null, 2)}\n`,
+          );
+        },
+        pause,
+      );
     }
     const allIds = [
       ...ids,
@@ -512,6 +570,7 @@ export async function main(args = process.argv.slice(2)) {
       .filter((row) => row.phase === 'cache-check')
       .map((row) => row.requestId)
       .filter(Boolean);
+    await saveDiagnostics();
     const diagnosticIds = [...allIds, ...warmupIds];
     const diagnosticsDeadline = Date.now() + 15_000;
     while (

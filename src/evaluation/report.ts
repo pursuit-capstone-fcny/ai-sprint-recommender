@@ -57,6 +57,8 @@ export const DiagnosticsSchema = z
       catalogMs: z.number().nonnegative().max(600_000).optional(),
       budgetMs: z.number().nonnegative().max(600_000).optional(),
       providerMs: z.number().nonnegative().max(600_000).optional(),
+      providerHeadersMs: z.number().nonnegative().max(600_000).optional(),
+      providerBodyMs: z.number().nonnegative().max(600_000).optional(),
       inputTokens: z.number().int().nonnegative().optional(),
       outputTokens: z.number().int().nonnegative().optional(),
       reasoningTokens: z.number().int().nonnegative().optional(),

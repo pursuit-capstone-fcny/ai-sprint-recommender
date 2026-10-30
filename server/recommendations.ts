@@ -1,5 +1,9 @@
 import { z } from 'zod';
 import {
+  DiagnosticSchema,
+  EVALUATION_DIAGNOSTIC_HEADER,
+} from '../src/contracts/evaluationDiagnostic';
+import {
   RECOMMENDATION_DEADLINE_MS,
   RECOMMENDATION_PROMPT_VERSION,
   RecommendationIdsSchema,
@@ -43,6 +47,8 @@ export interface Diagnostic extends Partial<ProviderValidation> {
   catalogMs?: number;
   budgetMs?: number;
   providerMs?: number;
+  providerHeadersMs?: number;
+  providerBodyMs?: number;
   accountingFinal?: boolean;
   phase?: 'request' | 'catalog' | 'budget' | 'provider' | 'validation';
   costMicrodollars?: number;
@@ -264,7 +270,18 @@ export async function recommend(
       diagnostic.providerDispatched = true;
       diagnostic.phase = 'provider';
       const providerStarted = Date.now();
-      const result = await provider(body, abort.signal).finally(() => {
+      const result = await provider(body, abort.signal, (timing) => {
+        for (const key of ['providerHeadersMs', 'providerBodyMs'] as const) {
+          const ms = timing[key];
+          if (
+            ms !== undefined &&
+            Number.isFinite(ms) &&
+            ms >= 0 &&
+            ms <= 600_000
+          )
+            diagnostic[key] = ms;
+        }
+      }).finally(() => {
         diagnostic.providerMs = Date.now() - providerStarted;
       });
       diagnostic.phase = 'validation';
@@ -359,21 +376,39 @@ export async function recommend(
       if (env.LLM_DIAGNOSTICS_ENABLED === 'true')
         console.info(JSON.stringify(entry));
     });
-  const emit = () =>
-    record({
-      ...diagnostic,
-      accountingFinal: finished,
-      // Active() prevents any later dispatch after the response deadline.
-      ...(!diagnostic.providerDispatched
-        ? { inputTokens: 0, outputTokens: 0, costMicrodollars: 0 }
-        : {}),
-    });
+  const snapshot = () => ({
+    ...diagnostic,
+    accountingFinal: finished,
+    // Active() prevents any later dispatch after the response deadline.
+    ...(!diagnostic.providerDispatched
+      ? { inputTokens: 0, outputTokens: 0, costMicrodollars: 0 }
+      : {}),
+  });
+  const emit = () => record(snapshot());
   emit();
+  const responseHeaders = new Headers({
+    ...headers,
+    'x-recommendation-request-id': requestId,
+  });
+  if (
+    env.LLM_ENVIRONMENT === 'test' &&
+    env.LLM_DIAGNOSTICS_ENABLED === 'true' &&
+    typeof env.LLM_RATE_KEY === 'string' &&
+    env.LLM_RATE_KEY.length >= 32 &&
+    request.headers.get('Authorization') === `Bearer ${env.LLM_RATE_KEY}`
+  ) {
+    const parsed = DiagnosticSchema.safeParse(snapshot());
+    if (parsed.success)
+      responseHeaders.set(
+        EVALUATION_DIAGNOSTIC_HEADER,
+        JSON.stringify(parsed.data),
+      );
+  }
   // Keep abort/settlement work alive after returning the bounded browser response.
   // Late known usage updates accounting only; it never changes the displayed picks.
   if (!finished && deps.waitUntil) deps.waitUntil(execution.then(emit));
   return new Response(JSON.stringify(result), {
     status,
-    headers: { ...headers, 'x-recommendation-request-id': requestId },
+    headers: responseHeaders,
   });
 }

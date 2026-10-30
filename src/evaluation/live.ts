@@ -297,6 +297,10 @@ export async function runLiveTrials(
   saveProgress: (progress: Trials) => Promise<void> = async () => {},
   saveWarmups: (warmups: Warmup[]) => Promise<void> = async () => {},
   checkout: Checkout = readCheckout(),
+  afterCall: (
+    response: RecommendationResponse,
+    requestId: string | null,
+  ) => Promise<void> = async () => {},
 ): Promise<Trials> {
   if (!allowPaid || benchmark.approval.status !== 'approved')
     throw new Error(
@@ -354,6 +358,7 @@ export async function runLiveTrials(
           'Preview configuration differs from the approved candidate. Stop and inspect server diagnostics.',
         );
       }
+      await afterCall(response, observation.requestId);
     }
   }
   return {

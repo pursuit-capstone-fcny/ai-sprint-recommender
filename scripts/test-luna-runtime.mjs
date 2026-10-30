@@ -27,7 +27,10 @@ try {
               if(outbound.redirect!=='manual')throw new Error('Redirects must not be followed');
               if(redirect)return new Response(null,{status:302,headers:{location:'https://example.com/'}});
               const text=JSON.stringify(Object.fromEntries(Array.from({length:8},(_,i)=>['rank'+(i+1),i===0?0:null])));
-              return Response.json(${haiku ? "{stop_reason:'end_turn',usage:{input_tokens:100,output_tokens:50},content:[{type:'text',text}]}" : "{id:'synthetic',model:'gpt-6-luna',status:'completed',usage:{input_tokens:100,output_tokens:50},output:[{type:'message',content:[{type:'output_text',text}]}]}"});
+              const payload = ${haiku ? "{stop_reason:'end_turn',usage:{input_tokens:100,output_tokens:50},content:[{type:'text',text}]}" : "{id:'synthetic',model:'gpt-6-luna',status:'completed',usage:{input_tokens:100,output_tokens:50},output:[{type:'message',content:[{type:'output_text',text}]}]}"};
+              if (${haiku}) return Response.json(payload);
+              const bytes=new TextEncoder().encode('event: response.completed\\ndata: '+JSON.stringify({type:'response.completed',response:payload})+'\\n\\n');
+              return new Response(new ReadableStream({start(controller){controller.enqueue(bytes);},cancel(){return new Promise(()=>{});}}),{headers:{'content-type':'text/event-stream'}});
             });
             const result=await provider({catalogIds:['abcdefghijk'],request:{system:'Synthetic runtime test',messages:[],output_config:{format:{schema:{}}}}},new AbortController().signal);
             return Response.json({ok:true,calls,ids:result.value.youtubeIds});

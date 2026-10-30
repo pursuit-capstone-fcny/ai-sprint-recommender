@@ -1,11 +1,19 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Luna and Haiku medium meet the numeric target; Haiku low evidence incomplete; client approval pending
+- **Status:** Latest expanded-output validation incomplete; reliability rerun pending; client approval pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given an independent case times out or encounters a transport/rate failure,
+  when continuing evaluation, then retain that failure and wait for its possible
+  concurrency lease to expire. Do not retry, refund its unknown spend, change
+  labels or change the task-diversity gate. Record waits outside request latency.
+- Given dropped console diagnostics, when evaluating authenticated test responses,
+  then capture their bounded diagnostic headers and retain later final accounting.
+  Missing evidence still fails validation; credentials and raw headers stay private.
 
 ### AC-19.1: Frozen benchmark
 

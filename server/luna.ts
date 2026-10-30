@@ -5,6 +5,7 @@ import {
 } from '../src/contracts/recommendation';
 import type { Provider, ProviderBody, ProviderValidation } from './anthropic';
 import { boundedJson } from './bounded-json';
+import { readLunaStream } from './luna-stream';
 
 export const LUNA_MODEL = 'gpt-6-luna';
 export const LUNA_ENDPOINT = 'https://api.openai.com/v1/responses';
@@ -212,12 +213,13 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
   };
 }
 
-// The deployed candidate uses the exact V7/low request used by the comparison.
+// Stream the same V10/low request; accept only a terminal event with measured usage.
 export function lunaProvider(
   key: string,
   fetcher: typeof fetch = fetch,
 ): Provider {
-  return async (body, signal) => {
+  return async (body, signal, timing) => {
+    const started = Date.now();
     const response = await fetcher(LUNA_ENDPOINT, {
       method: 'POST',
       signal,
@@ -227,13 +229,17 @@ export function lunaProvider(
         'content-type': 'application/json',
         Authorization: `Bearer ${key}`,
       },
-      body: JSON.stringify(lunaBody(body, 'low')),
+      body: JSON.stringify({ ...lunaBody(body, 'low'), stream: true }),
     });
+    timing?.({ providerHeadersMs: Date.now() - started });
     if (!response.ok) throw new Error('Provider failed');
-    const measured = readLunaResponse(
-      await boundedJson(response, 262_144),
-      body.catalogIds,
-    );
+    const bodyStarted = Date.now();
+    const payload = await (
+      response.headers.get('content-type')?.includes('text/event-stream')
+        ? readLunaStream(response, signal)
+        : boundedJson(response, 262_144)
+    ).finally(() => timing?.({ providerBodyMs: Date.now() - bodyStarted }));
+    const measured = readLunaResponse(payload, body.catalogIds);
     return {
       value:
         measured.youtubeIds === null

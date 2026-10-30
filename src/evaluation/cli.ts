@@ -10,6 +10,9 @@ import {
   parseEvaluationReport,
 } from './report';
 import { runLiveTrials } from './live';
+import { afterEvaluationCall, type Cooldown } from './cooldown';
+import { evaluationFetch, mergeDiagnostic } from './diagnostic-fetch';
+import type { EvaluationDiagnostic } from '../contracts/evaluationDiagnostic';
 import { readCheckout, validateLiveApproval } from './approval';
 
 async function readJson(path: string): Promise<unknown> {
@@ -53,25 +56,51 @@ export async function main(args = process.argv.slice(2)) {
   let trials = values.trials
     ? TrialsSchema.parse(await readJson(values.trials))
     : undefined;
+  const cooldowns: Cooldown[] = [];
+  const captured = new Map<string, EvaluationDiagnostic>();
+  const key = process.env.LLM_EVALUATION_RATE_KEY;
+  const capturedFetch =
+    liveApproval && key
+      ? evaluationFetch(liveApproval.endpoint, key, (entry) =>
+          mergeDiagnostic(captured, entry),
+        )
+      : fetch;
+  const saveCaptured = async () => {
+    if (key)
+      await writeFile(
+        resolve(output, 'response-diagnostics.json'),
+        `${JSON.stringify([...captured.values()], null, 2)}\n`,
+      );
+  };
   if (liveApproval)
     trials = await runLiveTrials(
       benchmark,
       liveApproval,
       values['allow-paid'],
-      fetch,
+      capturedFetch,
       async (progress) => {
+        await saveCaptured();
         await writeFile(
           resolve(output, 'live-progress.json'),
           `${JSON.stringify(progress, null, 2)}\n`,
         );
       },
       async (warmups) => {
+        await saveCaptured();
         await writeFile(
           resolve(output, 'warmups.json'),
           `${JSON.stringify(warmups, null, 2)}\n`,
         );
       },
       checkout,
+      (response, requestId) =>
+        afterEvaluationCall(response, requestId, async (entry) => {
+          cooldowns.push(entry);
+          await writeFile(
+            resolve(output, 'cooldowns.json'),
+            `${JSON.stringify(cooldowns, null, 2)}\n`,
+          );
+        }),
     );
   const report = evaluate(benchmark, {
     sourceRevision: `${checkout.sourceRevision}${checkout.dirty ? '-dirty' : ''}`,

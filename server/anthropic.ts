@@ -107,6 +107,10 @@ export interface ProviderResult extends Partial<ProviderValidation> {
 export type Provider = (
   body: ProviderBody,
   signal: AbortSignal,
+  timing?: (value: {
+    providerHeadersMs?: number;
+    providerBodyMs?: number;
+  }) => void,
 ) => Promise<ProviderResult>;
 
 // UTF-8 bytes conservatively bound visible text tokens. Reserve extra room for

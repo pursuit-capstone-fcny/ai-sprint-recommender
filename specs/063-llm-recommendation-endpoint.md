@@ -76,6 +76,14 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ### Luna test candidate
 
+- Given a streamed Luna response, when a terminal event includes validated
+  output and usage, then finish without waiting for transport close. Partial
+  text never counts as completion; aborts, malformed streams and missing usage
+  retain fallback and conservative accounting within the existing deadline.
+- Given an authenticated test runner, when diagnostics are enabled, then return
+  the bounded diagnostic in a response header as well as the console. Public
+  requests and production never receive that header. Late accounting can update
+  captured diagnostics but cannot replace the displayed result.
 - Given Jason's remaining original $1 allowance, when the test worker uses
   GPT-6 Luna low with standard reasoning and V7, then it uses the same public
   catalog, schema and 4.5-second deadline as the comparison. OpenAI production

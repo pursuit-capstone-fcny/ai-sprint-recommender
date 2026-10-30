@@ -83,9 +83,10 @@ describe('deployed Luna low candidate', () => {
     expect(fetcher.mock.calls[0][0]).toBe(
       'https://api.openai.com/v1/responses',
     );
-    expect(JSON.parse(String(fetcher.mock.calls[0][1]?.body))).toEqual(
-      lunaBody(body, 'low'),
-    );
+    expect(JSON.parse(String(fetcher.mock.calls[0][1]?.body))).toEqual({
+      ...lunaBody(body, 'low'),
+      stream: true,
+    });
     expect(measured).toMatchObject({
       inputTokens: 1000,
       outputTokens: 200,
@@ -326,3 +327,82 @@ describe('deployed Luna low candidate', () => {
     expect(response.headers.get('cache-control')).toBe('no-store');
   });
 });
+
+// Reproductions for the deployed timeout/capture failure modes. No external calls.
+describe('bounded transport and complete evaluation evidence', () => {
+  it('accepts a terminal response before transport close or cancel acknowledgement', async () => {
+    let controller!: ReadableStreamDefaultController<Uint8Array>;
+    const stream = new ReadableStream<Uint8Array>({
+      start(value) {
+        controller = value;
+      },
+      cancel: () => new Promise<void>(() => {}),
+    });
+    controller.enqueue(
+      new TextEncoder().encode(
+        `event: response.completed\ndata: ${JSON.stringify({ type: 'response.completed', response: output() })}\n\n`,
+      ),
+    );
+    const body = providerBody(intake, catalog, readLimits(env)!);
+    const pending = lunaProvider(
+      'fixture-key',
+      async () =>
+        new Response(stream, {
+          headers: { 'content-type': 'text/event-stream' },
+        }),
+    )(body, new AbortController().signal);
+    const result = await Promise.race([
+      pending,
+      new Promise<string>((resolve) =>
+        setTimeout(() => resolve('stalled'), 100),
+      ),
+    ]);
+    expect(result).not.toBe('stalled');
+    expect(result).toMatchObject({ inputTokens: 1000, outputTokens: 200 });
+  });
+  it('returns authenticated test diagnostics even when the console transport drops every record', async () => {
+    const input = request();
+    input.headers.set('Authorization', `Bearer ${env.LLM_RATE_KEY}`);
+    const response = await recommend(
+      input,
+      { ...env, LLM_ENABLED: 'false', LLM_DIAGNOSTICS_ENABLED: 'true' },
+      { diagnostic: () => {} },
+    );
+    expect(response.headers.get('x-evaluation-diagnostic')).not.toBeNull();
+    expect(
+      JSON.parse(response.headers.get('x-evaluation-diagnostic')!),
+    ).toMatchObject({
+      requestId: response.headers.get('x-recommendation-request-id'),
+      environment: 'test',
+      outcome: 'disabled',
+      accountingFinal: true,
+      costMicrodollars: 0,
+    });
+  });
+});
+
+it.each([
+  { environment: 'production', key: 'correct', enabled: 'true' },
+  { environment: 'test', key: 'wrong', enabled: 'true' },
+  { environment: 'test', key: 'correct', enabled: 'false' },
+])(
+  'does not expose evaluation headers outside authenticated test diagnostics: %j',
+  async (configuration) => {
+    const input = request();
+    input.headers.set(
+      'Authorization',
+      `Bearer ${configuration.key === 'correct' ? env.LLM_RATE_KEY : 'wrong'}`,
+    );
+    const response = await recommend(
+      input,
+      {
+        ...env,
+        LLM_ENABLED: 'false',
+        LLM_ENVIRONMENT: configuration.environment,
+        LLM_DIAGNOSTICS_ENABLED: configuration.enabled,
+      },
+      { diagnostic: () => {} },
+    );
+    expect(response.headers.has('x-evaluation-diagnostic')).toBe(false);
+  },
+);
