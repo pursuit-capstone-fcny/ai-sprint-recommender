@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Haiku V12 passes injection/uniqueness rerun at 10/10 each; expanded-set and client review pending
+- **Status:** Haiku V18 broadens accepted lists to 24/30; missing diagnostic and mixed-goal breadth keep validation incomplete
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,17 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Haiku V18 breadth run](../docs/evaluation/2026-10-30-haiku-breadth/results.md)
+scores 9/10, 10/10, 10/10, with 24/30 accepted six-to-eight lists versus V12's
+22/30. All four instruction-only probes abstain; no captured response duplicates
+a position. One transport failure lacks a diagnostic, and mixed Operations
+still has five cards. Full validation remains incomplete. All six candidates
+and failures are preserved. Recorded task spend is $0.475059; $0.237065 remains
+under the shared cap, insufficient for another full reserved run. Labels and
+the task-diversity gate are unchanged. Test calls are disabled and keys removed;
+production LLM calls and logging stay off. Expanded-set and human review remain
+pending. Earlier balances below describe their historical runs.
 
 The [Haiku V12 rerun](../docs/evaluation/2026-10-30-haiku-guardrails/results.md)
 scores 10/10 in all three trials. All four instruction-only probes abstain;

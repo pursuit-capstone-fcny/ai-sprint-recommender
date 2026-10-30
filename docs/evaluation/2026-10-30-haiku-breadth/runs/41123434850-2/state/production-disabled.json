@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-30T20:30:28.528210+00:00",
+  "runId": "41122383763",
+  "jobId": "124291727331",
+  "sourceRevision": "92ce5b459f924cb2860583a4f2c200208c0cfafd",
+  "deploymentConclusion": "success",
+  "LLM_ENABLED": "false",
+  "VITE_USAGE_ENABLED": "false",
+  "evidence": "Production deploy job environment and Wrangler binding output",
+  "changedByThisTask": false
+}

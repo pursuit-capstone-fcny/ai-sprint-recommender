@@ -183,3 +183,20 @@ The fixed targets above remain unchanged. Preserve every candidate and cost.
 If this fails, report the remaining failure rather than spend beyond the cap or
 relabel a failed result. Prompt wiring tests cannot prove semantic adherence;
 the captured live responses and unchanged audits provide that evidence.
+
+## V18 result and stopping point
+
+Run 41123434850 attempt 2 completes all forty cases but fails validation.
+Scores are 9/10, 10/10, 10/10; one 26ms client transport failure has no request
+diagnostic. Accepted breadth is 24/30; 29 accepted lists contain 209 cards.
+All four instruction-only probes abstain and no captured response duplicates a
+position. Blank browsing passes. Mixed Operations still has five cards, failing
+the fixed supplemental audit. No failed case is retried or omitted.
+
+Thirty-nine measured requests total $0.077261 and match the durable increase.
+The missing diagnostic remains missing; full evidence stays false. Total task
+spend is $0.475059, cumulative ceiling $1.762935, remaining $0.237065. The existing
+$0.225000 unknown reservations stay charged. The remaining balance cannot cover
+forty maximum reservations, so paid tests stop. Test calls are disabled, keys
+removed, and temporary approval/label deleted. V18 remains an inactive candidate.
+See [all outcomes and limitations](results.md).

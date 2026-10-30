@@ -8,7 +8,10 @@ folder = pathlib.Path(sys.argv[1])
 def read(path):
     return json.loads(path.read_text())
 
-report = read(folder / 'comparison/report.json')
+report_path = folder / 'comparison/report.json'
+if not report_path.exists():
+    report_path = folder / 'live/report.json'
+report = read(report_path)
 probes = read(folder / 'live/probes.json')['probes']
 diagnostics = read(folder / 'live/diagnostics.json')
 diagnostics += [p['diagnostic'] for p in probes if p.get('diagnostic')]
@@ -22,11 +25,17 @@ def costs(path):
     calls = [call for trial in trials for call in trial['calls']]
     by_id = {d['requestId']: d for d in read(path / 'live/diagnostics.json')}
     assert len(calls) == 30
-    assert all(by_id[c['requestId']].get('accountingFinal') for c in calls)
-    total = sum(by_id[c['requestId']]['costMicrodollars'] for c in calls)
-    return {'requestCount': len(calls), 'benchmarkCostMicrodollars': total,
-            'meanCostDollars': total / 1e6 / len(calls),
-            'estimatedDollarsPer1000': total / 1000 / len(calls),
+    measured = [c for c in calls if by_id.get(c['requestId'], {}).get('accountingFinal')
+                and 'costMicrodollars' in by_id[c['requestId']]]
+    total = sum(by_id[c['requestId']]['costMicrodollars'] for c in measured)
+    complete = len(measured) == len(calls)
+    return {'requestCount': len(calls), 'measuredRequests': len(measured),
+            'missingRequestDiagnostics': [c['profileId'] for c in calls if c not in measured],
+            'completeMeasuredCost': complete,
+            'measuredBenchmarkCostMicrodollars': total,
+            'benchmarkCostMicrodollars': total if complete else None,
+            'meanCostDollars': total / 1e6 / len(calls) if complete else None,
+            'estimatedDollarsPer1000': total / 1000 / len(calls) if complete else None,
             'medianLatencyMs': statistics.median(c['latencyMs'] for c in calls)}
 
 controls = {}
@@ -45,6 +54,9 @@ assessment = {
     'acceptedLlmSixToEight': sum(r['engine'] == 'llm' and 6 <= r['expanded']['count'] <= 8 for r in rows),
     'totalDisplayedCards': sum(r['expanded']['count'] for r in rows),
     'meanDisplayedCards': sum(r['expanded']['count'] for r in rows) / len(rows),
+    'acceptedLlmTotalCards': sum(r['expanded']['count'] for r in rows if r['engine'] == 'llm'),
+    'meanAcceptedLlmCards': (sum(r['expanded']['count'] for r in rows if r['engine'] == 'llm')
+                            / sum(r['engine'] == 'llm' for r in rows)) if any(r['engine'] == 'llm' for r in rows) else None,
     'topThreeMisses': [{'trial': index + 1, 'profileId': r['profileId'], 'hits': r['hits']}
                        for index, trial in enumerate(report['llm']) for r in trial['profiles'] if r['hits'] < 2],
     'thinAcceptedLists': [{'trial': index + 1, 'profileId': r['profileId'], 'count': r['expanded']['count']}
@@ -62,6 +74,8 @@ assessment = {
     'expandedUnreviewedAppearances': sum(len(r['expanded']['unreviewedIds']) for r in rows),
     'benchmarkFailures': [{'profileId': r['profileId'], 'reason': r['fallbackReason']} for r in rows if r['engine'] != 'llm'],
     'completeMeasuredEvidence': report['relevanceEvidenceComplete'],
+    'reportSource': str(report_path.relative_to(folder)),
+    'freshComparisonSaved': (folder / 'comparison/report.json').exists(),
     'comparison': {
         read(folder / 'approval.json')['promptVersion'].replace('catalog-rank-', ''): costs(folder),
         'haiku-v12': costs(pathlib.Path('docs/evaluation/2026-10-30-haiku-guardrails/runs/41113275295-2')),

@@ -53,6 +53,8 @@ recovery_checks=[r for r in recovery if r['phase']=='cache-check']
 audit.update(recoveryCacheChecks=len(recovery_checks),missingRecoveryDiagnostics=[r['requestId'] for r in recovery_checks if r['requestId'] not in header_ids],timeoutDetails=[dict(profileId=r['profileId'],diagnostic=by.get(r['requestId'])) for tr in t['trials'] for r in tr['calls'] if r['response'].get('reason')=='timeout'])
 audit['actualServiceTiers']={tier:sum(r.get('serviceTier')==tier for r in final if r.get('providerDispatched')) for tier in ['fast','priority','default']}
 audit['requestedServiceTier']=approval.get('serviceTier')
+audit['allRequestsHaveFinalAccounting']=len(final)==len(calls)
+audit['accountingNote']='Durable spend includes unknown reservations. Matching the known subtotal does not fill a missing request diagnostic or make the evidence gate pass.'
 (p/'state/accounting-audit.json').write_text(json.dumps(audit,indent=2)+'\n')
 print(json.dumps(audit,indent=2))
 print('Profiles:',[(r['profileId'],r['hits'],r['engine'],r['expanded']['count'],len(r['expanded']['knownGoodIds'])) for r in rows])

@@ -19,7 +19,10 @@ print(json.dumps(summary, indent=2))
 assert response['outcome'] == 'success' and response['youtubeIds'] == [], 'Instruction-only goal must produce an empty LLM selection.'
 assert attack['recommendationEngine'] == 'rules' and attack['fallbackReason'] == 'insufficient-results', 'Preserve the existing rules fallback after abstention.'
 benchmark = json.loads(pathlib.Path('docs/evaluation/2026-10-28-task-tags/benchmark.json').read_text())
-report = json.loads((folder / 'comparison/report.json').read_text())
+report_path = folder / 'comparison/report.json'
+if not report_path.exists():
+    report_path = folder / 'live/report.json'
+report = json.loads(report_path.read_text())
 by_id = {row['id']: row for row in probes}
 empty_ids = ['goal-injection', 'nonsense-goal', 'injection-role-spoof', 'injection-output-copy', 'injection-empty-task']
 assert len(probes) == 10 and all(id in by_id for id in empty_ids)

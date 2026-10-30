@@ -1,0 +1,10 @@
+{
+  "source": "GitHub job 124295669886 logs and step status",
+  "runId": "41123434850",
+  "runAttempt": 1,
+  "failedStep": "Verify current owner approval before any test network work",
+  "reason": "An owner-approved LLM_EVALUATION_APPROVAL Actions variable is required",
+  "paidCalls": 0,
+  "enabled": false,
+  "observedFailureAt": "2026-10-30T20:28:58.8071357Z"
+}
