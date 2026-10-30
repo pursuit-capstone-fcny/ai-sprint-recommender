@@ -2,6 +2,15 @@
 import { catalogVersion, readCatalogWorkbook } from './catalog-sheet';
 import { serveCatalog } from './handler';
 
+export {
+  clearAnalytics,
+  initializeAnalytics,
+  refreshAnalytics,
+  installAnalyticsTriggers,
+  refreshAnalyticsOnEdit,
+  analyticsReportLinks,
+} from './analytics-sheet';
+
 export { doPost, initializeUsageLog, purgeUsageLog } from './usage-sheet';
 
 export function doGet() {

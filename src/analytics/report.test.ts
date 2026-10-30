@@ -47,6 +47,37 @@ const task = (report: ReturnType<typeof run>, tag = 'grant reports') =>
   report.tags.find((row) => row.category === 'task' && row.tag === tag)!;
 
 describe('MVP analytics aggregation', () => {
+  it('keeps daily/source/mode facts additive and preserves zero inventory for Looker parameter controls', () => {
+    const report = run(
+      [search(), record(2), record(3, { src: 'team', searchId: uuid(67) })],
+      { ...window, includeTeam: true },
+    );
+    const facts = report.facts.filter(
+      (row) =>
+        row.entity === 'video' && row.youtubeId === catalog.items[0].youtubeId,
+    );
+    expect(facts.reduce((sum, row) => sum + row.appearances, 0)).toBe(2);
+    expect(facts.find((row) => row.source === 'team')).toMatchObject({
+      dateKey: 20261020,
+      mode: 'recommendations',
+      appearances: 1,
+    });
+    expect(
+      report.facts.some(
+        (row) =>
+          row.entity === 'tag' &&
+          row.tag === 'Claude' &&
+          row.dateKey === 0 &&
+          row.searches === 0,
+      ),
+    ).toBe(true);
+    expect(
+      report.facts
+        .filter((row) => row.entity === 'tag')
+        .reduce((sum, row) => sum + row.searches, 0),
+    ).toBe(3);
+  });
+
   it('retains cross-tool keyword associations when the video has different catalog tags', () => {
     const report = run([search(1, { tools: ['Claude'] }), record(2)], {
       ...window,
