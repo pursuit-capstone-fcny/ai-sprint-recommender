@@ -1,8 +1,10 @@
-import {
-  parsePublicCatalog,
-  type PublicCatalog,
-} from '../src/contracts/publicCatalog';
+import { type PublicCatalog } from '../src/contracts/publicCatalog';
 import { boundedJson } from './bounded-json';
+import {
+  readPublishedCatalog,
+  readPublishedManifest,
+  verifyPublishedCatalog,
+} from '../src/library/read';
 
 export const CATALOG_CACHE_SECONDS = 60;
 const MAX_CATALOG_BYTES = 1_048_576;
@@ -33,13 +35,22 @@ export async function readCatalogSnapshot(options: {
   origin: string;
   source: string;
   requestedVersion?: string;
+  currentVersion?: string;
   signal: AbortSignal;
   fetcher: typeof fetch;
   cache?: CatalogCache;
   waitUntil?: (task: Promise<unknown>) => void;
 }): Promise<PublicCatalog> {
   const { origin, source, requestedVersion, signal, fetcher, cache } = options;
-  if (cache) {
+  if (!requestedVersion) {
+    const manifest = await readPublishedManifest(source, signal, fetcher);
+    return readCatalogSnapshot({
+      ...options,
+      requestedVersion: manifest.catalogVersion,
+      currentVersion: manifest.catalogVersion,
+    });
+  }
+  if (cache && requestedVersion) {
     try {
       const cached = await cache.match(
         catalogCacheKey(origin, source, requestedVersion),
@@ -54,7 +65,7 @@ export async function readCatalogSnapshot(options: {
         age >= 0 &&
         age < CATALOG_CACHE_SECONDS * 1_000
       ) {
-        const catalog = parsePublicCatalog(
+        const catalog = await verifyPublishedCatalog(
           await boundedJson(cached, MAX_CATALOG_BYTES),
         );
         if (
@@ -68,16 +79,12 @@ export async function readCatalogSnapshot(options: {
     }
   }
   signal.throwIfAborted();
-  const response = await fetcher(source, {
+  const catalog = await readPublishedCatalog({
+    manifestUrl: source,
+    requestedVersion: options.currentVersion,
     signal,
-    redirect: 'follow',
-    credentials: 'omit',
-    referrerPolicy: 'no-referrer',
+    fetcher,
   });
-  if (!response.ok) throw new Error('Catalog unavailable');
-  const catalog = parsePublicCatalog(
-    await boundedJson(response, MAX_CATALOG_BYTES),
-  );
   signal.throwIfAborted();
   if (cache) {
     const save = async () => {

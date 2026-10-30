@@ -5,7 +5,7 @@ import {
   RECOMMENDATION_DEADLINE_MS,
 } from '../src/contracts/recommendation';
 import { recommend, type Diagnostic } from './recommendations';
-import { catalog, environment } from './test-helpers';
+import { catalog, environment, staticCatalogFetch } from './test-helpers';
 import type { Provider } from './anthropic';
 import type { CatalogCache } from './catalog-cache';
 
@@ -34,7 +34,7 @@ function setup() {
   const diagnostic = vi.fn<(entry: Diagnostic) => void>();
   const deps = {
     provider,
-    fetch: fetcher,
+    fetch: staticCatalogFetch(fetcher),
     budget,
     diagnostic,
     clientKey: async () => 'a'.repeat(64),
@@ -67,8 +67,12 @@ describe('recommendation endpoint', () => {
     vi.useFakeTimers();
     const { deps, provider, diagnostic } = setup();
     provider.mockImplementation(() => new Promise(() => undefined));
+    const began = Date.now();
     const pending = recommend(request(), environment, deps);
-    await vi.advanceTimersByTimeAsync(RECOMMENDATION_DEADLINE_MS - 500);
+    await vi.waitFor(() => expect(provider).toHaveBeenCalled());
+    await vi.advanceTimersByTimeAsync(
+      Math.max(0, 4_500 - (Date.now() - began)),
+    );
     expect(diagnostic).toHaveBeenCalledWith(
       expect.objectContaining({ outcome: 'timeout', latencyMs: 4_500 }),
     );
@@ -427,6 +431,7 @@ describe('recommendation endpoint', () => {
         ),
     );
     const pending = recommend(request(), environment, deps);
+    await vi.waitFor(() => expect(budget.reserve).toHaveBeenCalled());
     await vi.advanceTimersByTimeAsync(5_100);
     expect((await (await pending).json()).reason).toBe('timeout');
     expect(provider).not.toHaveBeenCalled();

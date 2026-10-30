@@ -1,25 +1,28 @@
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { createHash } from 'node:crypto';
 import worker from './worker';
 import { recommend } from './recommendations';
 import { catalog, environment } from './test-helpers';
-import type { CatalogCache } from './catalog-cache';
+import { catalogDataJson } from '../src/library/catalog';
 import { CATALOG_LOAD_DEADLINE_MS } from './catalog-route';
-
 afterEach(() => {
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
-
-describe('test catalog route', () => {
-  const get = (
-    env: Record<string, unknown> = environment,
-    path = '/api/catalog',
-    method = 'GET',
-  ) =>
-    worker.fetch(new Request(`https://example.test${path}`, { method }), env);
+const get = (
+  env: Record<string, unknown> = environment,
+  path = '/api/catalog',
+  method = 'GET',
+) => worker.fetch(new Request(`https://example.test${path}`, { method }), env);
+const manifest = (version = catalog.catalogVersion) => ({
+  schemaVersion: 1,
+  catalogVersion: version,
+  publishedAt: '2026-10-29T00:00:00Z',
+});
+describe('published catalog proxy', () => {
   it.each([{}, { ...environment, LLM_ENVIRONMENT: 'production' }])(
-    'keeps the route unavailable outside test deployments',
+    'preserves the test-only route boundary',
     async (env) => {
       const fetcher = vi.fn();
       vi.stubGlobal('fetch', fetcher);
@@ -31,7 +34,7 @@ describe('test catalog route', () => {
     ['/api/catalog?source=https://attacker.test', 'GET', 404],
     ['/api/catalog', 'POST', 405],
   ])(
-    'rejects request parameters and writes before loading the source',
+    'rejects request-controlled sources and writes',
     async (path, method, status) => {
       const fetcher = vi.fn();
       vi.stubGlobal('fetch', fetcher);
@@ -43,153 +46,92 @@ describe('test catalog route', () => {
   );
   it.each([
     undefined,
-    'https://attacker.test/catalog',
-    'https://script.google.com/macros/s/fixture/exec?private=value',
-    'https://private@script.google.com/macros/s/fixture/exec',
-    'https://script.google.com:8443/macros/s/fixture/exec',
-  ])('fails closed without a trusted configured source', async (source) => {
+    'http://library.test',
+    'https://library.test/private',
+    'https://name:pass@library.test',
+    'https://library.test:8443',
+  ])('fails closed on invalid configured origins', async (source) => {
     const fetcher = vi.fn();
     vi.stubGlobal('fetch', fetcher);
-    const response = await get({ ...environment, LLM_CATALOG_URL: source });
-    expect(response.status).toBe(503);
-    expect(await response.json()).toEqual({ error: 'CATALOG_UNAVAILABLE' });
+    expect((await get({ ...environment, LIBRARY_ORIGIN: source })).status).toBe(
+      503,
+    );
     expect(fetcher).not.toHaveBeenCalled();
   });
-  it.each([
-    { ...catalog, items: [{ ...catalog.items[0], status: 'retired' }] },
-    { ...catalog, items: [{ ...catalog.items[0], tools: ['unknown'] }] },
-    { private: 'private-value' },
-  ])(
-    'rejects invalid snapshots without exposing their content',
-    async (value) => {
-      vi.stubGlobal(
-        'fetch',
-        vi.fn(async () => Response.json(value)),
-      );
-      const response = await get();
-      expect(response.status).toBe(503);
-      expect(await response.json()).toEqual({ error: 'CATALOG_UNAVAILABLE' });
-    },
-  );
-  it('bounds an unresponsive upstream without leaking network details or retaining a timer', async () => {
-    vi.useFakeTimers();
-    const fetcher = vi.fn<typeof fetch>(() => new Promise(() => undefined));
-    vi.stubGlobal('fetch', fetcher);
-    const response = get();
-    await vi.advanceTimersByTimeAsync(CATALOG_LOAD_DEADLINE_MS);
-    expect((await response).status).toBe(504);
-    expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
-    expect(vi.getTimerCount()).toBe(0);
-  });
-  it('returns only public fields, with no browser caching or provider setup', async () => {
-    const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json({
-        ...catalog,
-        private: 'private-value',
-        items: catalog.items.map((item) => ({
-          ...item,
-          private: 'private-value',
-        })),
-      }),
+  it('reads a current manifest and verified immutable snapshot without provider configuration', async () => {
+    const fetcher = vi.fn<typeof fetch>(async (input) =>
+      Response.json(
+        String(input).endsWith('/current.json') ? manifest() : catalog,
+      ),
     );
     vi.stubGlobal('fetch', fetcher);
     const response = await get({
       LLM_ENVIRONMENT: 'test',
-      LLM_CATALOG_URL: environment.LLM_CATALOG_URL,
+      LIBRARY_ORIGIN: environment.LIBRARY_ORIGIN,
     });
     expect(response.status).toBe(200);
-    expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(response.headers.get('x-content-type-options')).toBe('nosniff');
     expect(await response.json()).toEqual(catalog);
-    expect(fetcher.mock.calls[0][0]).toBe(environment.LLM_CATALOG_URL);
-  });
-  it('loads a slow cold catalog before submission and refreshes expired snapshots before the next submission', async () => {
-    vi.useFakeTimers();
-    const entries = new Map<string, Response>();
-    const cache: CatalogCache = {
-      match: async (key) => entries.get(key.url)?.clone(),
-      put: async (key, value) => {
-        entries.set(key.url, value.clone());
-      },
-    };
-    const fetcher = vi.fn<typeof fetch>(
-      () =>
-        new Promise((resolve) => {
-          setTimeout(() => resolve(Response.json(catalog)), 5_200);
-        }),
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(fetcher.mock.calls[0][0]).toBe(
+      `${environment.LIBRARY_ORIGIN}/catalog/current.json`,
     );
-    vi.stubGlobal('fetch', fetcher);
-    vi.stubGlobal('caches', { default: cache });
-    const provider = vi.fn(async () => ({
-      value: { youtubeIds: [catalog.items[0].youtubeId] },
-      inputTokens: 100,
-      outputTokens: 20,
-    }));
-    const deps = {
-      provider,
-      budget: {
-        reserve: async () => ({ ok: true as const }),
-        settle: async () => undefined,
-      },
-      clientKey: async () => 'fixture',
-    };
-    for (const loadNumber of [1, 2]) {
-      const loading = worker.fetch(
-        new Request('https://example.test/api/catalog'),
-        {
-          ...environment,
-          LLM_ENABLED: 'false',
-        },
-      );
-      await vi.advanceTimersByTimeAsync(5_200);
-      const response = await loading;
-      expect(response.status).toBe(200);
-      expect(await response.json()).toEqual(catalog);
-      // A second page load in the freshness window also avoids another Sheet read.
-      expect((await get()).status).toBe(200);
-      const result = await recommend(
-        new Request('https://example.test/api/recommendations', {
-          method: 'POST',
-          body: JSON.stringify({
-            functionArea: 'Operations',
-            tools: [],
-            goal: 'organize data',
-            catalogVersion: catalog.catalogVersion,
-          }),
-        }),
-        environment,
-        deps,
-      );
-      expect((await result.json()).outcome).toBe('success');
-      expect(fetcher).toHaveBeenCalledTimes(loadNumber);
-      await vi.advanceTimersByTimeAsync(60_000);
-    }
-    expect(provider).toHaveBeenCalledTimes(2);
+    expect(fetcher.mock.calls[1][0]).toContain(
+      `/versions/${catalog.catalogVersion.slice(7)}.json`,
+    );
   });
-  it('fetches the current catalog at expiry and never resurrects a removed item from an old version', async () => {
+  it.each([
+    { ...catalog, private: 'excluded' },
+    { ...catalog, items: [{ ...catalog.items[0], private: 'excluded' }] },
+    { ...catalog, items: [] },
+  ])('rejects leaked or tampered metadata', async (value) => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async (input) =>
+        Response.json(
+          String(input).endsWith('/current.json') ? manifest() : value,
+        ),
+      ),
+    );
+    const response = await get();
+    expect(response.status).toBe(503);
+    expect(await response.json()).toEqual({ error: 'CATALOG_UNAVAILABLE' });
+  });
+  it('bounds an unresponsive static origin', async () => {
     vi.useFakeTimers();
+    const fetcher = vi.fn<typeof fetch>(() => new Promise(() => undefined));
+    vi.stubGlobal('fetch', fetcher);
+    const pending = get();
+    await vi.advanceTimersByTimeAsync(CATALOG_LOAD_DEADLINE_MS);
+    expect((await pending).status).toBe(504);
+    expect(fetcher.mock.calls[0][1]?.signal?.aborted).toBe(true);
+    expect(vi.getTimerCount()).toBe(0);
+  });
+  it('revalidates the manifest and uses the new published catalog after retirement', async () => {
+    vi.useFakeTimers();
+    let current = catalog;
+    const updated = { ...catalog, items: catalog.items.slice(1) };
+    updated.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(updated)).digest('hex')}`;
     const entries = new Map<string, Response>();
     vi.stubGlobal('caches', {
       default: {
         match: async (key: Request) => entries.get(key.url)?.clone(),
-        put: async (key: Request, value: Response) => {
-          entries.set(key.url, value.clone());
+        put: async (key: Request, response: Response) => {
+          entries.set(key.url, response.clone());
         },
       },
     });
-    const updated = {
-      ...catalog,
-      catalogVersion: 'sha256:' + 'f'.repeat(64),
-      items: catalog.items.slice(1),
-    };
-    const fetcher = vi
-      .fn<typeof fetch>()
-      .mockResolvedValueOnce(Response.json(catalog))
-      .mockImplementation(async () => Response.json(updated));
+    const fetcher = vi.fn<typeof fetch>(async (input) =>
+      Response.json(
+        String(input).endsWith('/current.json')
+          ? manifest(current.catalogVersion)
+          : current,
+      ),
+    );
     vi.stubGlobal('fetch', fetcher);
     expect(await (await get()).json()).toEqual(catalog);
-    await vi.advanceTimersByTimeAsync(60_000);
+    current = updated;
     expect(await (await get()).json()).toEqual(updated);
+    await vi.advanceTimersByTimeAsync(61_000);
     const provider = vi.fn();
     const budget = { reserve: vi.fn(), settle: vi.fn() };
     const response = await recommend(
@@ -197,8 +139,8 @@ describe('test catalog route', () => {
         method: 'POST',
         body: JSON.stringify({
           functionArea: 'Operations',
+          goal: 'budget',
           tools: [],
-          goal: 'organize data',
           catalogVersion: catalog.catalogVersion,
         }),
       }),

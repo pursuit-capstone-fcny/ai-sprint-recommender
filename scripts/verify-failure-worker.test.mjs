@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import worker from '../server/failure-test-worker';
@@ -10,6 +11,7 @@ import {
 } from './verify-failure-worker.mjs';
 
 afterEach(() => {
+  vi.restoreAllMocks();
   vi.useRealTimers();
   vi.unstubAllGlobals();
 });
@@ -176,6 +178,12 @@ describe('isolated deployed failure harness', () => {
   );
   it('observes the real five-second timeout and provider abort', async () => {
     vi.useFakeTimers();
+    vi.spyOn(crypto.subtle, 'digest').mockImplementation(
+      async (_algorithm, data) =>
+        Uint8Array.from(
+          createHash('sha256').update(new Uint8Array(data)).digest(),
+        ).buffer,
+    );
     const expected = scenarios.find((entry) => entry.name === 'timeout');
     const pending = worker.fetch(
       new Request(`${FAILURE_TEST_ORIGIN}/cases/timeout`),

@@ -25,3 +25,8 @@ coverage/
 
 # One-time local library source/deployment configuration
 library/config.local.json
+
+# Generated fictional preview catalog
+public/catalog/
+
+wrangler.library.jsonc

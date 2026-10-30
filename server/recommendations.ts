@@ -1,3 +1,4 @@
+import { PublishedCatalogVersionError } from '../src/library/read';
 import { z } from 'zod';
 import {
   RECOMMENDATION_DEADLINE_MS,
@@ -163,23 +164,29 @@ export async function recommend(
     active();
     if (!input.functionArea && !input.goal && input.tools.length === 0)
       return fallback('not-requested');
-    const fetcher = deps.fetch ?? fetch;
+    const fetcher: typeof fetch =
+      deps.fetch ??
+      (env.LIBRARY_MODE === 'bundled' && env.ASSETS
+        ? (input, init) => env.ASSETS!.fetch(new Request(input, init))
+        : fetch);
     let catalog;
     try {
       catalog = await readCatalogSnapshot({
         origin: new URL(request.url).origin,
-        source: limits.LLM_CATALOG_URL,
+        source: `${limits.LIBRARY_ORIGIN}/catalog/current.json`,
         requestedVersion: input.catalogVersion,
         signal: abort.signal,
         fetcher,
         cache: deps.catalogCache ?? defaultCatalogCache(),
         waitUntil: deps.waitUntil,
       });
-    } catch {
+    } catch (error) {
       return fallback(
-        abort.signal.aborted || Date.now() >= deadline
-          ? 'timeout'
-          : 'unavailable',
+        error instanceof PublishedCatalogVersionError
+          ? 'catalog-mismatch'
+          : abort.signal.aborted || Date.now() >= deadline
+            ? 'timeout'
+            : 'unavailable',
       );
     }
     active();
@@ -270,11 +277,13 @@ export async function recommend(
         modelVersion: limits.LLM_MODEL,
         promptVersion: RECOMMENDATION_PROMPT_VERSION,
       };
-    } catch {
+    } catch (error) {
       return fallback(
-        abort.signal.aborted || Date.now() >= deadline
-          ? 'timeout'
-          : 'provider-error',
+        error instanceof PublishedCatalogVersionError
+          ? 'catalog-mismatch'
+          : abort.signal.aborted || Date.now() >= deadline
+            ? 'timeout'
+            : 'provider-error',
       );
     } finally {
       // If reconciliation fails, the durable maximum reservation remains charged.

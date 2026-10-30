@@ -1,14 +1,17 @@
+import { createHash } from 'node:crypto';
+import { catalogDataJson } from '../src/library/catalog';
 import fixture from '../fixtures/public-catalog.json';
 import { parsePublicCatalog } from '../src/contracts/publicCatalog';
 import { type ObjectStorage } from './budget-object';
 
 export const catalog = parsePublicCatalog(fixture);
+catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(catalog)).digest('hex')}`;
 export const environment = {
   LLM_ENABLED: 'true',
   LLM_APPROVALS_RECORDED: 'true',
   LLM_ENVIRONMENT: 'test',
   LLM_MODEL: 'fixture-model',
-  LLM_CATALOG_URL: 'https://script.google.com/macros/s/fixture/exec',
+  LIBRARY_ORIGIN: 'https://library.example.test',
   ANTHROPIC_API_KEY: 'fixture-only',
   LLM_RATE_KEY: 'x'.repeat(32),
   LLM_MAX_INPUT_TOKENS: '20000',
@@ -22,6 +25,24 @@ export const environment = {
   LLM_OUTPUT_MICRODOLLARS_PER_MILLION: '1000000',
 };
 
+// Manifest requests are separate from snapshot reads in tests of cache/provider behavior.
+export function staticCatalogFetch(fetcher: typeof fetch): typeof fetch {
+  return async (input, init) => {
+    const url =
+      typeof input === 'string'
+        ? input
+        : input instanceof URL
+          ? input.href
+          : input.url;
+    if (url.endsWith('/catalog/current.json'))
+      return Response.json({
+        schemaVersion: 1,
+        catalogVersion: catalog.catalogVersion,
+        publishedAt: '2026-10-29T00:00:00Z',
+      });
+    return fetcher(input, init);
+  };
+}
 // Models the documented storage transaction serialization, with rollback and cloned values.
 export class TestStorage implements ObjectStorage {
   private values = new Map<string, unknown>();

@@ -14,7 +14,7 @@ describe('recommendation configuration', () => {
     expect(
       readLimits({
         ...environment,
-        LLM_CATALOG_URL: 'https://attacker.example/catalog',
+        LIBRARY_ORIGIN: 'https://attacker.example/catalog',
       }),
     ).toBeNull();
     expect(

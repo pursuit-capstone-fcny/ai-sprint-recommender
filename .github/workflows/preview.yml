@@ -22,14 +22,17 @@ jobs:
 
       - name: Install and build
         env:
-          VITE_CATALOG_URL: ${{ vars.CATALOG_TEST_URL }}
-          VITE_CATALOG_SOURCE: ${{ vars.CATALOG_TEST_URL && 'remote' || 'fixture' }}
+          VITE_LIBRARY_ORIGIN: ${{ vars.LIBRARY_TEST_ORIGIN }}
+          VITE_LIBRARY_DEMO: ${{ vars.LIBRARY_TEST_ORIGIN && 'false' || 'true' }}
+          VITE_CATALOG_SOURCE: static
           VITE_USAGE_ENVIRONMENT: test
-          VITE_USAGE_ENABLED: ${{ vars.CATALOG_TEST_URL && 'true' || 'false' }}
+          VITE_USAGE_ENABLED: ${{ vars.LIBRARY_TEST_ORIGIN && vars.CATALOG_TEST_URL && 'true' || 'false' }}
           VITE_USAGE_TEST_URL: ${{ vars.CATALOG_TEST_URL }}
         run: |
           pnpm install --frozen-lockfile
+          if [[ -z "$VITE_LIBRARY_ORIGIN" ]]; then node scripts/seed-library-demo.mjs; fi
           pnpm build
+          node scripts/configure-library-app.mjs
 
       # Uploads a preview version and prints its preview URL in the run log.
       # Production is untouched until the PR merges and deploy.yml runs.
@@ -38,4 +41,4 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: versions upload
+          command: versions upload --config wrangler.library.jsonc

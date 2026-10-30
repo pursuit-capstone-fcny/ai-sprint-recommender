@@ -1,18 +1,19 @@
 import fixture from '../fixtures/public-catalog.json';
 import scenarios from '../fixtures/recommendation-failure-cases.json';
+import { catalogDataJson } from '../src/library/catalog';
 import { PublicCatalogDataSchema } from '../src/contracts/publicCatalog';
 import { recommend } from './recommendations';
 import { SYSTEM_PROMPT, type Provider } from './anthropic';
 import type { Budget } from './budget';
 
 // No binding, secret or visitor input can change these synthetic dependencies.
-const source = 'https://script.google.com/macros/s/fixture/exec';
+const source = 'https://library.example.test';
 const environment = {
   LLM_ENABLED: 'true',
   LLM_APPROVALS_RECORDED: 'true',
   LLM_ENVIRONMENT: 'test',
   LLM_MODEL: 'fixture-model',
-  LLM_CATALOG_URL: source,
+  LIBRARY_ORIGIN: source,
   ANTHROPIC_API_KEY: 'fixture-only-not-a-credential',
   LLM_RATE_KEY: 'fixture-rate-placeholder'.repeat(2),
   LLM_MAX_INPUT_TOKENS: '20000',
@@ -38,11 +39,13 @@ async function snapshot(name: string) {
   else if (name === 'retired-catalog') catalog.items[0].status = 'retired';
   else if (name === 'catalog-description-injection')
     catalog.items[0].description = injection;
-  else return catalog;
+
   const data = PublicCatalogDataSchema.parse(catalog);
   const bytes = await crypto.subtle.digest(
     'SHA-256',
-    new TextEncoder().encode(JSON.stringify(data)),
+    new TextEncoder().encode(
+      catalogDataJson({ ...data, catalogVersion: catalog.catalogVersion }),
+    ),
   );
   return {
     ...data,
@@ -137,7 +140,13 @@ export default {
         provider,
         budget,
         fetch: async (requested) => {
-          if (requested !== source)
+          if (String(requested) === `${source}/catalog/current.json`)
+            return Response.json({
+              schemaVersion: 1,
+              catalogVersion: catalog.catalogVersion,
+              publishedAt: '2026-10-29T00:00:00Z',
+            });
+          if (!String(requested).startsWith(`${source}/catalog/versions/`))
             throw new Error('Unexpected synthetic source');
           calls.catalogReads++;
           return Response.json(catalog);

@@ -78,7 +78,7 @@ production logging is enabled just to change catalog transport.
 ## Publisher installation
 
 Copy `library/config.example.json` to ignored `library/config.local.json` as the
-one-time handoff record. Do not put credentials in that file. Configure the
+one-time project configuration. Vite and `scripts/configure-library-app.mjs` read its catalog origin. Alternatively set `VITE_LIBRARY_ORIGIN` in the local environment. Conflicting origins fail the build. Only the public catalog origin enters browser assets; the Sheet link stays in build-time configuration. Do not put credentials in that file. Configure the
 Sheet-bound collector project's server-side properties:
 
 | Property                    | Value                                                                 |
@@ -116,3 +116,18 @@ the last deployed assets intact. Roll back by publishing the approved older
 snapshot through the same validated workflow. Old immutable snapshots remain
 public after retirement; publishing retirement removes them from current
 recommendations, not from the historical archive.
+
+## Application deployment
+
+Set GitHub repository variables `LIBRARY_TEST_ORIGIN` and
+`LIBRARY_PRODUCTION_ORIGIN` to the corresponding static catalog origins. The
+application workflows use that one origin for both the browser and LLM Worker.
+Production builds fail if the origin is absent. An unconfigured PR preview
+contains only a fictional static catalog and disables usage collection.
+
+For local development, run `node scripts/seed-library-demo.mjs` to generate the
+fictional static assets, or configure the real published origin. After the normal
+build, run `node scripts/configure-library-app.mjs` and deploy with
+`--config wrangler.library.jsonc`. That generated config preserves the existing
+LLM enablement and budget gates. `LIBRARY_ORIGIN` replaces the former
+`LLM_CATALOG_URL`; do not point it at the editable Sheet or Apps Script endpoint.

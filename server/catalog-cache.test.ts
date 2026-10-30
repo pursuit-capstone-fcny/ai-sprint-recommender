@@ -6,7 +6,7 @@ import {
   type CatalogCache,
   CATALOG_CACHE_SECONDS,
 } from './catalog-cache';
-import { catalog, environment } from './test-helpers';
+import { catalog, environment, staticCatalogFetch } from './test-helpers';
 
 class TTLCache implements CatalogCache {
   entries = new Map<string, { response: Response; expires: number }>();
@@ -27,7 +27,7 @@ class TTLCache implements CatalogCache {
   }
 }
 const origin = 'https://example.test';
-const source = environment.LLM_CATALOG_URL;
+const source = `${environment.LIBRARY_ORIGIN}/catalog/current.json`;
 function setup() {
   const cache = new TTLCache();
   const fetcher = vi.fn<typeof fetch>(async () => Response.json(catalog));
@@ -40,7 +40,7 @@ function setup() {
       source: catalogSource,
       requestedVersion,
       signal: new AbortController().signal,
-      fetcher,
+      fetcher: staticCatalogFetch(fetcher),
       cache,
     });
   return { cache, fetcher, read };
@@ -86,7 +86,7 @@ describe('validated catalog snapshot cache', () => {
     ).toBeUndefined();
     await read(
       catalog.catalogVersion,
-      'https://script.google.com/macros/s/other/exec',
+      'https://second-library.example.test/catalog/current.json',
     );
     expect(fetcher).toHaveBeenCalledTimes(3);
   });
@@ -116,7 +116,7 @@ describe('validated catalog snapshot cache', () => {
       source,
       requestedVersion: catalog.catalogVersion,
       signal: new AbortController().signal,
-      fetcher,
+      fetcher: staticCatalogFetch(fetcher),
       cache,
     });
     expect(fetcher).toHaveBeenCalledTimes(1);
@@ -137,7 +137,7 @@ describe('validated catalog snapshot cache', () => {
         source,
         requestedVersion: catalog.catalogVersion,
         signal: new AbortController().signal,
-        fetcher,
+        fetcher: staticCatalogFetch(fetcher),
         cache,
       }),
     ).toEqual(catalog);
@@ -158,7 +158,7 @@ describe('validated catalog snapshot cache', () => {
         source,
         requestedVersion: catalog.catalogVersion,
         signal: new AbortController().signal,
-        fetcher,
+        fetcher: staticCatalogFetch(fetcher),
         cache,
         waitUntil,
       }),
@@ -195,7 +195,7 @@ describe('validated catalog snapshot cache', () => {
       source,
       requestedVersion: catalog.catalogVersion,
       signal: new AbortController().signal,
-      fetcher,
+      fetcher: staticCatalogFetch(fetcher),
       cache,
     });
     await vi.advanceTimersByTimeAsync(2);
