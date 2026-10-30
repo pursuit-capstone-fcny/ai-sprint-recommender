@@ -300,7 +300,8 @@ export async function runLiveTrials(
   afterCall: (
     response: RecommendationResponse,
     requestId: string | null,
-  ) => Promise<void> = async () => {},
+  ) => Promise<boolean | void> = async () => {},
+  saveRecoveryWarmups: (warmups: Warmup[]) => Promise<void> = async () => {},
 ): Promise<Trials> {
   if (!allowPaid || benchmark.approval.status !== 'approved')
     throw new Error(
@@ -312,6 +313,8 @@ export async function runLiveTrials(
     throw new Error('Live approval does not match this benchmark.');
   const trials: Trials['trials'] = [];
   const warmups: Warmup[] = [];
+  const recoveryWarmups: Warmup[] = [];
+  let recoveries = 0;
   for (let index = 0; index < 3; index += 1) {
     assertApprovalWindow(approval);
     const loaded = await warmCatalog(
@@ -358,7 +361,20 @@ export async function runLiveTrials(
           'Preview configuration differs from the approved candidate. Stop and inspect server diagnostics.',
         );
       }
-      await afterCall(response, observation.requestId);
+      if (await afterCall(response, observation.requestId)) {
+        // A 61-second lease cooldown expires the 60-second catalog cache.
+        // Reload through the unpaid route before another independent profile.
+        // The original failed call remains in the trial and is never retried.
+        assertApprovalWindow(approval);
+        const recovered = await warmCatalog(
+          benchmark,
+          approval,
+          fetcher,
+          async (rows) => saveRecoveryWarmups([...recoveryWarmups, ...rows]),
+          ++recoveries,
+        );
+        recoveryWarmups.push(...recovered);
+      }
     }
   }
   return {

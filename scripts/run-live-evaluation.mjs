@@ -175,6 +175,8 @@ export async function main(args = process.argv.slice(2)) {
   const readinessProbes = [];
   const extraResults = [];
   const probeCooldowns = [];
+  const probeRecoveryWarmups = [];
+  let probeRecoveries = 0;
   let evaluator;
   let tail;
   let tailFailed = false;
@@ -289,6 +291,9 @@ export async function main(args = process.argv.slice(2)) {
       ...probeIds,
       ...extraResults.map((row) => row.requestId),
       ...warmups.map((row) => row.requestId),
+      ...(await readRecoveryWarmups()).flatMap((rows) =>
+        rows.map((row) => row.requestId),
+      ),
     ]);
     await writeFile(
       `${liveDirectory}/unmatched.json`,
@@ -324,6 +329,22 @@ export async function main(args = process.argv.slice(2)) {
         )}\n`,
       );
     return trialIds;
+  }
+  async function readRecoveryWarmups() {
+    const groups = [];
+    for (const name of [
+      'recovery-warmups.json',
+      'probe-recovery-warmups.json',
+    ]) {
+      try {
+        groups.push(
+          JSON.parse(await readFile(`${liveDirectory}/${name}`, 'utf8')),
+        );
+      } catch (error) {
+        if (error?.code !== 'ENOENT') throw error;
+      }
+    }
+    return groups;
   }
   try {
     tail = spawn(
@@ -546,7 +567,7 @@ export async function main(args = process.argv.slice(2)) {
           response.promptVersion !== approval.promptVersion)
       )
         throw new Error('Probe candidate configuration changed.');
-      await contracts.afterEvaluationCall(
+      const cooled = await contracts.afterEvaluationCall(
         response,
         requestId,
         async (entry) => {
@@ -558,6 +579,23 @@ export async function main(args = process.argv.slice(2)) {
         },
         pause,
       );
+      if (cooled) {
+        checkRunning();
+        contracts.assertApprovalWindow(approval);
+        const recovered = await contracts.warmCatalog(
+          benchmark,
+          approval,
+          captureFetch,
+          async (rows) =>
+            writeFile(
+              `${liveDirectory}/probe-recovery-warmups.json`,
+              `${JSON.stringify([...probeRecoveryWarmups, ...rows], null, 2)}\n`,
+            ),
+          ++probeRecoveries,
+        );
+        probeRecoveryWarmups.push(...recovered);
+        await saveDiagnostics();
+      }
     }
     const allIds = [
       ...ids,
@@ -570,8 +608,15 @@ export async function main(args = process.argv.slice(2)) {
       .filter((row) => row.phase === 'cache-check')
       .map((row) => row.requestId)
       .filter(Boolean);
+    const recoveryGroups = await readRecoveryWarmups();
+    const recoveryIds = recoveryGroups.flatMap((rows) =>
+      rows
+        .filter((row) => row.phase === 'cache-check')
+        .map((row) => row.requestId)
+        .filter(Boolean),
+    );
     await saveDiagnostics();
-    const diagnosticIds = [...allIds, ...warmupIds];
+    const diagnosticIds = [...allIds, ...warmupIds, ...recoveryIds];
     const diagnosticsDeadline = Date.now() + 15_000;
     while (
       diagnosticIds.some(
@@ -590,6 +635,16 @@ export async function main(args = process.argv.slice(2)) {
         benchmark.catalog.catalogVersion,
         approval,
         diagnoseFormat ? 1 : 4,
+      ) ||
+      recoveryGroups.some(
+        (rows) =>
+          !contracts.hasCompleteWarmupEvidence(
+            rows,
+            observed,
+            benchmark.catalog.catalogVersion,
+            approval,
+            Math.max(...rows.map((row) => row.trial)),
+          ),
       ) ||
       diagnosticIds.some(
         (id) => !observed.has(id) || observed.get(id).accountingFinal === false,

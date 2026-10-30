@@ -11,6 +11,8 @@
   when continuing evaluation, then retain that failure and wait for its possible
   concurrency lease to expire. Do not retry, refund its unknown spend, change
   labels or change the task-diversity gate. Record waits outside request latency.
+  Reload and verify the catalog after a wait, saving recovery diagnostics
+  separately. Stop before further paid calls if that unpaid check fails.
 - Given dropped console diagnostics, when evaluating authenticated test responses,
   then capture their bounded diagnostic headers and retain later final accounting.
   Missing evidence still fails validation; credentials and raw headers stay private.

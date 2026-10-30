@@ -19,8 +19,9 @@ export async function afterEvaluationCall(
     response.outcome !== 'fallback' ||
     !['timeout', 'provider-error', 'rate-limited'].includes(response.reason)
   )
-    return;
+    return false;
   const reason = response.reason as Cooldown['reason'];
   await save({ requestId, reason, delayMs: 61_000 });
   await wait(61_000);
+  return true;
 }

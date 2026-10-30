@@ -569,6 +569,101 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
     });
     expect(snapshots[1].trials[0].calls).toHaveLength(2);
   });
+  it('refreshes the catalog after a cooldown without retrying the failed profile', async () => {
+    const value = approved();
+    let warm = false;
+    let paid = 0;
+    let loads = 0;
+    const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+      if (init?.method === 'GET') {
+        warm = true;
+        loads++;
+        return warmupResponse(value);
+      }
+      const input = JSON.parse(String(init?.body));
+      if (input.functionArea === '__evaluation_invalid_area__')
+        return warmupResponse(value, true);
+      paid++;
+      const failed = paid === 1 || !warm;
+      return Response.json(
+        failed
+          ? { outcome: 'fallback', reason: 'timeout' }
+          : {
+              outcome: 'success',
+              youtubeIds: value.profiles[0].ideal.map((row) => row.youtubeId),
+              catalogVersion: value.catalog.catalogVersion,
+              modelVersion: 'mock-model-v1',
+              promptVersion: 'mock-prompt-v1',
+            },
+        { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
+      );
+    });
+    const trials = await runLiveTrials(
+      value,
+      approval(value),
+      true,
+      fetcher,
+      async () => {},
+      async () => {},
+      { sourceRevision: 'a'.repeat(40), dirty: false },
+      async () => {
+        if (paid !== 1) return false;
+        // The 61-second lease cooldown outlasts the cache's 60-second TTL.
+        warm = false;
+        return true;
+      },
+    );
+    const calls = trials.trials.flatMap((trial) => trial.calls);
+    expect(
+      calls.filter((call) => call.response.outcome === 'fallback'),
+    ).toHaveLength(1);
+    expect(calls[0].response).toEqual({
+      outcome: 'fallback',
+      reason: 'timeout',
+    });
+    expect(paid).toBe(30);
+    expect(loads).toBe(4);
+  });
+  it('stops before another paid call when recovery finds a changed catalog', async () => {
+    const value = approved();
+    const fetcher = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(warmupResponse(value))
+      .mockResolvedValueOnce(warmupResponse(value, true))
+      .mockResolvedValueOnce(
+        Response.json(
+          { outcome: 'fallback', reason: 'timeout' },
+          { headers: { 'X-Recommendation-Request-Id': randomUUID() } },
+        ),
+      )
+      .mockResolvedValueOnce(
+        Response.json({
+          ...value.catalog,
+          catalogVersion: `sha256:${'f'.repeat(64)}`,
+        }),
+      );
+    const progress = vi.fn();
+    const recovery = vi.fn();
+    await expect(
+      runLiveTrials(
+        value,
+        approval(value),
+        true,
+        fetcher,
+        progress,
+        async () => {},
+        { sourceRevision: 'a'.repeat(40), dirty: false },
+        async () => true,
+        recovery,
+      ),
+    ).rejects.toThrow('Catalog warmup');
+    expect(fetcher).toHaveBeenCalledTimes(4);
+    expect(progress.mock.calls.at(-1)?.[0].trials[0].calls).toHaveLength(1);
+    expect(recovery.mock.calls.at(-1)?.[0][0]).toMatchObject({
+      phase: 'catalog-load',
+      response: { outcome: 'fallback', reason: 'invalid-response' },
+    });
+  });
   it.each(['client', 'server'])(
     'preserves three %s-timed-out unpaid loads and stops before any trial',
     async (timeoutSource) => {

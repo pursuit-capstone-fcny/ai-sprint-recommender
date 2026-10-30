@@ -101,6 +101,13 @@ export async function main(args = process.argv.slice(2)) {
             `${JSON.stringify(cooldowns, null, 2)}\n`,
           );
         }),
+      async (warmups) => {
+        await saveCaptured();
+        await writeFile(
+          resolve(output, 'recovery-warmups.json'),
+          `${JSON.stringify(warmups, null, 2)}\n`,
+        );
+      },
     );
   const report = evaluate(benchmark, {
     sourceRevision: `${checkout.sourceRevision}${checkout.dirty ? '-dirty' : ''}`,

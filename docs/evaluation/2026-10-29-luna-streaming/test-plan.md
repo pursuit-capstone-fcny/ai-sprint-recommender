@@ -63,3 +63,19 @@ $0.676554 floor still allow only $0.323446 more. Counters, reservations and
 historical charges are not reset. A regression test reproduces the block and
 proves the corrected config still rejects a request exceeding $1 total. The
 zero-spend run is preserved; it is not model quality evidence.
+
+The funded run 40999051079 attempt 2 scored 4/10, 9/10, 10/10. All 34 request
+diagnostics and four cache-check diagnostics were captured. Six first-trial
+timeouts remain. One spent its deadline in Luna; five spent most or all of it
+reading the catalog after the 61-second cooldown expired the 60-second cache.
+The cooldown now reloads and verifies the catalog through the unpaid route
+before the next independent case. Recovery loads and diagnostics are saved
+separately and required for complete evidence. Failures still count; no paid
+call is retried. This changes evaluation pacing, not the endpoint's freshness
+or deadline, and does not establish idle-browser or cold-cache performance.
+
+The funded run charged $0.055228: $0.034228 measured usage and $0.021000 of
+unknown reservations. The cumulative ceiling is $0.731782 with $0.196000
+unresolved. One corrected full run can reserve at most $0.238000 within the
+remaining $0.268218. Keep every prior result and charge, including this failed
+trial. No model, prompt, labels, task tags, diversity gate or cap changes.
