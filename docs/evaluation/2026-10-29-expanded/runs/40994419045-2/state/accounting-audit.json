@@ -1,0 +1,47 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v10",
+  "reasoningEffort": "low",
+  "runId": "40994419045",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 34,
+  "totalMeasuredMicrodollars": 70512,
+  "durableAdditionalMicrodollars": 70512,
+  "unreconciledMicrodollars": 0,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 161000,
+  "cumulativeCeilingMicrodollars": 657681,
+  "remainingAllowanceMicrodollars": 342319,
+  "inputTokens": 695089,
+  "outputTokens": 1972,
+  "medianClientLatencyMs": 1156.0,
+  "p95ClientLatencyMs": 1812,
+  "maxClientLatencyMs": 2082,
+  "topThreeScores": [9, 9, 9],
+  "fallbacks": 3,
+  "sixToEightCount": 23,
+  "acceptedLlmSixToEightCount": 20,
+  "acceptedLlmThinCount": 7,
+  "expandedCounts": [
+    8, 8, 7, 4, 8, 3, 8, 8, 7, 8, 8, 8, 7, 5, 8, 3, 8, 7, 6, 7, 7, 8, 6, 4, 8,
+    3, 8, 7, 5, 7
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 5
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 8
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": ["f652d03e-07a1-4868-b027-1a0447aad795"],
+  "freshComparisonSaved": false,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review"
+}

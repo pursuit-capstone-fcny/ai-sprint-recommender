@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "040e17fc12f1fa437b9e4f97356304c05539954f",
+  "approvedWorkflowRunId": "40994419045",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T03:41:05Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-v10",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Jason requested the V10 prompt changes and Haiku low rerun with thinking disabled. Eight videos is the hard maximum; preserve original top-three scoring, benchmark labels and task-diversity gate.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Spend only the remaining $0.412831 of the original shared comparison allowance. Carry all historical spend and unknown reservations forward. Run Haiku first, then check the actual remaining balance before the separately approved Luna low test. No budget reset or increase.",
+  "allowanceMicrodollars": 412831,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 587169,
+  "totalAllowanceMicrodollars": 1000000,
+  "thinking": "disabled"
+}

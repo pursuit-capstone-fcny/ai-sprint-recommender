@@ -1,0 +1,37 @@
+{
+  "tailFailed": false,
+  "observedDiagnostics": 38,
+  "stdoutBytes": 250743,
+  "envelopes": 83,
+  "malformedEnvelopes": 0,
+  "acceptedDiagnostics": 38,
+  "logs": 38,
+  "logLevels": {
+    "info": 38,
+    "log": 0,
+    "warn": 0,
+    "error": 0,
+    "debug": 0,
+    "other": 0
+  },
+  "messageContainers": {
+    "string": 0,
+    "object": 0,
+    "array": 38,
+    "number": 0,
+    "boolean": 0,
+    "null": 0,
+    "undefined": 0,
+    "other": 0
+  },
+  "messageValues": {
+    "string": 38,
+    "object": 0,
+    "array": 0,
+    "number": 0,
+    "boolean": 0,
+    "null": 0,
+    "undefined": 0,
+    "other": 0
+  }
+}
