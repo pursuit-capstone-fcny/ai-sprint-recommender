@@ -1,4 +1,9 @@
 export {
+  publishLibrary,
+  libraryPublishStatus,
+  showLibraryMenu,
+  openLibraryPublisher,
+  installLibraryPublisher,
   doGet,
   doPost,
   initializeUsageLog,

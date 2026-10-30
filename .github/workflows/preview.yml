@@ -26,7 +26,9 @@ jobs:
           VITE_LIBRARY_DEMO: ${{ vars.LIBRARY_TEST_ORIGIN && 'false' || 'true' }}
           VITE_CATALOG_SOURCE: static
           VITE_USAGE_ENVIRONMENT: test
-          VITE_USAGE_ENABLED: ${{ vars.LIBRARY_TEST_ORIGIN && vars.CATALOG_TEST_URL && 'true' || 'false' }}
+          # Collector migration ships in the next stacked PR. Do not send events
+          # to an older deployment that validates the legacy live-Sheet hash.
+          VITE_USAGE_ENABLED: 'false'
           VITE_USAGE_TEST_URL: ${{ vars.CATALOG_TEST_URL }}
         run: |
           pnpm install --frozen-lockfile

@@ -67,6 +67,40 @@ describe('static catalog publication build', () => {
       'immutable',
     );
   });
+  it('keeps newer immutable snapshots when an older manifest is deployed for rollback', () => {
+    const old = setup(),
+      latest = setup();
+    latest.catalog.items[0].title = 'New published title';
+    latest.catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(latest.catalog)).digest('hex')}`;
+    const newerFile = `${latest.catalog.catalogVersion.slice(7)}.json`;
+    writeFileSync(
+      join(latest.input, 'versions', newerFile),
+      canonicalJson(latest.catalog),
+    );
+    execFileSync(
+      process.execPath,
+      ['scripts/build-library-assets.mjs', old.input, old.output, latest.input],
+      { stdio: 'pipe' },
+    );
+    expect(
+      JSON.parse(readFileSync(join(old.output, 'catalog/current.json'), 'utf8'))
+        .catalogVersion,
+    ).toBe(old.catalog.catalogVersion);
+    expect(
+      JSON.parse(
+        readFileSync(join(old.output, 'catalog/versions', newerFile), 'utf8'),
+      ),
+    ).toEqual(latest.catalog);
+    expect(
+      existsSync(
+        join(
+          old.output,
+          'catalog/versions',
+          `${old.catalog.catalogVersion.slice(7)}.json`,
+        ),
+      ),
+    ).toBe(true);
+  });
   it('rejects tampered snapshots before changing previous output', () => {
     const s = setup();
     mkdirSync(s.output);

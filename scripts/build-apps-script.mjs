@@ -52,8 +52,14 @@ const context = {};
 runInNewContext(await readFile(`${directory}/Code.js`, 'utf8'), context, {
   timeout: 5000,
 });
-for (const name of exportedFunctions)
+for (const name of exportedFunctions) {
   assert.equal(typeof context[name], 'function');
+  assert.equal(
+    typeof context.CatalogApp[name],
+    'function',
+    `Missing bundled handler: ${name}`,
+  );
+}
 if (!testBuild) assert.equal(context.initializeTestCatalog, undefined);
 // A callable wrapper that drops the POST event would reject every real request.
 const request = { postData: { type: 'text/plain', contents: '{}' } };

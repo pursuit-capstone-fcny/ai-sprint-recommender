@@ -37,6 +37,11 @@ jobs:
             [[ "$GITHUB_REF" == refs/heads/main ]]
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      # Keep the newest archive even when an older manifest is selected for rollback.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.environment == 'production' && 'library-data' || 'library-data-test' }}
+          path: library-archive
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           ref: ${{ inputs.catalog_commit }}
@@ -61,7 +66,7 @@ jobs:
       - name: Validate and build public assets
         run: |
           pnpm install --frozen-lockfile
-          node scripts/build-library-assets.mjs library-input/catalog build/library-assets
+          node scripts/build-library-assets.mjs library-input/catalog build/library-assets library-archive/catalog
       - name: Deploy test catalog
         if: inputs.environment == 'test'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0

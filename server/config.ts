@@ -6,13 +6,16 @@ const positive = z.coerce
   .int()
   .positive()
   .max(Number.MAX_SAFE_INTEGER);
-export const CatalogSourceSchema = z.url().refine((value) => {
-  try {
-    return libraryOrigin(value) === value.replace(/\/$/, '');
-  } catch {
-    return false;
-  }
-});
+export const CatalogSourceSchema = z
+  .url()
+  .refine((value) => {
+    try {
+      return libraryOrigin(value) === value.replace(/\/$/, '');
+    } catch {
+      return false;
+    }
+  })
+  .transform(libraryOrigin);
 const schema = z.object({
   LLM_ENVIRONMENT: z.enum(['test', 'production']),
   LLM_MODEL: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/),
