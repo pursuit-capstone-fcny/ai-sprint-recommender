@@ -43,6 +43,10 @@ assessment = {
     'benchmarkFingerprint': report['benchmarkFingerprint'],
     'scores': [t['passedProfiles'] for t in report['llm']],
     'acceptedLlmSixToEight': sum(r['engine'] == 'llm' and 6 <= r['expanded']['count'] <= 8 for r in rows),
+    'totalDisplayedCards': sum(r['expanded']['count'] for r in rows),
+    'meanDisplayedCards': sum(r['expanded']['count'] for r in rows) / len(rows),
+    'topThreeMisses': [{'trial': index + 1, 'profileId': r['profileId'], 'hits': r['hits']}
+                       for index, trial in enumerate(report['llm']) for r in trial['profiles'] if r['hits'] < 2],
     'thinAcceptedLists': [{'trial': index + 1, 'profileId': r['profileId'], 'count': r['expanded']['count']}
                           for index, trial in enumerate(report['llm']) for r in trial['profiles']
                           if r['engine'] == 'llm' and r['expanded']['count'] < 6],
@@ -52,6 +56,8 @@ assessment = {
     'invalidResponses': [d for d in by_request.values() if d.get('validationFailure')],
     'controls': controls,
     'blankGoalCount': next(len(p['displayedIds']) for p in probes if p['id'] == 'blank-goal-control'),
+    'blankGoalEngine': next(p['recommendationEngine'] for p in probes if p['id'] == 'blank-goal-control'),
+    'blankGoalProviderCount': next(len(p['response'].get('youtubeIds', [])) for p in probes if p['id'] == 'blank-goal-control'),
     'fundraising02Counts': [r['expanded']['count'] for r in rows if r['profileId'] == 'fundraising-02'],
     'expandedUnreviewedAppearances': sum(len(r['expanded']['unreviewedIds']) for r in rows),
     'benchmarkFailures': [{'profileId': r['profileId'], 'reason': r['fallbackReason']} for r in rows if r['engine'] != 'llm'],

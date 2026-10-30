@@ -158,3 +158,28 @@ alone cannot settle that, and sampling variation remains possible.
 Keep every fixed target above and run all forty cases with an exact-source/attempt
 approval. Maximum reservation $0.270240 fits within $0.394174. Preserve all failed
 candidates and never add weak items merely to make the audit pass.
+
+## V17 result and final V18 revision
+
+V17 run 41121287886 attempt 2 scores 10/10, 9/10, 10/10. A duplicate
+provider position causes one strict rejection and rules fallback. All four
+injection probes still abstain, but the candidate fails the no-regression
+requirement. Accepted breadth is 23/30, total displayed cards 186 versus V12's
+195; mixed Operations still returns five. Forty calls cost $0.079848, bringing
+this task to $0.397798. The cumulative ceiling is $1.685674 with $0.314326 left.
+No new unknown reservations occur. Test calls are disabled and keys removed.
+
+The ranked hypotheses are that the long breadth directions compete with
+uniqueness checks, set-first selection makes it harder to preserve the direct
+ranking, and sampling variation remains. V18 changes only the nonblank breadth
+paragraph. Select the strongest three first, set their positions aside, then
+fill ranks four through eight sequentially from useful unused positions. State
+the supporting-method criteria once. Retain the exact V12 final eligibility and
+uniqueness instruction, V15 blank browsing and existing targeted ranking. No
+benchmark-specific facts enter the prompt and no validator repairs duplicates.
+
+Use one final forty-call run, maximum reservation $0.270240, under $0.314326.
+The fixed targets above remain unchanged. Preserve every candidate and cost.
+If this fails, report the remaining failure rather than spend beyond the cap or
+relabel a failed result. Prompt wiring tests cannot prove semantic adherence;
+the captured live responses and unchanged audits provide that evidence.

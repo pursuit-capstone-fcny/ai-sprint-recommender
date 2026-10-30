@@ -20,7 +20,7 @@ import {
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
-  it('adds only the breadth pass while preserving V12 guardrails, prior requests and frozen catalog data', () => {
+  it('adds breadth and blank browsing guidance while preserving V12 guardrails, prior requests and frozen catalog data', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
         readFileSync(

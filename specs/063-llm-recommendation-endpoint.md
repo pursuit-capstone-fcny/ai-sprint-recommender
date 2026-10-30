@@ -190,3 +190,8 @@ remain pending.
   Mixed goals retain their real work; blank goals retain browsing. Preserve V14
   ranking instructions and the existing rules fallback. See the
   [injection trial plan](../docs/evaluation/2026-10-30-luna-injection/test-plan.md).
+
+- Given an eligible nonblank goal, when Haiku V18 expands recommendations, then
+  keep its strongest three first and choose further useful positions only from
+  unused catalog items. Preserve V12 eligibility/uniqueness, blank browsing,
+  frozen labels and the task-diversity gate; reject duplicate provider output.
