@@ -202,3 +202,7 @@ remain pending.
 - Given a legitimate goal mixed with control instructions, when Haiku V19 ranks
   it, then apply the same breadth pass to its real work. Preserve eligibility,
   uniqueness, frozen labels, input text and the task-diversity gate.
+
+- Given a mixed goal, when Haiku V20 applies breadth guidance, then scope that
+  guidance within the mixed-goal instruction and retain every original
+  eligibility and uniqueness rule. Preserve ordinary-goal breadth in evaluation.

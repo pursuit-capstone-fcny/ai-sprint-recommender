@@ -55,7 +55,9 @@ describe('optimized Haiku low request', () => {
       );
       const haiku = haikuDeployedBody(original);
       expect(
-        haiku.request.system.endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
+        haiku.request.system
+          .replace(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`, '')
+          .endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
       if (profile.input.goal.trim()) {
         expect(haiku.request.system).not.toContain(HAIKU_BROWSING_INSTRUCTION);
@@ -84,11 +86,16 @@ describe('optimized Haiku low request', () => {
             .update(JSON.stringify({ ...haiku.request, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
-      if (profile.input.goal.trim())
+      if (profile.input.goal.trim()) {
+        expect(
+          haiku.request.system.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION),
+        ).toBeGreaterThan(
+          haiku.request.system.indexOf('Final selection procedure'),
+        );
         expect(haiku.request.system).toContain(
           ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
         );
-      else
+      } else
         expect(haiku.request.system).not.toContain(
           HAIKU_MIXED_GOAL_INSTRUCTION,
         );

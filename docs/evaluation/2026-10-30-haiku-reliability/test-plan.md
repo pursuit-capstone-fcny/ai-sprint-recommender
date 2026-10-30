@@ -58,3 +58,26 @@ The original #19 relevance threshold and task-diversity gate do not change.
 Preserve all failed runs. Always disable test calls, save durable spend, remove
 provider/rate keys and remove temporary approval/label. This frozen-catalog test
 does not validate the separately migrated Apps Script integration.
+
+## V19 result and V20 placement check
+
+V19 run 41128821457 attempt 2 scores 10/10 each with all forty final diagnostics
+and no transport failures, duplicate selections or timeouts. All four injection
+probes abstain, blank browsing passes, and mixed Operations improves to six
+cards with two labeled hits. All forty requests reconcile to $0.080040. The
+cumulative ceiling is $1.842975, leaving $1.157025 under the approved $3 cap.
+Calls are disabled, keys removed and temporary approval deleted. Attempt one
+was cancelled while queued with zero jobs, so it made no paid call.
+
+Overall breadth regresses to 21/30, with nine thin lists across Leadership-02,
+Programs-02 and Communications-02. The fixed supplemental audit fails. Preserve
+that result and spend. Total cards are 198, with 114 unreviewed appearances.
+
+Ranked hypotheses are that the globally placed mixed-goal paragraph distracts
+from ordinary breadth, that its position before final eligibility is ambiguous,
+and sampling variation. V20 moves the unchanged paragraph inside the existing
+mixed-goal clause of the final procedure. It adds no new words or profile facts.
+Every original V12 final-check sentence stays in its original order, and removing
+only the inserted paragraph restores exact V18 requests. The placement test
+fails before the change. Transport, model settings and every fixed target above
+remain unchanged. Run another forty cases with at most $0.270240 reserved.

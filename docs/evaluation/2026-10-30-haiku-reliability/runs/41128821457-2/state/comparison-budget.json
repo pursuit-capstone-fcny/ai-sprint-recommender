@@ -1,0 +1,13 @@
+{
+  "kind": "deployed-model-budget",
+  "modelVersion": "claude-haiku-5-5",
+  "sourceRevision": "64ec285ef1dad34b24304d2b23f4044ce383e9b5",
+  "runId": "41128821457",
+  "runAttempt": 2,
+  "checkedAt": "2026-10-30T21:13:59.995Z",
+  "priorSpendMicrodollars": 1762935,
+  "allowanceMicrodollars": 3000000,
+  "spentMicrodollars": 1842975,
+  "additionalMicrodollars": 80040,
+  "remainingMicrodollars": 1157025
+}

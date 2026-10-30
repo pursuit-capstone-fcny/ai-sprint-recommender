@@ -1,0 +1,5 @@
+{
+  "exitCode": 1,
+  "stdout": "{\n  \"id\": \"goal-injection\",\n  \"responseOutcome\": \"success\",\n  \"providerSelectionCount\": 0,\n  \"browserEngine\": \"rules\",\n  \"fallbackReason\": \"insufficient-results\",\n  \"existingRulesCardCount\": 8\n}\nAccepted six-to-eight lists: 21/30; must exceed V12 baseline 22/30.\n",
+  "stderr": "Traceback (most recent call last):\n  File \"/Users/jason/workspace/github.com/fcny/worktrees/issue-19/docs/evaluation/2026-10-30-haiku-breadth/audit-quality.py\", line 52, in <module>\n    assert breadth > 22 and all(row['hits'] >= 2 and 6 <= row['expanded']['count'] <= 8 for row in target)\nAssertionError\n"
+}
