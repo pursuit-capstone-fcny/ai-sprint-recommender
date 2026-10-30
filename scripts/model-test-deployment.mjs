@@ -33,6 +33,28 @@ try {
     `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`
   );
   const config = JSON.parse(readFileSync(configPath, 'utf8'));
+  if (!haiku) {
+    assert.equal(config.main, 'server/evaluation-worker.ts');
+    assert.equal(
+      config.vars.LLM_CATALOG_URL,
+      'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/evaluation-catalog/b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7.json',
+    );
+    assert.deepEqual(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-30-luna-ranking/catalog.json',
+          'utf8',
+        ),
+      ),
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
+        ),
+      ).catalog,
+      'Isolated test snapshot differs from the frozen benchmark',
+    );
+  }
   assert.equal(config.name, 'ai-sprint-recommender-llm-test');
   assert.equal(config.vars.LLM_ENABLED, 'false');
   assert(contracts.readLimits(config.vars));

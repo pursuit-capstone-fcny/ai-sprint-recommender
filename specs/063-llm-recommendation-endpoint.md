@@ -126,3 +126,9 @@ remain pending.
   useful supporting videos in later ranks, V12 breadth instructions, low effort,
   caps and deadlines. No benchmark labels or diversity checks change. See the
   [ranking trial plan](../docs/evaluation/2026-10-30-luna-ranking/test-plan.md).
+
+- Given the isolated evaluation entry point, when loading its pinned public
+  catalog, then serve the exact frozen snapshot through the existing validation
+  and cache paths. Reject this source in production or Haiku configuration;
+  ordinary bundles do not serve it. Preserve benchmark labels and report that
+  this run does not validate the concurrently migrated Apps Script source.

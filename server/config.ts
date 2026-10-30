@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EVALUATION_CATALOG_URL } from './evaluation-catalog-policy';
 import {
   LUNA_DEPLOYED_MAX_INPUT,
   LUNA_DEPLOYED_MAX_OUTPUT,
@@ -11,6 +12,7 @@ const positive = z.coerce
   .positive()
   .max(Number.MAX_SAFE_INTEGER);
 export const CatalogSourceSchema = z.url().refine((value) => {
+  if (value === EVALUATION_CATALOG_URL) return true;
   const url = new URL(value);
   return (
     url.protocol === 'https:' &&
@@ -55,6 +57,11 @@ export function readLimits(env: Variables): Limits | null {
   const result = schema.safeParse(env);
   if (!result.success) return null;
   const limits = result.data;
+  if (
+    limits.LLM_CATALOG_URL === EVALUATION_CATALOG_URL &&
+    (limits.LLM_ENVIRONMENT !== 'test' || limits.LLM_PROVIDER !== 'openai')
+  )
+    return null;
   const boundedComparison =
     limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined ||
     limits.LLM_PRIOR_MICRODOLLARS !== undefined;

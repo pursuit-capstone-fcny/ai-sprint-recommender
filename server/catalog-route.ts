@@ -12,6 +12,7 @@ const headers = {
 export async function serveCatalog(
   request: Request,
   env: Variables,
+  deps: { fetch?: typeof fetch } = {},
 ): Promise<Response> {
   if (env.LLM_ENVIRONMENT !== 'test' || new URL(request.url).search)
     return new Response('Not found', { status: 404, headers });
@@ -38,7 +39,7 @@ export async function serveCatalog(
         origin: new URL(request.url).origin,
         source: source.data,
         signal: abort.signal,
-        fetcher: fetch,
+        fetcher: deps.fetch ?? fetch,
         cache: defaultCatalogCache(),
         minimumFreshMs: 30_000,
       })

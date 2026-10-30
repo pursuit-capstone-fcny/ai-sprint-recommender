@@ -1,0 +1,11 @@
+{
+  "checkedAt": "2026-10-30T17:30:40.490051+00:00",
+  "originalVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+  "publishedVersion": "sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d",
+  "publicDataEqual": true,
+  "changedFields": ["catalogVersion"],
+  "items": 89,
+  "paidCalls": 0,
+  "originalBenchmarkChanged": false,
+  "testSourceDecision": "Copy the exact original public snapshot into an isolated test-only entry point; leave the concurrent Apps Script migration unchanged."
+}

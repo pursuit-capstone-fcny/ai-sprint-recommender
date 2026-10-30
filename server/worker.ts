@@ -8,6 +8,7 @@ export default {
     request: Request,
     env: WorkerEnv,
     ctx?: { waitUntil(task: Promise<unknown>): void },
+    deps: { fetch?: typeof fetch } = {},
   ): Promise<Response> {
     const path = new URL(request.url).pathname;
     // Runner-only readback accounts for every call, including unobserved traffic.
@@ -38,9 +39,10 @@ export default {
         },
       });
     }
-    if (path === CATALOG_PATH) return serveCatalog(request, env);
+    if (path === CATALOG_PATH) return serveCatalog(request, env, deps);
     if (path === RECOMMENDATION_PATH)
       return recommend(request, env, {
+        fetch: deps.fetch,
         waitUntil: ctx ? (task) => ctx.waitUntil(task) : undefined,
       });
     if (path.startsWith('/api/'))

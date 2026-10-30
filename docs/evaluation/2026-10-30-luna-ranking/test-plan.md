@@ -73,3 +73,28 @@ Expanded-card and unseen-wording review remain separate and pending.
 Always disable the test endpoint, save its durable balance, remove its provider
 and rate keys, and remove temporary approval and trigger after validation.
 No production deployment or flag change is authorized.
+
+## Catalog migration during this trial
+
+Attempt 2 of run 41097724599 stopped during its initial unpaid catalog load.
+Apps Script returned `CATALOG_UNAVAILABLE` while another authorized chat was
+migrating that shared test project. No benchmark request was sent and the
+durable budget increased by $0. Cleanup disabled test calls and removed keys.
+
+The migrated published snapshot has exactly the same public data, including all
+89 items and tags, but its canonical serialization gives a different version
+hash. The [comparison record](catalog-migration.json) records this distinction.
+Do not alter the frozen benchmark or relabel historical reports to match it.
+
+The rerun therefore uses a separate test-only Worker entry point with a copy of
+the original frozen public catalog. Preflight and unit tests require exact
+equality with the existing benchmark catalog. The same catalog parser, cache,
+recommendation handler, provider, budget and selection still run. Only the
+exact frozen source URL is handled locally; provider requests remain real.
+The ordinary Worker does not serve this snapshot, and production/Haiku config
+rejects it. No shared Apps Script or production configuration changes.
+
+This isolates ranking evaluation from the concurrent migration. Catalog load
+latency is no longer an Apps Script measurement, and the rerun cannot certify
+the migrated catalog's end-to-end integration. Provider latency and scoring
+remain measured; record the source change alongside every result.

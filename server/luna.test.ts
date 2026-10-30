@@ -18,6 +18,7 @@ import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 
 const env = {
   ...config.vars,
+  LLM_CATALOG_URL: 'https://script.google.com/macros/s/fixture/exec',
   LLM_ENABLED: 'true',
   LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
   OPENAI_API_KEY: 'fixture-key',

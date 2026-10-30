@@ -1,0 +1,15 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "fallback",
+      "reason": "provider-error"
+    },
+    "requestId": null,
+    "status": 503,
+    "latencyMs": 2205,
+    "diagnostic": null
+  }
+]
