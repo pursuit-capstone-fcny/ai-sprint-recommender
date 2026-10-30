@@ -195,3 +195,10 @@ remain pending.
   keep its strongest three first and choose further useful positions only from
   unused catalog items. Preserve V12 eligibility/uniqueness, blank browsing,
   frozen labels and the task-diversity gate; reject duplicate provider output.
+
+- Given authenticated test diagnostics and a valid evaluation request UUID, when
+  a response is lost, then the server and client retain the same ID. Ignore
+  supplied IDs in production, without authentication or with malformed UUIDs.
+- Given a legitimate goal mixed with control instructions, when Haiku V19 ranks
+  it, then apply the same breadth pass to its real work. Preserve eligibility,
+  uniqueness, frozen labels, input text and the task-diversity gate.

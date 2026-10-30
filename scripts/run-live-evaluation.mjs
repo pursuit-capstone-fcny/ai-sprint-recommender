@@ -52,7 +52,7 @@ export async function main(args = process.argv.slice(2)) {
       contents: `
     export { injectionProbes } from './src/evaluation/injection-probes';
     export { afterEvaluationCall } from './src/evaluation/cooldown';
-    export { evaluationFetch, mergeDiagnostic } from './src/evaluation/diagnostic-fetch';
+    export { evaluationFetch, mergeDiagnostic, EvaluationRequestError } from './src/evaluation/diagnostic-fetch';
     export { DiagnosticSchema } from './src/contracts/evaluationDiagnostic';
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
@@ -164,6 +164,7 @@ export async function main(args = process.argv.slice(2)) {
   const overallTimer = setTimeout(() => abort.abort(), 600_000);
   const observed = new Map();
   const directDiagnostics = new Map();
+  const transportFailures = [];
   let rateKey;
   if (!checkDiagnostics) {
     const candidate = approval.modelVersion === 'gpt-6-luna' ? 'luna' : 'haiku';
@@ -178,10 +179,16 @@ export async function main(args = process.argv.slice(2)) {
       throw new Error('Authenticated diagnostic capture is required');
   }
   const captureFetch = rateKey
-    ? contracts.evaluationFetch(approval.endpoint, rateKey, (entry) => {
-        contracts.mergeDiagnostic(observed, entry);
-        contracts.mergeDiagnostic(directDiagnostics, entry);
-      })
+    ? contracts.evaluationFetch(
+        approval.endpoint,
+        rateKey,
+        (entry) => {
+          contracts.mergeDiagnostic(observed, entry);
+          contracts.mergeDiagnostic(directDiagnostics, entry);
+        },
+        fetch,
+        (entry) => transportFailures.push(entry),
+      )
     : fetch;
   const probeIds = new Set();
   const readinessProbes = [];
@@ -242,6 +249,10 @@ export async function main(args = process.argv.slice(2)) {
       throw new Error('Evaluator failed; partial progress is preserved.');
   }
   async function saveDiagnostics() {
+    await writeFile(
+      `${liveDirectory}/probe-transport-failures.json`,
+      `${JSON.stringify(transportFailures, null, 2)}\n`,
+    );
     await writeFile(
       `${liveDirectory}/direct-response-diagnostics.json`,
       `${JSON.stringify([...directDiagnostics.values()], null, 2)}\n`,
@@ -543,6 +554,8 @@ export async function main(args = process.argv.slice(2)) {
             ? parsed.data
             : { outcome: 'fallback', reason: 'invalid-response' };
       } catch (error) {
+        if (error instanceof contracts.EvaluationRequestError)
+          requestId = error.requestId;
         response = {
           outcome: 'fallback',
           reason:

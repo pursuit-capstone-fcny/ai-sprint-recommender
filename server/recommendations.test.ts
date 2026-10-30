@@ -488,3 +488,62 @@ describe('recommendation endpoint', () => {
     expect(budget.settle).toHaveBeenCalledWith(expect.any(String), 0);
   });
 });
+
+it.each([
+  {
+    env: 'test',
+    auth: true,
+    diagnostics: 'true',
+    id: '936fb105-3c4d-4141-80ed-0317ca163d43',
+    accepted: true,
+  },
+  {
+    env: 'production',
+    auth: true,
+    diagnostics: 'true',
+    id: '936fb105-3c4d-4141-80ed-0317ca163d43',
+    accepted: false,
+  },
+  {
+    env: 'test',
+    auth: false,
+    diagnostics: 'true',
+    id: '936fb105-3c4d-4141-80ed-0317ca163d43',
+    accepted: false,
+  },
+  {
+    env: 'test',
+    auth: true,
+    diagnostics: 'false',
+    id: '936fb105-3c4d-4141-80ed-0317ca163d43',
+    accepted: false,
+  },
+  {
+    env: 'test',
+    auth: true,
+    diagnostics: 'true',
+    id: 'PRIVATE',
+    accepted: false,
+  },
+])('correlates only authenticated test requests: %j', async (configuration) => {
+  const call = request();
+  const key = 'a'.repeat(64);
+  call.headers.set('x-evaluation-request-id', configuration.id);
+  if (configuration.auth) call.headers.set('Authorization', `Bearer ${key}`);
+  const diagnostic = vi.fn();
+  const response = await recommend(
+    call,
+    {
+      ...environment,
+      LLM_ENABLED: 'false',
+      LLM_ENVIRONMENT: configuration.env,
+      LLM_DIAGNOSTICS_ENABLED: configuration.diagnostics,
+      LLM_RATE_KEY: key,
+    },
+    { diagnostic },
+  );
+  const actual = response.headers.get('x-recommendation-request-id');
+  expect(actual === configuration.id).toBe(configuration.accepted);
+  expect(diagnostic.mock.calls[0][0].requestId).toBe(actual);
+  expect(JSON.stringify(diagnostic.mock.calls)).not.toContain('PRIVATE');
+});

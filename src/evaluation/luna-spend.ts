@@ -8,6 +8,7 @@ import {
   LUNA_DEPLOYED_BUDGETS,
   LUNA_ALLOWANCE_GRANT,
   HAIKU_ALLOWANCE_SCOPE,
+  HAIKU_RELIABILITY_ALLOWANCE_GRANT,
 } from './luna-ledger';
 import { lunaSpent } from './luna';
 import { LUNA_TOTAL_ALLOWANCE } from '../../server/luna-policy';
@@ -17,6 +18,7 @@ const deployedBudget = z.object({
   kind: z.enum(['deployed-luna-budget', 'deployed-model-budget']),
   allowanceMicrodollars: z.union([
     z.literal(1_000_000),
+    z.literal(2_000_000),
     z.literal(LUNA_TOTAL_ALLOWANCE),
   ]),
   priorSpendMicrodollars: amount,
@@ -66,7 +68,7 @@ export function readLunaPriorSpend(): number {
       approvedAt: z.literal('2026-10-30'),
       previousAllowanceMicrodollars: z.literal(1_000_000),
       additionalAllowanceMicrodollars: z.literal(1_000_000),
-      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      totalAllowanceMicrodollars: z.literal(2_000_000),
       priorCeilingMicrodollars: z.literal(861_150),
       unresolvedReservationsMicrodollars: z.literal(225_000),
       scope: z.string().min(1),
@@ -74,7 +76,7 @@ export function readLunaPriorSpend(): number {
     .parse(read(...LUNA_ALLOWANCE_GRANT));
   assert.equal(
     grant.previousAllowanceMicrodollars + grant.additionalAllowanceMicrodollars,
-    LUNA_TOTAL_ALLOWANCE,
+    2_000_000,
   );
   const scope = z
     .strictObject({
@@ -82,7 +84,7 @@ export function readLunaPriorSpend(): number {
       approvedBy: z.literal('Jason'),
       approvedAt: z.literal('2026-10-30'),
       models: z.tuple([z.literal('gpt-6-luna'), z.literal('claude-haiku-5-5')]),
-      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      totalAllowanceMicrodollars: z.literal(2_000_000),
       additionalAllowanceMicrodollars: z.literal(0),
       priorCeilingMicrodollars: z.literal(1_133_483),
       remainingMicrodollars: z.literal(866_517),
@@ -92,6 +94,24 @@ export function readLunaPriorSpend(): number {
     .parse(read(...HAIKU_ALLOWANCE_SCOPE));
   assert.equal(
     scope.priorCeilingMicrodollars + scope.remainingMicrodollars,
+    2_000_000,
+  );
+  const reliabilityGrant = z
+    .strictObject({
+      kind: z.literal('evaluation-allowance-increase'),
+      approvedBy: z.literal('Jason'),
+      approvedAt: z.literal('2026-10-30'),
+      previousAllowanceMicrodollars: z.literal(2_000_000),
+      additionalAllowanceMicrodollars: z.literal(1_000_000),
+      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      priorCeilingMicrodollars: z.literal(1_762_935),
+      unresolvedReservationsMicrodollars: z.literal(225_000),
+      scope: z.string().min(1),
+    })
+    .parse(read(...HAIKU_RELIABILITY_ALLOWANCE_GRANT));
+  assert.equal(
+    reliabilityGrant.previousAllowanceMicrodollars +
+      reliabilityGrant.additionalAllowanceMicrodollars,
     LUNA_TOTAL_ALLOWANCE,
   );
   let prior = LUNA_SPEND_CAPTURES.reduce(
@@ -101,9 +121,12 @@ export function readLunaPriorSpend(): number {
   for (const [path, hash, allowance = 1_000_000] of LUNA_DEPLOYED_BUDGETS) {
     assert(allowance <= LUNA_TOTAL_ALLOWANCE);
     if (allowance > 1_000_000) assert(prior >= grant.priorCeilingMicrodollars);
+    if (allowance > 2_000_000)
+      assert(prior >= reliabilityGrant.priorCeilingMicrodollars);
     prior += deployedLunaSpend(read(path, hash), prior, allowance);
   }
   assert(prior >= scope.priorCeilingMicrodollars);
+  assert(prior >= reliabilityGrant.priorCeilingMicrodollars);
   assert.equal(
     prior,
     LUNA_PRIOR_SPEND,

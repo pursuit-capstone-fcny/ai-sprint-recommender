@@ -7,5 +7,5 @@ export const LUNA_GOAL_ELIGIBILITY_INSTRUCTION =
 export const LUNA_DEPLOYED_MAX_INPUT = 50_000;
 export const LUNA_DEPLOYED_MAX_OUTPUT = 1_000;
 export const LUNA_DEPLOYED_RESERVATION = 11_000;
-// Jason added $1 on October 30. The existing ledger and charges are not reset.
-export const LUNA_TOTAL_ALLOWANCE = 2_000_000;
+// Jason added another $1 for the Haiku reliability run. Earlier charges stay.
+export const LUNA_TOTAL_ALLOWANCE = 3_000_000;

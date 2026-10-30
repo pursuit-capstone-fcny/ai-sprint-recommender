@@ -11,7 +11,11 @@ import {
 } from './report';
 import { runLiveTrials } from './live';
 import { afterEvaluationCall, type Cooldown } from './cooldown';
-import { evaluationFetch, mergeDiagnostic } from './diagnostic-fetch';
+import {
+  evaluationFetch,
+  mergeDiagnostic,
+  type TransportFailure,
+} from './diagnostic-fetch';
 import type { EvaluationDiagnostic } from '../contracts/evaluationDiagnostic';
 import { readCheckout, validateLiveApproval } from './approval';
 
@@ -58,14 +62,23 @@ export async function main(args = process.argv.slice(2)) {
     : undefined;
   const cooldowns: Cooldown[] = [];
   const captured = new Map<string, EvaluationDiagnostic>();
+  const transportFailures: TransportFailure[] = [];
   const key = process.env.LLM_EVALUATION_RATE_KEY;
   const capturedFetch =
     liveApproval && key
-      ? evaluationFetch(liveApproval.endpoint, key, (entry) =>
-          mergeDiagnostic(captured, entry),
+      ? evaluationFetch(
+          liveApproval.endpoint,
+          key,
+          (entry) => mergeDiagnostic(captured, entry),
+          fetch,
+          (entry) => transportFailures.push(entry),
         )
       : fetch;
   const saveCaptured = async () => {
+    await writeFile(
+      resolve(output, 'transport-failures.json'),
+      `${JSON.stringify(transportFailures, null, 2)}\n`,
+    );
     if (key)
       await writeFile(
         resolve(output, 'response-diagnostics.json'),

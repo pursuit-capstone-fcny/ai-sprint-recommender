@@ -5,6 +5,7 @@ import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
+  HAIKU_MIXED_GOAL_INSTRUCTION,
 } from './haiku-policy';
 
 // Anthropic does not support maxItems. Retain its existing eight required
@@ -24,11 +25,14 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
         `${HAIKU_BREADTH_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
       )
     : `${system} ${HAIKU_BROWSING_INSTRUCTION}`;
+  const workSystem = body.data.goal.trim()
+    ? `${rankedSystem} ${HAIKU_MIXED_GOAL_INSTRUCTION}`
+    : rankedSystem;
   return {
     ...body,
     request: {
       ...body.request,
-      system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
+      system: `${workSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
       messages: [{ role: 'user', content: compact.content }],
     },
   };

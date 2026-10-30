@@ -1,0 +1,16 @@
+{
+  "sourceRevision": "4fc57cccae8b4744ba197f38d53c22fd08ddb128",
+  "note": "V18 provider requests, before the V19 mixed-goal instruction; allowance changes do not alter provider input.",
+  "hashes": {
+    "leadership-01": "95061d5b6744df0f718e25f0683f0bea26ba08f99040930216621955b07f80f4",
+    "leadership-02": "6cc216a8de2028a0d0b6605efbab86109ae7580bf0c2696aa2c0b00444d97873",
+    "operations-01": "3241df1384a5ed2fa245f42f8e83091f7d26bd90bae411eaaaa89c7a8fa9b7bc",
+    "operations-02": "673e436407ce9f8dcb1a9d560c81d9b86784c945a7f540f78e43d75fe34eab42",
+    "programs-01": "5effd96743a101c6f6d8e0c04ff7e88949ad8efd195126bb874a55131fdea983",
+    "programs-02": "a28af3eab100ac709f97ca47fa14f231bd340a49854c838019af71850d6a4099",
+    "communications-01": "7609dac9a8aebab06c6b5c290fa74cd6c0da3e7003c0733ee4ba15ce5e375869",
+    "communications-02": "aea1e7107112052b8d95fef4b44d1c4bf0c6a05e1de0daab7cbbc5b1ea9c6bfc",
+    "fundraising-01": "64af73d8074d74ed0c5b057cc63906a5b9fd8b81eec7955760a8ec16e99495dd",
+    "fundraising-02": "1978014121aeeb308c6c1f898d15ca43228904a98dffdb31c54491b35ee97df8"
+  }
+}

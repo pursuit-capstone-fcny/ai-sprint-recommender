@@ -68,3 +68,5 @@ export const DiagnosticSchema = z.strictObject({
 });
 export const EVALUATION_DIAGNOSTIC_HEADER = 'x-evaluation-diagnostic';
 export type EvaluationDiagnostic = z.infer<typeof DiagnosticSchema>;
+
+export const EVALUATION_REQUEST_HEADER = 'x-evaluation-request-id';

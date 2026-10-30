@@ -1,5 +1,5 @@
-// Original names and all charges are retained. The October 30 grant adds $1
-// for deployed Luna tests; historical and Haiku allowance limits stay unchanged.
+// Original names and all charges are retained. Grants add to the shared test
+// ceiling; live calls still require exact-source, provider and attempt approval.
 export const LUNA_PRIOR_SPEND = 1_762_935;
 export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
@@ -167,4 +167,10 @@ export const LUNA_ALLOWANCE_GRANT = [
 export const HAIKU_ALLOWANCE_SCOPE = [
   'docs/evaluation/2026-10-30-haiku-optimized/allowance-scope.json',
   'bf00eb7816927fa26288f8c176fa8c1dbe6a89d89e621082512bf944c94d39a1',
+] as const;
+
+// New Haiku reliability grant; no historical budget is reset.
+export const HAIKU_RELIABILITY_ALLOWANCE_GRANT = [
+  'docs/evaluation/2026-10-30-haiku-reliability/allowance.json',
+  'ec925493785e2e394d18370c5ef7fc94b59f49f83c81f18adb6b3c3d752b3595',
 ] as const;

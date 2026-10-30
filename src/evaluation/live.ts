@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { EvaluationRequestError } from './diagnostic-fetch';
 import { createHash } from 'node:crypto';
 import type { Benchmark } from './benchmark';
 import { benchmarkFingerprint } from './benchmark';
@@ -100,7 +101,7 @@ async function loadCatalog(
   };
 }
 
-async function requestRecommendation(
+export async function requestRecommendation(
   endpoint: string,
   input: RecommendationRequest,
   fetcher: typeof fetch,
@@ -137,6 +138,10 @@ async function requestRecommendation(
         ? parsed.data
         : { outcome: 'fallback', reason: 'invalid-response' };
   } catch (error) {
+    if (error instanceof EvaluationRequestError) {
+      requestId = error.requestId;
+      status = error.diagnostic.status;
+    }
     response = {
       outcome: 'fallback',
       reason:

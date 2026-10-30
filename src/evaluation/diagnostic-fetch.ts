@@ -1,6 +1,9 @@
+import { randomUUID } from 'node:crypto';
+import { z } from 'zod';
 import {
   DiagnosticSchema,
   EVALUATION_DIAGNOSTIC_HEADER,
+  EVALUATION_REQUEST_HEADER,
   type EvaluationDiagnostic,
 } from '../contracts/evaluationDiagnostic';
 
@@ -18,13 +21,63 @@ export function mergeDiagnostic(
   records.set(entry.requestId, entry);
 }
 
-// This credential is scoped to the approved endpoint. Never send it to the Sheet,
-// another origin, a redirect, or a provider. Only the fixed diagnostic schema is saved.
+export interface TransportFailure {
+  requestId: string;
+  phase: 'transport' | 'diagnostic';
+  kind:
+    | 'network'
+    | 'timeout'
+    | 'missing-header'
+    | 'invalid-header'
+    | 'request-mismatch';
+  code?: string;
+  status: number | null;
+  latencyMs: number;
+}
+
+export class EvaluationRequestError extends Error {
+  readonly requestId: string;
+  constructor(readonly diagnostic: TransportFailure) {
+    super(`Evaluation request failed: ${diagnostic.kind}`);
+    this.name =
+      diagnostic.kind === 'timeout' ? 'TimeoutError' : 'EvaluationRequestError';
+    this.requestId = diagnostic.requestId;
+  }
+}
+
+const networkCodes = new Set([
+  'ECONNRESET',
+  'ECONNREFUSED',
+  'ETIMEDOUT',
+  'ENOTFOUND',
+  'EAI_AGAIN',
+  'UND_ERR_SOCKET',
+  'UND_ERR_CONNECT_TIMEOUT',
+  'UND_ERR_HEADERS_TIMEOUT',
+  'UND_ERR_BODY_TIMEOUT',
+]);
+function networkCode(error: unknown): string | undefined {
+  if (!error || typeof error !== 'object') return;
+  const source =
+    'cause' in error && error.cause && typeof error.cause === 'object'
+      ? error.cause
+      : error;
+  if (
+    'code' in source &&
+    typeof source.code === 'string' &&
+    networkCodes.has(source.code)
+  )
+    return source.code;
+}
+
+// Only the exact approved endpoint gets credentials, fresh POST connections and
+// correlation IDs. Never replay a POST or save raw errors, headers or bodies.
 export function evaluationFetch(
   endpoint: string,
   key: string,
   record: (entry: EvaluationDiagnostic) => void,
   fetcher: typeof fetch = fetch,
+  recordFailure: (entry: TransportFailure) => void = () => {},
 ): typeof fetch {
   if (!/^[a-f0-9]{64}$/.test(key))
     throw new Error('Invalid evaluation credential');
@@ -32,21 +85,59 @@ export function evaluationFetch(
     const url = input instanceof Request ? input.url : String(input);
     if (url !== endpoint || init?.method !== 'POST')
       return fetcher(input, init);
+    const started = performance.now();
+    let requestId: string = randomUUID();
+    let status: number | null = null;
+    const fail = (
+      phase: TransportFailure['phase'],
+      kind: TransportFailure['kind'],
+      code?: string,
+    ): never => {
+      const diagnostic: TransportFailure = {
+        requestId,
+        phase,
+        kind,
+        ...(code ? { code } : {}),
+        status,
+        latencyMs: Math.round(performance.now() - started),
+      };
+      recordFailure(diagnostic);
+      throw new EvaluationRequestError(diagnostic);
+    };
     const headers = new Headers(init.headers);
     headers.set('Authorization', `Bearer ${key}`);
-    const response = await fetcher(input, {
-      ...init,
-      headers,
-      redirect: 'error',
-    });
+    headers.set(EVALUATION_REQUEST_HEADER, requestId);
+    headers.set('Connection', 'close');
+    let response: Response;
+    try {
+      response = await fetcher(input, { ...init, headers, redirect: 'error' });
+    } catch (error) {
+      const timeout =
+        error instanceof Error &&
+        ['TimeoutError', 'AbortError'].includes(error.name);
+      return fail(
+        'transport',
+        timeout ? 'timeout' : 'network',
+        networkCode(error),
+      );
+    }
+    status = response.status;
+    const responseId = z
+      .uuid()
+      .safeParse(response.headers.get('x-recommendation-request-id'));
+    if (responseId.success) requestId = responseId.data;
     const value = response.headers.get(EVALUATION_DIAGNOSTIC_HEADER);
-    if (!value || value.length > 4096)
-      throw new Error('Missing bounded evaluation diagnostic');
-    const parsed = DiagnosticSchema.parse(JSON.parse(value));
-    if (
-      parsed.requestId !== response.headers.get('x-recommendation-request-id')
-    )
-      throw new Error('Evaluation diagnostic request mismatch');
+    if (!value) return fail('diagnostic', 'missing-header');
+    let parsed: EvaluationDiagnostic;
+    try {
+      if (value.length > 4096) return fail('diagnostic', 'invalid-header');
+      parsed = DiagnosticSchema.parse(JSON.parse(value));
+    } catch (error) {
+      if (error instanceof EvaluationRequestError) throw error;
+      return fail('diagnostic', 'invalid-header');
+    }
+    if (!responseId.success || parsed.requestId !== responseId.data)
+      return fail('diagnostic', 'request-mismatch');
     record(parsed);
     return response;
   };

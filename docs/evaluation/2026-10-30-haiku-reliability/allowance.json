@@ -1,0 +1,11 @@
+{
+  "kind": "evaluation-allowance-increase",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "previousAllowanceMicrodollars": 2000000,
+  "additionalAllowanceMicrodollars": 1000000,
+  "totalAllowanceMicrodollars": 3000000,
+  "priorCeilingMicrodollars": 1762935,
+  "unresolvedReservationsMicrodollars": 225000,
+  "scope": "Fix Haiku transport failures, missing diagnostics and mixed Operations breadth, then rerun #19. Preserve frozen labels, task-diversity gate, all historical charges and unknown reservations. Production LLM calls and logging remain disabled. Only exact-source/attempt Haiku test approval is granted by this task."
+}

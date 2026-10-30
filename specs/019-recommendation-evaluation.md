@@ -7,6 +7,13 @@
 
 ## Acceptance criteria
 
+- Given a transport or diagnostic-header failure, when a test request fails,
+  then preserve its correlation ID, stage, status and allowlisted error code.
+  Never save raw errors or retry a paid POST. Missing server usage stays missing.
+- Given the additional $1 Haiku grant, when a new run is approved, then retain
+  the $1.762935 prior ceiling and $0.225000 unknown reservations under a $3 cap.
+  Keep production LLM calls and logging disabled.
+
 - Given an independent case times out or encounters a transport/rate failure,
   when continuing evaluation, then retain that failure and wait for its possible
   concurrency lease to expire. Do not retry, refund its unknown spend, change

@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
+import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
@@ -17,6 +18,7 @@ import {
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
+  HAIKU_MIXED_GOAL_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -69,7 +71,28 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
-      const v12System = haiku.request.system
+      const v18System = haiku.request.system.replace(
+        ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
+        '',
+      );
+      const v18Hash = Object.entries(v18.hashes).find(
+        ([id]) => id === profile.id,
+      )?.[1];
+      if (v18Hash)
+        expect(
+          createHash('sha256')
+            .update(JSON.stringify({ ...haiku.request, system: v18System }))
+            .digest('hex'),
+        ).toBe(v18Hash);
+      if (profile.input.goal.trim())
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
+        );
+      else
+        expect(haiku.request.system).not.toContain(
+          HAIKU_MIXED_GOAL_INSTRUCTION,
+        );
+      const v12System = v18System
         .replace(` ${HAIKU_BREADTH_INSTRUCTION}`, '')
         .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');
       const v12Hash = Object.entries(v12.hashes).find(

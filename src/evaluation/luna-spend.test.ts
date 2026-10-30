@@ -30,7 +30,7 @@ describe('shared evaluation allowance evidence', () => {
       additionalMicrodollars: 1000,
       remainingMicrodollars: 1137850,
     };
-    expect(deployedLunaSpend(record, 861150, LUNA_TOTAL_ALLOWANCE)).toBe(1000);
+    expect(deployedLunaSpend(record, 861150, 2_000_000)).toBe(1000);
     expect(() => deployedLunaSpend(record, 861150)).toThrow('allowance');
     expect(() =>
       deployedLunaSpend(

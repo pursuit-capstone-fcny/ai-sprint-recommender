@@ -38,7 +38,11 @@ export const LiveApprovalSchema = z
     serviceTier: z.literal('fast').optional(),
     priorSpendMicrodollars: z.number().int().nonnegative().optional(),
     totalAllowanceMicrodollars: z
-      .union([z.literal(1_000_000), z.literal(LUNA_TOTAL_ALLOWANCE)])
+      .union([
+        z.literal(1_000_000),
+        z.literal(2_000_000),
+        z.literal(LUNA_TOTAL_ALLOWANCE),
+      ])
       .optional(),
   })
   .refine(

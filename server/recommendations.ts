@@ -2,6 +2,7 @@ import { z } from 'zod';
 import {
   DiagnosticSchema,
   EVALUATION_DIAGNOSTIC_HEADER,
+  EVALUATION_REQUEST_HEADER,
 } from '../src/contracts/evaluationDiagnostic';
 import {
   RECOMMENDATION_DEADLINE_MS,
@@ -114,7 +115,19 @@ export async function recommend(
 ): Promise<Response> {
   const started = Date.now();
   const deadline = started + SERVER_DEADLINE_MS;
-  const requestId = crypto.randomUUID();
+  const authenticatedDiagnostics =
+    env.LLM_ENVIRONMENT === 'test' &&
+    env.LLM_DIAGNOSTICS_ENABLED === 'true' &&
+    typeof env.LLM_RATE_KEY === 'string' &&
+    env.LLM_RATE_KEY.length >= 32 &&
+    request.headers.get('Authorization') === `Bearer ${env.LLM_RATE_KEY}`;
+  const suppliedId = z
+    .uuid()
+    .safeParse(request.headers.get(EVALUATION_REQUEST_HEADER));
+  const requestId =
+    authenticatedDiagnostics && suppliedId.success
+      ? suppliedId.data
+      : crypto.randomUUID();
   const abort = new AbortController();
   const diagnostic: Diagnostic = {
     requestId,
@@ -416,13 +429,7 @@ export async function recommend(
     ...headers,
     'x-recommendation-request-id': requestId,
   });
-  if (
-    env.LLM_ENVIRONMENT === 'test' &&
-    env.LLM_DIAGNOSTICS_ENABLED === 'true' &&
-    typeof env.LLM_RATE_KEY === 'string' &&
-    env.LLM_RATE_KEY.length >= 32 &&
-    request.headers.get('Authorization') === `Bearer ${env.LLM_RATE_KEY}`
-  ) {
+  if (authenticatedDiagnostics) {
     const parsed = DiagnosticSchema.safeParse(snapshot());
     if (parsed.success)
       responseHeaders.set(
