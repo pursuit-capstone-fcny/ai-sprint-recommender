@@ -15,6 +15,7 @@ export default tseslint.config(
   {
     files: [
       'apps-script/index.ts',
+      'apps-script/published-library.ts',
       'apps-script/library-publisher.ts',
       'apps-script/library-source.ts',
       'apps-script-admin/index.ts',

@@ -1,6 +1,9 @@
 # Analytics end-to-end test deployment
 
-Verified October 29, 2026. This uses the existing isolated test collector and
+Historical verification of the pre-publishing deployment on October 29, 2026.
+This live Google deployment has not yet been upgraded to the static catalog
+stack. Follow [library publishing](library-publishing.md) to deploy the new
+bundles and configuration after review. This uses the existing isolated test collector and
 private test copy of the library. The production integration workbook and
 production collection were not changed.
 

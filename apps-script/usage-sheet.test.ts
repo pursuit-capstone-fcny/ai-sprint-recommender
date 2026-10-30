@@ -1,3 +1,4 @@
+import { publishFixture } from '../fixtures/mock-published-library';
 import { createHash } from 'node:crypto';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import catalogFixture from '../fixtures/public-catalog.json';
@@ -149,6 +150,9 @@ function setup() {
       setMimeType: () => ({ getContent: () => content }),
     }),
   });
+  const publish = () =>
+    publishFixture(catalog as unknown as import('./catalog').Workbook);
+  publishFixture(catalog as unknown as import('./catalog').Workbook, true);
   const send = (value: unknown = searchEvent) =>
     JSON.parse(
       doPost({
@@ -156,6 +160,7 @@ function setup() {
       }).getContent(),
     );
   return {
+    publish,
     properties,
     usage,
     catalog,
@@ -184,10 +189,7 @@ describe('usage Apps Script adapter', () => {
       'flush',
       'unlock',
     ]);
-    expect(openById.mock.calls).toEqual([
-      ['fixture-usage-book'],
-      ['fixture-catalog-book'],
-    ]);
+    expect(openById.mock.calls).toEqual([['fixture-usage-book']]);
     expect(send()).toEqual({ ok: true, status: 'duplicate' });
     expect(usage.Usage).toHaveLength(2);
   });
@@ -195,6 +197,7 @@ describe('usage Apps Script adapter', () => {
   it('stores formula-shaped canonical tags inside a JSON object, never as formulas', () => {
     const services = setup();
     services.catalog.Dictionary.push(['task', '=1+1']);
+    services.publish();
     const catalog = JSON.parse(doGet().getContent());
     expect(
       services.send({

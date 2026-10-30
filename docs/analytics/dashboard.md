@@ -54,7 +54,7 @@ sharing. Named membership of the private file authorizes its dashboard data.
 The manifest pins `executeAs=USER_ACCESSING` and `access=ANYONE`, meaning Google
 account authentication, **not** `ANYONE_ANONYMOUS`. Review both in the deployment
 UI. Google Workspace policy and OAuth consent must allow the intended staff.
-The admin project requests email identity, Spreadsheet service access and Drive read-only access to verify sharing; the
+The admin project requests email identity, Spreadsheet service access and Drive read-only access to verify sharing, plus external-request access to the public static catalog; the
 latter is broad at Google's scope level even though this code only reads the
 user-selected file. Each admin must review/authorize those scopes. No
 credentials, emails or workbook IDs belong in frontend code or this repository.
@@ -104,16 +104,12 @@ Script Property, duplicate email allowlist, reporting workbook or refresh trigge
 is required from them. **Change Sheet** validates the new file before replacing
 the saved connection. **Disconnect** forgets only that account's binding.
 
-Supported inputs are a normalized `Catalog`/`Dictionary` workbook, the integration
-library's `First 10  -Tag Review` format, or an existing aggregate workbook with
-`Analytics facts` and `Analytics status`. The source file must use Restricted
-sharing with named people. Connecting cannot grant missing Google access.
-
-For the integration format, only published videos are included. Proposed
-function-area/tool/task tags become canonical only when their row's Approval
-Status is Approved. The report labels pending reviews and excludes unapproved
-proposals. It reads only the recognized public catalog and approval columns,
-never review notes or unrelated tabs.
+The link must identify the configured private source/usage Sheet. Arbitrary
+catalog or aggregate workbooks are rejected. Inventory comes exclusively from
+the versioned Cloudflare catalog. The publisher validates normalized Catalog
+workbooks or approved integration rows; the dashboard never reads draft catalog
+cells. Connecting cannot grant missing Google access. See
+[library publishing](library-publishing.md) for the one-time technical setup.
 
 A source workbook can be connected before it has a `Usage` tab. Inventory loads,
 but usage counts display **Unavailable** and unused-content/date/source/mode
@@ -121,8 +117,8 @@ controls stay disabled. An existing, valid but empty `Usage` table instead means
 zero retained recorded events. Connecting does not create that table or turn on
 production logging. The collection owner must still deploy and approve #16's
 event collection. Events must be in the selected source workbook to be read
-there. Existing multi-file producer deployments can use their aggregate workbook
-link instead.
+there. Legacy multi-file producers retain their owner reconciliation tables,
+but those tables cannot be connected to the dashboard.
 
 Direct source reads aggregate on each reload and expire after 15 minutes. If the
 owner supplies approved reporting policy as workbook developer metadata
@@ -132,14 +128,14 @@ uses that policy. This is optional technical owner configuration, never a staff
 onboarding field. Without it the reader conservatively includes only receipts
 from the last 24 hours and labels the coverage. It does not extend retention or
 approve collection. Historical versions without a matching snapshot stay
-explicitly unmapped. Precomputed report links keep the producer's published
-retention/environment/refresh metadata.
+explicitly unmapped. Historical metadata comes only from hash-verified public
+snapshots, never mutable Sheet snapshot cells.
 
 ## Technical deployment, once
 
 1. Create a separate FCNY-owned Apps Script project from
-   `build/apps-script-admin/`. No Script Properties are needed for normal admin
-   onboarding. The optional `ANALYTICS_ADMIN_ENABLED=false` kill switch disables
+   `build/apps-script-admin/`. Configure `LIBRARY_SOURCE_SHEET_URL` and
+   `LIBRARY_PUBLIC_ORIGIN` once as described in library publishing. The optional `ANALYTICS_ADMIN_ENABLED=false` kill switch disables
    access. Never deploy this bundle on the public catalog/usage endpoint.
 2. Deploy as **User accessing the web app**, with Google sign-in required. Each
    staff member authorizes Google's scopes. Review Workspace/OAuth policy with

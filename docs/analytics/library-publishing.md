@@ -131,3 +131,49 @@ build, run `node scripts/configure-library-app.mjs` and deploy with
 `--config wrangler.library.jsonc`. That generated config preserves the existing
 LLM enablement and budget gates. `LIBRARY_ORIGIN` replaces the former
 `LLM_CATALOG_URL`; do not point it at the editable Sheet or Apps Script endpoint.
+
+## Private analytics and collection cutover
+
+Build the latest producer and admin bundles. Set `LIBRARY_PUBLIC_ORIGIN` and
+`LIBRARY_SOURCE_SHEET_URL` in both Apps Script projects to the same configured
+catalog origin and private source/usage Sheet. The producer's
+`CATALOG_SPREADSHEET_ID`, if using owner reconciliation tables, must match that
+source. Put the private `Usage` table in this Sheet and set the collector's
+`USAGE_SPREADSHEET_ID` accordingly. Keep the existing retention, access and
+collection approvals. The admin needs no GitHub token. Review Google's added
+external-request scope when deploying the updated admin bundle.
+
+Deploy the catalog first and verify its manifest, then update the producer,
+admin and application. Old live-Sheet event hashes differ from the new canonical
+hashes. Historical events without an archived published snapshot are labeled
+unmapped, never reassigned today's tags. Export approved historical metadata
+through a separately reviewed migration if needed; do not weaken hash checks.
+The old Sheet snapshot table is no longer a runtime metadata source. History
+reads are capped at 50 additional versions and 8 MiB per report.
+
+The public Apps Script GET, if retained for compatibility, proxies only the
+verified published snapshot and never reads draft catalog cells or updates
+Problems. Publisher validation is the route for draft content. The optional
+owner reconciliation producer still writes private aggregate tables and purges
+retained logs; the private dashboard accepts only the configured source Sheet.
+
+After setup, check with a fictional test library: publish, observe the matching
+manifest hash, generate a test search/impression/click, and reload private
+analytics with test/team filters enabled. Change a draft tag and confirm nothing
+changes until publishing. Publish again and verify old activity retains old tags.
+Force validation/deployment failure and confirm the previous manifest remains
+usable. Production usage and paid LLM approval are separate from this test.
+
+## Verification recorded for this stack
+
+The shared-consumer preview loaded its fictional static catalog and deterministic
+search for grant reports returned the expected fixture video. Usage was disabled.
+Publisher tests cover deployment outcomes, duplicate requests and last-good
+preservation; the sidebar test covers pending controls and safe job links.
+Native Google publisher installation and a real catalog-only workflow dispatch
+remain deployment checks after the workflow lands on the default branch and the
+owner provisions the private credential. The existing live Google test app is
+still the earlier deployment; its old end-to-end evidence does not certify this
+cutover.
+
+![Static catalog preview](screenshots/static-catalog-preview.png)

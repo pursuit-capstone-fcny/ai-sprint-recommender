@@ -1,3 +1,4 @@
+import { publishFixture } from '../fixtures/mock-published-library';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { analyticsServices } from '../fixtures/analytics-services';
 import { impressionEvent, searchEvent } from '../fixtures/usage-events';
@@ -103,6 +104,9 @@ describe('private analytics reporting adapter', () => {
     const { data, openById } = initialized();
     data['fixture-catalog'].Catalog[1][2] =
       'Fictional public metadata. '.repeat(1000);
+    publishFixture(
+      data['fixture-catalog'] as unknown as import('./catalog').Workbook,
+    );
     const current = JSON.parse(doGet().getContent());
     refreshAnalytics();
     const sheet = openById('fixture-usage').getSheetByName(SNAPSHOT_TABLE)!;
@@ -259,7 +263,12 @@ describe('private analytics reporting adapter', () => {
     const { data, openById } = initialized();
     send(searchEvent);
     data['fixture-catalog'].Catalog[1][5] = 'budget tracking';
+    const prior = JSON.parse(doGet().getContent());
+    publishFixture(
+      data['fixture-catalog'] as unknown as import('./catalog').Workbook,
+    );
     const nextCatalog = JSON.parse(doGet().getContent());
+    expect(nextCatalog.catalogVersion).not.toBe(prior.catalogVersion);
     expect(
       send({
         ...searchEvent,
