@@ -3,9 +3,18 @@ import {
   MAX_RECOMMENDATIONS,
   RECOMMENDATION_PROMPT_VERSION,
 } from '../src/contracts/recommendation';
-import type { Provider, ProviderBody, ProviderValidation } from './anthropic';
+import {
+  RANK_OUTPUT_INSTRUCTION,
+  type Provider,
+  type ProviderBody,
+  type ProviderValidation,
+} from './anthropic';
 import { boundedJson } from './bounded-json';
 import { readLunaStream } from './luna-stream';
+import {
+  LUNA_DEPLOYED_MAX_INPUT,
+  LUNA_DEPLOYED_RESERVATION,
+} from './luna-policy';
 
 export const LUNA_MODEL = 'gpt-6-luna';
 export const LUNA_ENDPOINT = 'https://api.openai.com/v1/responses';
@@ -77,6 +86,67 @@ export function lunaBody(
 }
 
 const tokens = z.number().int().nonnegative().max(Number.MAX_SAFE_INTEGER);
+const catalogFields = [
+  'position',
+  'title',
+  'description',
+  'functionAreas',
+  'tasks',
+  'tools',
+] as const;
+export function lunaDeployedBody(body: ProviderBody) {
+  const original = lunaBody(body, 'low');
+  const request = {
+    ...original,
+    input: [
+      {
+        role: 'system',
+        content: body.request.system.replace(
+          RANK_OUTPUT_INSTRUCTION,
+          'Each catalog row uses the field order in catalogFields. Return one positions array containing up to eight distinct catalog positions, best match first. Use an empty array when none fit. Include only useful matches, do not pad with videos. Recheck that every position is distinct. Copy the integer position provided for each item; never invent a position or return IDs, titles, URLs, or explanations.',
+        ),
+      },
+      {
+        role: 'user',
+        content: JSON.stringify({
+          ...body.data,
+          catalogFields,
+          catalog: body.data.catalog.map((item) =>
+            catalogFields.map((field) => item[field]),
+          ),
+        }),
+      },
+    ],
+    text: {
+      format: {
+        type: 'json_schema',
+        name: 'video_positions',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            positions: {
+              type: 'array',
+              maxItems: MAX_RECOMMENDATIONS,
+              items: {
+                type: 'integer',
+                enum: body.catalogIds.map((_, position) => position),
+              },
+            },
+          },
+          required: ['positions'],
+          additionalProperties: false,
+        },
+      },
+    },
+  };
+  if (
+    new TextEncoder().encode(JSON.stringify(request)).byteLength + 1_024 >
+    LUNA_DEPLOYED_MAX_INPUT
+  )
+    throw new Error('Luna input exceeds the conservative token bound.');
+  return request;
+}
 const usageSchema = z
   .object({
     input_tokens: tokens,
@@ -108,7 +178,11 @@ const ranksSchema = z.strictObject(
   ),
 );
 
-export function readLunaResponse(value: unknown, catalogIds: string[]) {
+export function readLunaResponse(
+  value: unknown,
+  catalogIds: string[],
+  protocol: 'ranks' | 'positions' = 'ranks',
+) {
   const parsed = envelopeSchema.parse(value);
   const usage = parsed.usage;
   const costMicrodollars = Math.ceil(
@@ -116,9 +190,13 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
   );
   const mismatch =
     parsed.model !== LUNA_MODEL ||
-    usage.input_tokens > LUNA_MAX_INPUT ||
+    usage.input_tokens >
+      (protocol === 'positions' ? LUNA_DEPLOYED_MAX_INPUT : LUNA_MAX_INPUT) ||
     usage.output_tokens > LUNA_MAX_OUTPUT ||
-    costMicrodollars > LUNA_RESERVATION ||
+    costMicrodollars >
+      (protocol === 'positions'
+        ? LUNA_DEPLOYED_RESERVATION
+        : LUNA_RESERVATION) ||
     (usage.input_tokens_details?.cached_tokens ?? 0) !== 0;
   let youtubeIds: string[] | null = null;
   let validation: ProviderValidation | undefined;
@@ -167,12 +245,24 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
         validation.validationFailure = 'json';
       }
       if (json !== undefined) {
-        const ranks = ranksSchema.safeParse(json);
+        const ranks = (
+          protocol === 'positions'
+            ? z
+                .strictObject({
+                  positions: z
+                    .array(z.number().int().nonnegative())
+                    .max(MAX_RECOMMENDATIONS),
+                })
+                .transform((value) => value.positions)
+            : ranksSchema.transform((value) =>
+                rankKeys
+                  .map((key) => value[key])
+                  .filter((position) => position !== null),
+              )
+        ).safeParse(json);
         if (!ranks.success) validation.validationFailure = 'schema';
         else {
-          const positions = rankKeys
-            .map((key) => ranks.data[key])
-            .filter((position) => position !== null);
+          const positions = ranks.data;
           const duplicateCount = positions.length - new Set(positions).size;
           const outOfRangeCount = positions.filter(
             (position) => position >= catalogIds.length,
@@ -213,7 +303,7 @@ export function readLunaResponse(value: unknown, catalogIds: string[]) {
   };
 }
 
-// Stream the same V10/low request; accept only a terminal event with measured usage.
+// Stream the compact low-effort candidate; accept only terminal output and usage.
 export function lunaProvider(
   key: string,
   fetcher: typeof fetch = fetch,
@@ -229,7 +319,7 @@ export function lunaProvider(
         'content-type': 'application/json',
         Authorization: `Bearer ${key}`,
       },
-      body: JSON.stringify({ ...lunaBody(body, 'low'), stream: true }),
+      body: JSON.stringify({ ...lunaDeployedBody(body), stream: true }),
     });
     timing?.({ providerHeadersMs: Date.now() - started });
     if (!response.ok) throw new Error('Provider failed');
@@ -239,7 +329,7 @@ export function lunaProvider(
         ? readLunaStream(response, signal)
         : boundedJson(response, 262_144)
     ).finally(() => timing?.({ providerBodyMs: Date.now() - bodyStarted }));
-    const measured = readLunaResponse(payload, body.catalogIds);
+    const measured = readLunaResponse(payload, body.catalogIds, 'positions');
     return {
       value:
         measured.youtubeIds === null

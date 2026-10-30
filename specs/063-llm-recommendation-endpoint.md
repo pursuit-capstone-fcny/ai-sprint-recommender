@@ -37,12 +37,19 @@ Status: Implemented with live enablement pending #1, #8 and #19.
   each requested activity and deliverable, distinguishes qualitative feedback
   from numerical analysis, and aims for six to eight useful picks without padding.
   Haiku low and Luna low use the same instructions; production remains disabled.
-- Given a provider request, when candidates are encoded, then every catalog
+- Given a rank-slot provider request, when candidates are encoded, then every catalog
   item has a numeric position constrained by a schema enum. Eight required
   nullable slots, `rank1` through `rank8`, bound the output. The server maps
   non-null positions in rank order to the same trusted snapshot's IDs.
   Missing or extra slots, duplicates, nonintegers, out-of-range and malformed
   selections reject the whole result without truncation.
+- Given Luna candidate `catalog-rank-luna-v11`, when preparing its request, then
+  encode the same ranking fields as rows with explicit field names and request
+  a strict `positions` array of at most eight distinct catalog positions.
+  Preserve V10's ranking instructions, low effort and the 2,000-token output
+  cap. Reject input exceeding a 50,000-token byte bound before reserving $0.006;
+  retain all older charges at their original amounts. Partial, duplicate or
+  invalid output still rejects the whole result. Production remains disabled.
 - Given sufficient rate, concurrency and spend allowance, when a call is
   dispatched, then its maximum configured input/output cost has already been
   reserved in one Durable Object storage transaction. Concurrent reservations

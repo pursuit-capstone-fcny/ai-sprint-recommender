@@ -19,7 +19,7 @@ try {
   const bundle = await build({
     stdin: {
       contents:
-        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaBody} from './server/luna';",
+        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaDeployedBody} from './server/luna';",
       resolveDir: process.cwd(),
       loader: 'ts',
     },
@@ -124,7 +124,7 @@ try {
       const bound = haiku
         ? contracts.inputTokenBound(body)
         : new TextEncoder().encode(
-            JSON.stringify(contracts.lunaBody(body, 'low')),
+            JSON.stringify(contracts.lunaDeployedBody(body)),
           ).length + 1024;
       assert(
         bound <= limits.LLM_MAX_INPUT_TOKENS,

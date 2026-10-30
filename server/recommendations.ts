@@ -20,7 +20,8 @@ import {
   type ProviderValidation,
 } from './anthropic';
 import { boundedJson } from './bounded-json';
-import { lunaBody, lunaProvider } from './luna';
+import { lunaDeployedBody, lunaProvider } from './luna';
+import { LUNA_DEPLOYED_PROMPT } from './luna-policy';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -124,6 +125,7 @@ export async function recommend(
     phase: 'request',
   };
   let status = 200;
+  let promptVersion: string = RECOMMENDATION_PROMPT_VERSION;
   const fallback = (
     reason: RecommendationFallbackReason,
   ): RecommendationResponse => ({
@@ -135,7 +137,7 @@ export async function recommend(
     ...(diagnostic.modelVersion
       ? {
           modelVersion: diagnostic.modelVersion,
-          promptVersion: RECOMMENDATION_PROMPT_VERSION,
+          promptVersion,
         }
       : {}),
   });
@@ -162,7 +164,11 @@ export async function recommend(
     )
       return fallback('unavailable');
     diagnostic.modelVersion = limits.LLM_MODEL;
-    diagnostic.promptVersion = RECOMMENDATION_PROMPT_VERSION;
+    promptVersion =
+      limits.LLM_PROVIDER === 'openai'
+        ? LUNA_DEPLOYED_PROMPT
+        : RECOMMENDATION_PROMPT_VERSION;
+    diagnostic.promptVersion = promptVersion;
     if (request.method !== 'POST') {
       status = 405;
       return fallback('unavailable');
@@ -226,7 +232,7 @@ export async function recommend(
     try {
       bound =
         limits.LLM_PROVIDER === 'openai'
-          ? new TextEncoder().encode(JSON.stringify(lunaBody(body, 'low')))
+          ? new TextEncoder().encode(JSON.stringify(lunaDeployedBody(body)))
               .length + 1_024
           : inputTokenBound(body);
     } catch {
@@ -334,7 +340,7 @@ export async function recommend(
         youtubeIds: parsed.data.youtubeIds,
         catalogVersion: catalog.catalogVersion,
         modelVersion: limits.LLM_MODEL,
-        promptVersion: RECOMMENDATION_PROMPT_VERSION,
+        promptVersion,
       };
     } catch {
       return fallback(

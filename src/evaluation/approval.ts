@@ -3,6 +3,10 @@ import { z } from 'zod';
 import { benchmarkFingerprint, type Benchmark } from './benchmark';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
 import { LUNA_PRIOR_SPEND } from './luna-ledger';
+import {
+  LUNA_DEPLOYED_PROMPT,
+  LUNA_DEPLOYED_RESERVATION,
+} from '../../server/luna-policy';
 
 export const TEST_EVALUATION_ENDPOINT =
   'https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations';
@@ -87,8 +91,10 @@ export function validateLiveApproval(
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
       approval.totalAllowanceMicrodollars !== 1_000_000 ||
       approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
-      approval.maxRequestMicrodollars !== (luna ? 7_000 : 6_756) ||
-      approval.promptVersion !== 'catalog-rank-v10')
+      approval.maxRequestMicrodollars !==
+        (luna ? LUNA_DEPLOYED_RESERVATION : 6_756) ||
+      approval.promptVersion !==
+        (luna ? LUNA_DEPLOYED_PROMPT : 'catalog-rank-v10'))
   )
     throw new Error(
       'Model comparison must preserve the candidate and remaining allowance.',

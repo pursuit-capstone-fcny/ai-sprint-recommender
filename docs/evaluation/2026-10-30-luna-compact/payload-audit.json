@@ -1,0 +1,61 @@
+{
+  "purpose": "Unpaid request-size audit; bytes conservatively bound input tokens, not measured usage or latency.",
+  "model": "gpt-6-luna",
+  "effort": "low",
+  "promptVersion": "catalog-rank-luna-v11",
+  "inputGuard": 50000,
+  "outputCap": 2000,
+  "maximumReservationMicrodollars": 6000,
+  "rows": [
+    {
+      "profileId": "leadership-01",
+      "previousByteBound": 57320,
+      "compactByteBound": 48269
+    },
+    {
+      "profileId": "leadership-02",
+      "previousByteBound": 57323,
+      "compactByteBound": 48272
+    },
+    {
+      "profileId": "operations-01",
+      "previousByteBound": 57339,
+      "compactByteBound": 48288
+    },
+    {
+      "profileId": "operations-02",
+      "previousByteBound": 57368,
+      "compactByteBound": 48317
+    },
+    {
+      "profileId": "programs-01",
+      "previousByteBound": 57348,
+      "compactByteBound": 48297
+    },
+    {
+      "profileId": "programs-02",
+      "previousByteBound": 57361,
+      "compactByteBound": 48310
+    },
+    {
+      "profileId": "communications-01",
+      "previousByteBound": 57357,
+      "compactByteBound": 48306
+    },
+    {
+      "profileId": "communications-02",
+      "previousByteBound": 57359,
+      "compactByteBound": 48308
+    },
+    {
+      "profileId": "fundraising-01",
+      "previousByteBound": 57349,
+      "compactByteBound": 48298
+    },
+    {
+      "profileId": "fundraising-02",
+      "previousByteBound": 57343,
+      "compactByteBound": 48292
+    }
+  ]
+}
