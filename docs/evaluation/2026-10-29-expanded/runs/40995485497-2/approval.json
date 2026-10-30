@@ -1,0 +1,21 @@
+{
+  "approvedSourceRevision": "90b4dbd32e7ccdc1d387105c9407dfe26ac2c9d7",
+  "approvedWorkflowRunId": "40995485497",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T03:51:49Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Jason requested Luna low with standard processing and the V10 prompt changes. Eight videos is the hard maximum; preserve original top-three scoring, benchmark labels and task-diversity gate.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Spend only the remaining $0.342319 of the original shared $1 comparison allowance after the Haiku V10 run. Carry all historical spend and unknown reservations forward. No budget reset or increase.",
+  "allowanceMicrodollars": 342319,
+  "maxRequestMicrodollars": 7000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 657681,
+  "totalAllowanceMicrodollars": 1000000
+}

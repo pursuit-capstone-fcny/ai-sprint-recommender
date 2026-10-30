@@ -43,5 +43,36 @@
   "missingUnpaidWarmupDiagnostics": ["f652d03e-07a1-4868-b027-1a0447aad795"],
   "freshComparisonSaved": false,
   "topThreeRelevanceEvidenceComplete": false,
-  "expandedSetQualityApproval": "pending-client-review"
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 34,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [],
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 161000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 0,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    }
+  ]
 }

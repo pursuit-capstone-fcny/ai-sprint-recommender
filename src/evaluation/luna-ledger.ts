@@ -1,6 +1,6 @@
 // Original Luna names are retained for historical captures. This $1 allowance
 // now also covers the explicitly requested Haiku rerun; it is never reset.
-export const LUNA_PRIOR_SPEND = 657_681;
+export const LUNA_PRIOR_SPEND = 676_554;
 export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
   [
     'docs/evaluation/2026-10-29-luna-deployed/runs/40908665576-2/state/luna-budget.json',
@@ -29,6 +29,10 @@ export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
   [
     'docs/evaluation/2026-10-29-expanded/runs/40994419045-2/state/comparison-budget.json',
     'f0c38c19bc08d682f0ede2441dc6c619c6589cfb6f2f7661f4a513f589f09e2f',
+  ],
+  [
+    'docs/evaluation/2026-10-29-expanded/runs/40995485497-2/state/luna-budget.json',
+    'fcef4928d6fbb46fce0cf66b7420d6eb3b5938e163530daecfb17878af329e6e',
   ],
 ];
 export const LUNA_SPEND_CAPTURES = [

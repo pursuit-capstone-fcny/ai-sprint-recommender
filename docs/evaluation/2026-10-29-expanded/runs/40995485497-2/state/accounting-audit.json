@@ -1,0 +1,98 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "reasoningEffort": "low",
+  "runId": "40995485497",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 16,
+  "totalMeasuredMicrodollars": 4873,
+  "durableAdditionalMicrodollars": 18873,
+  "unreconciledMicrodollars": 14000,
+  "reconciled": false,
+  "historicalUnknownReservationsMicrodollars": 161000,
+  "cumulativeCeilingMicrodollars": 676554,
+  "remainingAllowanceMicrodollars": 323446,
+  "inputTokens": 46011,
+  "outputTokens": 541,
+  "medianClientLatencyMs": 121.0,
+  "p95ClientLatencyMs": 4548,
+  "maxClientLatencyMs": 4554,
+  "topThreeScores": [4, 0, 0],
+  "fallbacks": 26,
+  "sixToEightCount": 29,
+  "acceptedLlmSixToEightCount": 3,
+  "acceptedLlmThinCount": 1,
+  "expandedCounts": [
+    8, 7, 7, 6, 5, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 0,
+      "expandedHits": 0,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 1,
+      "expandedHits": 1,
+      "count": 8
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": ["6110a37d-aef1-49b2-985b-68517fcbb1b4"],
+  "freshComparisonSaved": false,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 4,
+  "zeroCostDiagnosticRequests": 12,
+  "missingRequestDiagnostics": [
+    "e5c32886-cc67-40e5-a984-a4e83f33c371",
+    "47ec79b9-9998-4a77-a6d6-f39ed3aacba0",
+    "fb1cc55e-c9ac-44d3-85dc-c35b1df0c44b",
+    "86f1d2a2-f0f3-4c44-8ac4-1b6447a172ae",
+    "9e64a432-9b01-4392-af7e-c038d84a4d01",
+    "7b66eb4b-8169-406d-8325-88eebd9d4783",
+    "fccb975d-d6ca-42aa-9b8b-2bd4be74aa9f",
+    "cc2a513c-b148-4972-b5d9-8646c40a8122",
+    "be778384-71ab-480e-81dc-08a189f1b184",
+    "af8a4a42-1d1b-4ea5-b33a-92bccfb836f1",
+    "88d4326d-706f-4c20-9ebe-8b0add8aa0dc",
+    "ac2e3b8a-83a2-40c7-99ac-2e6d699b7d77",
+    "5d9af15d-ae3a-43c5-b76d-be4bd5f97bfb",
+    "33f048e4-39e0-407f-9209-198c8e4c4489",
+    "5436a48f-1fd5-4368-baf4-b2c55f045f5c",
+    "04dfc086-6c2f-48e9-8f7e-1b27fa7ffc29"
+  ],
+  "newUnknownReservationRequests": [
+    "dbab60cb-b193-4980-8f68-d2d735348e3a",
+    "85a8830e-71d7-4c76-99d0-4202e752ac74"
+  ],
+  "newUnknownReservationsMicrodollars": 14000,
+  "cumulativeUnknownReservationsMicrodollars": 175000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 2,
+  "rateLimitedBenchmarkRequests": 24,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "rules",
+      "fallbackReason": "rate-limited"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "rules",
+      "fallbackReason": "rate-limited"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "rate-limited"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "rate-limited"
+    }
+  ]
+}

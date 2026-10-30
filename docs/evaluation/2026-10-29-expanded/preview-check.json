@@ -1,0 +1,17 @@
+{
+  "sourceRevision": "90b4dbd32e7ccdc1d387105c9407dfe26ac2c9d7",
+  "url": "https://380397b9-ai-sprint-recommender.jason-zeng151.workers.dev/",
+  "checkedAt": "2026-10-30T03:09:10.781220+00:00",
+  "catalogCount": 89,
+  "initialCards": 8,
+  "submittedCards": 8,
+  "showMoreButtons": 0,
+  "keyboardSubmit": true,
+  "focusAfterSubmit": "results-heading",
+  "matchingMode": "Standard matching",
+  "syntheticGoal": "Prepare a concise board update and a presentation",
+  "functionArea": "Leadership",
+  "paidModelCalls": 0,
+  "usageEnvironment": "test",
+  "note": "Existing PR preview logs test events. Evaluation endpoint and production logging remain disabled; no logging settings changed."
+}

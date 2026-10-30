@@ -1,0 +1,176 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "8f8cff4b-c83e-4f8a-be2b-6569613546a0",
+      "response": {
+        "outcome": "fallback",
+        "reason": "rate-limited",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      },
+      "latencyMs": 172,
+      "displayedIds": [
+        "i22v2xwT6k4",
+        "zTcrktnmv48",
+        "4LMIC-v5xZ0",
+        "Z8yOypmasGg",
+        "_pM0ua51qRI",
+        "maR3ZerQIJU",
+        "dAqdQGqyNq8",
+        "gzxiw5xdPPI"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "rate-limited",
+      "diagnostic": {
+        "requestId": "8f8cff4b-c83e-4f8a-be2b-6569613546a0",
+        "environment": "test",
+        "outcome": "rate-limited",
+        "latencyMs": 80,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "budget",
+        "catalogMs": 10,
+        "budgetMs": 70,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "4dc2373f-83bb-4b97-b360-800a3c0d3acb",
+      "response": {
+        "outcome": "fallback",
+        "reason": "rate-limited",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      },
+      "latencyMs": 135,
+      "displayedIds": [
+        "_9QqyTbwisc",
+        "ADF07rFbH8M",
+        "ZlfTvy2PT1w",
+        "ShikWPoBRac",
+        "VQRVNYS1m3g",
+        "rjaMvND2IRU",
+        "6EWc3MgRNFg",
+        "MpkMYlaHU4k"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "rate-limited",
+      "diagnostic": {
+        "requestId": "4dc2373f-83bb-4b97-b360-800a3c0d3acb",
+        "environment": "test",
+        "outcome": "rate-limited",
+        "latencyMs": 75,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "budget",
+        "catalogMs": 6,
+        "budgetMs": 69,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "3a722642-1d18-4f70-b703-b133d9db02af",
+      "response": {
+        "outcome": "fallback",
+        "reason": "rate-limited",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      },
+      "latencyMs": 113,
+      "displayedIds": [
+        "-zIvVmJ2XFw",
+        "0kMuHMGvhBE",
+        "0qSXFbGrQ90",
+        "1yBNcKEISP0",
+        "33a0qYtCMvc",
+        "3oX_M8AcBXk",
+        "3sui0H77srg",
+        "4LMIC-v5xZ0"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "rate-limited",
+      "diagnostic": {
+        "requestId": "3a722642-1d18-4f70-b703-b133d9db02af",
+        "environment": "test",
+        "outcome": "rate-limited",
+        "latencyMs": 75,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "budget",
+        "catalogMs": 6,
+        "budgetMs": 69,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "267e6843-e84b-4d31-bd95-97e866b47f94",
+      "response": {
+        "outcome": "fallback",
+        "reason": "rate-limited",
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      },
+      "latencyMs": 130,
+      "displayedIds": [
+        "Z8yOypmasGg",
+        "33a0qYtCMvc",
+        "wxJVc1q_nnY",
+        "4LMIC-v5xZ0",
+        "W-j725bzPJU",
+        "ZMPLTq-ptrE",
+        "jWdB3uOYoug",
+        "6d2bKhdmqqA"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "rate-limited",
+      "diagnostic": {
+        "requestId": "267e6843-e84b-4d31-bd95-97e866b47f94",
+        "environment": "test",
+        "outcome": "rate-limited",
+        "latencyMs": 80,
+        "providerDispatched": false,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "budget",
+        "catalogMs": 7,
+        "budgetMs": 73,
+        "inputTokens": 0,
+        "outputTokens": 0,
+        "costMicrodollars": 0,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "gpt-6-luna",
+        "promptVersion": "catalog-rank-v10"
+      }
+    }
+  ]
+}
