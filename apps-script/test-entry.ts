@@ -14,5 +14,7 @@ export {
   installAnalyticsTriggers,
   refreshAnalyticsOnEdit,
   analyticsReportLinks,
+  refreshFeedbackReport,
+  installFeedbackReporting,
 } from './index';
 export { initializeTestCatalog } from './test-setup';

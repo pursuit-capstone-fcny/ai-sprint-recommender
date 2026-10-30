@@ -302,7 +302,7 @@ export function buildAnalyticsReport(
   };
   const increment = (
     row: Counts,
-    e: Exclude<UsageEvent, { type: 'search' }>,
+    e: Extract<UsageEvent, { type: 'impression' | 'click' }>,
   ) => {
     if (e.mode === 'direct') {
       if (e.type === 'impression') row.directViews++;
@@ -314,6 +314,8 @@ export function buildAnalyticsReport(
   };
   for (const record of records) {
     const e = record.event;
+    // Usefulness has its own private report and never counts as a click.
+    if (e.type === 'feedback') continue;
     // Deduplicate impressions across dates and sources before applying filters.
     if (e.type === 'impression') {
       if (seenImpressions.has(impressionKey(e))) {

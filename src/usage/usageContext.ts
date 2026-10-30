@@ -6,6 +6,7 @@ import { computeMatch } from '../engine/match';
 import { expandSynonyms, normalizeText } from '../engine/vocabulary';
 import type { RecommendationSelection } from '../recommendations/selectRecommendations';
 import type { UsageSession } from './usageSession';
+import { feedbackVote, type FeedbackBinding } from '../feedback/vote';
 
 type SearchEvent = Extract<UsageEvent, { type: 'search' }>;
 type MatchType = Extract<UsageEvent, { type: 'impression' }>['matchType'];
@@ -131,6 +132,18 @@ export function createRecommendationUsage(
     });
   };
   return {
+    feedback(match: RankedMatch, index: number): FeedbackBinding {
+      return {
+        vote: feedbackVote(session, match.item.youtubeId),
+        source: {
+          ...common,
+          youtubeId: match.item.youtubeId,
+          rank: index + 1,
+          matchType: usageMatchType(match, profile),
+        },
+        catalog,
+      };
+    },
     display(results: RankedMatch[]) {
       start();
       results.forEach(impression);

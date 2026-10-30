@@ -17,6 +17,7 @@ import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
 import { IntakeForm } from './IntakeForm';
 import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
+import { feedbackQuestion } from '../feedback/vote';
 
 const PAGE_SIZE = 3;
 const EMPTY_PROFILE: IntakeProfile = {
@@ -88,6 +89,7 @@ export function IntakeResults({
   const isGlobalFallback = results[0]?.matchType === 'fallback';
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
+  const question = feedbackQuestion();
   const usageContext = useMemo(
     () =>
       usageSession && usageCatalog
@@ -267,6 +269,11 @@ export function IntakeResults({
             : null}
       </p>
       <ResultsList
+        feedback={
+          question && usageContext
+            ? { question, bind: usageContext.feedback }
+            : undefined
+        }
         loading={loading}
         results={results}
         playingId={playingId}

@@ -29,6 +29,7 @@ export type UsagePolicy = z.infer<typeof UsagePolicySchema>;
 export type UsageRecord = { eventId: string; receivedAt: string };
 export type UsagePorts = {
   enabled: boolean;
+  feedbackEnabled?: boolean;
   policy: () => UsagePolicy;
   now: () => Date;
   lock: { tryLock: (milliseconds: number) => boolean; releaseLock: () => void };
@@ -70,6 +71,8 @@ export function receiveUsage(
   } catch {
     return usageError('USAGE_INVALID_EVENT');
   }
+  if (event.type === 'feedback' && !ports.feedbackEnabled)
+    return usageError('FEEDBACK_DISABLED');
   let locked = false;
   try {
     const parsedPolicy = UsagePolicySchema.safeParse(ports.policy());
