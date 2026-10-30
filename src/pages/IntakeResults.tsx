@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { rank } from '../engine';
+import { feedbackQuestion } from '../feedback/vote';
 import {
   recommendationsEnabled,
   requestRecommendations,
@@ -17,7 +18,6 @@ import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
 import { IntakeForm } from './IntakeForm';
 import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
-import { feedbackQuestion } from '../feedback/vote';
 
 const PAGE_SIZE = 3;
 const EMPTY_PROFILE: IntakeProfile = {
