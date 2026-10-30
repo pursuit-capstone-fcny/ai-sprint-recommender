@@ -117,6 +117,9 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
   recommendations from its area/tools. Nonblank goals never receive this mode.
   Ignoring control instructions in a mixed goal must not narrow useful real-work
   recommendations. Keep V12's final checks and the unchanged diversity gate.
+- Given V16, when expanding nonblank goals, then choose a useful set before
+  ordering direct matches first. Preserve V15 browsing and V12 safety checks;
+  concrete supporting methods may expand the set, unrelated padding may not.
 
 - Given the Haiku V12 test, when selecting ranks, then check work eligibility
   before breadth and select each integer position only once. Instruction-only

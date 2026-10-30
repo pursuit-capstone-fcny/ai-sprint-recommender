@@ -1,0 +1,12 @@
+{
+  "sourceRevision": "5834e1b2da122bccf6796c9d98d6ed02663b24eb",
+  "runId": 41118294349,
+  "runAttempt": 2,
+  "paidRequests": 0,
+  "additionalMicrodollars": 0,
+  "stage": "initial unpaid readiness request before benchmark cases",
+  "exactTransportCause": "not captured",
+  "recordedReadinessResponses": 0,
+  "shutdownConfirmed": true,
+  "nextAttempt": "Same source, full run, approval pinned to attempt 3; no paid outcome replaced."
+}

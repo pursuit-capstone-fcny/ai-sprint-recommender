@@ -111,3 +111,25 @@ V12 final eligibility/uniqueness instruction and ranking priorities remain exact
 The blank-mode request test fails before wiring the instruction. Repeat all
 forty requests under the same fixed targets, maximum reservation $0.270240,
 with a new exact-source/attempt approval. Preserve all V13/V14 evidence and costs.
+
+## V15 result and V16 revision
+
+V15 run 41118294349 attempt 2 also stops during initial unpaid readiness with
+zero spend; exact transport cause remains uncaptured. Attempt 3 uses the same
+source with separate approval and completes all forty requests. It retains
+10/10 each, four injection abstentions and no duplicate, invalid response or
+timeout. Blank browsing returns eight videos. Breadth is 23/30, while mixed
+Operations still returns five videos with two labeled top-three hits. The
+supplemental audit fails and remains saved. V15 costs $0.079820, bringing this
+task's three paid runs to $0.238963. Cumulative ceiling $1.526839 leaves $0.473161.
+
+Remaining hypotheses are repeated directions competing at low effort, negative
+stopping guidance narrowing the set, and sampling variation. V16 changes only
+the nonblank breadth paragraph to a shorter set-first, order-second procedure.
+It retains concrete supporting methods, transferable workflows, no padding and
+the same real-work scope for mixed goals. The successful blank-mode guidance,
+specific ranking priorities and exact V12 final checks remain unchanged. No
+profile IDs or label facts enter the request. The existing request-isolation
+tests cover this text-only change; another unit assertion cannot prove semantic
+adherence. Run the same forty cases against the same fixed targets and reserve
+at most $0.270240 from $0.473161. All prior outcomes and charges remain recorded.

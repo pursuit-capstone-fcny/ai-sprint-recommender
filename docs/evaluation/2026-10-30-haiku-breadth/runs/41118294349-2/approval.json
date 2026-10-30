@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "5834e1b2da122bccf6796c9d98d6ed02663b24eb",
+  "approvedWorkflowRunId": "41118294349",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T20:48:47Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v15",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized improving Haiku breadth without regressing injection handling or deduplication within the remaining allowance. V15 keeps the breadth pass before targeted-ranking priorities and retains the exact V12 final eligibility/uniqueness instruction. Truly blank goals receive explicit browsing-mode guidance; nonblank goals never receive it. Mixed real goals keep the full useful breadth after disregarding controls. Preserve V13 and V14 failed audits and all charges. Run the same 30 frozen benchmark requests and 10 separate probes with unchanged labels, task-diversity gate, low effort, disabled thinking, schema, caps and deadlines. No per-case paid retries. Frozen public catalog only.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $2 cap only. Carry forward $1.447019 including $0.225000 historical unknown reservations and all prior runs, including failed candidates. Remaining $0.552981. No new money, reset, refund or repricing. Forty reservations of $0.006756 total at most $0.270240. Settle known Haiku usage at existing rates; unknown charges retain reservations.",
+  "allowanceMicrodollars": 552981,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1447019,
+  "totalAllowanceMicrodollars": 2000000,
+  "thinking": "disabled"
+}

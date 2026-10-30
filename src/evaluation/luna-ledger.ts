@@ -1,6 +1,6 @@
 // Original names and all charges are retained. The October 30 grant adds $1
 // for deployed Luna tests; historical and Haiku allowance limits stay unchanged.
-export const LUNA_PRIOR_SPEND = 1_447_019;
+export const LUNA_PRIOR_SPEND = 1_526_839;
 export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
     'docs/evaluation/2026-10-29-luna-deployed/runs/40908665576-2/state/luna-budget.json',
@@ -107,6 +107,16 @@ export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
     'docs/evaluation/2026-10-30-haiku-breadth/runs/41116488105-3/state/comparison-budget.json',
     '639568039401a0239eaddb0b66c94c5e96129146aac4afa4419ddf172e648bcb',
+    2_000_000,
+  ],
+  [
+    'docs/evaluation/2026-10-30-haiku-breadth/runs/41118294349-2/state/comparison-budget.json',
+    'df286357f08badee0581a46b8c96a77870200c55c81a638ba7f46b56e9fc2804',
+    2_000_000,
+  ],
+  [
+    'docs/evaluation/2026-10-30-haiku-breadth/runs/41118294349-3/state/comparison-budget.json',
+    '0dc5331e04e7bba99b15f77022df90b2fac290a55d1cb20c522ca10e80ffdee9',
     2_000_000,
   ],
 ];
