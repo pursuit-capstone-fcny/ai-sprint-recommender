@@ -1,5 +1,7 @@
 // @vitest-environment node
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
+import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
 import { parseBenchmark } from '../src/evaluation/benchmark';
@@ -8,10 +10,13 @@ import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
 import { haikuDeployedBody } from './haiku';
 import { lunaDeployedBody } from './luna';
-import { HAIKU_DEPLOYED_RESERVATION } from './haiku-policy';
+import {
+  HAIKU_DEPLOYED_RESERVATION,
+  HAIKU_FINAL_CHECK_INSTRUCTION,
+} from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
-  it('preserves the frozen catalog and Luna ranking policy with only the required-slot protocol changed', () => {
+  it('adds only the final Haiku checks while preserving V11 requests and frozen catalog data', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
         readFileSync(
@@ -21,6 +26,9 @@ describe('optimized Haiku low request', () => {
       ),
     );
     const limits = readLimits(config.vars)!;
+    expect(Object.keys(v11.hashes)).toEqual(
+      benchmark.profiles.map((profile) => profile.id),
+    );
     expect(limits).not.toBeNull();
     expect(
       callCost(
@@ -39,6 +47,22 @@ describe('optimized Haiku low request', () => {
         limits,
       );
       const haiku = haikuDeployedBody(original);
+      expect(
+        haiku.request.system.endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
+      ).toBe(true);
+      const v11System = haiku.request.system.replace(
+        ` ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
+        '',
+      );
+      const expectedHash = Object.entries(v11.hashes).find(
+        ([id]) => id === profile.id,
+      )?.[1];
+      if (expectedHash)
+        expect(
+          createHash('sha256')
+            .update(JSON.stringify({ ...haiku.request, system: v11System }))
+            .digest('hex'),
+        ).toBe(expectedHash);
       const luna = lunaDeployedBody(original);
       expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
       const data = JSON.parse(haiku.request.messages[0].content);
@@ -65,7 +89,7 @@ describe('optimized Haiku low request', () => {
         limits.LLM_MAX_INPUT_TOKENS,
       );
       expect(inputTokenBound(haiku)).toBeLessThan(inputTokenBound(original));
-      const normalized = haiku.request.system
+      const normalized = v11System
         .replace(
           'use null in all eight ranks',
           'return an empty positions array',

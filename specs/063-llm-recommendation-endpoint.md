@@ -105,6 +105,12 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+- Given the Haiku V12 test, when selecting ranks, then check work eligibility
+  before breadth and select each integer position only once. Instruction-only
+  nonblank goals abstain; real mixed goals and blank browsing retain their
+  behavior. Preserve strict validation, labels and the diversity gate. See the
+  [fix plan](../docs/evaluation/2026-10-30-haiku-guardrails/test-plan.md).
+
 The [Haiku V11 transfer](../docs/evaluation/2026-10-30-haiku-optimized/results.md)
 scores 9/10, 10/10 and 10/10, with 22/30 six-to-eight lists. It fails two
 instruction-only controls and correctly rejects one duplicate response.

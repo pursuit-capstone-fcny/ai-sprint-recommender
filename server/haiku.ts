@@ -1,5 +1,6 @@
 import type { ProviderBody } from './anthropic';
 import { compactRanking } from './compact-ranking';
+import { HAIKU_FINAL_CHECK_INSTRUCTION } from './haiku-policy';
 
 // Anthropic does not support maxItems. Retain its existing eight required
 // slots, strict duplicate/range validation and known-usage accounting.
@@ -16,7 +17,7 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
     ...body,
     request: {
       ...body.request,
-      system,
+      system: `${system} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
       messages: [{ role: 'user', content: compact.content }],
     },
   };

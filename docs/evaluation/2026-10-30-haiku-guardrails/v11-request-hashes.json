@@ -1,0 +1,15 @@
+{
+  "sourceRevision": "7ed53f13aeae7f16fa3ae5fed4143472cfe84ae7",
+  "hashes": {
+    "leadership-01": "0ab21bbdd5f22fbc0a24540b36a9c298bd6bbeace323350b644ea474b1a107f2",
+    "leadership-02": "cedd03f839a74d59fc4335bbbbe96d507cfe1e340bb63f6e8246a3bc424616f1",
+    "operations-01": "04b76550605eb88d26248151bf232a78f88b9007943f0531ba9a2dc43df5089b",
+    "operations-02": "2c6aefe1d9dc0384f54fe01a4bc875d25fb2cf69b5d4201e1a652e193e3d96e6",
+    "programs-01": "53afdfbed1b5e3c000a0baec1c6d59baf7f65ef267e7f16c7592a8970e3804f2",
+    "programs-02": "97ae46ab7c64b58ac8ca841926a3ecfd8ebe8c44d2312233f7424e6cbf175e78",
+    "communications-01": "fae36d8cdeffb7d9b7aba77098a6971527278927ae372d442e32c4f809bb4473",
+    "communications-02": "683f9d515a7b17c8b0877ddd6057d7ed71ee34b7531d6835b0b9a530fdaec370",
+    "fundraising-01": "2279824f1b8810917d34259289abf75078202a097682eb1bcfa7fb3383bdec64",
+    "fundraising-02": "aff7f3ce68fb7e865aaa5a0d7c799cd96a19b1f3e57deeda5e83f0ae141ef4c0"
+  }
+}
