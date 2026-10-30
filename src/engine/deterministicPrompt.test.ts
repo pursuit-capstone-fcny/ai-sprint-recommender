@@ -54,6 +54,187 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.10 rejects keyword-only results when no requested task is recognized', () => {
+    const row = lesson(
+      1,
+      ['Peer learning'],
+      'Share monthly community updates and hold reviews.',
+    );
+    const { run } = fixture([row]);
+    expect(
+      run('Hold a review of our monthly community updates.').recommendations,
+    ).toEqual([]);
+  });
+  it('AC-12.10 applies source/output compatibility to a canonical task without an operation profile', () => {
+    const recording = lesson(
+      1,
+      ['Archive indexing'],
+      'Index a recorded interview.',
+    );
+    const document = lesson(2, ['Archive indexing'], 'Index written material.');
+    const { catalog, options } = fixture([document, recording]);
+    const config = {
+      ...options,
+      workflows: {
+        artifacts: ['recording', 'document', 'indexing'].map((id) => ({
+          id,
+          label: id,
+          aliases: [id],
+          tasks: [],
+        })),
+        workflows: [
+          {
+            youtubeId: recording.youtubeId,
+            task: 'Archive indexing',
+            source: 'recording',
+            output: 'indexing',
+          },
+          {
+            youtubeId: document.youtubeId,
+            task: 'Archive indexing',
+            source: 'document',
+            output: 'indexing',
+          },
+        ],
+      },
+    };
+    const result = recommendVideos(
+      catalog,
+      { prompt: 'I have a recording and need Archive indexing.' },
+      config,
+    );
+    expect(result.interpretation.sourceMaterials).toContain('recording');
+    expect(ids(result)).toEqual([recording.youtubeId]);
+  });
+  it('AC-12.10 rejects mention-only evidence even on the generic canonical-task route', () => {
+    const row = lesson(
+      1,
+      ['Archive review'],
+      'An introduction that mentions archive review.',
+    );
+    const { catalog, options } = fixture([row]);
+    expect(
+      recommendVideos(
+        catalog,
+        { prompt: 'I need Archive review.' },
+        {
+          ...options,
+          instructions: [
+            {
+              youtubeId: row.youtubeId,
+              task: 'Archive review',
+              form: 'mentioned',
+            },
+          ],
+        },
+      ).recommendations,
+    ).toEqual([]);
+  });
+  it('AC-12.10 rejects duplicate instruction evidence before candidate ranking', () => {
+    const row = lesson(1, ['Spreadsheet formulas'], 'Explain formula errors.');
+    const { catalog, options } = fixture([row]);
+    const entry = {
+      youtubeId: row.youtubeId,
+      task: 'Spreadsheet formulas',
+      form: 'demonstrated' as const,
+    };
+    expect(() =>
+      recommendVideos(
+        catalog,
+        { prompt: 'Explain this formula error.' },
+        { ...options, instructions: [entry, entry] },
+      ),
+    ).toThrow('Invalid or duplicate task instruction evidence.');
+  });
+  it('AC-12.10 checks specialized capability evidence even when a strong operation profile matches', () => {
+    const generic = lesson(
+      1,
+      ['Volunteer onboarding', 'Video creation'],
+      'Animate a welcome from volunteer shift instructions.',
+    );
+    const specialized = lesson(
+      2,
+      ['Volunteer onboarding', 'Video creation'],
+      'Show voice cloning and lip sync for a welcome animation.',
+    );
+    const { run } = fixture([generic, specialized]);
+    expect(
+      ids(
+        run(
+          'Turn volunteer shift instructions into a welcome animation with voice cloning and lip-sync.',
+        ),
+      ),
+    ).toEqual([specialized.youtubeId]);
+  });
+  it('AC-12.7 distinguishes feedback on a funding conversation from survey responses', () => {
+    const role = lesson(
+      1,
+      ['Role play', 'Grantmaker communications'],
+      'Practice a grant conversation and request feedback.',
+    );
+    const survey = lesson(
+      2,
+      ['Survey analysis'],
+      'Analyze feedback on a funding program.',
+    );
+    const { run } = fixture([survey, role]);
+    expect(
+      ids(
+        run(
+          'As a program officer, I want to practise a funding conversation with a nonprofit and receive feedback.',
+        ),
+      ),
+    ).toEqual([role.youtubeId]);
+  });
+  it('AC-12.7 keeps branding as a finishing preference for a volunteer animation', () => {
+    const animation = lesson(
+      1,
+      ['Volunteer onboarding', 'Video creation'],
+      'Turn shift instructions into an animated welcome.',
+    );
+    const voice = lesson(
+      2,
+      ['Brand voice', 'Custom assistants'],
+      'Write branded communications using an assistant.',
+    );
+    const { run } = fixture([voice, animation]);
+    expect(
+      ids(
+        run(
+          'Use these volunteer shift instructions for an animated welcome, with branding added at the end.',
+        ),
+      ),
+    ).toEqual([animation.youtubeId]);
+  });
+  it('AC-12.7 does not extend an incidental negative clause into the tool used for review', () => {
+    const review = lesson(
+      1,
+      ['Editing proofreading', 'Document review'],
+      'Review draft claims and grammar.',
+      ['Microsoft Word'],
+    );
+    const { run } = fixture([review]);
+    const result = run(
+      'Review the grammar in this draft letter and flag claims we cannot support, with edits and comments in Word.',
+    );
+    expect(result.interpretation.excludedTools).not.toContain('Microsoft Word');
+    expect(result.interpretation.tools).toContain('Microsoft Word');
+    expect(ids(result)).toEqual([review.youtubeId]);
+  });
+  it('AC-12.10 enforces a rules-out tool constraint before ranking eligible operations', () => {
+    const macro = lesson(
+      1,
+      ['Budget consolidation', 'Spreadsheet automation'],
+      'Combine budget files through a folder macro.',
+      ['VBA'],
+    );
+    const { run } = fixture([macro]);
+    const result = run(
+      'Combine budget files from a folder into a master workbook. Our policy rules out VBA and macros.',
+    );
+    expect(result.interpretation.excludedTools).toContain('VBA');
+    expect(result.recommendations).toEqual([]);
+  });
   it('AC-12.8 scopes default evidence to the caller catalog rather than requiring all library identities', () => {
     const sum = lesson(
       1,

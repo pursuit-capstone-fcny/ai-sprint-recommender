@@ -2,7 +2,7 @@ import type {
   PublicCatalog,
   PublicCatalogItem,
 } from '../contracts/publicCatalog';
-import type { PromptOptions } from './prompt';
+import { prepareInstructions, type PromptOptions } from './prompt';
 import { languageTokens } from './promptLanguage';
 import {
   containsPhrase,
@@ -22,6 +22,7 @@ function requirement(
   rule: CandidateRequirement,
   intent: Intent,
   options: PromptOptions,
+  instructions: ReturnType<typeof prepareInstructions>,
 ) {
   const teaching = languageTokens(`${item.title} ${item.description}`);
   if (
@@ -43,9 +44,7 @@ function requirement(
       !intent.interpretation.excludedTasks.includes(task),
   );
   const taught = relevant.filter((task) => {
-    const form = options.instructions?.find(
-      (row) => row.youtubeId === item.youtubeId && row.task === task,
-    )?.form;
+    const form = instructions.get(JSON.stringify([item.youtubeId, task]));
     return (
       !options.instructions ||
       (form &&
@@ -54,6 +53,34 @@ function requirement(
             (intent.operation?.explanatory ? 0.5 : 0.75)))
     );
   });
+  const flows =
+    options.workflows?.workflows.filter(
+      (row) => row.youtubeId === item.youtubeId && taught.includes(row.task),
+    ) ?? [];
+  const sameSource = (source: string) =>
+    intent.interpretation.sourceMaterials.some(
+      (requested) =>
+        requested === source ||
+        (['survey', 'spreadsheet'].includes(requested) &&
+          ['survey', 'spreadsheet'].includes(source)),
+    );
+  if (
+    rule.requireSourceMatch &&
+    intent.interpretation.sourceMaterials.length &&
+    !flows.some((flow) => sameSource(flow.source))
+  )
+    return null;
+  if (
+    rule.requireOutputMatch &&
+    intent.interpretation.desiredOutputs.length &&
+    !flows.some(
+      (flow) =>
+        intent.interpretation.desiredOutputs.includes(flow.output) &&
+        (!intent.interpretation.sourceMaterials.length ||
+          sameSource(flow.source)),
+    )
+  )
+    return null;
   return taught.length ? { priority: rule.priority, taught } : null;
 }
 
@@ -63,7 +90,8 @@ export function compatibleCandidates(
   intent: Intent,
   options: PromptOptions,
 ) {
-  if (!intent.operation) return null;
+  const instructions = prepareInstructions(catalog, options.instructions);
+  if (!intent.operation) return [];
   const operation = intent.operation;
   const frequency = new Map<string, number>();
   for (const item of catalog.items)
@@ -112,9 +140,21 @@ export function compatibleCandidates(
     )
       return [];
     const teaching = languageTokens(`${item.title} ${item.description}`);
+    if (
+      intent.constraints.some(
+        (rule) =>
+          rule.tasks?.some((task) => !item.tasks.includes(task)) ||
+          rule.tools?.some((tool) => !item.tools.includes(tool)) ||
+          rule.teaching?.some(
+            (group) =>
+              !group.some((phrase) => containsPhrase(teaching, phrase)),
+          ),
+      )
+    )
+      return [];
     if (intent.language && !teaching.includes(intent.language)) return [];
     const evidence = operation.candidates
-      .map((rule) => requirement(item, rule, intent, options))
+      .map((rule) => requirement(item, rule, intent, options, instructions))
       .filter((row) => row !== null)
       .sort((a, b) => b.priority - a.priority)[0];
     if (!evidence) return [];

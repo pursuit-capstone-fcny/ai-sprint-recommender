@@ -1,16 +1,13 @@
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import {
-  recommendFromPrompt,
+  interpretPrompt,
   type PromptOptions,
   type PromptRequest,
 } from './prompt';
-import { expandedDeterministicRecommendations } from './expandedPrecision';
 import { language } from './promptConfig/language';
 import { workflows } from './promptConfig/workflows';
 import { learningFormats } from './promptConfig/learningFormats';
 import { instructions } from './promptConfig/instructions';
-import { expansionPolicy } from './promptConfig/expansionPolicy';
-import { precisionPolicy } from './promptConfig/precisionPolicy';
 import { interpretOperation } from './taskIntent';
 import { compatibleCandidates } from './taskCompatibility';
 
@@ -57,7 +54,11 @@ export function recommendVideos(
 ) {
   const options = { ...optionsForCatalog(catalog), ...overrides };
   const boundedRequest = { ...request, limit: Math.min(request.limit ?? 8, 8) };
-  const current = recommendFromPrompt(catalog, boundedRequest, options);
+  if (request.prompt.length > 500)
+    throw new RangeError('Prompt must be 500 characters or fewer.');
+  if (!Number.isInteger(boundedRequest.limit) || boundedRequest.limit < 0)
+    throw new RangeError('Result limit must be a nonnegative integer.');
+  const current = interpretPrompt(catalog, boundedRequest, options);
   if (!request.prompt.trim())
     return {
       interpretation: current.interpretation,
@@ -71,40 +72,21 @@ export function recommendVideos(
     options,
   );
   const compatible = compatibleCandidates(catalog, intent, options);
-  if (compatible)
-    return {
-      interpretation: intent.interpretation,
-      warnings: compatible.length
-        ? []
-        : [
-            'No compatible instructional example for the requested operation and constraints.',
-          ],
-      recommendations: compatible
-        .slice(0, boundedRequest.limit)
-        .map((row, index) => ({
-          item: row.item,
-          rank: index + 1,
-          reason: row.reason,
-          origin: 'operation',
-        })),
-    };
-  const result = expandedDeterministicRecommendations({
-    catalog,
-    request: boundedRequest,
-    options,
-    current,
-    expansionPolicy,
-    refinementPolicy: precisionPolicy,
-  });
   return {
-    interpretation: current.interpretation,
-    warnings: current.warnings,
-    recommendations: result.recommendations.map((row) => ({
-      item: catalog.items.find((item) => item.youtubeId === row.youtubeId)!,
-      rank: row.rank,
-      reason: row.reason,
-      origin: row.origin,
-    })),
+    interpretation: intent.interpretation,
+    warnings: compatible.length
+      ? []
+      : [
+          'No compatible instructional example for the requested operation and constraints.',
+        ],
+    recommendations: compatible
+      .slice(0, boundedRequest.limit)
+      .map((row, index) => ({
+        item: row.item,
+        rank: index + 1,
+        reason: row.reason,
+        origin: 'operation',
+      })),
   };
 }
 

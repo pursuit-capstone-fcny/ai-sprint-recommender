@@ -71,6 +71,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given the same catalog, request and matching configuration
   - When catalog order changes or the request repeats
   - Then recommendations and reasons remain deterministic and the engine does not mutate its inputs.
+- AC-12.10 Compatibility across retrieval routes
+  - Given free-text input, reviewed task evidence and any explicit method or tool constraints
+  - When either an operation profile or a canonical task produces candidates
+  - Then every candidate passes the same instruction, exclusion and capability checks before the result limit; keyword overlap alone cannot admit a candidate, and generic task matches must respect their source/output pair.
 
 ### Open questions
 

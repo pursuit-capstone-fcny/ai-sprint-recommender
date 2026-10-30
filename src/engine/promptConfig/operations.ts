@@ -1,10 +1,7 @@
-import type { CandidateRequirement, OperationRule } from '../taskIntent';
+import type { OperationRule } from '../taskIntent';
 
-const candidate = (
-  tasks: string[],
-  priority = 100,
-  extra: Omit<CandidateRequirement, 'tasks' | 'priority'> = {},
-): CandidateRequirement => ({ tasks, priority, ...extra });
+import { candidate, rule } from './operationRules';
+import { taskOperations } from './taskOperations';
 const formulas = [candidate(['Spreadsheet formulas'])];
 const survey = [
   candidate(['Survey analysis'], 100, {
@@ -26,26 +23,9 @@ const citedDocuments = candidate(['Document Q&A'], 80, {
   ],
   excludeTasks: ['App building'],
 });
-const rule = (
-  id: string,
-  when: string[][],
-  tasks: string[],
-  source: string | undefined,
-  outputs: string[],
-  candidates: CandidateRequirement[],
-  extra: Partial<OperationRule> = {},
-): OperationRule => ({
-  id,
-  when,
-  tasks,
-  source,
-  outputs,
-  candidates,
-  ...extra,
-});
-
 /** Predicate groups express requested operations; candidate links describe transferable instruction. */
 export const operationRules: readonly OperationRule[] = [
+  ...taskOperations,
   rule(
     'vocabulary-helper',
     [
@@ -631,6 +611,11 @@ export const operationRules: readonly OperationRule[] = [
     ['Photo editing'],
     'image',
     ['image'],
-    [candidate(['Photo editing'])],
+    [
+      candidate(['Photo editing']),
+      candidate(['Design feedback'], 75, {
+        teaching: ['diagnose', 'screenshot'],
+      }),
+    ],
   ),
 ];
