@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
-import { rank } from '../engine';
 import { feedbackQuestion } from '../feedback/vote';
 import {
   recommendationsEnabled,
@@ -10,7 +9,6 @@ import {
 import {
   rulesSelection,
   selectRecommendations,
-  selectRulesResults,
   type RecommendationSelection,
 } from '../recommendations/selectRecommendations';
 import type { PublicCatalog } from '../contracts/publicCatalog';
@@ -20,7 +18,6 @@ import { IntakeForm } from './IntakeForm';
 import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
 import { RequestForm } from '../requests/RequestForm';
 
-const PAGE_SIZE = 3;
 const EMPTY_PROFILE: IntakeProfile = {
   functionArea: null,
   goalWords: [],
@@ -56,7 +53,6 @@ export function IntakeResults({
   const [functionArea, setFunctionArea] = useState<string | null>(null);
   const [goalText, setGoalText] = useState('');
   const [tools, setTools] = useState<string[]>([]);
-  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<{
     profile: IntakeProfile;
@@ -80,14 +76,7 @@ export function IntakeResults({
     [catalog, dictionaryTools],
   );
 
-  const results = useMemo(
-    () =>
-      selection.recommendationEngine === 'llm'
-        ? selection.results.slice(0, visibleCount)
-        : selectRulesResults(catalog, profile, visibleCount),
-    [catalog, profile, visibleCount, selection],
-  );
-  const isGlobalFallback = results[0]?.matchType === 'fallback';
+  const results = selection.results;
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
   const question = feedbackQuestion();
@@ -98,28 +87,16 @@ export function IntakeResults({
             usageSession,
             usageCatalog,
             profile,
-            selection.results.slice(0, PAGE_SIZE),
+            results,
             completed !== null,
             selection,
           )
         : null,
-    [usageSession, usageCatalog, profile, selection, completed],
+    [usageSession, usageCatalog, profile, selection, completed, results],
   );
   useEffect(() => {
     usageContext?.display(results);
   }, [usageContext, results]);
-
-  const canShowMore = useMemo(() => {
-    if (selection.recommendationEngine === 'llm')
-      return selection.results.length > visibleCount;
-    if (isGlobalFallback) return false;
-    const nextWindow = rank(catalog, profile, {
-      topN: visibleCount + PAGE_SIZE,
-    });
-    return nextWindow
-      .slice(visibleCount, visibleCount + PAGE_SIZE)
-      .some((match) => match.matchType === 'strong');
-  }, [catalog, profile, visibleCount, isGlobalFallback, selection]);
 
   function cancelPending() {
     pending.current?.abort();
@@ -142,7 +119,6 @@ export function IntakeResults({
     setGoalText('');
     setTools([]);
     setPlayingId(null);
-    setVisibleCount(PAGE_SIZE);
     setCompleted(null);
   }
 
@@ -191,7 +167,6 @@ export function IntakeResults({
         });
       });
     }
-    setVisibleCount(PAGE_SIZE);
     setPlayingId(null);
     const heading = document.getElementById(RESULTS_HEADING_ID);
     if (!heading) return;
@@ -279,8 +254,6 @@ export function IntakeResults({
         results={results}
         playingId={playingId}
         onPlay={setPlayingId}
-        canShowMore={canShowMore}
-        onShowMore={() => setVisibleCount((count) => count + PAGE_SIZE)}
         showClosestMatch={profile.functionArea !== null}
         onVideoClick={(match, index, target) =>
           usageContext?.click(match, index, target)

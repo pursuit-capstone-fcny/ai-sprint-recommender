@@ -84,7 +84,7 @@ describe('browser usage events', () => {
       </StrictMode>
     );
     const { rerender } = render(view);
-    await waitFor(() => expect(logged()).toHaveLength(3));
+    await waitFor(() => expect(logged()).toHaveLength(4));
     expect(logged().every((event) => event.type === 'impression')).toBe(true);
     expect(screen.getByText(/Your typed goal is not logged/)).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Function area'), {
@@ -96,17 +96,17 @@ describe('browser usage events', () => {
     fireEvent.change(screen.getByLabelText('Tool (optional)'), {
       target: { value: 'ChatGPT' },
     });
-    expect(logged()).toHaveLength(3);
+    expect(logged()).toHaveLength(4);
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(7));
+    await waitFor(() => expect(logged()).toHaveLength(9));
     const search = logged().find((event) => event.type === 'search');
     expect(search).toMatchObject({
       type: 'search',
       tasks: ['report writing'],
       tools: ['ChatGPT'],
       functionArea: 'Operations',
-      resultCount: 3,
-      strongMatchCount: 3,
+      resultCount: 4,
+      strongMatchCount: 4,
       recommendationEngine: 'rules',
       llmFallbackReason: 'disabled',
       fallbackType: 'none',
@@ -117,16 +117,10 @@ describe('browser usage events', () => {
     );
     expect(
       logged()
-        .slice(3)
+        .slice(4)
         .every((event) => event.searchId === search?.searchId),
     ).toBe(true);
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
-    await waitFor(() => expect(logged()).toHaveLength(8));
-    expect(logged()[7]).toMatchObject({
-      type: 'impression',
-      rank: 4,
-      searchId: search?.searchId,
-    });
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     rerender(view);
     fireEvent.change(screen.getByLabelText('What do you want to learn?'), {
       target: { value: 'unsubmitted edit' },
@@ -134,8 +128,8 @@ describe('browser usage events', () => {
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
     );
-    await waitFor(() => expect(logged()).toHaveLength(9));
-    expect(logged()[8]).toMatchObject({
+    await waitFor(() => expect(logged()).toHaveLength(10));
+    expect(logged()[9]).toMatchObject({
       type: 'click',
       target: 'embed',
       youtubeId: 'fixture0000',
@@ -145,8 +139,8 @@ describe('browser usage events', () => {
     expect(screen.getByTitle('Fixture video 0').tagName).toBe('IFRAME');
     const link = screen.getAllByRole('link', { name: /Watch on YouTube/ })[0];
     fireEvent.click(link);
-    await waitFor(() => expect(logged()).toHaveLength(10));
-    expect(logged()[9]).toMatchObject({
+    await waitFor(() => expect(logged()).toHaveLength(11));
+    expect(logged()[10]).toMatchObject({
       type: 'click',
       target: 'youtube',
       rank: 1,
@@ -154,26 +148,26 @@ describe('browser usage events', () => {
     });
     expect(link.getAttribute('target')).toBe('_blank');
     expect(logged().filter((event) => event.type === 'search')).toHaveLength(1);
-    expect(new Set(logged().map((event) => event.eventId)).size).toBe(10);
+    expect(new Set(logged().map((event) => event.eventId)).size).toBe(11);
   });
 
   it('creates a new search context even for an identical second submission; Clear is not a search', async () => {
     const usage = { session: session(), catalog: publicCatalog };
     render(<IntakeResults catalog={catalog} usage={usage} />);
-    await waitFor(() => expect(logged()).toHaveLength(3));
+    await waitFor(() => expect(logged()).toHaveLength(4));
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(7));
+    await waitFor(() => expect(logged()).toHaveLength(9));
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(11));
+    await waitFor(() => expect(logged()).toHaveLength(14));
     const searches = logged().filter((event) => event.type === 'search');
     expect(searches).toHaveLength(2);
     expect(searches[0].searchId).not.toBe(searches[1].searchId);
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-    await waitFor(() => expect(logged()).toHaveLength(14));
+    await waitFor(() => expect(logged()).toHaveLength(18));
     expect(logged().filter((event) => event.type === 'search')).toHaveLength(2);
   });
 
-  it('keeps submit, expansion and playback working while delivery is stalled or offline', async () => {
+  it('keeps submit and playback working while delivery is stalled or offline', async () => {
     vi.useFakeTimers();
     vi.mocked(fetch)
       .mockImplementationOnce(() => new Promise(() => {}))
@@ -189,7 +183,6 @@ describe('browser usage events', () => {
       target: { value: 'Operations' },
     });
     submit();
-    fireEvent.click(screen.getByRole('button', { name: 'Show more' }));
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),

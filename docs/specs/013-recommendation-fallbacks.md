@@ -66,3 +66,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Manual check: search for "asdf" on a preview
 - Rollback signal: empty results despite a valid Start-here set; an empty catalog requires a data fix, not invented picks
 - Review: acceptance evidence names the tested release or document version, unresolved failures and follow-up owners. Updating this specification does not mark the implementation complete.
+
+### Result-count policy update
+
+Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
+and Show-more requirements. Display at most eight matches; fill fewer than six
+with labeled fallback videos to six, subject to the eligible catalog size.
+The existing model validation gates remain separate from this display minimum.

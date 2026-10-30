@@ -12,7 +12,7 @@ production enablement. An API key alone is insufficient.
 
 ## Haiku 5.5 test results
 
-`catalog-rank-v7` puts the full catalog first in the
+`catalog-rank-v8` puts the full catalog first in the
 JSON user message, followed by `functionArea`, `goal` and `tools`. V5's system
 prompt, catalog order and metadata, output schema and caps stay unchanged.
 Haiku 5.5 keeps v6's medium effort with thinking disabled.
@@ -221,3 +221,9 @@ inspect bundle/log privacy, then approve the explicit test-call allowance.
 - [Durable Object SQLite storage transactions](https://developers.cloudflare.com/durable-objects/api/sqlite-storage-api/)
 - [Durable Object limits and free-plan SQLite support](https://developers.cloudflare.com/durable-objects/platform/limits/)
 - [Durable Object deployment lifecycle](https://developers.cloudflare.com/durable-objects/reference/durable-objects-migrations/)
+
+Spec #83 caps displayed recommendations at eight and fills fewer than six matches
+with labeled fallback videos. The v8 prompt asks for at most eight useful matches;
+it keeps the ten named provider slots for compatibility, with unused slots null.
+Full-set quality review and the original top-three evaluation remain required
+before enabling this prompt in production.

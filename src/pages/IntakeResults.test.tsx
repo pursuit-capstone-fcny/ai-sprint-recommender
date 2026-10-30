@@ -77,13 +77,13 @@ function selectFundraising() {
 }
 
 describe('IntakeResults', () => {
-  it('shows 3 cards with reasons after picking an area', () => {
+  it('shows the available matches and labeled fallback when the catalog has fewer than six', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();
 
     const cards = screen.getAllByRole('listitem');
-    expect(cards).toHaveLength(3);
-    for (const card of cards) {
+    expect(cards).toHaveLength(5);
+    for (const card of cards.slice(0, 4)) {
       expect(card.textContent).toMatch(/fundraising|about|made with/i);
     }
   });
@@ -127,23 +127,11 @@ describe('IntakeResults', () => {
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
-  it('shows at most 3 cards on first render even with more strong matches available', () => {
+  it('fills a thin matched set with distinct fallback videos and has no Show more', () => {
     render(<IntakeResults catalog={catalog} />);
     selectFundraising();
-
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
-    expect(screen.getByRole('button', { name: /show more/i })).toBeTruthy();
-  });
-
-  it('"Show more" reveals the next strong match and never a fallback card', () => {
-    render(<IntakeResults catalog={catalog} />);
-    selectFundraising();
-
-    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
-
-    const cards = screen.getAllByRole('listitem');
-    expect(cards).toHaveLength(4);
-    expect(screen.queryByText('Closest match')).toBeNull();
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
+    expect(screen.getAllByText('Closest match')).toHaveLength(1);
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
@@ -188,14 +176,13 @@ describe('IntakeResults', () => {
     selectFundraising();
     fireEvent.change(goal, { target: { value: 'gizmo' } });
     fireEvent.change(tool, { target: { value: 'Claude' } });
-    fireEvent.click(screen.getByRole('button', { name: /show more/i }));
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
 
     expect(area.value).toBe('');
     expect(goal.value).toBe('');
     expect(tool.value).toBe('');
-    expect(screen.getAllByRole('listitem')).toHaveLength(3);
+    expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 
   it('"Find videos" moves focus to the results heading', () => {
@@ -206,14 +193,15 @@ describe('IntakeResults', () => {
     );
   });
 
-  it('shows tool pills, not "Closest match", in the "Not sure" state', () => {
+  it('labels fallback discovery picks in the "Not sure" state', () => {
     render(<IntakeResults catalog={catalog} />);
     const cards = screen.getAllByRole('listitem');
     expect(cards.length).toBeGreaterThan(0);
     expect(screen.queryByText('Closest match')).toBeNull();
     const firstTitle = cards[0].querySelector('h3')?.textContent;
     const firstItem = catalog.find((item) => item.title === firstTitle);
-    expect(within(cards[0]).getByText(firstItem!.tools[0])).toBeTruthy();
+    expect(firstItem).toBeTruthy();
+    expect(within(cards[0]).getByText('More to explore')).toBeTruthy();
 
     fireEvent.change(screen.getByLabelText(/function area/i), {
       target: { value: 'Leadership' },

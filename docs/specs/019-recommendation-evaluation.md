@@ -27,7 +27,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-19.1 Shared benchmark
   - Given the 10 approved synthetic profiles and their ideal/good IDs from #7
   - When either recommendation path is evaluated
-  - Then both use the same frozen catalog/config and score the final three displayed picks after validation and deduplication. Missing slots count as misses; edge cases do not change the 10-profile denominator
+  - Then both use the same frozen catalog/config and score the final displayed set after validation, deduplication, the eight-video cap and fallback filling in #83. Preserve the original top-three score separately, with missing top-three slots counted as misses; edge cases do not change the 10-profile denominator
 - AC-19.2 Relevance target
   - Given a candidate model/prompt configuration
   - When the rules benchmark and three live LLM trials run
@@ -60,3 +60,31 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Log or metric: per-profile relevance, outcome counts, latency and cost for the exact proposed configuration.
 - Manual check: client review, failure demonstration and rules-only switch on the deployed preview.
 - Rollback signal: relevance falls below the accepted target, safety checks fail or spend exceeds the agreed allowance; disable the LLM path and investigate.
+
+### Expanded results under #83
+
+Use `scoreDisplayedResults(judgments, selection.results)` from
+`src/evaluation/displayedResults.ts` for both paths. `topThree` retains the
+original two-good-picks threshold. `expanded` records every displayed ID and
+count, known-good IDs under the frozen labels, and IDs that still require
+review. Include fallback cards because learners see them. Retain engine and
+fallback metadata alongside these scores so a rules fallback cannot establish
+an LLM pass.
+
+Full-set quality approval remains pending Ali or Eliot's review. Six displayed
+cards does not establish model validity or relevance. Do not turn unreviewed
+IDs into automatic good or bad labels, change the ten-profile denominator, or
+rewrite historical reports. The separately developed #19 runner must integrate
+this scorer before the changed configuration can pass its live release gate.
+
+Run the offline expanded-set evaluator against the unchanged #19 benchmark and
+optionally its three saved trial files in one trials envelope:
+
+```sh
+pnpm evaluate:displayed path/to/benchmark.json path/to/trials.json > expanded-report.json
+```
+
+This reuses the production selectors and emits ten rules profiles and, when
+provided, three ten-profile model trials with engine/fallback metadata. Output
+is explicitly marked offline replay and pending client review. It does not
+replace historical reports or establish fresh live approval.
