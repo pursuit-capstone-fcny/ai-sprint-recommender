@@ -4,6 +4,10 @@ import { benchmarkFingerprint, type Benchmark } from './benchmark';
 import { RecommendationVersionSchema } from '../contracts/usageEvent';
 import { LUNA_PRIOR_SPEND } from './luna-ledger';
 import {
+  HAIKU_DEPLOYED_PROMPT,
+  HAIKU_DEPLOYED_RESERVATION,
+} from '../../server/haiku-policy';
+import {
   LUNA_DEPLOYED_PROMPT,
   LUNA_DEPLOYED_RESERVATION,
   LUNA_TOTAL_ALLOWANCE,
@@ -91,17 +95,18 @@ export function validateLiveApproval(
   if (
     (luna || haiku) &&
     (approval.reasoningEffort !== 'low' ||
-      (haiku && approval.thinking !== 'disabled') ||
+      (haiku &&
+        (approval.thinking !== 'disabled' ||
+          approval.serviceTier !== undefined)) ||
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
-      approval.totalAllowanceMicrodollars !==
-        (luna ? LUNA_TOTAL_ALLOWANCE : 1_000_000) ||
+      approval.totalAllowanceMicrodollars !== LUNA_TOTAL_ALLOWANCE ||
       approval.allowanceMicrodollars !==
-        (luna ? LUNA_TOTAL_ALLOWANCE : 1_000_000) - LUNA_PRIOR_SPEND ||
+        LUNA_TOTAL_ALLOWANCE - LUNA_PRIOR_SPEND ||
       (luna && approval.serviceTier !== 'fast') ||
       approval.maxRequestMicrodollars !==
-        (luna ? LUNA_DEPLOYED_RESERVATION : 6_756) ||
+        (luna ? LUNA_DEPLOYED_RESERVATION : HAIKU_DEPLOYED_RESERVATION) ||
       approval.promptVersion !==
-        (luna ? LUNA_DEPLOYED_PROMPT : 'catalog-rank-v10'))
+        (luna ? LUNA_DEPLOYED_PROMPT : HAIKU_DEPLOYED_PROMPT))
   )
     throw new Error(
       'Model comparison must preserve the candidate and remaining allowance.',

@@ -81,13 +81,8 @@ export async function main(args = process.argv.slice(2)) {
     JSON.parse(await readFile(benchmarkPath, 'utf8')),
   );
   const endpoint = new URL(approval.endpoint);
-  if (
-    values['injection-probes'] &&
-    (checkDiagnostics ||
-      diagnoseFormat ||
-      approval.modelVersion !== 'gpt-6-luna')
-  )
-    throw new Error('Injection controls require the full Luna endpoint trial.');
+  if (values['injection-probes'] && (checkDiagnostics || diagnoseFormat))
+    throw new Error('Injection controls require the full endpoint trial.');
   const extraCases = values['injection-probes']
     ? contracts.injectionProbes(benchmark)
     : [];

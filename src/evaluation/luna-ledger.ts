@@ -112,3 +112,9 @@ export const LUNA_ALLOWANCE_GRANT = [
   'docs/evaluation/2026-10-30-luna-fast/allowance.json',
   'ce27cbd7d0037af1ff3c2e235113d1fc120fa4e7314c8b79a5fdaaa94cc3dc4f',
 ] as const;
+
+// October 30: the owner authorized Haiku to use the remaining shared balance.
+export const HAIKU_ALLOWANCE_SCOPE = [
+  'docs/evaluation/2026-10-30-haiku-optimized/allowance-scope.json',
+  'bf00eb7816927fa26288f8c176fa8c1dbe6a89d89e621082512bf944c94d39a1',
+] as const;

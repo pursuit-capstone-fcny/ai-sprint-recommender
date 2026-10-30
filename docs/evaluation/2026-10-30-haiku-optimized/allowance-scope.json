@@ -1,0 +1,12 @@
+{
+  "kind": "evaluation-allowance-scope",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "models": ["gpt-6-luna", "claude-haiku-5-5"],
+  "totalAllowanceMicrodollars": 2000000,
+  "additionalAllowanceMicrodollars": 0,
+  "priorCeilingMicrodollars": 1133483,
+  "remainingMicrodollars": 866517,
+  "unresolvedReservationsMicrodollars": 225000,
+  "scope": "Apply the Luna optimizations to Haiku low and rerun within the existing remaining comparison allowance. Preserve labels, the task-diversity gate, historical charges and unknown reservations. Production LLM calls and logging stay disabled."
+}

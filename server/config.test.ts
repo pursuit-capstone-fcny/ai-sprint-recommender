@@ -19,6 +19,7 @@ describe('recommendation configuration', () => {
       { LLM_MODEL: 'unapproved' },
       { LLM_REASONING_EFFORT: undefined },
       { LLM_REASONING_EFFORT: 'medium' },
+      { LLM_SERVICE_TIER: 'fast' },
       { LLM_MAX_OUTPUT_TOKENS: '513' },
       { LLM_INPUT_MICRODOLLARS_PER_MILLION: '1' },
     ])
@@ -30,16 +31,19 @@ describe('recommendation configuration', () => {
         }),
       ).toBeNull();
   });
-  it('keeps Haiku disabled when shared spend exceeds its original cap', () => {
+  it('shares only the authorized existing cap and rejects an exhausted old cap', () => {
     expect(haikuConfig.vars.LLM_ENABLED).toBe('false');
     expect(haikuConfig.vars.LLM_PRIOR_MICRODOLLARS).toBe(
       lunaConfig.vars.LLM_PRIOR_MICRODOLLARS,
     );
-    expect(Number(haikuConfig.vars.LLM_ALLOWANCE_MICRODOLLARS)).toBe(1000000);
-    expect(Number(haikuConfig.vars.LLM_PRIOR_MICRODOLLARS)).toBeGreaterThan(
-      1000000,
+    expect(haikuConfig.vars.LLM_ALLOWANCE_MICRODOLLARS).toBe(
+      lunaConfig.vars.LLM_ALLOWANCE_MICRODOLLARS,
     );
-    expect(readLimits(haikuConfig.vars)).toBeNull();
+    expect(readLimits(haikuConfig.vars)).not.toBeNull();
+    for (const amount of ['1000000', '2000001'])
+      expect(
+        readLimits({ ...haikuConfig.vars, LLM_ALLOWANCE_MICRODOLLARS: amount }),
+      ).toBeNull();
   });
   it('rejects unsafe intermediate multiplication even when the final cost could fit', () => {
     expect(

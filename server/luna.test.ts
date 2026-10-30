@@ -555,6 +555,7 @@ describe('deployed Luna low candidate', () => {
     });
     const haikuEnv = {
       ...haikuConfig.vars,
+      LLM_CATALOG_URL: 'https://script.google.com/macros/s/fixture/exec',
       LLM_PRIOR_MICRODOLLARS: '700000',
       LLM_ENABLED: 'true',
       LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
@@ -596,7 +597,7 @@ describe('deployed Luna low candidate', () => {
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 150);
     const saved = (await storage.get<Ledger>('ledger'))!;
-    saved.total = 999_999;
+    saved.total = 1_999_999;
     await storage.put('ledger', saved);
     fetcher.mockClear();
     const blocked = await recommend(
@@ -613,8 +614,8 @@ describe('deployed Luna low candidate', () => {
       { ...haikuEnv, LLM_ENABLED: 'false', RECOMMENDATION_BUDGET: namespace },
     );
     expect(await summary.json()).toEqual({
-      allowanceMicrodollars: 1000000,
-      spentMicrodollars: 999999,
+      allowanceMicrodollars: 2000000,
+      spentMicrodollars: 1999999,
     });
   });
   it('restricts budget readback to the test runner and exposes only cumulative amounts', async () => {

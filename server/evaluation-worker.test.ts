@@ -1,3 +1,4 @@
+import haikuConfig from '../wrangler.evaluation.json';
 // @vitest-environment node
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { readFileSync } from 'node:fs';
@@ -14,68 +15,107 @@ import { TestStorage } from './test-helpers';
 afterEach(() => vi.unstubAllGlobals());
 
 describe('frozen test catalog isolation', () => {
-  it('uses the frozen catalog while forwarding one provider request through the real handler', async () => {
-    const env = {
-      ...config.vars,
-      LLM_ENABLED: 'true',
-      LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
-      OPENAI_API_KEY: 'synthetic-key',
-      LLM_RATE_KEY: 'x'.repeat(32),
-    };
-    const budget = new RecommendationBudget(
-      { storage: new TestStorage() },
-      env,
-    );
-    const fetcher = vi.fn<typeof fetch>(async () =>
-      Response.json({
-        id: 'synthetic',
-        model: 'gpt-6-luna',
-        status: 'completed',
-        service_tier: 'fast',
-        usage: { input_tokens: 1000, output_tokens: 20 },
-        output: [
-          {
-            type: 'message',
-            content: [
-              {
-                type: 'output_text',
-                text: JSON.stringify({ positions: [0, 1] }),
+  it.each(['openai', 'anthropic'])(
+    'uses the frozen catalog through the real %s handler',
+    async (provider) => {
+      const isHaiku = provider === 'anthropic';
+      const env = {
+        ...(isHaiku ? haikuConfig.vars : config.vars),
+        LLM_ENABLED: 'true',
+        LLM_TEST_EXPIRES_AT: '2099-01-01T00:00:00Z',
+        OPENAI_API_KEY: 'synthetic-key',
+        ANTHROPIC_API_KEY: 'synthetic-key',
+        LLM_RATE_KEY: 'x'.repeat(32),
+      };
+      const budget = new RecommendationBudget(
+        { storage: new TestStorage() },
+        env,
+      );
+      const fetcher = vi.fn<typeof fetch>(async () =>
+        Response.json(
+          isHaiku
+            ? {
+                stop_reason: 'end_turn',
+                usage: { input_tokens: 1000, output_tokens: 20 },
+                content: [
+                  {
+                    type: 'text',
+                    text: JSON.stringify(
+                      Object.fromEntries(
+                        Array.from({ length: 8 }, (_, i) => [
+                          'rank' + (i + 1),
+                          i < 2 ? i : null,
+                        ]),
+                      ),
+                    ),
+                  },
+                ],
+              }
+            : {
+                id: 'synthetic',
+                model: 'gpt-6-luna',
+                status: 'completed',
+                service_tier: 'fast',
+                usage: { input_tokens: 1000, output_tokens: 20 },
+                output: [
+                  {
+                    type: 'message',
+                    content: [
+                      {
+                        type: 'output_text',
+                        text: JSON.stringify({ positions: [0, 1] }),
+                      },
+                    ],
+                  },
+                ],
               },
-            ],
-          },
-        ],
-      }),
-    );
-    vi.stubGlobal('fetch', fetcher);
-    const request = new Request(
-      new URL('/api/recommendations', EVALUATION_CATALOG_URL),
-      {
-        method: 'POST',
-        headers: { 'CF-Connecting-IP': '192.0.2.1' },
-        body: JSON.stringify({
-          functionArea: 'Leadership',
-          tools: [],
-          goal: 'Prepare an AI policy',
-          catalogVersion: snapshot.catalogVersion,
-        }),
-      },
-    );
-    const result = await worker.fetch(request, {
-      ...env,
-      RECOMMENDATION_BUDGET: { idFromName: (name) => name, get: () => budget },
-    });
-    expect(await result.json()).toMatchObject({
-      outcome: 'success',
-      catalogVersion: snapshot.catalogVersion,
-      youtubeIds: snapshot.items.slice(0, 2).map((item) => item.youtubeId),
-    });
-    expect(fetcher).toHaveBeenCalledTimes(1);
-    expect(fetcher.mock.calls[0][0]).toBe(
-      'https://api.openai.com/v1/responses',
-    );
-    const payload = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
-    expect(JSON.parse(payload.input[1].content).catalog).toHaveLength(89);
-  });
+        ),
+      );
+      vi.stubGlobal('fetch', fetcher);
+      const request = new Request(
+        new URL('/api/recommendations', EVALUATION_CATALOG_URL),
+        {
+          method: 'POST',
+          headers: { 'CF-Connecting-IP': '192.0.2.1' },
+          body: JSON.stringify({
+            functionArea: 'Leadership',
+            tools: [],
+            goal: 'Prepare an AI policy',
+            catalogVersion: snapshot.catalogVersion,
+          }),
+        },
+      );
+      const result = await worker.fetch(request, {
+        ...env,
+        RECOMMENDATION_BUDGET: {
+          idFromName: (name) => name,
+          get: () => budget,
+        },
+      });
+      expect(await result.json()).toMatchObject({
+        outcome: 'success',
+        catalogVersion: snapshot.catalogVersion,
+        youtubeIds: snapshot.items.slice(0, 2).map((item) => item.youtubeId),
+      });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(fetcher.mock.calls[0][0]).toBe(
+        isHaiku
+          ? 'https://api.anthropic.com/v1/messages'
+          : 'https://api.openai.com/v1/responses',
+      );
+      const payload = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
+      expect(
+        JSON.parse(
+          isHaiku ? payload.messages[0].content : payload.input[1].content,
+        ).catalog,
+      ).toHaveLength(89);
+      if (isHaiku) {
+        expect(payload.thinking).toEqual({ type: 'disabled' });
+        expect(payload.output_config.effort).toBe('low');
+        expect(payload.system).toContain('use null in all eight ranks');
+      }
+    },
+  );
   it('preserves the original public catalog and serves it without network or model calls', async () => {
     const benchmark = parseBenchmark(
       JSON.parse(

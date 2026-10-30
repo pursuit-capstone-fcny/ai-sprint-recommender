@@ -22,6 +22,8 @@ import {
 import { boundedJson } from './bounded-json';
 import { lunaDeployedBody, lunaProvider } from './luna';
 import { LUNA_DEPLOYED_PROMPT } from './luna-policy';
+import { HAIKU_DEPLOYED_PROMPT } from './haiku-policy';
+import { haikuDeployedBody } from './haiku';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -165,10 +167,15 @@ export async function recommend(
     )
       return fallback('unavailable');
     diagnostic.modelVersion = limits.LLM_MODEL;
+    const boundedHaiku =
+      limits.LLM_PROVIDER === 'anthropic' &&
+      limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined;
     promptVersion =
       limits.LLM_PROVIDER === 'openai'
         ? LUNA_DEPLOYED_PROMPT
-        : RECOMMENDATION_PROMPT_VERSION;
+        : boundedHaiku
+          ? HAIKU_DEPLOYED_PROMPT
+          : RECOMMENDATION_PROMPT_VERSION;
     diagnostic.promptVersion = promptVersion;
     if (request.method !== 'POST') {
       status = 405;
@@ -228,7 +235,8 @@ export async function recommend(
       return fallback('unavailable');
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
-    const body = providerBody(input, catalog, limits);
+    const originalBody = providerBody(input, catalog, limits);
+    const body = boundedHaiku ? haikuDeployedBody(originalBody) : originalBody;
     let bound: number;
     try {
       bound =

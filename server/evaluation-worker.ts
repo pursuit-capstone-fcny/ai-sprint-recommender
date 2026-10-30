@@ -3,12 +3,12 @@
 import snapshot from '../docs/evaluation/2026-10-30-luna-ranking/catalog.json';
 import worker from './worker';
 import { EVALUATION_CATALOG_URL } from './evaluation-catalog-policy';
+import { readLimits } from './config';
 export { RecommendationBudget } from './budget-object';
 
 export default {
   async fetch(...[request, env, ctx]: Parameters<typeof worker.fetch>) {
-    const enabled =
-      env.LLM_ENVIRONMENT === 'test' && env.LLM_PROVIDER === 'openai';
+    const enabled = env.LLM_ENVIRONMENT === 'test' && readLimits(env) !== null;
     const response = () =>
       Response.json(snapshot, {
         headers: {

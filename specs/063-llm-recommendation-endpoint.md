@@ -105,6 +105,12 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+- Given the approved Haiku V11 test, when ranking, then use Luna V15's compact
+  catalog and ranking/breadth/eligibility instructions with Haiku's eight nullable
+  output slots. Preserve low effort, disabled thinking, deadlines, labels and
+  the diversity gate. Spend only the existing shared balance and disable calls
+  after validation. See the [transfer plan](../docs/evaluation/2026-10-30-haiku-optimized/test-plan.md).
+
 The [V15 injection trial](../docs/evaluation/2026-10-30-luna-injection/results.md)
 scores 10/10 in all three trials, with 29/30 six-to-eight lists. All four
 instruction-only attacks abstain; mixed goals and blank browsing still work.

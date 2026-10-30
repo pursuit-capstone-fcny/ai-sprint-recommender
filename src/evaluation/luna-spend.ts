@@ -7,6 +7,7 @@ import {
   LUNA_SPEND_CAPTURES,
   LUNA_DEPLOYED_BUDGETS,
   LUNA_ALLOWANCE_GRANT,
+  HAIKU_ALLOWANCE_SCOPE,
 } from './luna-ledger';
 import { lunaSpent } from './luna';
 import { LUNA_TOTAL_ALLOWANCE } from '../../server/luna-policy';
@@ -75,6 +76,24 @@ export function readLunaPriorSpend(): number {
     grant.previousAllowanceMicrodollars + grant.additionalAllowanceMicrodollars,
     LUNA_TOTAL_ALLOWANCE,
   );
+  const scope = z
+    .strictObject({
+      kind: z.literal('evaluation-allowance-scope'),
+      approvedBy: z.literal('Jason'),
+      approvedAt: z.literal('2026-10-30'),
+      models: z.tuple([z.literal('gpt-6-luna'), z.literal('claude-haiku-5-5')]),
+      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      additionalAllowanceMicrodollars: z.literal(0),
+      priorCeilingMicrodollars: z.literal(1_133_483),
+      remainingMicrodollars: z.literal(866_517),
+      unresolvedReservationsMicrodollars: z.literal(225_000),
+      scope: z.string().min(1),
+    })
+    .parse(read(...HAIKU_ALLOWANCE_SCOPE));
+  assert.equal(
+    scope.priorCeilingMicrodollars + scope.remainingMicrodollars,
+    LUNA_TOTAL_ALLOWANCE,
+  );
   let prior = LUNA_SPEND_CAPTURES.reduce(
     (sum, [path, hash]) => sum + lunaSpent(read(path, hash)),
     0,
@@ -84,6 +103,7 @@ export function readLunaPriorSpend(): number {
     if (allowance > 1_000_000) assert(prior >= grant.priorCeilingMicrodollars);
     prior += deployedLunaSpend(read(path, hash), prior, allowance);
   }
+  assert(prior >= scope.priorCeilingMicrodollars);
   assert.equal(
     prior,
     LUNA_PRIOR_SPEND,

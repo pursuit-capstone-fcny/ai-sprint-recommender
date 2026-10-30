@@ -59,7 +59,12 @@ export function readLimits(env: Variables): Limits | null {
   const limits = result.data;
   if (
     limits.LLM_CATALOG_URL === EVALUATION_CATALOG_URL &&
-    (limits.LLM_ENVIRONMENT !== 'test' || limits.LLM_PROVIDER !== 'openai')
+    (limits.LLM_ENVIRONMENT !== 'test' ||
+      (limits.LLM_PROVIDER !== 'openai' &&
+        !(
+          limits.LLM_MODEL === 'claude-haiku-5-5' &&
+          limits.LLM_ALLOWANCE_MICRODOLLARS === LUNA_TOTAL_ALLOWANCE
+        )))
   )
     return null;
   const boundedComparison =
@@ -72,7 +77,8 @@ export function readLimits(env: Variables): Limits | null {
       limits.LLM_PRIOR_MICRODOLLARS === undefined ||
       limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS ||
       (limits.LLM_PROVIDER === 'anthropic' &&
-        (limits.LLM_ALLOWANCE_MICRODOLLARS > 1_000_000 ||
+        (limits.LLM_ALLOWANCE_MICRODOLLARS !== LUNA_TOTAL_ALLOWANCE ||
+          limits.LLM_SERVICE_TIER !== undefined ||
           limits.LLM_MODEL !== 'claude-haiku-5-5' ||
           limits.LLM_REASONING_EFFORT !== 'low' ||
           limits.LLM_MAX_INPUT_TOKENS !== 65_000 ||

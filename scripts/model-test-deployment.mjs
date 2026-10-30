@@ -19,7 +19,7 @@ try {
   const bundle = await build({
     stdin: {
       contents:
-        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaDeployedBody} from './server/luna';",
+        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaDeployedBody} from './server/luna';export {haikuDeployedBody} from './server/haiku';export {injectionProbes} from './src/evaluation/injection-probes';",
       resolveDir: process.cwd(),
       loader: 'ts',
     },
@@ -33,7 +33,7 @@ try {
     `data:text/javascript;base64,${Buffer.from(bundle.outputFiles[0].text).toString('base64')}`
   );
   const config = JSON.parse(readFileSync(configPath, 'utf8'));
-  if (!haiku) {
+  {
     assert.equal(config.main, 'server/evaluation-worker.ts');
     assert.equal(
       config.vars.LLM_CATALOG_URL,
@@ -139,14 +139,17 @@ try {
       ),
     );
     const limits = contracts.readLimits(config.vars);
-    for (const profile of benchmark.profiles) {
+    for (const profile of [
+      ...benchmark.profiles,
+      ...contracts.injectionProbes(benchmark),
+    ]) {
       const body = contracts.providerBody(
         { ...profile.input, catalogVersion: benchmark.catalog.catalogVersion },
         benchmark.catalog,
         limits,
       );
       const bound = haiku
-        ? contracts.inputTokenBound(body)
+        ? contracts.inputTokenBound(contracts.haikuDeployedBody(body))
         : new TextEncoder().encode(
             JSON.stringify(contracts.lunaDeployedBody(body)),
           ).length + 1024;
@@ -160,7 +163,7 @@ try {
       approval,
       undefined,
       Date.now(),
-      34,
+      40,
     );
     assert.equal(
       Number(config.vars.LLM_ALLOWANCE_MICRODOLLARS),
