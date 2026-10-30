@@ -1,7 +1,7 @@
-// Original Luna names are retained for historical captures. This $1 allowance
-// now also covers the explicitly requested Haiku rerun; it is never reset.
+// Original names and all charges are retained. The October 30 grant adds $1
+// for deployed Luna tests; historical and Haiku allowance limits stay unchanged.
 export const LUNA_PRIOR_SPEND = 861_150;
-export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
+export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
     'docs/evaluation/2026-10-29-luna-deployed/runs/40908665576-2/state/luna-budget.json',
     'fb4e6b9852e1331dac5a337fde0258e55f20a3970ff891f68e45701d50539251',
@@ -77,3 +77,8 @@ export const LUNA_SPEND_CAPTURES = [
     '2f52b62ac70c686a3b4e569a6d6b5e71c2d72d53ba117e928961244e6499f63b',
   ],
 ];
+
+export const LUNA_ALLOWANCE_GRANT = [
+  'docs/evaluation/2026-10-30-luna-fast/allowance.json',
+  'ce27cbd7d0037af1ff3c2e235113d1fc120fa4e7314c8b79a5fdaaa94cc3dc4f',
+] as const;

@@ -43,6 +43,7 @@ export interface Diagnostic extends Partial<ProviderValidation> {
   inputTokens?: number;
   outputTokens?: number;
   reasoningTokens?: number;
+  serviceTier?: 'default' | 'priority' | 'fast';
   providerDispatched?: boolean;
   requestedCatalogVersion?: string;
   catalogMs?: number;
@@ -298,8 +299,19 @@ export async function recommend(
         result.outputTokens < 0
       )
         return fallback('invalid-response');
+      if (limits.LLM_PROVIDER === 'openai') {
+        if (!['default', 'priority', 'fast'].includes(result.serviceTier ?? ''))
+          return fallback('invalid-response');
+        diagnostic.serviceTier = result.serviceTier;
+      }
       const measuredCost = callCost(
-        limits,
+        limits.LLM_PROVIDER === 'openai' && result.serviceTier === 'default'
+          ? {
+              ...limits,
+              LLM_INPUT_MICRODOLLARS_PER_MILLION: 100_000,
+              LLM_OUTPUT_MICRODOLLARS_PER_MILLION: 500_000,
+            }
+          : limits,
         result.inputTokens,
         result.outputTokens,
       );

@@ -1,4 +1,5 @@
 import { readFileSync } from 'node:fs';
+import { createHash } from 'node:crypto';
 import { parseBenchmark } from '../src/evaluation/benchmark';
 import haikuConfig from '../wrangler.evaluation.json';
 // @vitest-environment node
@@ -37,6 +38,7 @@ const output = (positions = [1, 2, 3]) => ({
   id: 'fixture-response',
   model: 'gpt-6-luna',
   status: 'completed',
+  service_tier: 'priority',
   output: [
     { type: 'reasoning', summary: [] },
     {
@@ -66,6 +68,107 @@ function budgetObject() {
   return { storage, object, namespace };
 }
 describe('deployed Luna low candidate', () => {
+  it('charges the actual returned tier and rejects Standard as Fast evidence', async () => {
+    for (const tier of ['fast', 'priority', 'default']) {
+      const { storage, namespace } = budgetObject();
+      const diagnostic = vi.fn();
+      const fetcher = vi.fn<typeof fetch>(async (url) =>
+        String(url).includes('script.google.com')
+          ? Response.json(catalog)
+          : Response.json({ ...output(), service_tier: tier }),
+      );
+      const response = await recommend(
+        request(),
+        { ...env, RECOMMENDATION_BUDGET: namespace },
+        { fetch: fetcher, diagnostic },
+      );
+      expect((await response.json()).outcome).toBe(
+        tier === 'default' ? 'fallback' : 'success',
+      );
+      const cost = tier === 'default' ? 200 : 400;
+      expect((await storage.get<Ledger>('ledger'))?.total).toBe(
+        LUNA_PRIOR_SPEND + cost,
+      );
+      expect(diagnostic).toHaveBeenCalledWith(
+        expect.objectContaining({
+          serviceTier: tier,
+          costMicrodollars: cost,
+          reservedMicrodollars: 11000,
+        }),
+      );
+    }
+  });
+  it('retains the full Fast reservation if the returned billing tier is missing or unknown', async () => {
+    for (const tier of [undefined, 'unknown']) {
+      const { storage, namespace } = budgetObject();
+      const fetcher = vi.fn<typeof fetch>(async (url) =>
+        String(url).includes('script.google.com')
+          ? Response.json(catalog)
+          : Response.json({ ...output(), service_tier: tier }),
+      );
+      const response = await recommend(
+        request(),
+        { ...env, RECOMMENDATION_BUDGET: namespace },
+        { fetch: fetcher, diagnostic: () => {} },
+      );
+      expect((await response.json()).outcome).toBe('fallback');
+      expect((await storage.get<Ledger>('ledger'))?.total).toBe(
+        LUNA_PRIOR_SPEND + 11000,
+      );
+      expect(fetcher).toHaveBeenCalledTimes(2);
+    }
+  });
+  it('changes only the service tier from the recorded V12 request', () => {
+    const benchmark = parseBenchmark(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
+        ),
+      ),
+    );
+    const baseline = JSON.parse(
+      readFileSync(
+        'docs/evaluation/2026-10-30-luna-fast/v12-request-hashes.json',
+        'utf8',
+      ),
+    );
+    for (const profile of benchmark.profiles) {
+      const candidate = lunaDeployedBody(
+        providerBody(
+          {
+            ...profile.input,
+            catalogVersion: benchmark.catalog.catalogVersion,
+          },
+          benchmark.catalog,
+          readLimits(env)!,
+        ),
+      );
+      expect(candidate.service_tier).toBe('fast');
+      expect(
+        createHash('sha256')
+          .update(JSON.stringify({ ...candidate, service_tier: 'default' }))
+          .digest('hex'),
+      ).toBe(
+        baseline.rows.find(
+          (r: { profileId: string }) => r.profileId === profile.id,
+        ).sha256,
+      );
+    }
+  });
+  it('accepts the additional allowance without permitting an unapproved increase', () => {
+    expect(
+      readLimits({
+        ...env,
+        LLM_ALLOWANCE_MICRODOLLARS: '2000000',
+        LLM_DAILY_MICRODOLLARS: '2000000',
+        LLM_MONTHLY_MICRODOLLARS: '2000000',
+      }),
+    ).not.toBeNull();
+    expect(
+      readLimits({ ...env, LLM_ALLOWANCE_MICRODOLLARS: '2000001' }),
+    ).toBeNull();
+  });
   it.each([
     { positions: [1, 1] },
     { positions: [-1] },
@@ -87,7 +190,7 @@ describe('deployed Luna low candidate', () => {
         'positions',
       );
       expect(measured.youtubeIds).toBeNull();
-      expect(measured.costMicrodollars).toBe(200);
+      expect(measured.costMicrodollars).toBe(400);
     },
   );
   it('bounds compact input and usage before accepting a selection', () => {
@@ -146,7 +249,7 @@ describe('deployed Luna low candidate', () => {
         ),
       ).toEqual(body.data.catalog);
       expect(candidate.reasoning).toEqual({ effort: 'low', mode: 'standard' });
-      expect(candidate.max_output_tokens).toBe(2000);
+      expect(candidate.max_output_tokens).toBe(1000);
     }
   });
   it('accepts compact positions without changing order or catalog IDs', async () => {
@@ -227,18 +330,18 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v11',
+      promptVersion: 'catalog-rank-luna-v12-fast',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(
-      LUNA_PRIOR_SPEND + 200,
+      LUNA_PRIOR_SPEND + 400,
     );
     expect(diagnostic).toHaveBeenCalledWith(
       expect.objectContaining({
-        costMicrodollars: 200,
+        costMicrodollars: 400,
         outputTokens: 200,
         reasoningTokens: 150,
-        reservedMicrodollars: 6000,
+        reservedMicrodollars: 11000,
       }),
     );
     expect(fetcher).toHaveBeenCalledTimes(2);
@@ -253,6 +356,9 @@ describe('deployed Luna low candidate', () => {
     { LLM_TEST_EXPIRES_AT: '2020-01-01T00:00:00Z' },
     { LLM_MODEL: 'different-model' },
     { LLM_INPUT_MICRODOLLARS_PER_MILLION: '1' },
+    { LLM_SERVICE_TIER: undefined },
+    { LLM_SERVICE_TIER: 'default' },
+    { LLM_INPUT_MICRODOLLARS_PER_MILLION: '100000' },
   ])(
     'fails closed for unsupported or disabled configuration %j',
     async (override) => {
@@ -285,7 +391,7 @@ describe('deployed Luna low candidate', () => {
         mode === 'duplicate' ? 'invalid-response' : 'provider-error',
       );
       expect((await storage.get<Ledger>('ledger'))?.total).toBe(
-        LUNA_PRIOR_SPEND + (mode === 'duplicate' ? 200 : 6000),
+        LUNA_PRIOR_SPEND + (mode === 'duplicate' ? 400 : 11000),
       );
       expect(fetcher).toHaveBeenCalledTimes(2);
     }
@@ -334,7 +440,7 @@ describe('deployed Luna low candidate', () => {
   });
   it('carries Luna spend into Haiku on the same object and preserves the allowance ceiling', async () => {
     const storage = new TestStorage();
-    const priorTotal = LUNA_PRIOR_SPEND + 200;
+    const priorTotal = LUNA_PRIOR_SPEND + 400;
     await storage.put('ledger', {
       day: '',
       month: '',
@@ -438,7 +544,7 @@ describe('deployed Luna low candidate', () => {
       RECOMMENDATION_BUDGET: namespace,
     });
     expect(await response.json()).toEqual({
-      allowanceMicrodollars: 1000000,
+      allowanceMicrodollars: 2000000,
       spentMicrodollars: LUNA_PRIOR_SPEND,
     });
     expect(response.headers.get('cache-control')).toBe('no-store');

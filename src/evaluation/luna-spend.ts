@@ -6,21 +6,35 @@ import {
   LUNA_PRIOR_SPEND,
   LUNA_SPEND_CAPTURES,
   LUNA_DEPLOYED_BUDGETS,
+  LUNA_ALLOWANCE_GRANT,
 } from './luna-ledger';
 import { lunaSpent } from './luna';
+import { LUNA_TOTAL_ALLOWANCE } from '../../server/luna-policy';
 
-const amount = z.number().int().nonnegative().max(1_000_000);
+const amount = z.number().int().nonnegative().max(LUNA_TOTAL_ALLOWANCE);
 const deployedBudget = z.object({
   kind: z.enum(['deployed-luna-budget', 'deployed-model-budget']),
-  allowanceMicrodollars: z.literal(1_000_000),
+  allowanceMicrodollars: z.union([
+    z.literal(1_000_000),
+    z.literal(LUNA_TOTAL_ALLOWANCE),
+  ]),
   priorSpendMicrodollars: amount,
   spentMicrodollars: amount,
   additionalMicrodollars: amount,
   remainingMicrodollars: amount,
 });
 
-export function deployedLunaSpend(value: unknown, prior: number): number {
+export function deployedLunaSpend(
+  value: unknown,
+  prior: number,
+  allowance = 1_000_000,
+): number {
   const budget = deployedBudget.parse(value);
+  assert.equal(
+    budget.allowanceMicrodollars,
+    allowance,
+    'Deployed allowance changed',
+  );
   assert.equal(
     budget.priorSpendMicrodollars,
     prior,
@@ -29,7 +43,7 @@ export function deployedLunaSpend(value: unknown, prior: number): number {
   assert.equal(budget.spentMicrodollars, prior + budget.additionalMicrodollars);
   assert.equal(
     budget.remainingMicrodollars,
-    1_000_000 - budget.spentMicrodollars,
+    allowance - budget.spentMicrodollars,
   );
   return budget.additionalMicrodollars;
 }
@@ -44,12 +58,32 @@ export function readLunaPriorSpend(): number {
     );
     return JSON.parse(bytes.toString('utf8'));
   };
+  const grant = z
+    .strictObject({
+      kind: z.literal('evaluation-allowance-increase'),
+      approvedBy: z.literal('Jason'),
+      approvedAt: z.literal('2026-10-30'),
+      previousAllowanceMicrodollars: z.literal(1_000_000),
+      additionalAllowanceMicrodollars: z.literal(1_000_000),
+      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      priorCeilingMicrodollars: z.literal(861_150),
+      unresolvedReservationsMicrodollars: z.literal(225_000),
+      scope: z.string().min(1),
+    })
+    .parse(read(...LUNA_ALLOWANCE_GRANT));
+  assert.equal(
+    grant.previousAllowanceMicrodollars + grant.additionalAllowanceMicrodollars,
+    LUNA_TOTAL_ALLOWANCE,
+  );
   let prior = LUNA_SPEND_CAPTURES.reduce(
     (sum, [path, hash]) => sum + lunaSpent(read(path, hash)),
     0,
   );
-  for (const [path, hash] of LUNA_DEPLOYED_BUDGETS)
-    prior += deployedLunaSpend(read(path, hash), prior);
+  for (const [path, hash, allowance = 1_000_000] of LUNA_DEPLOYED_BUDGETS) {
+    assert(allowance <= LUNA_TOTAL_ALLOWANCE);
+    if (allowance > 1_000_000) assert(prior >= grant.priorCeilingMicrodollars);
+    prior += deployedLunaSpend(read(path, hash), prior, allowance);
+  }
   assert.equal(
     prior,
     LUNA_PRIOR_SPEND,

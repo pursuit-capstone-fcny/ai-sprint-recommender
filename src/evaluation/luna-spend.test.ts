@@ -14,12 +14,32 @@ import { parseBenchmark } from './benchmark';
 import { validateLiveApproval } from './approval';
 import {
   LUNA_DEPLOYED_PROMPT,
+  LUNA_TOTAL_ALLOWANCE,
   LUNA_DEPLOYED_RESERVATION,
 } from '../../server/luna-policy';
 
 afterEach(() => vi.unstubAllEnvs());
 
 describe('shared evaluation allowance evidence', () => {
+  it('adds the new grant without resetting earlier charges or repricing old records', () => {
+    const record = {
+      kind: 'deployed-luna-budget',
+      allowanceMicrodollars: 2000000,
+      priorSpendMicrodollars: 861150,
+      spentMicrodollars: 862150,
+      additionalMicrodollars: 1000,
+      remainingMicrodollars: 1137850,
+    };
+    expect(deployedLunaSpend(record, 861150, LUNA_TOTAL_ALLOWANCE)).toBe(1000);
+    expect(() => deployedLunaSpend(record, 861150)).toThrow('allowance');
+    expect(() =>
+      deployedLunaSpend(
+        { ...record, priorSpendMicrodollars: 0 },
+        861150,
+        LUNA_TOTAL_ALLOWANCE,
+      ),
+    ).toThrow();
+  });
   it('rejects a deployed budget that resets prior spend or refunds unknown charges', () => {
     const record = {
       kind: 'deployed-luna-budget',
@@ -58,7 +78,7 @@ describe('shared evaluation allowance evidence', () => {
   });
 
   it('rejects paid runs whose maximum reservations exceed the current balance', async () => {
-    const remaining = 1_000_000 - readLunaPriorSpend();
+    const remaining = LUNA_TOTAL_ALLOWANCE - readLunaPriorSpend();
     const captured = JSON.parse(
       readFileSync(
         'docs/evaluation/2026-10-30-luna-compact/runs/41085742178-2/approval.json',
@@ -83,6 +103,8 @@ describe('shared evaluation allowance evidence', () => {
         benchmark,
         {
           ...captured,
+          serviceTier: 'fast',
+          totalAllowanceMicrodollars: LUNA_TOTAL_ALLOWANCE,
           promptVersion: LUNA_DEPLOYED_PROMPT,
           maxRequestMicrodollars: LUNA_DEPLOYED_RESERVATION,
           priorSpendMicrodollars: LUNA_PRIOR_SPEND,

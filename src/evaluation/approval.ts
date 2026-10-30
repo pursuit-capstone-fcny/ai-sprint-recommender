@@ -6,6 +6,7 @@ import { LUNA_PRIOR_SPEND } from './luna-ledger';
 import {
   LUNA_DEPLOYED_PROMPT,
   LUNA_DEPLOYED_RESERVATION,
+  LUNA_TOTAL_ALLOWANCE,
 } from '../../server/luna-policy';
 
 export const TEST_EVALUATION_ENDPOINT =
@@ -30,8 +31,11 @@ export const LiveApprovalSchema = z
     maxRequestMicrodollars: z.number().int().positive(),
     reasoningEffort: z.enum(['low', 'medium']).optional(),
     thinking: z.literal('disabled').optional(),
+    serviceTier: z.literal('fast').optional(),
     priorSpendMicrodollars: z.number().int().nonnegative().optional(),
-    totalAllowanceMicrodollars: z.literal(1_000_000).optional(),
+    totalAllowanceMicrodollars: z
+      .union([z.literal(1_000_000), z.literal(LUNA_TOTAL_ALLOWANCE)])
+      .optional(),
   })
   .refine(
     (value) => value.maxRequestMicrodollars * 30 <= value.allowanceMicrodollars,
@@ -89,8 +93,11 @@ export function validateLiveApproval(
     (approval.reasoningEffort !== 'low' ||
       (haiku && approval.thinking !== 'disabled') ||
       approval.priorSpendMicrodollars !== LUNA_PRIOR_SPEND ||
-      approval.totalAllowanceMicrodollars !== 1_000_000 ||
-      approval.allowanceMicrodollars !== 1_000_000 - LUNA_PRIOR_SPEND ||
+      approval.totalAllowanceMicrodollars !==
+        (luna ? LUNA_TOTAL_ALLOWANCE : 1_000_000) ||
+      approval.allowanceMicrodollars !==
+        (luna ? LUNA_TOTAL_ALLOWANCE : 1_000_000) - LUNA_PRIOR_SPEND ||
+      (luna && approval.serviceTier !== 'fast') ||
       approval.maxRequestMicrodollars !==
         (luna ? LUNA_DEPLOYED_RESERVATION : 6_756) ||
       approval.promptVersion !==

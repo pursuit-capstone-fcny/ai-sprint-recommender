@@ -37,6 +37,7 @@ export const DiagnosticSchema = z.strictObject({
   inputTokens: count.optional(),
   outputTokens: count.optional(),
   reasoningTokens: count.optional(),
+  serviceTier: z.enum(['default', 'priority', 'fast']).optional(),
   costMicrodollars: count.optional(),
   reservedMicrodollars: count.optional(),
   validationFailure: z

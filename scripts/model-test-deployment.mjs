@@ -54,6 +54,7 @@ try {
     config.vars.LLM_ALLOWANCE_MICRODOLLARS,
   );
   const prior = contracts.readLunaPriorSpend();
+  const allowance = Number(config.vars.LLM_ALLOWANCE_MICRODOLLARS);
   const approval = JSON.parse(
     readFileSync(
       `${process.env.RUNNER_TEMP}/llm-evaluation-approval.json`,
@@ -65,6 +66,7 @@ try {
   assert.equal(approval.endpoint, `${endpoint}/api/recommendations`);
   assert.equal(approval.modelVersion, model);
   assert.equal(approval.reasoningEffort, config.vars.LLM_REASONING_EFFORT);
+  assert.equal(approval.serviceTier, config.vars.LLM_SERVICE_TIER);
   const secretPath = `${process.env.RUNNER_TEMP}/${candidate}-test-secrets.json`;
   if (action === 'budget') {
     // Read after disabling calls. It includes reservations even if diagnostics were lost.
@@ -76,11 +78,11 @@ try {
     });
     assert.equal(response.status, 200);
     const budget = await response.json();
-    assert.equal(budget.allowanceMicrodollars, 1000000);
+    assert.equal(budget.allowanceMicrodollars, allowance);
     assert(
       Number.isSafeInteger(budget.spentMicrodollars) &&
         budget.spentMicrodollars >= prior &&
-        budget.spentMicrodollars <= 1000000,
+        budget.spentMicrodollars <= allowance,
     );
     mkdirSync('build/evaluation/state', { recursive: true });
     writeFileSync(
@@ -96,7 +98,7 @@ try {
           priorSpendMicrodollars: prior,
           ...budget,
           additionalMicrodollars: budget.spentMicrodollars - prior,
-          remainingMicrodollars: 1000000 - budget.spentMicrodollars,
+          remainingMicrodollars: allowance - budget.spentMicrodollars,
         },
         null,
         2,

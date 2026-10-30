@@ -1,0 +1,45 @@
+{
+  "sourceRevision": "925e4d1669a1293bdca947ae3a57f48d354a9961",
+  "rows": [
+    {
+      "profileId": "leadership-01",
+      "sha256": "0243019e38f721078d463cffe7bd3692b38da3c383240ff29d84527646b42455"
+    },
+    {
+      "profileId": "leadership-02",
+      "sha256": "d8a9cdf0969ee4b11ca6fb5a45474c21807a95bf3cd9d54485188f2af04a858d"
+    },
+    {
+      "profileId": "operations-01",
+      "sha256": "f1a2c4dce6a4c8a4629d5e3581313a08159e36705d679ef43ab718559d943cf5"
+    },
+    {
+      "profileId": "operations-02",
+      "sha256": "db44fec725e58aa815498850363215dfdda842421b9a204322eedc389fc3ced4"
+    },
+    {
+      "profileId": "programs-01",
+      "sha256": "81ece75b73852bee54c95e0c360f0b607479a4f7ec7df607b02777d105e0a118"
+    },
+    {
+      "profileId": "programs-02",
+      "sha256": "0ebb083c213ec6359d070af9fb6d9eccd53d7d7337760f301b10be39d4b5d65d"
+    },
+    {
+      "profileId": "communications-01",
+      "sha256": "d0a71818313ea6a936df8c98fb08442f95b43ca6ea290e65710b865b0e06e83d"
+    },
+    {
+      "profileId": "communications-02",
+      "sha256": "83d641944962fe48c1205cb8570ac6744cb8f38c176ba7e9c8709d0f83312c71"
+    },
+    {
+      "profileId": "fundraising-01",
+      "sha256": "516f8e86ccaea00bdeac47febe14b240d027acf041caa8ef6c955b6467843755"
+    },
+    {
+      "profileId": "fundraising-02",
+      "sha256": "3630d75dd5ecc70d5210b6b5bb2dc0b2f5ace655325af491713486a8aff52c10"
+    }
+  ]
+}

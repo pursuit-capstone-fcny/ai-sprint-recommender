@@ -48,17 +48,18 @@ const approval = {
 };
 
 describe('paid evaluation approval preflight', () => {
-  it('requires Luna low to carry the original allowance and exact test workflow', () => {
+  it('requires Luna low to carry the additive allowance and exact test workflow', () => {
     vi.stubEnv('GITHUB_WORKFLOW', 'Validate Luna test deployment');
     const luna = {
       ...approval,
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v11',
+      promptVersion: 'catalog-rank-luna-v12-fast',
       reasoningEffort: 'low',
+      serviceTier: 'fast',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
-      totalAllowanceMicrodollars: 1000000,
-      allowanceMicrodollars: 1000000 - LUNA_PRIOR_SPEND,
-      maxRequestMicrodollars: 6000,
+      totalAllowanceMicrodollars: 2000000,
+      allowanceMicrodollars: 2000000 - LUNA_PRIOR_SPEND,
+      maxRequestMicrodollars: 11000,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');
     expect(validateLiveApproval(benchmark, luna, checkout, now, 34)).toEqual(
@@ -68,6 +69,9 @@ describe('paid evaluation approval preflight', () => {
       { priorSpendMicrodollars: 0 },
       { allowanceMicrodollars: 1000000 },
       { reasoningEffort: 'medium' },
+      { serviceTier: undefined },
+      { serviceTier: 'default' },
+      { totalAllowanceMicrodollars: 2000001 },
     ])
       expect(() =>
         validateLiveApproval(

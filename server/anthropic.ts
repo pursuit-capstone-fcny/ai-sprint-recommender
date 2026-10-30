@@ -105,6 +105,7 @@ export const ProviderValidationSchema = z.object({
 });
 export type ProviderValidation = z.infer<typeof ProviderValidationSchema>;
 export interface ProviderResult extends Partial<ProviderValidation> {
+  serviceTier?: 'default' | 'priority' | 'fast';
   value: unknown;
   inputTokens: number;
   outputTokens: number;

@@ -1,0 +1,11 @@
+{
+  "kind": "evaluation-allowance-increase",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "previousAllowanceMicrodollars": 1000000,
+  "additionalAllowanceMicrodollars": 1000000,
+  "totalAllowanceMicrodollars": 2000000,
+  "priorCeilingMicrodollars": 861150,
+  "unresolvedReservationsMicrodollars": 225000,
+  "scope": "Fix V12 provider timeouts and rerun Luna low evaluation. Preserve labels, task-diversity gate, historical charges and production-off settings."
+}

@@ -172,10 +172,11 @@ it.each([lunaConfig, haikuConfig])(
     settle(ledger, 'one', null);
     expireLedger(ledger, now + 61000);
     expect(ledger.total).toBe(683554);
-    ledger.total = 999999;
+    const almostExhausted = configured.LLM_ALLOWANCE_MICRODOLLARS! - 1;
+    ledger.total = almostExhausted;
     expect(
       reserve(ledger, configured, 'two', 'a', 7000, now + 66000, now + 61000),
     ).toEqual({ ok: false, reason: 'budget-exhausted' });
-    expect(ledger.total).toBe(999999);
+    expect(ledger.total).toBe(almostExhausted);
   },
 );

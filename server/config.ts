@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { LUNA_DEPLOYED_MAX_INPUT } from './luna-policy';
+import {
+  LUNA_DEPLOYED_MAX_INPUT,
+  LUNA_DEPLOYED_MAX_OUTPUT,
+  LUNA_TOTAL_ALLOWANCE,
+} from './luna-policy';
 
 const positive = z.coerce
   .number()
@@ -22,12 +26,13 @@ export const CatalogSourceSchema = z.url().refine((value) => {
 const schema = z.object({
   LLM_PROVIDER: z.enum(['anthropic', 'openai']).default('anthropic'),
   LLM_REASONING_EFFORT: z.literal('low').optional(),
-  LLM_ALLOWANCE_MICRODOLLARS: positive.max(1_000_000).optional(),
+  LLM_SERVICE_TIER: z.literal('fast').optional(),
+  LLM_ALLOWANCE_MICRODOLLARS: positive.max(LUNA_TOTAL_ALLOWANCE).optional(),
   LLM_PRIOR_MICRODOLLARS: z.coerce
     .number()
     .int()
     .nonnegative()
-    .max(1_000_000)
+    .max(LUNA_TOTAL_ALLOWANCE)
     .optional(),
   LLM_ENVIRONMENT: z.enum(['test', 'production']),
   LLM_MODEL: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/),
@@ -60,7 +65,8 @@ export function readLimits(env: Variables): Limits | null {
       limits.LLM_PRIOR_MICRODOLLARS === undefined ||
       limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS ||
       (limits.LLM_PROVIDER === 'anthropic' &&
-        (limits.LLM_MODEL !== 'claude-haiku-5-5' ||
+        (limits.LLM_ALLOWANCE_MICRODOLLARS > 1_000_000 ||
+          limits.LLM_MODEL !== 'claude-haiku-5-5' ||
           limits.LLM_REASONING_EFFORT !== 'low' ||
           limits.LLM_MAX_INPUT_TOKENS !== 65_000 ||
           limits.LLM_MAX_OUTPUT_TOKENS !== 512 ||
@@ -73,11 +79,12 @@ export function readLimits(env: Variables): Limits | null {
     limits.LLM_PROVIDER === 'openai' &&
     (limits.LLM_ENVIRONMENT !== 'test' ||
       limits.LLM_MODEL !== 'gpt-6-luna' ||
+      limits.LLM_SERVICE_TIER !== 'fast' ||
       limits.LLM_REASONING_EFFORT !== 'low' ||
       limits.LLM_MAX_INPUT_TOKENS !== LUNA_DEPLOYED_MAX_INPUT ||
-      limits.LLM_MAX_OUTPUT_TOKENS !== 2_000 ||
-      limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
-      limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000 ||
+      limits.LLM_MAX_OUTPUT_TOKENS !== LUNA_DEPLOYED_MAX_OUTPUT ||
+      limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 200_000 ||
+      limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 1_000_000 ||
       limits.LLM_ALLOWANCE_MICRODOLLARS === undefined ||
       limits.LLM_PRIOR_MICRODOLLARS === undefined ||
       limits.LLM_PRIOR_MICRODOLLARS > limits.LLM_ALLOWANCE_MICRODOLLARS)
@@ -109,7 +116,7 @@ export function callCost(
 }
 
 // Keep the existing object name: changing it would reset the approved comparison
-// allowance. Haiku reruns now spend from the same remaining $1 as Luna.
+// allowance. Haiku reruns now spend from the same persistent ledger as Luna.
 export function budgetKey(limits: Limits): string {
   return limits.LLM_ENVIRONMENT === 'test' &&
     limits.LLM_ALLOWANCE_MICRODOLLARS !== undefined

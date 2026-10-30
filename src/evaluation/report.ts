@@ -62,6 +62,7 @@ export const DiagnosticsSchema = z
       inputTokens: z.number().int().nonnegative().optional(),
       outputTokens: z.number().int().nonnegative().optional(),
       reasoningTokens: z.number().int().nonnegative().optional(),
+      serviceTier: z.enum(['default', 'priority', 'fast']).optional(),
       costMicrodollars: z.number().int().nonnegative().optional(),
       reservedMicrodollars: z.number().int().nonnegative().optional(),
       validationFailure: z

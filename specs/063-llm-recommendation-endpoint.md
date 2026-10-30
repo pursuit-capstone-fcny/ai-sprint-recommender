@@ -109,3 +109,11 @@ The [V12 breadth trial](../docs/evaluation/2026-10-30-luna-breadth/results.md)
 increased list sizes but reintroduced four provider timeouts. V11 remains the
 default candidate. Historical V12 charges keep their original $0.0055 reservation;
 all production LLM calls and usage logging remain disabled.
+
+- Given the approved V12 Fast trial, when calling Luna, then change only V12's
+  processing tier to Fast, keep low effort and deadlines, and reserve $0.011.
+  Record the actual tier, reject Standard responses as Fast evidence, and
+  retain the full reservation when the tier or usage is unknown.
+- Given Jason's additional $1, when reserving test calls, then preserve the
+  existing ledger and charges under the $2 cumulative Luna limit. Production
+  stays disabled. See the [trial plan](../docs/evaluation/2026-10-30-luna-fast/test-plan.md).
