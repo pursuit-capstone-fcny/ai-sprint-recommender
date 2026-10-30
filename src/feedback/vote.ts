@@ -27,7 +27,9 @@ function createVote(session: UsageSession) {
     update({ helpful: attempt.event.helpful, status: 'sending' });
     let outcome: string;
     try {
-      outcome = await session.sender.send(attempt.event, attempt.catalog);
+      outcome = await session.sender.send(attempt.event, attempt.catalog, {
+        explicitFeedback: true,
+      });
     } catch {
       outcome = 'dropped';
     }

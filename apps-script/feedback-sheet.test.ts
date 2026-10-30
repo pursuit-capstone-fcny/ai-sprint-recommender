@@ -147,6 +147,18 @@ describe('feedback Sheet adapter', () => {
     expect(receive()).toEqual({ ok: true, status: 'duplicate' });
     expect(records).toHaveLength(1);
   });
+  it.each([undefined, 'invalid', '0', '366'])(
+    'AC-29.4: invalid retention %s clears stale report output',
+    (days) => {
+      const { data, properties, openById } = setup();
+      data.feedback.Feedback = [['stale aggregate']];
+      if (days === undefined) delete properties.USAGE_RETENTION_DAYS;
+      else properties.USAGE_RETENTION_DAYS = days;
+      expect(() => refreshFeedbackReport()).toThrow();
+      expect(data.feedback.Feedback).toEqual([]);
+      expect(openById.mock.calls.map(([id]) => id)).toEqual(['feedback']);
+    },
+  );
   it('AC-29.4: writes only retained aggregate feedback to the restricted report and clears it on failure', () => {
     const { data, properties } = setup();
     const up = {

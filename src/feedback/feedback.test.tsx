@@ -17,6 +17,7 @@ import { buildAnalyticsReport } from '../analytics/report';
 import { feedbackQuestion, type FeedbackEvent } from './vote';
 import { buildFeedbackReport } from './report';
 import { FeedbackControls } from './FeedbackControls';
+import { createUsageSender } from '../usage/sendUsage';
 
 const catalog = parsePublicCatalog(fixture);
 const feedback = (changes: object = {}): FeedbackEvent => {
@@ -34,6 +35,7 @@ const feedback = (changes: object = {}): FeedbackEvent => {
 afterEach(() => {
   cleanup();
   vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
 });
 
 describe('private usefulness feedback', () => {
@@ -193,6 +195,49 @@ describe('private usefulness feedback', () => {
       ),
     ).toBe(true);
     expect(report.associations).toEqual([]);
+  });
+  it('AC-29.1/3: explicit retry recovers from a temporary rate limit with identical event context', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi
+        .fn()
+        .mockResolvedValueOnce(
+          Response.json({ error: { code: 'USAGE_RATE_LIMITED' } }),
+        )
+        .mockResolvedValue(Response.json({ ok: true, status: 'accepted' })),
+    );
+    const session: UsageSession = {
+      sessionId: crypto.randomUUID(),
+      src: 'pilot',
+      sender: createUsageSender('https://script.google.com/macros/s/test/exec'),
+    };
+    const match = {
+      item: toCatalogItem(catalog.items[0]),
+      matchType: 'strong' as const,
+      reason: 'Fictional',
+    };
+    const context = createRecommendationUsage(
+      session,
+      catalog,
+      { functionArea: null, tools: [], goalWords: [] },
+      [match],
+      true,
+    );
+    const binding = context.feedback(match, 2);
+    binding.vote.submit(true, binding.source, catalog);
+    await waitFor(() =>
+      expect(binding.vote.getSnapshot().status).toBe('failed'),
+    );
+    expect(fetch).toHaveBeenCalledTimes(1);
+    await binding.vote.retry();
+    expect(binding.vote.getSnapshot().status).toBe('saved');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(fetch).mock.calls[1][1]?.body).toBe(
+      vi.mocked(fetch).mock.calls[0][1]?.body,
+    );
+    // Recovery is explicit feedback only; automatic usage remains suppressed.
+    expect(await session.sender.send(impressionEvent, catalog)).toBe('dropped');
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
   it('requires both enablement and approved question wording', () => {
     expect(feedbackQuestion()).toBeNull();

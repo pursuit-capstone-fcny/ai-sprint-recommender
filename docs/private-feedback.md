@@ -26,7 +26,9 @@ rank, match type and engine context. Retrying an unconfirmed vote reuses the exa
 original event, ID, revision and source context. Controls announce sending, saved
 and unconfirmed states, preserve the selected response and provide retry. No
 response is called saved without an accepted/duplicate acknowledgement. Buttons
-use native keyboard activation and `aria-pressed`.
+use native keyboard activation and `aria-pressed`. Explicit learner actions may
+retry feedback after a temporary rate limit, preserving the event ID and context.
+Automatic usage remains suppressed; disabled or full collectors remain stopped.
 
 The usage log stays append-only except its approved retention cleanup. Reporting
 reduces the whole retained log to the highest revision per session/video before

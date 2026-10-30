@@ -10,10 +10,11 @@ const MAX_BYTES = 16_384;
 const QUEUE_LIFETIME_MS = 60_000;
 
 type Outcome = 'accepted' | 'duplicate' | 'dropped';
-type Attempt = Outcome | 'busy' | 'stopped';
+type Attempt = Outcome | 'busy' | 'stopped' | 'rate-limited';
 type Pending = {
   body: string;
   queuedAt: number;
+  explicitFeedback: boolean;
   resolve: (outcome: Outcome) => void;
 };
 
@@ -48,11 +49,8 @@ async function post(url: string, body: string): Promise<Attempt> {
         const error = value.error;
         if ('code' in error) {
           if (error.code === 'USAGE_BUSY') return 'busy';
-          if (
-            ['USAGE_DISABLED', 'USAGE_RATE_LIMITED', 'USAGE_FULL'].includes(
-              String(error.code),
-            )
-          )
+          if (error.code === 'USAGE_RATE_LIMITED') return 'rate-limited';
+          if (['USAGE_DISABLED', 'USAGE_FULL'].includes(String(error.code)))
             return 'stopped';
         }
       }
@@ -72,6 +70,7 @@ export function createUsageSender(url: string) {
   const queue: Pending[] = [];
   let running = false;
   let stopped = false;
+  let rateLimited = false;
 
   async function drain() {
     if (running) return;
@@ -80,11 +79,16 @@ export function createUsageSender(url: string) {
       let next: Pending | undefined;
       while ((next = queue.shift())) {
         let outcome: Attempt = 'dropped';
-        if (!stopped && Date.now() - next.queuedAt < QUEUE_LIFETIME_MS) {
+        if (
+          !stopped &&
+          (!rateLimited || next.explicitFeedback) &&
+          Date.now() - next.queuedAt < QUEUE_LIFETIME_MS
+        ) {
           outcome = await post(url, next.body);
           // Only an explicit lock-contention response gets one retry, same ID.
           if (outcome === 'busy') outcome = await post(url, next.body);
           if (outcome === 'stopped') stopped = true;
+          if (outcome === 'rate-limited') rateLimited = true;
         }
         next.resolve(
           outcome === 'accepted' || outcome === 'duplicate'
@@ -98,10 +102,21 @@ export function createUsageSender(url: string) {
   }
 
   return {
-    send(value: unknown, catalog: PublicCatalog): Promise<Outcome> {
+    send(
+      value: unknown,
+      catalog: PublicCatalog,
+      options?: { explicitFeedback?: boolean },
+    ): Promise<Outcome> {
       const parsed = UsageEventSchema.safeParse(value);
+      // Only a learner action may try feedback again after a temporary limit.
+      // Automatic usage stays suppressed, and disabled/full collectors stay stopped.
+      const explicitFeedback =
+        options?.explicitFeedback === true &&
+        parsed.success &&
+        parsed.data.type === 'feedback';
       if (
         stopped ||
+        (rateLimited && !explicitFeedback) ||
         queue.length >= USAGE_QUEUE_LIMIT ||
         !parsed.success ||
         !hasUsageCatalogReferences(parsed.data, catalog)
@@ -111,7 +126,7 @@ export function createUsageSender(url: string) {
       if (new TextEncoder().encode(body).byteLength > MAX_BYTES)
         return Promise.resolve('dropped');
       return new Promise((resolve) => {
-        queue.push({ body, queuedAt: Date.now(), resolve });
+        queue.push({ body, queuedAt: Date.now(), explicitFeedback, resolve });
         void drain();
       });
     },

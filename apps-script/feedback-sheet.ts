@@ -20,18 +20,18 @@ export function refreshFeedbackReport() {
     [usageId, catalogId, requestId].includes(reportId)
   )
     throw new Error('Feedback requires a restricted reporting workbook');
-  const days = z.coerce
-    .number()
-    .int()
-    .min(1)
-    .max(365)
-    .parse(p.getProperty('USAGE_RETENTION_DAYS'));
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(1500)) throw new Error('Feedback report busy');
   let report: GoogleAppsScript.Spreadsheet.Sheet | undefined;
   try {
     const book = SpreadsheetApp.openById(reportId);
     report = book.getSheetByName('Feedback') ?? book.insertSheet('Feedback');
+    const days = z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(365)
+      .parse(p.getProperty('USAGE_RETENTION_DAYS'));
     const log = SpreadsheetApp.openById(usageId).getSheetByName('Usage');
     if (!log) throw new Error('Missing usage log');
     const rows = buildFeedbackReport(
