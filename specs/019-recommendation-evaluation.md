@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Breadth candidate rejected after four timeouts; V11 restored; breadth and client review pending
+- **Status:** V12 Fast passes fresh timeout, breadth and numeric checks; expanded-set and client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,16 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [V12 Fast rerun](../docs/evaluation/2026-10-30-luna-fast/results.md) scores
+10/10, 9/10 and 9/10 with zero timeouts or invalid responses. Changing only
+V12's processing tier retains breadth: 27/30 accepted lists contain six to
+eight videos, up from 20/30. All 34 requests have measured usage and diagnostics;
+fresh relevance evidence is complete. The run costs $0.064224. Jason's additional
+$1 raises the cumulative limit to $2; the $0.925374 ceiling leaves at least
+$1.074626. Historical charges, labels and the gate are unchanged. Test calls
+are disabled and keys removed. Production LLM calls and logging stay off.
+Expanded-set, unseen-wording and client review remain pending.
 
 The [Luna breadth trial](../docs/evaluation/2026-10-30-luna-breadth/results.md)
 raises six-to-eight accepted lists from 8/30 to 20/30, but scores 7/10, 8/10

@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "3d8b51fa9d70dcf3b2b0539b1b873a7deb33a662",
+  "approvedWorkflowRunId": "41094923123",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T18:00:34Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v12-fast",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason requested fixing V12 provider timeouts without losing breadth. Test its unchanged complete request with service_tier fast, GPT-6 Luna low, all 89 catalog items, unchanged frozen benchmark labels, task-diversity gate, 1000-token output cap and deadlines. Preserve all outcomes; no paid case retries.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Jason approved another $1 on October 30. Combined cumulative allowance is $2. Carry forward $0.861150 including $0.225000 unresolved historical reservations without reset, refund or repricing. Available $1.138850. Fast prices are $0.20 input/$1.00 output per million tokens. Reserve $0.011 per request and at most $0.374 for 34 calls. Charge actual known returned tier, retain full reservations when usage or tier is unknown.",
+  "allowanceMicrodollars": 1138850,
+  "maxRequestMicrodollars": 11000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 861150,
+  "totalAllowanceMicrodollars": 2000000,
+  "serviceTier": "fast"
+}

@@ -105,10 +105,12 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
-The [V12 breadth trial](../docs/evaluation/2026-10-30-luna-breadth/results.md)
-increased list sizes but reintroduced four provider timeouts. V11 remains the
-default candidate. Historical V12 charges keep their original $0.0055 reservation;
-all production LLM calls and usage logging remain disabled.
+The [V12 Fast trial](../docs/evaluation/2026-10-30-luna-fast/results.md) scores
+10/10, 9/10 and 9/10 with no timeouts or invalid responses. Six-to-eight lists
+increase from V12 Standard's 20/30 to 27/30. V12 Fast is the disabled test
+candidate. Historical charges retain their original reservations; production
+LLM calls and usage logging remain disabled. Expanded-set and client review
+remain pending.
 
 - Given the approved V12 Fast trial, when calling Luna, then change only V12's
   processing tier to Fast, keep low effort and deadlines, and reserve $0.011.
