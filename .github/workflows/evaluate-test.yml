@@ -105,7 +105,7 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: node scripts/run-live-evaluation.mjs --config wrangler.evaluation.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --wording docs/evaluation/2026-10-29-luna-deployed/wording.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline docs/evaluation/2026-10-30-haiku-optimized/runs/41110070488-2/comparison/report.json --injection-probes
+        run: node scripts/run-live-evaluation.mjs --config wrangler.evaluation.json --benchmark docs/evaluation/2026-10-28-task-tags/benchmark.json --wording docs/evaluation/2026-10-29-luna-deployed/wording.json --approval "$RUNNER_TEMP/llm-evaluation-approval.json" --baseline docs/evaluation/2026-10-30-haiku-guardrails/runs/41113275295-2/comparison/report.json --injection-probes
 
       - name: Disable test provider calls after evaluation
         if: always() && (steps.enable.outcome == 'success' || steps.enable.outcome == 'failure')
@@ -145,7 +145,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: haiku-guardrails-${{ github.run_id }}-${{ github.run_attempt }}
+          name: haiku-breadth-${{ github.run_id }}-${{ github.run_attempt }}
           path: build/evaluation/
           retention-days: 30
           if-no-files-found: warn

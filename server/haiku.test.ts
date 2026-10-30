@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
+import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
 import { parseBenchmark } from '../src/evaluation/benchmark';
@@ -13,10 +14,11 @@ import { lunaDeployedBody } from './luna';
 import {
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
+  HAIKU_BREADTH_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
-  it('adds only the final Haiku checks while preserving V11 requests and frozen catalog data', () => {
+  it('adds only the breadth pass while preserving V12 guardrails, prior requests and frozen catalog data', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
         readFileSync(
@@ -29,6 +31,7 @@ describe('optimized Haiku low request', () => {
     expect(Object.keys(v11.hashes)).toEqual(
       benchmark.profiles.map((profile) => profile.id),
     );
+    expect(Object.keys(v12.hashes)).toEqual(Object.keys(v11.hashes));
     expect(limits).not.toBeNull();
     expect(
       callCost(
@@ -50,7 +53,21 @@ describe('optimized Haiku low request', () => {
       expect(
         haiku.request.system.endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
-      const v11System = haiku.request.system.replace(
+      expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+      const v12System = haiku.request.system.replace(
+        ` ${HAIKU_BREADTH_INSTRUCTION}`,
+        '',
+      );
+      const v12Hash = Object.entries(v12.hashes).find(
+        ([id]) => id === profile.id,
+      )?.[1];
+      if (v12Hash)
+        expect(
+          createHash('sha256')
+            .update(JSON.stringify({ ...haiku.request, system: v12System }))
+            .digest('hex'),
+        ).toBe(v12Hash);
+      const v11System = v12System.replace(
         ` ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
         '',
       );

@@ -105,6 +105,12 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+- Given the Haiku V13 test, when an eligible goal has fewer than six direct
+  matches, then review unused catalog items for concrete supporting methods.
+  Keep direct matches first and preserve V12's exact eligibility/uniqueness
+  instruction, strict validation and diversity gate. Never pad unrelated picks.
+  See the [breadth plan](../docs/evaluation/2026-10-30-haiku-breadth/test-plan.md).
+
 - Given the Haiku V12 test, when selecting ranks, then check work eligibility
   before breadth and select each integer position only once. Instruction-only
   nonblank goals abstain; real mixed goals and blank browsing retain their
