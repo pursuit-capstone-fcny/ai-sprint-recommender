@@ -134,3 +134,7 @@ build, run `node scripts/configure-library-app.mjs` and deploy with
 `--config wrangler.library.jsonc`. That generated config preserves the existing
 LLM enablement and budget gates. `LIBRARY_ORIGIN` replaces the former
 `LLM_CATALOG_URL`; do not point it at the editable Sheet or Apps Script endpoint.
+
+Preview usage collection remains disabled in the shared-consumer PR until the
+collector migration in the next stacked PR. An origin and old collector URL
+alone do not establish compatible usage validation.

@@ -58,27 +58,30 @@ describe('published catalog proxy', () => {
     );
     expect(fetcher).not.toHaveBeenCalled();
   });
-  it('reads a current manifest and verified immutable snapshot without provider configuration', async () => {
-    const fetcher = vi.fn<typeof fetch>(async (input) =>
-      Response.json(
-        String(input).endsWith('/current.json') ? manifest() : catalog,
-      ),
-    );
-    vi.stubGlobal('fetch', fetcher);
-    const response = await get({
-      LLM_ENVIRONMENT: 'test',
-      LIBRARY_ORIGIN: environment.LIBRARY_ORIGIN,
-    });
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual(catalog);
-    expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(fetcher.mock.calls[0][0]).toBe(
-      `${environment.LIBRARY_ORIGIN}/catalog/current.json`,
-    );
-    expect(fetcher.mock.calls[1][0]).toContain(
-      `/versions/${catalog.catalogVersion.slice(7)}.json`,
-    );
-  });
+  it.each(['', '/'])(
+    'reads a manifest with normalized origin suffix %s',
+    async (suffix) => {
+      const fetcher = vi.fn<typeof fetch>(async (input) =>
+        Response.json(
+          String(input).endsWith('/current.json') ? manifest() : catalog,
+        ),
+      );
+      vi.stubGlobal('fetch', fetcher);
+      const response = await get({
+        LLM_ENVIRONMENT: 'test',
+        LIBRARY_ORIGIN: environment.LIBRARY_ORIGIN + suffix,
+      });
+      expect(response.status).toBe(200);
+      expect(await response.json()).toEqual(catalog);
+      expect(response.headers.get('cache-control')).toBe('no-store');
+      expect(fetcher.mock.calls[0][0]).toBe(
+        `${environment.LIBRARY_ORIGIN}/catalog/current.json`,
+      );
+      expect(fetcher.mock.calls[1][0]).toContain(
+        `/versions/${catalog.catalogVersion.slice(7)}.json`,
+      );
+    },
+  );
   it.each([
     { ...catalog, private: 'excluded' },
     { ...catalog, items: [{ ...catalog.items[0], private: 'excluded' }] },

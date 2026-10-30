@@ -88,7 +88,7 @@ more tokens than low; the existing token, spend and deadline limits still apply.
 
 The shared schema is `src/contracts/recommendation.ts`. Submit only canonical
 `functionArea`, `tools`, optional text as `goal: ""` when blank, and the browser's
-`catalogVersion`. The server fetches Apps Script's validated public catalog.
+`catalogVersion`. The server fetches the shared published manifest and verifies its immutable catalog snapshot.
 A successful response contains ranked `youtubeIds` and catalog/model/prompt
 versions. Failure responses contain a bounded `reason`; the browser uses rules.
 The `x-recommendation-request-id` response header joins a response to sanitized
@@ -107,7 +107,7 @@ before the browser's five-second limit. This margin does not guarantee delivery.
 Test deployments also serve `GET /api/catalog` while the LLM is disabled. Set
 the test browser's `VITE_CATALOG_URL=/api/catalog` to load the trusted catalog
 before submission. This unpaid route accepts no parameters and uses only the
-validated `LLM_CATALOG_URL`. It validates and stores latest and versioned
+validated `LIBRARY_ORIGIN`. It validates and stores latest and versioned
 snapshots before returning the public envelope with `Cache-Control: no-store`.
 Its nine-second deadline stays below the browser catalog loader's ten seconds.
 It returns 504 on timeout and generic 503 on source/configuration failures;
@@ -170,7 +170,7 @@ the next UTC month; a failed cleanup cannot reopen that allowance after reset.
 | `LLM_APPROVALS_RECORDED`                                                    | Exactly `true` only after #1/#8 decisions exist           |
 | `LLM_ENVIRONMENT`                                                           | `test` or `production`, also isolates the budget object   |
 | `LLM_MODEL`                                                                 | Approved Anthropic model that supports structured outputs |
-| `LLM_CATALOG_URL`                                                           | Trusted Apps Script `/exec` deployment                    |
+| `LIBRARY_ORIGIN`                                                            | Published HTTPS catalog origin, without a path            |
 | `LLM_MAX_INPUT_TOKENS`, `LLM_MAX_OUTPUT_TOKENS`                             | Positive token caps                                       |
 | `LLM_REQUESTS_PER_MINUTE`, `LLM_CLIENT_REQUESTS_PER_MINUTE`                 | Global and client limits                                  |
 | `LLM_MAX_CONCURRENCY`                                                       | Maximum outstanding provider reservations                 |
