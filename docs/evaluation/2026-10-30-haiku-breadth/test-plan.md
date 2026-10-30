@@ -133,3 +133,28 @@ profile IDs or label facts enter the request. The existing request-isolation
 tests cover this text-only change; another unit assertion cannot prove semantic
 adherence. Run the same forty cases against the same fixed targets and reserve
 at most $0.270240 from $0.473161. All prior outcomes and charges remain recorded.
+
+## V16 result and V17 revision
+
+V16 run 41120030350 attempt 2 retains 10/10 each, four injection abstentions,
+blank browsing and no duplicates or timeouts. Breadth remains 23/30 and mixed
+Operations still returns five provider IDs and five displayed IDs. No browser
+deduplication removes a pick. Its supplemental audit fails and is retained.
+Forty calls cost $0.078987. Four paid candidates now cost $0.317950; cumulative
+ceiling $1.605826 leaves $0.394174. All usage reconciles; historical unknown
+reservations stay unchanged.
+
+V17 uses the earlier V14 breadth wording, which produced 25/30, and keeps V15's
+successful blank-mode guidance. It adds concrete examples of supporting methods:
+source organization, input quality/consistency, usable documents/presentations,
+and recording next actions. The hypothesis is that concrete operations retrieve
+useful supporting material that the generic preparation/checking wording misses.
+These are optional connections to the actual work, not a mandatory checklist.
+They add no video IDs, profile IDs, labels or tasks to the catalog. The exact
+ranking priorities and V12 final checks stay unchanged. Another possibility is
+that the catalog lacks enough useful supporting material for some goals; counts
+alone cannot settle that, and sampling variation remains possible.
+
+Keep every fixed target above and run all forty cases with an exact-source/attempt
+approval. Maximum reservation $0.270240 fits within $0.394174. Preserve all failed
+candidates and never add weak items merely to make the audit pass.

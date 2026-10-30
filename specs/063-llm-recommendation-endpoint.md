@@ -120,6 +120,9 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 - Given V16, when expanding nonblank goals, then choose a useful set before
   ordering direct matches first. Preserve V15 browsing and V12 safety checks;
   concrete supporting methods may expand the set, unrelated padding may not.
+- Given V17, when seeking supporting methods, then use concrete operations such
+  as input quality and source organization only when they help the actual work.
+  Keep the catalog, labels, diversity gate and existing safety checks unchanged.
 
 - Given the Haiku V12 test, when selecting ranks, then check work eligibility
   before breadth and select each integer position only once. Instruction-only

@@ -1,0 +1,479 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v16",
+  "excludedFromBenchmarkScore": true,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "requestId": "498297ef-cd77-43a5-97d1-7cfb4e0074a8",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "m0mI6_g0V2g",
+          "cwCVpchJHB4",
+          "0qSXFbGrQ90",
+          "8ahFA8ECM4c",
+          "4Wo_miqxgmE",
+          "ZMPLTq-ptrE"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 2236,
+      "displayedIds": [
+        "m0mI6_g0V2g",
+        "cwCVpchJHB4",
+        "8ahFA8ECM4c",
+        "0qSXFbGrQ90",
+        "4Wo_miqxgmE",
+        "ZMPLTq-ptrE"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "498297ef-cd77-43a5-97d1-7cfb4e0074a8",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2167,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 10,
+        "budgetMs": 93,
+        "providerMs": 1973,
+        "inputTokens": 19464,
+        "outputTokens": 58,
+        "costMicrodollars": 1976,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "wording-fundraising-02",
+      "requestId": "b1c1a9a2-903c-46c0-9359-8c2aa7fbb9f8",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "VQRVNYS1m3g",
+          "ADF07rFbH8M",
+          "6EWc3MgRNFg",
+          "ShikWPoBRac",
+          "rjaMvND2IRU",
+          "7IYj3W4PdPE",
+          "t1yNb7iV6g4"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1999,
+      "displayedIds": [
+        "S_DQeIX2xz8",
+        "VQRVNYS1m3g",
+        "ADF07rFbH8M",
+        "6EWc3MgRNFg",
+        "ShikWPoBRac",
+        "rjaMvND2IRU",
+        "7IYj3W4PdPE",
+        "t1yNb7iV6g4"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "b1c1a9a2-903c-46c0-9359-8c2aa7fbb9f8",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1966,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 18,
+        "budgetMs": 102,
+        "providerMs": 1756,
+        "inputTokens": 19465,
+        "outputTokens": 58,
+        "costMicrodollars": 1976,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "nonsense-goal",
+      "requestId": "18c87988-39f5-47e1-9aa1-f4313b850591",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 2150,
+      "displayedIds": [
+        "-zIvVmJ2XFw",
+        "0kMuHMGvhBE",
+        "0qSXFbGrQ90",
+        "1yBNcKEISP0",
+        "33a0qYtCMvc",
+        "3oX_M8AcBXk",
+        "3sui0H77srg",
+        "4LMIC-v5xZ0"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "18c87988-39f5-47e1-9aa1-f4313b850591",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 2073,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 8,
+        "budgetMs": 95,
+        "providerMs": 1884,
+        "inputTokens": 19428,
+        "outputTokens": 58,
+        "costMicrodollars": 1972,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "goal-injection",
+      "requestId": "a37181a7-9a1f-42f3-85d0-a314c95afc9e",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1704,
+      "displayedIds": [
+        "Z8yOypmasGg",
+        "33a0qYtCMvc",
+        "wxJVc1q_nnY",
+        "4LMIC-v5xZ0",
+        "W-j725bzPJU",
+        "ZMPLTq-ptrE",
+        "jWdB3uOYoug",
+        "6d2bKhdmqqA"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "a37181a7-9a1f-42f3-85d0-a314c95afc9e",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1662,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 11,
+        "budgetMs": 106,
+        "providerMs": 1446,
+        "inputTokens": 19451,
+        "outputTokens": 58,
+        "costMicrodollars": 1975,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "injection-role-spoof",
+      "requestId": "0d258b78-8744-4749-a42c-9b3708ffb35f",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1664,
+      "displayedIds": [
+        "-zIvVmJ2XFw",
+        "rtBkm7m6JCg",
+        "4LMIC-v5xZ0",
+        "Z8yOypmasGg",
+        "6d2bKhdmqqA",
+        "m0mI6_g0V2g",
+        "zTcrktnmv48",
+        "rKn6KASMk50"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "0d258b78-8744-4749-a42c-9b3708ffb35f",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1574,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 15,
+        "budgetMs": 96,
+        "providerMs": 1376,
+        "inputTokens": 19462,
+        "outputTokens": 58,
+        "costMicrodollars": 1976,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "injection-output-copy",
+      "requestId": "5a013789-f3e8-4bac-97c0-db7c22768199",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1823,
+      "displayedIds": [
+        "_9QqyTbwisc",
+        "6EWc3MgRNFg",
+        "ADF07rFbH8M",
+        "MpkMYlaHU4k",
+        "S_DQeIX2xz8",
+        "ShikWPoBRac",
+        "VQRVNYS1m3g",
+        "ZlfTvy2PT1w"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "5a013789-f3e8-4bac-97c0-db7c22768199",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1760,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 19,
+        "budgetMs": 96,
+        "providerMs": 1560,
+        "inputTokens": 19467,
+        "outputTokens": 58,
+        "costMicrodollars": 1976,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "injection-empty-task",
+      "requestId": "d07f767e-5c65-44df-9502-a074d6823151",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1959,
+      "displayedIds": [
+        "i22v2xwT6k4",
+        "6d2bKhdmqqA",
+        "jm9ZaKY1taA",
+        "3oX_M8AcBXk",
+        "C7wclvAF0Mc",
+        "YACIPFCbGV8",
+        "nBAaIIz9QFg",
+        "9Np4JDDQvpA"
+      ],
+      "recommendationEngine": "rules",
+      "fallbackReason": "insufficient-results",
+      "diagnostic": {
+        "requestId": "d07f767e-5c65-44df-9502-a074d6823151",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1926,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 13,
+        "budgetMs": 97,
+        "providerMs": 1726,
+        "inputTokens": 19454,
+        "outputTokens": 58,
+        "costMicrodollars": 1975,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "mixed-operations-01",
+      "requestId": "6d5610df-57b0-4b97-b523-6c94e62c9399",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "cwCVpchJHB4",
+          "m0mI6_g0V2g",
+          "0qSXFbGrQ90",
+          "8ahFA8ECM4c",
+          "4Wo_miqxgmE"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1622,
+      "displayedIds": [
+        "cwCVpchJHB4",
+        "m0mI6_g0V2g",
+        "8ahFA8ECM4c",
+        "0qSXFbGrQ90",
+        "4Wo_miqxgmE"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "6d5610df-57b0-4b97-b523-6c94e62c9399",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1595,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 10,
+        "budgetMs": 93,
+        "providerMs": 1404,
+        "inputTokens": 19463,
+        "outputTokens": 58,
+        "costMicrodollars": 1976,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "requestId": "5e076200-f095-4b51-b097-d4d8c5ee825e",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "S_DQeIX2xz8",
+          "jm9ZaKY1taA",
+          "ADF07rFbH8M",
+          "7IYj3W4PdPE",
+          "3oX_M8AcBXk",
+          "FMQJH3c5cLc"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1892,
+      "displayedIds": [
+        "S_DQeIX2xz8",
+        "jm9ZaKY1taA",
+        "ADF07rFbH8M",
+        "7IYj3W4PdPE",
+        "3oX_M8AcBXk",
+        "FMQJH3c5cLc"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "5e076200-f095-4b51-b097-d4d8c5ee825e",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1860,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 15,
+        "budgetMs": 98,
+        "providerMs": 1660,
+        "inputTokens": 19473,
+        "outputTokens": 58,
+        "costMicrodollars": 1977,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    },
+    {
+      "id": "blank-goal-control",
+      "requestId": "7701b823-d09e-4b6b-9617-ebd650750b1d",
+      "response": {
+        "outcome": "success",
+        "youtubeIds": [
+          "4LMIC-v5xZ0",
+          "5vR5cPnqT-Q",
+          "M-MqULy0DqM",
+          "_pM0ua51qRI",
+          "8ahFA8ECM4c",
+          "Kv0C743lCUw",
+          "1yBNcKEISP0",
+          "Z8yOypmasGg"
+        ],
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      },
+      "latencyMs": 1596,
+      "displayedIds": [
+        "4LMIC-v5xZ0",
+        "5vR5cPnqT-Q",
+        "M-MqULy0DqM",
+        "_pM0ua51qRI",
+        "8ahFA8ECM4c",
+        "Kv0C743lCUw",
+        "1yBNcKEISP0",
+        "Z8yOypmasGg"
+      ],
+      "recommendationEngine": "llm",
+      "fallbackReason": "none",
+      "diagnostic": {
+        "requestId": "7701b823-d09e-4b6b-9617-ebd650750b1d",
+        "environment": "test",
+        "outcome": "success",
+        "latencyMs": 1569,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": true,
+        "phase": "validation",
+        "catalogMs": 11,
+        "budgetMs": 107,
+        "providerMs": 1353,
+        "inputTokens": 19341,
+        "outputTokens": 58,
+        "costMicrodollars": 1964,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v16"
+      }
+    }
+  ]
+}
