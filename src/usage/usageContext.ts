@@ -2,7 +2,6 @@ import type { IntakeProfile } from '../contracts/intakeProfile';
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import type { UsageEvent } from '../contracts/usageEvent';
-import { computeMatch } from '../engine/match';
 import { expandSynonyms, normalizeText } from '../engine/vocabulary';
 import type { RecommendationSelection } from '../recommendations/selectRecommendations';
 import type { UsageSession } from './usageSession';
@@ -33,15 +32,12 @@ export function usageMatchType(
     match.matchType === 'cross-area'
   )
     return match.matchType;
-  const signals = computeMatch(match.item, profile);
+  if (match.item.isStartHere) return 'start-here';
   if (
-    match.item.isStartHere &&
-    !signals.areaMatch &&
-    !signals.taskMatch &&
-    signals.toolTier === 'none'
+    profile.functionArea !== null &&
+    !match.item.functionAreas.includes(profile.functionArea)
   )
-    return 'start-here';
-  if (profile.functionArea !== null && !signals.areaMatch) return 'cross-area';
+    return 'cross-area';
   return 'weak';
 }
 

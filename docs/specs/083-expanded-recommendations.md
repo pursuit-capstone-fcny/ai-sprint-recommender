@@ -2,7 +2,7 @@
 
 Owner:
 
-Status: Draft
+Status: Implementation policy confirmed; quality validation pending
 
 Date: Oct 29, 2026
 
@@ -56,11 +56,41 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the page renders, expands or replaces a result set
   - Then Update #19's evaluation for the expanded results while preserving the original top-three score for comparison.
 
-### Open questions
+### Confirmed display policy
 
-- [ ] Confirm the exact default within 6–8 and Show-more behavior.
-- [ ] Agree how weak matches and Start-here picks fill thin sets and what happens when fewer than six eligible videos exist.
-- [ ] Agree the additional full-set quality metric with Ali or Eliot.
+Confirmed by Jason on Oct 30, 2026 in the implementation chat.
+
+- Display all matched videos, capped at eight. If fewer than six match, append
+  distinct fallback videos from the active catalog until six are displayed.
+- Show fewer than six only when fewer than six eligible catalog videos exist.
+  Exclude retired rows and every copy of a duplicate catalog ID.
+- Rules matches use the existing strong-match classification. Keep the original
+  three-slot task-diversity ordering; videos sharing a task may appear afterward.
+- Model matches must pass the existing response, catalog-version and two-primary-task
+  validation. Six is a display minimum, never a new model-validity threshold.
+  Valid short selections receive rules-ranked fallback videos, with explicit
+  fallback reasons rather than a claim that the model selected them.
+- Start-here videos retain their label. Other fallback videos retain weak or
+  cross-area labels in usage events and a visible fallback badge on their card.
+- Show the complete set immediately. Show more is removed so it cannot exceed
+  the eight-video cap or make another model call.
+- One search event records the final displayed count, including fallback cards.
+  One impression per video is sent for each search context. Resubmission creates
+  a new context and stops playback. The accessible count describes the displayed
+  set and its fallback count.
+
+### Evaluation and release review
+
+`src/evaluation/displayedResults.ts` scores the exact displayed set returned by
+both selectors, after capping and filling. The original top-three metric still
+requires two ideal/good picks, with missing slots counted as misses. It reports
+all displayed IDs, known-good IDs and unreviewed IDs separately. Existing labels
+are not rewritten or treated as exhaustive full-set judgments.
+
+The #19 evaluation runner is on a separate unmerged branch. It must call this
+scorer with the final `selection.results` when integrated. Existing reports stay
+unchanged. Full-set judgments, fresh live evaluation and Ali or Eliot's quality
+approval remain release gates, not evidence established by these fixture tests.
 
 ### Evidence required
 
@@ -68,3 +98,15 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Log or metric: displayed resultCount, one impression per video/search context and original top-three plus approved full-set evaluation.
 - Manual check: signed-out rules/model/fallback results on desktop and mobile; expansion makes no extra paid call.
 - Rollback signal: duplicate/invalid picks, misleading padding or degraded relevance; use the last validated display policy.
+
+Run the offline expanded-set evaluator against the unchanged #19 benchmark and
+optionally its three saved trial files in one trials envelope:
+
+```sh
+pnpm evaluate:displayed path/to/benchmark.json path/to/trials.json > expanded-report.json
+```
+
+This reuses the production selectors and emits ten rules profiles and, when
+provided, three ten-profile model trials with engine/fallback metadata. Output
+is explicitly marked offline replay and pending client review. It does not
+replace historical reports or establish fresh live approval.

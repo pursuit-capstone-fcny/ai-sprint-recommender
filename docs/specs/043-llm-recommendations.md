@@ -60,3 +60,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Log or metric: LLM versus rules result sets, fallback reasons and submission-to-results latency, without raw goals.
 - Manual check: signed-out desktop, mobile and keyboard use on preview; one LLM result and one forced fallback.
 - Rollback signal: invalid cards, stuck loading or stale results; disable LLM recommendations and verify the rules path.
+
+### Result-count policy update
+
+Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
+and Show-more requirements. Display at most eight matches; fill fewer than six
+with labeled fallback videos to six, subject to the eligible catalog size.
+The existing model validation gates remain separate from this display minimum.

@@ -102,8 +102,14 @@ export function VideoCard({
       <div className="card-body">
         {matchType === 'cross-area' ? (
           <span className="tag tag-fallback">From another area</span>
-        ) : showClosestMatch && matchType === 'fallback' ? (
-          <span className="tag tag-fallback">Closest match</span>
+        ) : matchType === 'fallback' ? (
+          <span className="tag tag-fallback">
+            {item.isStartHere
+              ? 'Start here'
+              : showClosestMatch
+                ? 'Closest match'
+                : 'More to explore'}
+          </span>
         ) : (
           firstTool && <span className="tag">{firstTool}</span>
         )}

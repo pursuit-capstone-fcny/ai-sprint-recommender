@@ -9,8 +9,14 @@ import type { RecommendationVersion } from '../contracts/usageEvent';
 import { rank } from '../engine';
 import { applyDedupe } from '../engine/dedupe';
 import { computeMatch } from '../engine/match';
+import {
+  applyResultPolicy,
+  eligibleCatalog,
+  MAX_RECOMMENDATIONS,
+  RECOMMENDATION_DIVERSITY_WINDOW,
+} from './resultPolicy';
 
-export const RECOMMENDATION_PAGE_SIZE = 3;
+export const RECOMMENDATION_PAGE_SIZE = MAX_RECOMMENDATIONS;
 export interface RecommendationSelection extends Partial<RecommendationVersion> {
   results: RankedMatch[];
   recommendationEngine: 'llm' | 'rules';
@@ -23,10 +29,13 @@ export function selectRulesResults(
   profile: IntakeProfile,
   count = RECOMMENDATION_PAGE_SIZE,
 ): RankedMatch[] {
-  const matches = rank(catalog, profile, { topN: count }).slice(0, count);
-  return matches[0]?.matchType === 'fallback'
-    ? matches
-    : matches.filter((match) => match.matchType === 'strong');
+  const ranked = rank(eligibleCatalog(catalog), profile, {
+    topN: RECOMMENDATION_DIVERSITY_WINDOW,
+  });
+  return applyResultPolicy(
+    ranked.filter((match) => match.matchType === 'strong'),
+    ranked.filter((match) => match.matchType === 'fallback'),
+  ).slice(0, Math.min(count, MAX_RECOMMENDATIONS));
 }
 
 export function rulesSelection(
@@ -86,16 +95,14 @@ export function selectRecommendations(
     return rulesSelection(catalog, profile, result.reason, versions);
 
   const active = new Map(
-    catalog
-      .filter((item) => item.status === 'active')
-      .map((item) => [item.youtubeId, item]),
+    eligibleCatalog(catalog).map((item) => [item.youtubeId, item]),
   );
   // Reject the whole response. Never blend valid fragments with rules results.
   if (result.youtubeIds.some((id) => !active.has(id)))
     return rulesSelection(catalog, profile, 'invalid-response', versions);
-  let results = applyDedupe(
+  const results = applyDedupe(
     result.youtubeIds.map((id) => semanticMatch(active.get(id)!, profile)),
-    RECOMMENDATION_PAGE_SIZE,
+    RECOMMENDATION_DIVERSITY_WINDOW,
   );
   const distinctTasks = new Set(
     results
@@ -105,18 +112,18 @@ export function selectRecommendations(
   // Untagged picks keep their place, but cannot establish task diversity.
   if (distinctTasks < 2)
     return rulesSelection(catalog, profile, 'insufficient-results', versions);
-  const distinctSlots = new Set(
-    results.map(
-      ({ item }) =>
-        item.tasks[0]?.trim().toLowerCase() ?? `__unique__:${item.youtubeId}`,
-    ),
-  ).size;
-  // applyDedupe demotes duplicates. A short window must not pull them back
-  // into its vacant slots. Untagged picks still occupy separate display slots.
-  if (distinctSlots < RECOMMENDATION_PAGE_SIZE)
-    results = results.slice(0, distinctSlots);
+  const fallbacks = rank([...active.values()], profile, {
+    topN: RECOMMENDATION_DIVERSITY_WINDOW,
+  }).map((match): RankedMatch => ({
+    ...match,
+    matchType: 'fallback',
+    // These items were not selected by the model. Do not imply semantic fit.
+    reason: match.item.isStartHere
+      ? 'A good place to start.'
+      : `More from ${match.item.functionAreas[0] ?? 'the catalog'}.`,
+  }));
   return {
-    results,
+    results: applyResultPolicy(results, fallbacks),
     recommendationEngine: 'llm',
     llmFallbackReason: 'none',
     ...versions,
