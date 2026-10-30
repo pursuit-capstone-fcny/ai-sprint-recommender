@@ -113,7 +113,10 @@ new publication. The owner checks GitHub runs for the recorded request before
 clearing `LIBRARY_PUBLISH_STATE` to recover a confirmed missing job. Never clear
 that state while a matching job is running. Validation/deployment failures leave
 the last deployed assets intact. Roll back by publishing the approved older
-snapshot through the same validated workflow. Old immutable snapshots remain
+snapshot through the same validated workflow. The workflow unions the selected
+commit's snapshots with the newest data-branch archive, validates every snapshot,
+and changes only the selected current manifest. A rollback cannot remove newer
+immutable snapshot URLs. Old immutable snapshots remain
 public after retirement; publishing retirement removes them from current
 recommendations, not from the historical archive.
 
