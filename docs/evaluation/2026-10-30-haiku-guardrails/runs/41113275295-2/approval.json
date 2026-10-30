@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "e618b3f5709cf2a92bf515f0b4a55e3fd88a397b",
+  "approvedWorkflowRunId": "41113275295",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T20:12:27Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v12",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized fixing Haiku injection failures and duplicate responses and rerunning within the remaining allowance. V12 appends one final eligibility-first, unused-position selection instruction. Run 30 frozen benchmark requests and the same 10 separate probes. Preserve all 89 items, labels, task-diversity gate, existing ranking and breadth text, strict eight-slot validation, low effort, disabled thinking, 512 output cap, 65000 conservative input bound and deadlines. No per-case paid retries. Use the identical frozen public catalog on the isolated test Worker; this does not validate the separately migrated Apps Script integration.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the existing combined $2 allowance authorized for both providers. Carry forward $1.209801 including $0.225000 unresolved historical reservations. Remaining $0.790199. No new money, reset, refund or repricing. Reserve $0.006756 per request and at most $0.270240 for 40 calls. Settle known usage at existing Haiku rates; retain full reservations for unknown usage.",
+  "allowanceMicrodollars": 790199,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1209801,
+  "totalAllowanceMicrodollars": 2000000,
+  "thinking": "disabled"
+}

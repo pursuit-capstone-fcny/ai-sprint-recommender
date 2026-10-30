@@ -1,0 +1,8 @@
+{
+  "workflowRunId": 41108445967,
+  "sourceRevision": "258d13c35c75587159de693e67d3535e31abe204",
+  "checkedAt": "2026-10-30T19:16:15Z",
+  "LLM_ENABLED": false,
+  "VITE_USAGE_ENABLED": false,
+  "evidence": "Deployment logs at 18:37:15 and 18:37:36 UTC. Production was deployed separately; this task did not change it."
+}

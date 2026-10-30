@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Haiku V11 improves ranking but fails two injection controls; Luna V15 retains stronger breadth; client review pending
+- **Status:** Haiku V12 passes injection/uniqueness rerun at 10/10 each; expanded-set and client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Haiku V12 rerun](../docs/evaluation/2026-10-30-haiku-guardrails/results.md)
+scores 10/10 in all three trials. All four instruction-only probes abstain;
+no duplicate, invalid response or timeout occurs. Six-to-eight lists remain
+22/30; eight accepted lists are thinner. Mixed goals, wording controls and
+blank browsing pass. All 40 calls reconcile to $0.078075, leaving $0.712124
+under the unchanged shared cap. Labels and the diversity gate are unchanged.
+Test calls are disabled and keys removed. Production LLM calls and logging
+remain off; expanded-set, unseen-input and human review remain pending.
 
 The [Haiku V11 transfer](../docs/evaluation/2026-10-30-haiku-optimized/results.md)
 scores 9/10, 10/10 and 10/10, with 22/30 six-to-eight lists. Two instruction-only
