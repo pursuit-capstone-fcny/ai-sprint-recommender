@@ -1,0 +1,81 @@
+import type { ExpansionPolicy } from '../candidateExpansion';
+export const expansionPolicy: ExpansionPolicy = {
+  resultLimit: 8,
+  minimumProcedureStrength: 0.75,
+  explanatoryTasks: ['AI literacy', 'Responsible AI'],
+  sharedTopicGroups: [
+    ['policy', 'agreement', 'disclosure'],
+    ['financial', 'annual', 'audit', 'revenue', 'expense'],
+  ],
+  audienceGroup: ['family', 'parent', 'student', 'teenager', 'learner'],
+  components: [
+    {
+      requestedTasks: ['Terminology updates'],
+      taughtTasks: ['Data cleaning'],
+      outputs: ['cleaned-data'],
+      sources: ['spreadsheet'],
+      requireSourceMatch: true,
+      teachingAll: [['standardize'], ['change log']],
+    },
+    {
+      requestedTasks: ['Document comparison'],
+      taughtTasks: ['Document Q&A'],
+      outputs: ['answer'],
+      sources: ['document'],
+      requireSharedTopic: true,
+    },
+    {
+      requestedTasks: ['Curriculum design'],
+      taughtTasks: ['Lesson planning'],
+      outputs: ['lesson'],
+      sources: ['curriculum'],
+      teachingAll: [['course context', 'curriculum', 'learning objectives']],
+    },
+    {
+      requestedTasks: ['Responsible AI'],
+      taughtTasks: ['AI literacy'],
+      outputs: [],
+      explanatory: true,
+    },
+    {
+      requestedTasks: ['Reimbursement documentation'],
+      taughtTasks: ['Document drafting', 'Client correspondence'],
+      outputs: ['document'],
+      teachingAll: [['letter', 'placeholder']],
+    },
+    {
+      requestedTasks: ['Speechwriting'],
+      taughtTasks: ['Social media writing'],
+      outputs: ['email'],
+      contextAll: [['social posts', 'social media']],
+    },
+    {
+      requestedTasks: ['Attendance analysis'],
+      taughtTasks: ['Student interventions'],
+      flowTasks: ['Case management'],
+      requiresTasks: ['Case management'],
+      outputs: ['spreadsheet'],
+      contextAll: [['follow up', 'follow ups', 'intervention']],
+    },
+    {
+      requestedTasks: ['Case management'],
+      taughtTasks: ['Process documentation'],
+      requiresTasks: ['Client intake'],
+      outputs: ['checklist'],
+      contextAll: [['onboarding', 'handoff', 'steps']],
+    },
+    {
+      requestedTasks: ['Storytelling'],
+      taughtTasks: ['Design feedback', 'Image generation'],
+      outputs: ['image'],
+      contextAll: [['picture', 'illustration', 'character consistency']],
+    },
+    {
+      requestedTasks: ['Accessible content', 'Educational materials'],
+      taughtTasks: ['Outreach materials'],
+      outputs: ['image'],
+      requireAudience: true,
+      contextAll: [['visual', 'guide', 'image', 'poster']],
+    },
+  ],
+};

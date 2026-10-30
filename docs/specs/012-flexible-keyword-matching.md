@@ -57,6 +57,21 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the rules matcher processes a query
   - Then verify this deterministic matcher remains available when #43 is disabled, times out or fails.
 
+### Deterministic prompt engine
+
+- AC-12.7 Prompt interpretation
+  - Given a free-text task and a validated catalog
+  - When the deterministic prompt engine runs
+  - Then it distinguishes source material, desired output, excluded tasks and tools, and preferred learning format without a network request.
+- AC-12.8 Candidate compatibility
+  - Given reviewed workflow and instructional metadata
+  - When the engine expands and ranks candidates
+  - Then it checks task compatibility and instructional evidence and returns at most eight distinct active catalog items with reasons; smaller eligible lists are allowed.
+- AC-12.9 Determinism
+  - Given the same catalog, request and matching configuration
+  - When catalog order changes or the request repeats
+  - Then recommendations and reasons remain deterministic and the engine does not mutate its inputs.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.
