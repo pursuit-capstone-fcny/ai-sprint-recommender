@@ -22,3 +22,6 @@ coverage/
 # Local Apps Script targets and login credentials
 .clasp*.json
 .clasprc*.json
+
+# One-time local library source/deployment configuration
+library/config.local.json

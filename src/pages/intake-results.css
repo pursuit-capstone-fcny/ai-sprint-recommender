@@ -597,6 +597,22 @@
   text-transform: uppercase;
 }
 
+.admin-analytics-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: var(--space-2);
+  color: var(--navy);
+  font-size: var(--text-sm);
+  letter-spacing: normal;
+  text-transform: none;
+  text-underline-offset: 0.2em;
+}
+
+.admin-analytics-link:hover {
+  color: var(--navy-hover);
+}
+
 /* Responsive */
 
 @media (max-width: 960px) {

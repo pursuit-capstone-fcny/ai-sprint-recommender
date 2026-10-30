@@ -116,6 +116,8 @@ export function analyticsServices() {
     if (!data[id]) throw new Error('Unknown fixture workbook');
     const book = {
       getId: () => id,
+      getName: () => `Fixture ${id}`,
+      getDeveloperMetadata: () => [],
       getSheetByName: (name: string) => {
         if (!data[id][name]) return null;
         const key = `${id}/${name}`;
@@ -153,7 +155,9 @@ export function analyticsServices() {
       },
     }),
   });
+  let generation = 0;
   vi.stubGlobal('Utilities', {
+    getUuid: () => `fixture-generation-${++generation}`,
     DigestAlgorithm: { SHA_256: 'sha256' },
     Charset: { UTF_8: 'utf8' },
     computeDigest: (_algorithm: string, value: string) =>

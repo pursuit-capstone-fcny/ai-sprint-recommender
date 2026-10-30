@@ -331,6 +331,19 @@ export function refreshAnalytics() {
       'Analytics tags': result.tags,
       'Analytics associations': result.associations,
     };
+    const generationId = Utilities.getUuid();
+    write(table(report, 'Analytics status'), tableHeaders['Analytics status'], [
+      ['state', 'refreshing'],
+      ['generationId', generationId],
+      ['attemptedAt', now.toISOString()],
+      [
+        'lastSuccessAt',
+        PropertiesService.getScriptProperties().getProperty(
+          'ANALYTICS_LAST_SUCCESS_AT',
+        ) ?? 'unavailable',
+      ],
+    ]);
+    SpreadsheetApp.flush();
     for (const [name, values] of Object.entries(datasets)) {
       const label = name as keyof typeof datasets;
       const headers = tableHeaders[label];
@@ -354,6 +367,7 @@ export function refreshAnalytics() {
     const refreshedAt = now.toISOString();
     write(table(report, 'Analytics status'), tableHeaders['Analytics status'], [
       ['state', allData.diagnostics.selectedEvents ? 'ready' : 'empty'],
+      ['generationId', generationId],
       ['lastSuccessAt', refreshedAt],
       ['attemptedAt', refreshedAt],
       ['startDate', factsFilter.startDate],
@@ -524,6 +538,19 @@ export function clearAnalytics() {
         failed = true;
       }
     };
+    attempt(() =>
+      write(
+        table(report, 'Analytics status'),
+        tableHeaders['Analytics status'],
+        [
+          ['state', 'refreshing'],
+          ['operation', 'clear'],
+          ['generationId', Utilities.getUuid()],
+          ['attemptedAt', new Date().toISOString()],
+        ],
+      ),
+    );
+    attempt(() => SpreadsheetApp.flush());
     for (const name of [
       'Analytics facts',
       'Analytics videos',

@@ -1,0 +1,7 @@
+{
+  "sourceSheetUrl": "https://docs.google.com/spreadsheets/d/REPLACE_WITH_SOURCE_SHEET_ID/edit",
+  "catalogOrigin": "https://REPLACE_WITH_LIBRARY_HOST.workers.dev",
+  "githubRepository": "OWNER/REPOSITORY",
+  "workflowRef": "main",
+  "environment": "test"
+}

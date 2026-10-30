@@ -1,271 +1,210 @@
-# MVP analytics dashboard
+# Private MVP analytics dashboard
 
-Implements [#24](../specs/024-usage-dashboard.md) on the existing
-[#16 usage contract](../specs/016-usage-logging.md). This code does not enable
-production logging, publish a report, or grant any staff account access.
+Issue [#24](../specs/024-usage-dashboard.md) now uses a private React dashboard
+rather than requiring Looker Studio. The user confirmed this implementation on
+Oct 29, 2026. The producer from #88 still writes restricted aggregate Sheets;
+this PR adds the actual interactive app and its authenticated read-only service.
+The [isolated test deployment](test-deployment.md) records native Google consent,
+Sheet-link connection and browser-to-dashboard reconciliation.
 
-## Data path
+## What ships
 
-```text
-accepted #16 events + event-time public catalog snapshots
-  private usage workbook, read under the ingestion lock
-  validate, exclude expired records, deduplicate and aggregate
-  separate restricted reporting workbook
-    Analytics facts          daily/source/mode aggregates + zero inventory
-    Analytics videos         selected-window video totals
-    Analytics tags           selected-window tag totals and search counts
-    Analytics associations   selected-window video-keyword co-occurrences
-    Analytics status         facts refresh, coverage and error state
-    Analytics filters        shared owner verification controls
-  FCNY-owned Looker report, restricted to named staff
-```
+- Videos, Tags & keywords, and Keyword associations views with sortable tables
+  and 25-row pages. Each admin has their own in-memory filters.
+- Receipt-date range in America/New_York; source, discovery mode, video/keyword
+  search, category/tag, team and historical-item filters.
+- All activity, zero appearances, appeared-with-no-clicks and zero keyword-search
+  views. Inventory stays visible with zeros when selected dates/sources have no
+  events. Keyword-search frequency and catalog-tag appearances remain distinct.
+- A video-to-keyword drill-down. Associations mean co-occurrence with a search,
+  not the cause of a recommendation. Clicks never imply watches; direct-view
+  metrics are separately available. Percentage watched is explicitly unavailable.
+- Loading, access-denied, empty, cleared, refresh-in-progress, failed and stale
+  states. Reloading never falls back to sample or previously authorized data.
+  Counts disappear when the snapshot reaches its stale deadline.
+- A public, clearly labeled **synthetic-only** review route at
+  `/admin/analytics/preview`. No live private data or admin service URL is embedded
+  in that route. It does not send usage events or connect to a reporting file.
 
-Neither `doGet` nor `doPost` serves reports, snapshots, workbook IDs or maintenance
-operations. There is no analytics route in the public SPA. No raw events,
-session/search/event IDs, goal text, or personal identifiers enter report tables.
-The report workbook must be separate from both the catalog and usage files.
-
-The `facts` table includes team-source aggregates, allowing an authorized admin
-to opt in. The Looker parameter defaults below exclude them. It never mixes test
-and production files. The three verification tables exclude team by default.
-Counts remain estimates from anonymous, best-effort events, not identified people.
-
-## Owner setup and release gates
-
-The FCNY reporting owner performs these steps in their own environment. Use
-separate synthetic test files first. No live production configuration is supplied
-in this PR.
-
-1. Confirm #8 approval of production collection, fields, retention and staff
-   access. Name the reporting/refresh/recovery owner. Confirm the catalog and
-   usage files belong to the intended environment.
-2. Create an FCNY-owned **restricted** reporting spreadsheet. Disable link,
-   domain and public sharing. Grant named reporting staff access only; do not
-   grant them raw-log access merely to view reports. Verify denied access in an
-   unauthorized signed-out session. A hidden/protected tab is not access control.
-3. Build and deploy the Apps Script bundle using `pnpm build:apps-script` or
-   `pnpm build:apps-script:test`. The manifest adds `script.scriptapp` for the
-   explicit trigger installer. The FCNY owner must review and authorize that new
-   scope before installing triggers. No Drive or external-fetch scope is added.
-4. Set the Script Properties below, then run `initializeAnalytics` from the
-   script editor. It creates only the named analytics tables, refuses unexpected
-   headers, and captures the current public catalog. Keep production ingestion
-   off until its separate #16 validation is complete.
-5. Run `refreshAnalytics` with synthetic retained events. Reconcile the tables
-   and the tests below before installing `installAnalyticsTriggers`. This helper
-   first verifies a successful refresh, then installs one daily refresh in the
-   03:00 America/New_York hour and one reporting-file edit trigger for the current
-   owner. Repeated calls by that owner do not add duplicates. Replacing the reporting
-   workbook also replaces obsolete analytics edit triggers for that owner. Only one owner
-   should install triggers; review/remove former owners' triggers during handoff.
-6. Run `analyticsReportLinks` in the editor and copy the returned **Analytics
-   facts** link. Open it as the FCNY reporting owner and save the generated Looker
-   report in FCNY's account. This helper initiates Google's report creation flow;
-   it does not create or share a report automatically. Add `Analytics status` as
-   a second restricted Sheets source using the same reporting file.
-7. Configure the report below. Keep the report and its data sources restricted
-   to named staff. If using owner credentials for data access, report sharing is
-   the access boundary. Verify both an authorized staff account without YouTube
-   channel access and an unauthorized account. Do not publish or embed publicly.
-8. Record the FCNY report URL, owner, test/release version and evidence in the
-   private deployment record. Leave #24 unchecked until the live report, access,
-   freshness, filter and reconciliation checks pass. This code alone is not that
-   evidence.
-
-| Script Property                                  | Required value                                                                                                                 |
-| ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| `ANALYTICS_ENABLED`                              | Literal `true` opts in to reporting and ingestion snapshot capture; absent/false is off                                        |
-| `ANALYTICS_ACCESS_APPROVED`                      | Literal `true` only after the owner checks the restricted reporting-file ACL; a declaration, not an automatic permission audit |
-| `ANALYTICS_SPREADSHEET_ID`                       | Explicit restricted reporting file, different from catalog and usage files                                                     |
-| `ANALYTICS_ENVIRONMENT`                          | `test` or `production`                                                                                                         |
-| `USAGE_ENVIRONMENT`                              | Same environment as analytics; verify the file IDs independently                                                               |
-| `ANALYTICS_OWNER`                                | Named FCNY reporting/retention/recovery owner, stored in Script Properties, not exported to reports                            |
-| `USAGE_RETENTION_DAYS`                           | Existing approved integer 1–365                                                                                                |
-| `USAGE_SPREADSHEET_ID`, `CATALOG_SPREADSHEET_ID` | Existing explicit sources from #16/#9                                                                                          |
-
-## Looker report configuration
-
-Connect only to the reporting workbook. Use **Analytics facts**, not the raw
-usage file or a blend of tags and video totals. One fact row is an aggregate at
-`entity/dateKey/source/mode/youtubeId/category/tag`. `entity` is `video`, `tag` or
-`association`. Metrics are numeric counts; identity/category/tag columns are
-text. `dateKey` is a numeric New York receipt date, `YYYYMMDD`.
-
-`activeInventory` identifies videos/tags still present in the current active
-catalog/dictionary. Use `activeInventory=true` on the unused-content tables so
-retired historical tags/videos do not appear unused. Keep historical rows
-available on trend/association views, labeled as historical.
-
-There are zero-weight inventory rows with `dateKey=0`, including videos and
-canonical dictionary tags with no events. Keep those rows in the source. A
-normal date/source dimension filter would remove them and make unused content
-disappear. Instead, configure these **per-view parameters** and calculated
-metrics. Changing a viewer's Looker controls does not change another viewer's
-selection or edit the shared reporting workbook.
-
-| Parameter        | Type / allowed values                                                | Default |
-| ---------------- | -------------------------------------------------------------------- | ------- |
-| `p_start`        | Number, `YYYYMMDD`; `0` means no lower bound within retained data    | `0`     |
-| `p_end`          | Number, `YYYYMMDD`; `0` means no upper bound within retained data    | `0`     |
-| `p_source`       | Text: `all`, `website`, `email`, `session`, `pilot`, `team`, `other` | `all`   |
-| `p_mode`         | Text: `all`, `recommendations`, `topic`, `direct`                    | `all`   |
-| `p_include_team` | Text: `no`, `yes`                                                    | `no`    |
-
-Create `In selected period` as a row-level field. Set all numeric count source
-fields to numbers. Date controls use the explicit New York date keys, so a viewer's
-local timezone cannot shift the boundary.
+## Separate deployment and access boundary
 
 ```text
-CASE
-  WHEN dateKey > 0
-    AND (p_start = 0 OR dateKey >= p_start)
-    AND (p_end = 0 OR dateKey <= p_end)
-    AND (p_source = "all" OR source = p_source)
-    AND (p_mode = "all" OR mode = p_mode)
-    AND (p_include_team = "yes" OR source != "team")
-  THEN 1
-  ELSE 0
-END
+Public recommender deployment                 Private admin deployment
+catalog GET / usage POST                      Google sign-in, execute as visitor
+no analytics read endpoint                    per-user saved Sheet link
+synthetic preview only                        visitor's restricted Sheet permission
+                                              readDashboard -> aggregates only
 ```
 
-Create row-level metrics such as `Selected appearances`:
+Build with `pnpm build:admin`, or the normal `pnpm build`. The generated
+`build/apps-script-admin/` folder contains `Code.js`, `Dashboard.html` and
+`appsscript.json`. Create a **separate FCNY-owned Apps Script project** from that
+folder. Do not upload the admin bundle to the public catalog/usage project or
+serve the HTML through its anonymous `doGet`.
 
-```text
-CASE WHEN In selected period = 1 THEN appearances ELSE 0 END
-```
+The admin bundle exports `doGet`, `readDashboard`, `connectSheet` and
+`disconnectSheet`. Connection helpers only change the current user's binding in
+Apps Script User Properties. They never edit a Sheet, alter sharing, enable
+collection, install triggers or call producer maintenance operations. Every RPC
+requires a Google identity and matching active/effective users, rejecting an
+owner-executed deployment. File reads execute as the visiting user and require
+actual Google file permission. The reader also rejects public, domain and link
+sharing. Named membership of the private file authorizes its dashboard data.
 
-Repeat for `searches`, `embedClicks`, `youtubeClicks`, `directViews`,
-`directEmbedClicks` and `directYoutubeClicks`. Set each selected metric's default
-aggregation to **Sum**. Set `Selected clicks` to the selected embed plus YouTube
-clicks. Zero inventory rows remain available when all their selected metrics sum
-to zero. Do not use Record Count, count inventory rows as appearances, or filter
-out `dateKey=0` at source/page/chart level.
+The manifest pins `executeAs=USER_ACCESSING` and `access=ANYONE`, meaning Google
+account authentication, **not** `ANYONE_ANONYMOUS`. Review both in the deployment
+UI. Google Workspace policy and OAuth consent must allow the intended staff.
+The admin project requests email identity, Spreadsheet service access and Drive read-only access to verify sharing; the
+latter is broad at Google's scope level even though this code only reads the
+user-selected file. Each admin must review/authorize those scopes. No
+credentials, emails or workbook IDs belong in frontend code or this repository.
+The built app contains no external scripts/fonts, analytics beacons or browser
+storage. Reporting facts exist only in page memory and are not logged.
 
-Create these report pages, with each table filtered to its stated entity:
+References: [Google web-app execution identities](https://developers.google.com/apps-script/guides/web),
+[Session identity availability](https://developers.google.com/apps-script/reference/base/session),
+[HTML-service RPC](https://developers.google.com/apps-script/guides/html/communication).
 
-| Page/table           | Entity and dimensions                                | Summed metrics / controls                                                                                           |
-| -------------------- | ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| Videos               | `entity=video`; `youtubeId`, `title`                 | Selected appearances, embed/YouTube clicks, direct views/clicks; video dropdown and metric sliders                  |
-| Tags and keywords    | `entity=tag`; `category`, `tag`                      | Selected appearances, clicks and searches; category/tag dropdowns and metric sliders                                |
-| Keyword associations | `entity=association`; `youtubeId`, `category`, `tag` | Selected appearances and clicks; video/category/keyword dropdowns                                                   |
-| Reporting health     | `Analytics status` metric/value table                | State, last success, stale-at, coverage, unmapped/unattributed counts; display even when an activity table is empty |
+## Producer setup
 
-Group content dropdowns with their relevant tables. `tag` on the association page
-means a canonical search keyword; `tag` on the tag page means a catalog tag.
-Association counts cannot be summed across keywords to obtain video totals.
-Neither can keyword frequencies be summed to obtain total searches.
+The producer remains in the existing Apps Script project from #88. Configure
+these Script Properties separately for each environment. Keep production
+collection off until #8/#16's existing approval and validation gates pass.
 
-Enable metric sliders for the video and tag tables. Set selected appearances to
-`0..0` to show unused items. For shown-but-not-clicked items, use appearances
-`>=1` and selected clicks `0..0`. On tags, searches `0..0` finds unused keywords.
-These conditions apply to the **aggregated selected metrics**, never the raw
-per-day counts. Include separate prefiltered copies of these tables if sliders
-are insufficient in the selected Looker template. Check zero-use membership
-against the corresponding Sheet control results before acceptance.
+| Producer property                                | Value                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------- |
+| `ANALYTICS_ENABLED`                              | Literal `true` opts into aggregate materialization and ingestion snapshots    |
+| `ANALYTICS_ACCESS_APPROVED`                      | Literal `true` after verifying the reporting file's restricted sharing        |
+| `ANALYTICS_SPREADSHEET_ID`                       | Explicit FCNY-owned reporting file, separate from raw usage and catalog files |
+| `ANALYTICS_ENVIRONMENT`, `USAGE_ENVIRONMENT`     | Matching `test` or `production`; independently verify file IDs                |
+| `ANALYTICS_OWNER`                                | Named FCNY refresh/access/retention/recovery owner                            |
+| `USAGE_RETENTION_DAYS`                           | Existing approved integer 1–365                                               |
+| `USAGE_SPREADSHEET_ID`, `CATALOG_SPREADSHEET_ID` | Existing explicit sources                                                     |
 
-Label the tables "Recorded activity in the selected period". A zero is not proof
-of never-used content, especially when rows were purged or browser delivery was
-lost. Show the reporting coverage and warn when the requested period extends
-beyond retained data. An inverted date range has no selected activity; the UI
-instructions should tell admins to correct it.
+Run `initializeAnalytics`, then `refreshAnalytics` and reconcile synthetic counts.
+`installAnalyticsTriggers` adds daily refresh in the 03:00 New York hour and an
+edit trigger for the shared verification filters. Only one FCNY owner should
+install them. Replacing the reporting file replaces obsolete edit triggers for
+that owner. Review previous owners' triggers during handoff. The producer's
+`script.scriptapp` scope is for this explicit installer only; the admin app has
+no trigger scope.
 
-The `Analytics filters` Sheet provides an independent reconciliation view. Edit
-only its value column, then run `refreshAnalytics` or use the installed edit
-trigger. Dates are literal ISO `YYYY-MM-DD` or `auto`; other values follow the
-`ReportFilterSchema` enums. A tag requires its category. Selecting team also
-requires `includeTeam=true`. `zero-searches` applies to the tag table, not videos.
-These controls are shared owner/test controls; the Looker parameters are the
-per-view admin filters. The all-retained-data facts are rebuilt independently of
-these shared controls.
+The producer writes a unique generation and a `refreshing` status before replacing
+facts, then publishes `ready`/`empty` and its coverage metadata. The admin reader
+validates every returned field, expected headers, row limits, and the generation
+before/after reading facts. In-progress, failed, cleared or stale reports do not
+return fact rows. A mixed-generation read yields a recoverable load error.
 
-## Metric definitions and limitations
+## Staff setup: one Sheet link
 
-- Video appearances count one displayed video per session/search/catalog
-  context, even if a retry/rerender sends a new event ID. They are not viewport
-  visibility or completed watches. Direct views/clicks remain separate.
-- Tag appearances count displayed video/context pairs carrying each tag in the
-  **event-time** catalog. Multiple tags do not multiply video totals. Keyword
-  searches count a canonical category/value once per submitted search context.
-  Aliases were normalized before ingestion; no original wording is retained.
-- Associations join an impression and its immutable search context using
-  session/search/catalog version, source and mode. They indicate co-occurrence,
-  not the reason the recommender chose a video. Searches outside the selected
-  receipt period can still supply context for later displayed videos. Direct
-  views and events without retained search/impression context stay unattributed.
-- New catalog versions are snapshotted best effort during accepted ingestion.
-  Snapshot failure does not block #16 event delivery; it records a fixed failure
-  outcome. Missing snapshots produce explicit unmapped counts, with no guessed
-  tag/keyword attribution. Previously purged or never-captured history cannot be
-  reconstructed. Snapshots contain only validated public catalog metadata.
-- Refreshes exclude expired records even before #16's purge runs. Snapshots not
-  referenced by retained events/current catalog are pruned. The report is a daily
-  materialization and Looker can cache it; approve derived-aggregate/cache
-  retention and set the shortest appropriate data freshness before launch.
-- Hard limits are 10,000 usage rows, 8 MiB of parsed retained event bodies, 500
-  snapshot chunks of 10,000 characters, and 100,000 rows per output table. A
-  capacity/validation failure clears generated datasets where writes remain
-  available and marks error instead of silently truncating metrics. Load-test the
-  agreed catalog/traffic size before production.
+After the technical team deploys the private app, Ali and Eliot each sign in with
+Google, authorize the app, paste their Google Sheets link and choose **Connect
+Sheet**. The app remembers that connection for that Google account. No file ID,
+Script Property, duplicate email allowlist, reporting workbook or refresh trigger
+is required from them. **Change Sheet** validates the new file before replacing
+the saved connection. **Disconnect** forgets only that account's binding.
 
-## Refresh failures and rollback
+Supported inputs are a normalized `Catalog`/`Dictionary` workbook, the integration
+library's `First 10  -Tag Review` format, or an existing aggregate workbook with
+`Analytics facts` and `Analytics status`. The source file must use Restricted
+sharing with named people. Connecting cannot grant missing Google access.
 
-`Analytics status` health and unprefixed coverage/source/mode fields describe the
-all-retained-data facts dataset. `selectionState` and `selection...` fields
-describe the shared Sheet reconciliation controls independently, so an empty
-selection cannot hide activity or missing metadata in the Looker source.
+For the integration format, only published videos are included. Proposed
+function-area/tool/task tags become canonical only when their row's Approval
+Status is Approved. The report labels pending reviews and excludes unapproved
+proposals. It reads only the recognized public catalog and approval columns,
+never review notes or unrelated tabs.
 
-`Analytics status` records `ready`, `empty`, `error` or `cleared`, last successful
-refresh, attempted refresh, coverage and the explicit unavailable watched metric.
-Display an alert when now exceeds `staleAt`, 26 hours after the last refresh.
-A trigger that never runs cannot update its own status; owner trigger-failure
-notifications and the stale-at alert are both required. If a write/cleanup also
-fails, the last success remains stale and the trigger raises a fixed error.
+A source workbook can be connected before it has a `Usage` tab. Inventory loads,
+but usage counts display **Unavailable** and unused-content/date/source/mode
+controls stay disabled. An existing, valid but empty `Usage` table instead means
+zero retained recorded events. Connecting does not create that table or turn on
+production logging. The collection owner must still deploy and approve #16's
+event collection. Events must be in the selected source workbook to be read
+there. Existing multi-file producer deployments can use their aggregate workbook
+link instead.
 
-1. For wrong totals or access exposure, restrict the report immediately.
-2. Run `clearAnalytics` to remove generated facts/totals, then set
-   `ANALYTICS_ENABLED=false`. Clearing also works after that flag is disabled
-   while the remaining configuration is intact. Remove analytics triggers or
-   expect them to fail closed while disabled. Clear Looker cached data/access too.
-3. Keep `purgeUsageLog` running and use #16's stop switch if collection is at
-   fault. Analytics clearing never deletes source log rows.
-4. Repair configuration/snapshots, rerun reconciliation, then refresh/re-enable
-   only the approved environment. Do not copy test rows into production.
+Direct source reads aggregate on each reload and expire after 15 minutes. If the
+owner supplies approved reporting policy as workbook developer metadata
+`FCNY_ANALYTICS_POLICY_V1`, JSON
+`{"schemaVersion":1,"retentionDays":30,"environment":"production"}`, the reader
+uses that policy. This is optional technical owner configuration, never a staff
+onboarding field. Without it the reader conservatively includes only receipts
+from the last 24 hours and labels the coverage. It does not extend retention or
+approve collection. Historical versions without a matching snapshot stay
+explicitly unmapped. Precomputed report links keep the producer's published
+retention/environment/refresh metadata.
 
-Changing a corrupt header deliberately prevents overwriting unrelated staff
-content. Repair the owned table under the owner's review; do not delete log rows
-to make a refresh pass.
+## Technical deployment, once
 
-## Playback percentage feasibility
+1. Create a separate FCNY-owned Apps Script project from
+   `build/apps-script-admin/`. No Script Properties are needed for normal admin
+   onboarding. The optional `ANALYTICS_ADMIN_ENABLED=false` kill switch disables
+   access. Never deploy this bundle on the public catalog/usage endpoint.
+2. Deploy as **User accessing the web app**, with Google sign-in required. Each
+   staff member authorizes Google's scopes. Review Workspace/OAuth policy with
+   the FCNY owner. Test missing identity, incorrect owner execution, revoked file
+   access, broadly shared files and per-account binding isolation.
+3. Verify an authorized viewer can connect using only the Sheet URL and can
+   inspect aggregates without YouTube channel access. Confirm no raw event
+   records or private review notes reach the browser. Test disconnect/reconnect
+   and reload after revocation.
+4. Record the private deployment URL, owner and native reconciliation evidence
+   in the private deployment record. The public synthetic preview validates UI;
+   it cannot validate Google sign-in or connect a real Sheet. Do not close #24
+   until native deployment/consent and live reconciliation have been verified.
 
-The current #16 schema has no playback progress, and a YouTube click is not a
-watch. The [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference)
-provides current position and duration for an instrumented embed. Their ratio is
-playback position, not percent actually watched: seeking can jump ahead, replays
-can inflate elapsed time, and external YouTube opens are unobservable here.
-Reliable observed progress would require approved played-segment instrumentation,
-a revised versioned event schema, notices/retention and missing-data rules.
-No progress instrumentation is added. Percentage watched remains unavailable and
-does not block the basic MVP dashboard.
+Changing access uses Google's file sharing controls. Every reload rechecks it
+and clears visible facts first. Revocation cannot recall an already-delivered
+response; facts hide at their stale expiry and never persist in browser storage.
 
-## Acceptance evidence to collect
+## Metrics and limits
 
-- Local tests cover #16 ingestion through snapshots to the aggregate tables,
-  deduplication, historical/missing catalog versions, zero inventory, source/mode
-  isolation, NY midnight/DST, cross-period context, retention, fixed failure
-  messages, stale-data clearing, table guards and trigger idempotence.
-- In FCNY's isolated test environment, reconcile a hand-counted reporting day,
-  including repeated events, multi-keyword searches, no-result searches, team
-  traffic and zero-activity tags. Compare each Looker view to the shared Sheet
-  controls for the same range/source/mode.
-- Verify zero-use filters still show never-impressed inventory, and that a video
-  with earlier activity becomes zero for a later selected period. Verify missing
-  snapshots and unmatched searches do not invent keywords or claim full coverage.
-- Exercise authorized and unauthorized access, daily refresh, edit refresh,
-  empty/error/stale states, trigger failure notifications and the stop switch.
-- Record these live checks and the FCNY-owned report URL before closing #24.
+The producer deduplicates accepted events and repeated impressions before receipt
+window selection. Historical tags come from event-time public catalog snapshots;
+missing metadata remains explicitly unmapped. Video IDs with missing metadata
+retain counts with an unavailable-title label. Canonical keyword searches are
+counted once per submission; sums across multiple keywords are not total searches.
+Associations and tag appearances cannot be summed as video totals. Direct views
+and unjoinable events do not invent keyword attribution.
 
-References: [Looker Linking API](https://developers.google.com/data-studio/integrate/linking-api),
-[metric sliders](https://docs.cloud.google.com/data-studio/metric-slider),
-[calculated fields](https://docs.cloud.google.com/data-studio/about-calculated-fields),
-[clock triggers](https://developers.google.com/apps-script/reference/script/clock-trigger-builder),
-[Sheet formula interpretation](https://developers.google.com/apps-script/reference/spreadsheet/range).
+Active zero-weight inventory rows survive client-side date/source filtering.
+Historical/retired items are hidden by default and can be included explicitly.
+A zero means no **recorded** activity in the selected period, never proof of
+never-used content. Coverage and missing/unattributed counts are visible.
+
+Producer limits: 10,000 usage rows, 8 MiB retained event bodies, 500 public-catalog
+chunks of 10,000 characters, and 100,000 rows per output table. Admin reads at most
+100,000 strict aggregate facts, renders 25 rows at a time, and bounds RPC waiting
+to 30 seconds. Load-test the agreed scale before production. Precomputed aggregates refresh
+daily; direct source reads refresh on reload. approve derived-data retention as well as raw-log retention. Stale data is
+not served by the admin reader. Snapshots contain public metadata only.
+
+`Analytics filters` still provides a shared owner reconciliation view in Sheets.
+Dashboard filters operate locally on the independently published daily facts and
+never change that shared selection or another admin's view.
+
+## Errors, retention and rollback
+
+If a refresh fails, independently clear every writable owned dataset and attempt
+an error-status write. Corrupt headers are guarded, not overwritten. The rollback
+helper `clearAnalytics` also continues across individual table failures, records
+partial failure and throws a fixed error instead of claiming complete clearing.
+Repair remaining damaged tables under the owner's review. If writes/status updates
+also fail, the previous last-success deadline and trigger failure notifications
+remain the external operational backstop.
+
+For access exposure or wrong totals, first disable the admin app with
+`ANALYTICS_ADMIN_ENABLED=false` and remove the affected file access.
+Run producer `clearAnalytics`, disable producer analytics and its triggers as
+appropriate, and keep the raw usage purge running. None of these code changes
+enable production logging or change Google permissions automatically.
+
+## Percentage watched
+
+The current event contract contains no progress events. The
+[YouTube IFrame API](https://developers.google.com/youtube/iframe_api_reference)
+exposes position/duration for an instrumented embed, but that ratio does not
+measure actual watched segments. Seeking, replays and external YouTube opens need
+separate semantics and collection approval. This dashboard displays unavailable;
+it does not infer watches from clicks or introduce new tracking.

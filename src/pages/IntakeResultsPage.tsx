@@ -110,7 +110,18 @@ export function IntakeResultsPage() {
         </div>
       </main>
       <footer className="site-footer">
-        AI for Nonprofits Sprint · Fund for the City of New York
+        <span>AI for Nonprofits Sprint · Fund for the City of New York</span>
+        <nav aria-label="Staff">
+          <a
+            className="admin-analytics-link"
+            href="https://script.google.com/macros/s/AKfycbzw_0TUPaW2VbEEiLonCU_AsG7KJkf7H2iB2zg4oG2dmq3SNZFv2zNY-LRW73sCFS7J/exec"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Admin analytics
+            <span className="sr-only"> (opens in a new tab)</span>
+          </a>
+        </nav>
       </footer>
     </>
   );
