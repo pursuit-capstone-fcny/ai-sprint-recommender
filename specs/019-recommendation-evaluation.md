@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Haiku V18 broadens accepted lists to 24/30; missing diagnostic and mixed-goal breadth keep validation incomplete
+- **Status:** Haiku V21 fixes transport and mixed-goal failures; breadth remains below the 24/30 target; expanded review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -85,6 +85,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Haiku V21 rerun](../docs/evaluation/2026-10-30-haiku-reliability/results.md)
+scores 10/10 each with forty final diagnostics, reconciled usage and no observed
+transport, timeout, invalid-response or duplicate failure. All injection probes
+abstain; mixed Operations has six cards and two labeled hits. Breadth is 23/30,
+so the unchanged 24/30 retention target remains failed. Recorded task spend
+$0.240124 leaves $0.996941 under the approved $3 cap. Labels and the diversity
+gate remain unchanged. Test calls are disabled and keys removed; production
+LLM calls and logging remain off. Full expanded-set and human review are pending.
 
 The [Haiku V18 breadth run](../docs/evaluation/2026-10-30-haiku-breadth/results.md)
 scores 9/10, 10/10, 10/10, with 24/30 accepted six-to-eight lists versus V12's

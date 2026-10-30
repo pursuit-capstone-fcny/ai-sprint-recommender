@@ -98,3 +98,18 @@ precedes candidate selection. It changes no words, model settings or validation
 targets. The original final checks are again contiguous and last. A placement
 test goes red before the change; removing the added paragraph still reproduces
 V18 request hashes. Repeat the same forty cases with at most $0.270240 reserved.
+
+## V21 result and retained limitation
+
+Run 41130921904 attempt 2 scores 10/10 each with forty final diagnostics and
+complete measured usage. No transport, timeout, invalid-response or duplicate
+failure occurs; all injection controls abstain. Mixed Operations returns six
+cards and two labeled hits, and the wording controls pass. The earlier quality
+audit passes, but the fixed 24/30 breadth-retention check remains failed at
+23/30. Keep that failure visible; do not change the target or claim a full pass.
+
+The requested transport/diagnostic and mixed-goal fixes are retained in V21.
+Paid trials stop here with the broader retention target unresolved. Total spend
+for three runs is $0.240124; cumulative ceiling $2.003059 leaves $0.996941.
+All original unknown reservations remain charged. Calls are disabled, keys and
+temporary approval removed. See [results and review limits](results.md).

@@ -197,15 +197,8 @@ remain pending.
   frozen labels and the task-diversity gate; reject duplicate provider output.
 
 - Given authenticated test diagnostics and a valid evaluation request UUID, when
-  a response is lost, then the server and client retain the same ID. Ignore
-  supplied IDs in production, without authentication or with malformed UUIDs.
-- Given a legitimate goal mixed with control instructions, when Haiku V19 ranks
-  it, then apply the same breadth pass to its real work. Preserve eligibility,
-  uniqueness, frozen labels, input text and the task-diversity gate.
-
-- Given a mixed goal, when Haiku V20 applies breadth guidance, then scope that
-  guidance within the mixed-goal instruction and retain every original
-  eligibility and uniqueness rule. Preserve ordinary-goal breadth in evaluation.
-
-- Given a mixed goal, when Haiku V21 selects candidates, then restate its real
-  work before the breadth pass and retain the original final validation checks.
+  a response is lost, then retain the same client/server ID. Ignore supplied
+  IDs in production, without authentication or with malformed UUIDs.
+- Given a legitimate goal mixed with control instructions, when Haiku ranks it,
+  then restate its real work before the breadth pass. Preserve input text,
+  eligibility, uniqueness, frozen labels and the task-diversity gate.

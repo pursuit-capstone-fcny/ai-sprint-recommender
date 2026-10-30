@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "6378a94f807560c5758ec6c8676f539383f5d00d",
+  "approvedWorkflowRunId": "41130921904",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T22:25:52Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v21",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized Haiku transport/diagnostic fixes and mixed Operations breadth. V21 moves the unchanged mixed-goal paragraph before candidate selection and the breadth pass. Original final checks remain contiguous and last. Transport fixes, model settings, caps, deadline, schema, catalog, frozen labels and task-diversity gate stay unchanged. Removing the added paragraph reproduces V18 requests. Run the same thirty benchmark requests and ten probes without per-case retries. Preserve the V19 and V20 failed breadth audits and all costs.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Approved shared $3 test cap. Carry forward $1.923019 including $0.225000 historical unknown reservations and both completed reliability runs. Remaining $1.076981. Reserve at most forty times $0.006756, or $0.270240. No reset, refund or repricing. This attempt authorizes Haiku only; production LLM calls and logging stay disabled.",
+  "allowanceMicrodollars": 1076981,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1923019,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}
