@@ -11,6 +11,11 @@ export {
 } from './analytics-sheet';
 
 export { doPost, initializeUsageLog, purgeUsageLog } from './usage-sheet';
+export {
+  initializeRequests,
+  purgeRequests,
+  installRequestRetention,
+} from './contributions-sheet';
 
 export function doGet() {
   let body: string;

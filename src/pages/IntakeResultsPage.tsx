@@ -2,6 +2,7 @@ import { useCatalog } from '../data/useCatalog';
 import { IntakeResults } from './IntakeResults';
 import { recommendationsEnabled } from '../recommendations/requestRecommendations';
 import { getUsageSession } from '../usage/usageSession';
+import { RequestForm } from '../requests/RequestForm';
 import './global.css';
 import './intake-results.css';
 
@@ -80,6 +81,7 @@ export function IntakeResultsPage() {
                   >
                     Refresh catalog
                   </button>
+                  <RequestForm fallback />
                 </div>
               ) : (
                 <IntakeResults

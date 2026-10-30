@@ -17,6 +17,7 @@ import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
 import { IntakeForm } from './IntakeForm';
 import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
+import { RequestForm } from '../requests/RequestForm';
 
 const PAGE_SIZE = 3;
 const EMPTY_PROFILE: IntakeProfile = {
@@ -276,6 +277,16 @@ export function IntakeResults({
         showClosestMatch={profile.functionArea !== null}
         onVideoClick={(match, index, target) =>
           usageContext?.click(match, index, target)
+        }
+      />
+      <RequestForm
+        fallback={
+          results.length === 0 ||
+          results.some(
+            (match) =>
+              match.matchType === 'fallback' ||
+              match.matchType === 'cross-area',
+          )
         }
       />
     </>
