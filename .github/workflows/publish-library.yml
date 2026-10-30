@@ -1,0 +1,83 @@
+name: Publish library
+run-name: Publish library ${{ inputs.request_id }}
+on:
+  workflow_dispatch:
+    inputs:
+      request_id:
+        description: Publisher request UUID
+        required: true
+      catalog_commit:
+        description: Immutable content commit on the environment's library-data branch
+        required: true
+      environment:
+        description: Isolated publishing target
+        type: choice
+        options: [test, production]
+        required: true
+permissions:
+  contents: read
+concurrency:
+  group: publish-library-${{ inputs.environment }}
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Validate dispatch
+        env:
+          REQUEST_ID: ${{ inputs.request_id }}
+          CONTENT_COMMIT: ${{ inputs.catalog_commit }}
+          TARGET: ${{ inputs.environment }}
+        run: |
+          [[ "$REQUEST_ID" =~ ^[a-f0-9-]{36}$ ]]
+          [[ "$CONTENT_COMMIT" =~ ^[a-f0-9]{40}$ ]]
+          [[ "$TARGET" == test || "$TARGET" == production ]]
+          if [[ "$TARGET" == production ]]; then
+            [[ "$GITHUB_REF" == refs/heads/main ]]
+          fi
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+      # Keep the newest archive even when an older manifest is selected for rollback.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.environment == 'production' && 'library-data' || 'library-data-test' }}
+          path: library-archive
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.catalog_commit }}
+          path: library-input
+          fetch-depth: 0
+      - name: Verify content provenance
+        env:
+          CONTENT_COMMIT: ${{ inputs.catalog_commit }}
+          TARGET: ${{ inputs.environment }}
+        working-directory: library-input
+        run: |
+          if [[ "$TARGET" == production ]]; then
+            git merge-base --is-ancestor "$CONTENT_COMMIT" origin/library-data
+          else
+            git merge-base --is-ancestor "$CONTENT_COMMIT" origin/library-data-test
+          fi
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Validate and build public assets
+        run: |
+          pnpm install --frozen-lockfile
+          node scripts/build-library-assets.mjs library-input/catalog build/library-assets library-archive/catalog
+      - name: Deploy test catalog
+        if: inputs.environment == 'test'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config library/wrangler.jsonc --name ai-sprint-library-test
+      - name: Deploy production catalog
+        if: inputs.environment == 'production'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config library/wrangler.jsonc
