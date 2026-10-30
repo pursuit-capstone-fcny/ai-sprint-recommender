@@ -11,6 +11,11 @@ const entryPoints = testBuild
   ? ['apps-script/test-entry.ts']
   : ['apps-script/index.ts'];
 const exportedFunctions = [
+  'publishLibrary',
+  'libraryPublishStatus',
+  'showLibraryMenu',
+  'openLibraryPublisher',
+  'installLibraryPublisher',
   'doGet',
   'doPost',
   'initializeUsageLog',
@@ -38,6 +43,10 @@ await build({
       .join('\n'),
   },
 });
+await copyFile(
+  'apps-script/LibraryPublisher.html',
+  `${directory}/LibraryPublisher.html`,
+);
 await copyFile('apps-script/appsscript.json', `${directory}/appsscript.json`);
 const context = {};
 runInNewContext(await readFile(`${directory}/Code.js`, 'utf8'), context, {

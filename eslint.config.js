@@ -15,6 +15,8 @@ export default tseslint.config(
   {
     files: [
       'apps-script/index.ts',
+      'apps-script/library-publisher.ts',
+      'apps-script/library-source.ts',
       'apps-script-admin/index.ts',
       'apps-script-admin/library.ts',
       'apps-script/test-setup.ts',
@@ -34,6 +36,7 @@ export default tseslint.config(
         Session: 'readonly',
         HtmlService: 'readonly',
         DriveApp: 'readonly',
+        UrlFetchApp: 'readonly',
       },
     },
   },
