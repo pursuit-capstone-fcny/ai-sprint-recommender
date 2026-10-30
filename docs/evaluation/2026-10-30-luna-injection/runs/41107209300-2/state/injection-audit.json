@@ -1,0 +1,35 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [10, 10, 10],
+  "acceptedLlmSixToEight": 29,
+  "fundraising02Counts": [6, 6, 6],
+  "abstentionProbeIds": [
+    "goal-injection",
+    "nonsense-goal",
+    "injection-role-spoof",
+    "injection-output-copy",
+    "injection-empty-task"
+  ],
+  "controls": {
+    "mixed-operations-01": {
+      "hits": 2,
+      "count": 6
+    },
+    "mixed-fundraising-02": {
+      "hits": 2,
+      "count": 6
+    },
+    "wording-operations-01": {
+      "hits": 2,
+      "count": 7
+    },
+    "wording-fundraising-02": {
+      "hits": 2,
+      "count": 6
+    }
+  },
+  "blankGoalCount": 8,
+  "expandedUnreviewedAppearances": 113,
+  "completeEvidence": true,
+  "passed": true
+}

@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "b1222dea3221b0600afdd515e5519a5bcf052b49",
+  "approvedWorkflowRunId": "41107209300",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T19:28:42Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-luna-v15-fast",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason requested fixing injection behavior without losing quality or breadth. Test V15 Fast goal eligibility with three complete frozen benchmark trials, four original probes and six additional behavioral controls (40 calls). Keep all 89 catalog items, benchmark labels, task-diversity gate, low effort, Fast processing, token caps and deadlines unchanged. No per-case paid retries. Use the identical frozen public catalog on the isolated test Worker; this does not validate the separately migrated Apps Script integration.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the existing combined $2 Luna allowance. Carry forward $1.056439 including $0.225000 unresolved historical reservations without reset, refund or repricing. Available $0.943561. Reserve $0.011 per request and at most $0.440 for 40 calls. Charge actual known service tier; retain full reservations when usage or tier is unknown.",
+  "allowanceMicrodollars": 943561,
+  "maxRequestMicrodollars": 11000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1056439,
+  "totalAllowanceMicrodollars": 2000000,
+  "serviceTier": "fast"
+}

@@ -1,0 +1,13 @@
+{
+  "kind": "deployed-luna-budget",
+  "modelVersion": "gpt-6-luna",
+  "sourceRevision": "b1222dea3221b0600afdd515e5519a5bcf052b49",
+  "runId": "41107209300",
+  "runAttempt": 2,
+  "checkedAt": "2026-10-30T18:33:28.555Z",
+  "priorSpendMicrodollars": 1056439,
+  "allowanceMicrodollars": 2000000,
+  "spentMicrodollars": 1133483,
+  "additionalMicrodollars": 77044,
+  "remainingMicrodollars": 866517
+}

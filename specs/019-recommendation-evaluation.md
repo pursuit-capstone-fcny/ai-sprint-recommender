@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V14 Fast fixes Fundraising-02 and retains breadth; expanded-set and client review pending
+- **Status:** V15 Fast fixes observed injection behavior and retains quality/breadth; expanded-set and client review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -78,6 +78,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [V15 injection rerun](../docs/evaluation/2026-10-30-luna-injection/results.md)
+scores 10/10 in all three trials, with 29/30 six-to-eight lists. Four
+instruction-only attacks abstain; mixed goals and blank browsing still work.
+No benchmark timeout, invalid response or fallback occurs. All 40 calls have
+reconciled usage and diagnostics; $0.077044 added leaves $0.866517. Labels and
+the diversity gate are unchanged. Test calls are disabled and keys removed;
+production LLM calls and logging stay off. Expanded-set and unseen-input review
+remain pending; these probes do not establish complete injection resistance.
 
 The [V14 ranking rerun](../docs/evaluation/2026-10-30-luna-ranking/results.md)
 scores 10/10 in all three trials. Fundraising-02 has both labeled matches in
