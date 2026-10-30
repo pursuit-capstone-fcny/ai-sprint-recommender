@@ -41,8 +41,69 @@ function setup() {
   };
   return { provider, fetcher, budget, diagnostic, deps };
 }
-afterEach(() => vi.useRealTimers());
+afterEach(() => {
+  vi.useRealTimers();
+  vi.unstubAllGlobals();
+});
 describe('recommendation endpoint', () => {
+  it('uses static assets only for bundled catalogs and network fetch for the provider', async () => {
+    const { budget } = setup();
+    const assets = vi.fn(async (request: Request) =>
+      Response.json(
+        request.url.endsWith('/current.json')
+          ? {
+              schemaVersion: 1,
+              catalogVersion: catalog.catalogVersion,
+              publishedAt: '2026-10-29T00:00:00Z',
+            }
+          : catalog,
+      ),
+    );
+    const network = vi.fn<typeof fetch>(async () =>
+      Response.json({
+        stop_reason: 'end_turn',
+        content: [
+          {
+            type: 'text',
+            text: JSON.stringify(
+              Object.fromEntries(
+                Array.from({ length: 10 }, (_, index) => [
+                  `rank${index + 1}`,
+                  index === 0 ? 1 : null,
+                ]),
+              ),
+            ),
+          },
+        ],
+        usage: { input_tokens: 100, output_tokens: 20 },
+      }),
+    );
+    vi.stubGlobal('fetch', network);
+    const response = await recommend(
+      request(),
+      { ...environment, LIBRARY_MODE: 'bundled', ASSETS: { fetch: assets } },
+      { budget, clientKey: async () => 'a'.repeat(64) },
+    );
+    expect((await response.json()).youtubeIds).toEqual([
+      catalog.items[1].youtubeId,
+    ]);
+    expect(assets).toHaveBeenCalledTimes(2);
+    expect(
+      assets.mock.calls.every(([request]) =>
+        new URL(request.url).pathname.startsWith('/catalog/'),
+      ),
+    ).toBe(true);
+    expect(network).toHaveBeenCalledTimes(1);
+    expect(network.mock.calls[0][0]).toBe(
+      'https://api.anthropic.com/v1/messages',
+    );
+    expect(network.mock.calls[0][1]?.method).toBe('POST');
+    expect(budget.settle).toHaveBeenCalled();
+    expect(budget.settle).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Number),
+    );
+  });
   it('does not delay a recommendation for hung cache writes and handles their later rejection', async () => {
     const { deps, provider } = setup();
     let failWrite: (error: Error) => void = () => undefined;

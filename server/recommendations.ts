@@ -164,7 +164,7 @@ export async function recommend(
     active();
     if (!input.functionArea && !input.goal && input.tools.length === 0)
       return fallback('not-requested');
-    const fetcher: typeof fetch =
+    const catalogFetcher: typeof fetch =
       deps.fetch ??
       (env.LIBRARY_MODE === 'bundled' && env.ASSETS
         ? (input, init) => env.ASSETS!.fetch(new Request(input, init))
@@ -176,7 +176,7 @@ export async function recommend(
         source: `${limits.LIBRARY_ORIGIN}/catalog/current.json`,
         requestedVersion: input.catalogVersion,
         signal: abort.signal,
-        fetcher,
+        fetcher: catalogFetcher,
         cache: deps.catalogCache ?? defaultCatalogCache(),
         waitUntil: deps.waitUntil,
       });
@@ -209,7 +209,8 @@ export async function recommend(
       deps.budget ??
       durableBudget(env.RECOMMENDATION_BUDGET!, limits.LLM_ENVIRONMENT);
     const provider =
-      deps.provider ?? anthropicProvider(env.ANTHROPIC_API_KEY, fetcher);
+      deps.provider ??
+      anthropicProvider(env.ANTHROPIC_API_KEY, deps.fetch ?? fetch);
     const identifier = await (deps.clientKey?.() ??
       clientKey(request, env.LLM_RATE_KEY));
     active();
