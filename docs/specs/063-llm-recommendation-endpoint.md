@@ -29,7 +29,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the service is enabled
   - Then the team has recorded the runtime change through #1, and #8 records FCNY's provider, model, permitted data, retention terms, account owner and budget approval. Credentials stay in server secrets; preview and production use separate configuration and budgets
 - AC-63.2 Trusted inputs
-  - Given a submitted function area, optional goal and tools
+  - Given a submitted description from #82, nullable function area and optional tools
   - When the endpoint accepts a request
   - Then it validates canonical values and a goal limit of 500 characters, reads the validated public catalog from #9 itself, and sends only those inputs and bounded public catalog fields to the provider. Browser-supplied catalog rows, URLs and prompts are never trusted
 - AC-63.3 Catalog-grounded ranking

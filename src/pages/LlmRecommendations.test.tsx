@@ -31,7 +31,7 @@ function deferredResponse() {
   return { promise, resolve };
 }
 function goal(value = 'a fictional semantic goal') {
-  fireEvent.change(screen.getByLabelText('What do you want to learn?'), {
+  fireEvent.change(screen.getByLabelText('What do you want to learn or do?'), {
     target: { value },
   });
 }
@@ -140,7 +140,8 @@ describe('LLM submissions', () => {
     submit();
     expect(fetch).not.toHaveBeenCalled();
     expect(screen.getByText('Standard matching')).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('Function area'), {
+    fireEvent.click(screen.getByText(/Refine by function area or tool/));
+    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
       target: { value: 'Operations' },
     });
     submit();
