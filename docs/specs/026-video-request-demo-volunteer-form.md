@@ -73,3 +73,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Manual check: submit a test entry and see it in the review sheet
 - Rollback signal: entries go unanswered for two weeks; unlink the form
 - Review: acceptance evidence names the tested release or document version, unresolved failures and follow-up owners. Updating this specification does not mark the implementation complete.
+
+### Implementation evidence, October 30, 2026
+
+- Implementation and setup: [contribution-requests](../contribution-requests.md).
+- This spec has its own PR branch, based on `8f5e4a6`.
+- Final wording, collection/access/retention decisions, operating ownership and
+  live Cloudflare/collector delivery remain open. The user confirmed no operating
+  approvals are available. This update does not mark acceptance complete.

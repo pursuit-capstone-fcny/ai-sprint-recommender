@@ -6,6 +6,9 @@ export {
   installLibraryPublisher,
   doGet,
   doPost,
+  initializeRequests,
+  purgeRequests,
+  installRequestRetention,
   initializeUsageLog,
   purgeUsageLog,
   clearAnalytics,
@@ -14,5 +17,7 @@ export {
   installAnalyticsTriggers,
   refreshAnalyticsOnEdit,
   analyticsReportLinks,
+  refreshFeedbackReport,
+  installFeedbackReporting,
 } from './index';
 export { initializeTestCatalog } from './test-setup';

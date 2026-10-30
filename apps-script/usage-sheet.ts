@@ -1,5 +1,7 @@
 /// <reference types="google-apps-script" />
 import { z } from 'zod';
+import { isContributionRequest } from './contributions';
+import { contributionPost } from './contributions-sheet';
 import { type PublicCatalog } from '../src/contracts/publicCatalog';
 import { captureAnalyticsCatalog } from './analytics-snapshots';
 import { publishedCatalog } from './published-library';
@@ -67,6 +69,8 @@ function readRecords(sheet: GoogleAppsScript.Spreadsheet.Sheet): UsageRecord[] {
 }
 
 export function doPost(event?: { postData?: UsageRequest }) {
+  if (isContributionRequest(event?.postData))
+    return contributionPost(event?.postData);
   let body: string;
   let enabled = false;
   try {
@@ -83,6 +87,7 @@ export function doPost(event?: { postData?: UsageRequest }) {
     };
     body = receiveUsage(event?.postData, {
       enabled,
+      feedbackEnabled: properties.getProperty('FEEDBACK_ENABLED') === 'true',
       policy: () => readPolicy(properties),
       now: () => new Date(),
       lock: LockService.getScriptLock(),

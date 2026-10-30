@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
+import { FeedbackControls } from '../feedback/FeedbackControls';
+import type { FeedbackBinding } from '../feedback/vote';
 
 const COPIED_RESET_MS = 2000;
 
@@ -14,6 +16,7 @@ interface VideoCardProps {
   onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
   showClosestMatch?: boolean;
+  feedback?: { binding: FeedbackBinding; question: string };
 }
 
 export function VideoCard({
@@ -22,6 +25,7 @@ export function VideoCard({
   onPlay,
   onWatch,
   showClosestMatch = true,
+  feedback,
 }: VideoCardProps) {
   const { item, reason, matchType } = match;
   const [thumbnailFailed, setThumbnailFailed] = useState(false);
@@ -139,6 +143,13 @@ export function VideoCard({
             {copyState === 'failed' && 'Could not copy the link'}
           </span>
         </div>
+        {feedback && (
+          <FeedbackControls
+            binding={feedback.binding}
+            question={feedback.question}
+            title={item.title}
+          />
+        )}
       </div>
     </li>
   );

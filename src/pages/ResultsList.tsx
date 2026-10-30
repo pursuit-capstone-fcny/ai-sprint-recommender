@@ -1,5 +1,6 @@
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
+import type { FeedbackBinding } from '../feedback/vote';
 
 export const RESULTS_HEADING_ID = 'results-heading';
 
@@ -11,6 +12,10 @@ interface ResultsListProps {
   canShowMore: boolean;
   onShowMore: () => void;
   showClosestMatch?: boolean;
+  feedback?: {
+    question: string;
+    bind: (match: RankedMatch, index: number) => FeedbackBinding;
+  };
   onVideoClick?: (
     match: RankedMatch,
     index: number,
@@ -27,6 +32,7 @@ export function ResultsList({
   onShowMore,
   showClosestMatch = true,
   onVideoClick,
+  feedback,
 }: ResultsListProps) {
   return (
     <section
@@ -49,6 +55,14 @@ export function ResultsList({
             match={match}
             isPlaying={playingId === match.item.youtubeId}
             showClosestMatch={showClosestMatch}
+            feedback={
+              feedback
+                ? {
+                    question: feedback.question,
+                    binding: feedback.bind(match, index),
+                  }
+                : undefined
+            }
             onPlay={() => {
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');

@@ -35,7 +35,10 @@ events expire after 60 seconds. Each attempt has a ten-second deadline covering
 both fetch and response parsing. Requests use `keepalive`, omit credentials and
 referrers, and set no custom headers. Only `USAGE_BUSY` gets one immediate retry
 with the identical payload. Network, opaque and invalid responses are dropped;
-disabled/full/rate-limit responses stop delivery for the rest of the visit.
+disabled/full/rate-limit responses stop automatic delivery for the rest of the
+visit. Spec #29 allows a new explicit learner action to retry feedback after a
+temporary rate limit, reusing the event ID and context. Disabled/full collectors
+remain stopped, and automatic search/impression/click traffic never resumes.
 Navigation may lose queued events, and an acknowledgment is required to count
 delivery as confirmed. Counts remain estimates.
 

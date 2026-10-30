@@ -18,6 +18,9 @@ const exportedFunctions = [
   'installLibraryPublisher',
   'doGet',
   'doPost',
+  'initializeRequests',
+  'purgeRequests',
+  'installRequestRetention',
   'initializeUsageLog',
   'purgeUsageLog',
   'clearAnalytics',
@@ -26,6 +29,8 @@ const exportedFunctions = [
   'installAnalyticsTriggers',
   'refreshAnalyticsOnEdit',
   'analyticsReportLinks',
+  'refreshFeedbackReport',
+  'installFeedbackReporting',
 ];
 if (testBuild) exportedFunctions.push('initializeTestCatalog');
 await mkdir(directory, { recursive: true });

@@ -9,8 +9,17 @@ export {
   refreshAnalyticsOnEdit,
   analyticsReportLinks,
 } from './analytics-sheet';
+export {
+  refreshFeedbackReport,
+  installFeedbackReporting,
+} from './feedback-sheet';
 
 export { doPost, initializeUsageLog, purgeUsageLog } from './usage-sheet';
+export {
+  initializeRequests,
+  purgeRequests,
+  installRequestRetention,
+} from './contributions-sheet';
 
 export function doGet() {
   let body: string;

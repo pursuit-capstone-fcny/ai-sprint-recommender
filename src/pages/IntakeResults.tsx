@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { rank } from '../engine';
+import { feedbackQuestion } from '../feedback/vote';
 import {
   recommendationsEnabled,
   requestRecommendations,
@@ -17,6 +18,7 @@ import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
 import { IntakeForm } from './IntakeForm';
 import { RESULTS_HEADING_ID, ResultsList } from './ResultsList';
+import { RequestForm } from '../requests/RequestForm';
 
 const PAGE_SIZE = 3;
 const EMPTY_PROFILE: IntakeProfile = {
@@ -88,6 +90,7 @@ export function IntakeResults({
   const isGlobalFallback = results[0]?.matchType === 'fallback';
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
+  const question = feedbackQuestion();
   const usageContext = useMemo(
     () =>
       usageSession && usageCatalog
@@ -267,6 +270,11 @@ export function IntakeResults({
             : null}
       </p>
       <ResultsList
+        feedback={
+          question && usageContext
+            ? { question, bind: usageContext.feedback }
+            : undefined
+        }
         loading={loading}
         results={results}
         playingId={playingId}
@@ -276,6 +284,16 @@ export function IntakeResults({
         showClosestMatch={profile.functionArea !== null}
         onVideoClick={(match, index, target) =>
           usageContext?.click(match, index, target)
+        }
+      />
+      <RequestForm
+        fallback={
+          results.length === 0 ||
+          results.some(
+            (match) =>
+              match.matchType === 'fallback' ||
+              match.matchType === 'cross-area',
+          )
         }
       />
     </>

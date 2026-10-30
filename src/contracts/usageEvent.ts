@@ -94,6 +94,14 @@ export const UsageEventSchema = z
       type: z.literal('click'),
       target: z.enum(['embed', 'youtube']),
     }),
+    z.strictObject({
+      ...common,
+      ...result,
+      schemaVersion: z.literal(2),
+      type: z.literal('feedback'),
+      helpful: z.boolean(),
+      voteRevision: z.number().int().min(1).max(Number.MAX_SAFE_INTEGER),
+    }),
   ])
   .superRefine((event, ctx) => {
     const invalid = () =>
