@@ -1,7 +1,6 @@
 import {
   LUNA_MODEL,
   LUNA_ENDPOINT,
-  LUNA_MAX_OUTPUT,
   LUNA_RESERVATION,
   LUNA_RERUN_PROMPT,
   LUNA_COMPACT_PROMPT,
@@ -162,9 +161,10 @@ export async function runLunaComparison(options: {
   const limits = readLimits({
     ...options.limits,
     LLM_MODEL: LUNA_MODEL,
-    LLM_MAX_OUTPUT_TOKENS: LUNA_MAX_OUTPUT,
   });
   if (!limits) throw new Error('Invalid frozen test limits.');
+  // Validate current config here; lunaBody retains the isolated protocol's
+  // own 2,000-token output cap and original maximum reservation.
   // Precompute every request without labels before spending anything.
   const bodies = benchmark.profiles.map((profile) =>
     providerBody(

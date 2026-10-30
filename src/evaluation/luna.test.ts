@@ -357,6 +357,7 @@ describe('Luna paid dispatch boundaries using mocks', () => {
     const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
       const request = JSON.parse(String(init?.body));
       expect(request.reasoning.effort).toBe('low');
+      expect(request.max_output_tokens).toBe(2000);
       expect(request.input[0].content).toContain(
         'never add an unrelated or weak video',
       );

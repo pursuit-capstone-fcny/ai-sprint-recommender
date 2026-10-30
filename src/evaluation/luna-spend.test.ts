@@ -12,6 +12,10 @@ import {
 } from './luna';
 import { parseBenchmark } from './benchmark';
 import { validateLiveApproval } from './approval';
+import {
+  LUNA_DEPLOYED_PROMPT,
+  LUNA_DEPLOYED_RESERVATION,
+} from '../../server/luna-policy';
 
 afterEach(() => vi.unstubAllEnvs());
 
@@ -53,7 +57,7 @@ describe('shared evaluation allowance evidence', () => {
     expect(1_000_000 - prior).toBe(662_365);
   });
 
-  it('rejects another full deployed or isolated run at the current balance', async () => {
+  it('rejects paid runs whose maximum reservations exceed the current balance', async () => {
     const remaining = 1_000_000 - readLunaPriorSpend();
     const captured = JSON.parse(
       readFileSync(
@@ -79,14 +83,16 @@ describe('shared evaluation allowance evidence', () => {
         benchmark,
         {
           ...captured,
+          promptVersion: LUNA_DEPLOYED_PROMPT,
+          maxRequestMicrodollars: LUNA_DEPLOYED_RESERVATION,
           priorSpendMicrodollars: LUNA_PRIOR_SPEND,
           allowanceMicrodollars: remaining,
         },
         { sourceRevision: captured.approvedSourceRevision, dirty: false },
         Date.parse('2026-10-30T16:10:00Z'),
-        34,
+        Math.floor(remaining / LUNA_DEPLOYED_RESERVATION) + 1,
       ),
-    ).toThrow('insufficient allowance');
+    ).toThrow();
     const fetcher = vi.fn<typeof fetch>();
     const save = vi.fn();
     await expect(

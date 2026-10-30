@@ -53,12 +53,12 @@ describe('paid evaluation approval preflight', () => {
     const luna = {
       ...approval,
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v11',
+      promptVersion: 'catalog-rank-luna-v12',
       reasoningEffort: 'low',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
       totalAllowanceMicrodollars: 1000000,
       allowanceMicrodollars: 1000000 - LUNA_PRIOR_SPEND,
-      maxRequestMicrodollars: 6000,
+      maxRequestMicrodollars: 5500,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');
     expect(validateLiveApproval(benchmark, luna, checkout, now, 34)).toEqual(

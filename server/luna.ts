@@ -13,6 +13,7 @@ import { boundedJson } from './bounded-json';
 import { readLunaStream } from './luna-stream';
 import {
   LUNA_DEPLOYED_MAX_INPUT,
+  LUNA_DEPLOYED_MAX_OUTPUT,
   LUNA_DEPLOYED_RESERVATION,
 } from './luna-policy';
 
@@ -98,12 +99,13 @@ export function lunaDeployedBody(body: ProviderBody) {
   const original = lunaBody(body, 'low');
   const request = {
     ...original,
+    max_output_tokens: LUNA_DEPLOYED_MAX_OUTPUT,
     input: [
       {
         role: 'system',
         content: body.request.system.replace(
           RANK_OUTPUT_INSTRUCTION,
-          'Each catalog row uses the field order in catalogFields. Return one positions array containing up to eight distinct catalog positions, best match first. Use an empty array when none fit. Include only useful matches, do not pad with videos. Recheck that every position is distinct. Copy the integer position provided for each item; never invent a position or return IDs, titles, URLs, or explanations.',
+          'Each catalog row uses the field order in catalogFields. Return one positions array containing six to eight useful, distinct catalog positions when available, best match first. Choose the strongest three direct matches first. Then review the remaining catalog for demonstrations of other requested activities and directly useful supporting steps: preparing inputs, producing or checking the deliverable, or using the result. A second demonstration of the same task can be useful when it teaches a different practical method. Before stopping below six, check for these complementary matches across the whole catalog, including transferable workflows from another function area or tool. Among equally useful choices, prefer different existing primary task tags. Never invent task tags or add a weak match for diversity. Return fewer only when the catalog lacks further useful matches, and an empty array when none fit. Never pad with unrelated videos. Recheck that every position is distinct. Copy the integer position provided for each item; never invent a position or return IDs, titles, URLs, or explanations.',
         ),
       },
       {
@@ -192,7 +194,8 @@ export function readLunaResponse(
     parsed.model !== LUNA_MODEL ||
     usage.input_tokens >
       (protocol === 'positions' ? LUNA_DEPLOYED_MAX_INPUT : LUNA_MAX_INPUT) ||
-    usage.output_tokens > LUNA_MAX_OUTPUT ||
+    usage.output_tokens >
+      (protocol === 'positions' ? LUNA_DEPLOYED_MAX_OUTPUT : LUNA_MAX_OUTPUT) ||
     costMicrodollars >
       (protocol === 'positions'
         ? LUNA_DEPLOYED_RESERVATION

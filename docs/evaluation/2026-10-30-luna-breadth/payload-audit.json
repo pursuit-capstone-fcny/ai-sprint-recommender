@@ -1,0 +1,69 @@
+{
+  "promptVersion": "catalog-rank-luna-v12",
+  "maxRequestMicrodollars": 5500,
+  "maxRunMicrodollars": 187000,
+  "priorCeilingMicrodollars": 810414,
+  "remainingMicrodollars": 189586,
+  "rows": [
+    {
+      "profileId": "leadership-01",
+      "conservativeInputTokenBound": 48979,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "leadership-02",
+      "conservativeInputTokenBound": 48982,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "operations-01",
+      "conservativeInputTokenBound": 48998,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "operations-02",
+      "conservativeInputTokenBound": 49027,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "programs-01",
+      "conservativeInputTokenBound": 49007,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "programs-02",
+      "conservativeInputTokenBound": 49020,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "communications-01",
+      "conservativeInputTokenBound": 49016,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "communications-02",
+      "conservativeInputTokenBound": 49018,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "fundraising-01",
+      "conservativeInputTokenBound": 49008,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    },
+    {
+      "profileId": "fundraising-02",
+      "conservativeInputTokenBound": 49002,
+      "outputTokenCap": 1000,
+      "catalogCount": 89
+    }
+  ]
+}
