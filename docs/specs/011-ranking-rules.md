@@ -81,3 +81,17 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Manual check: Ali or Eliot reads the reasons for three sample profiles
 - Rollback signal: the golden-test score drops below its last accepted value
 - Review: acceptance evidence names the tested release or document version, unresolved failures and follow-up owners. Updating this specification does not mark the implementation complete.
+
+### Task relevance refinement from #75
+
+Within the task tier, score each distinct goal concept once, grouping existing
+synonyms. Its weight is `1 + ln((active videos + 1) / (matching videos + 1))`.
+A matching title or canonical task contributes twice the weight of a
+matching description. Repeated words and multiple aliases do not add votes.
+This favors specific task evidence over incidental shared words while retaining
+function area before task, then tool, Start-here, date and ID tiebreaks. Retired
+items do not affect these statistics. Scores are rounded to six decimal places
+for deterministic ties.
+
+Generic regression tests use explicit fictional public items alongside the
+original frozen fixture. Benchmark labels and IDs are never ranking inputs.

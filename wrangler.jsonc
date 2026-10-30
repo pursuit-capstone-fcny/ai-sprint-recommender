@@ -1,9 +1,13 @@
 {
-  // Deploys the built SPA as a static-asset Worker (no server code).
+  // The API is disabled by default; no Durable Object migration is applied here.
   "name": "ai-sprint-recommender",
+  "main": "server/worker.ts",
+  "vars": { "LLM_ENABLED": "false" },
   "compatibility_date": "2026-10-01",
   "assets": {
     "directory": "./dist",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
     "not_found_handling": "single-page-application",
   },
 }

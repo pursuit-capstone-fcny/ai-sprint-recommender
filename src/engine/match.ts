@@ -6,6 +6,7 @@ import type { ToolTier } from './vocabulary';
 export interface VideoMatch {
   areaMatch: boolean;
   taskMatch: boolean;
+  taskRelevance?: number;
   toolTier: ToolTier;
   matchedTask?: string;
   matchedWord?: string;

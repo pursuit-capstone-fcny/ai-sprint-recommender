@@ -23,6 +23,7 @@
     "apps-script",
     "vite.config.ts",
     "eslint.config.js",
-    "apps-script-admin"
+    "apps-script-admin",
+    "server"
   ]
 }

@@ -1,0 +1,122 @@
+[
+  {
+    "name": "success",
+    "status": 200,
+    "outcome": "success",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "default-off",
+    "status": 200,
+    "reason": "disabled",
+    "catalogReads": 0,
+    "providerCalls": 0,
+    "reservations": 0
+  },
+  {
+    "name": "kill-switch",
+    "status": 200,
+    "reason": "disabled",
+    "catalogReads": 0,
+    "providerCalls": 0,
+    "reservations": 0
+  },
+  {
+    "name": "empty-catalog",
+    "status": 200,
+    "reason": "insufficient-results",
+    "catalogReads": 1,
+    "providerCalls": 0,
+    "reservations": 0
+  },
+  {
+    "name": "retired-catalog",
+    "status": 200,
+    "reason": "unavailable",
+    "catalogReads": 1,
+    "providerCalls": 0,
+    "reservations": 0
+  },
+  {
+    "name": "catalog-description-injection",
+    "status": 200,
+    "reason": "invalid-response",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "unknown-id",
+    "status": 200,
+    "reason": "invalid-response",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "duplicate-id",
+    "status": 200,
+    "reason": "invalid-response",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "provider-error",
+    "status": 200,
+    "reason": "provider-error",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "timeout",
+    "status": 200,
+    "reason": "timeout",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "budget-exhausted",
+    "status": 200,
+    "reason": "budget-exhausted",
+    "catalogReads": 1,
+    "providerCalls": 0,
+    "reservations": 1
+  },
+  {
+    "name": "rate-limited",
+    "status": 200,
+    "reason": "rate-limited",
+    "catalogReads": 1,
+    "providerCalls": 0,
+    "reservations": 1
+  },
+  {
+    "name": "oversized-output",
+    "status": 200,
+    "reason": "invalid-response",
+    "catalogReads": 1,
+    "providerCalls": 1,
+    "reservations": 1
+  },
+  {
+    "name": "oversized-input",
+    "status": 400,
+    "reason": "unavailable",
+    "catalogReads": 0,
+    "providerCalls": 0,
+    "reservations": 0
+  },
+  {
+    "name": "catalog-too-large",
+    "status": 200,
+    "reason": "catalog-too-large",
+    "catalogReads": 1,
+    "providerCalls": 0,
+    "reservations": 0
+  }
+]
