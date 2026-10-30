@@ -1,0 +1,121 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v14",
+  "reasoningEffort": "low",
+  "runId": "41116488105",
+  "runAttempt": 3,
+  "submittedRequests": 40,
+  "finalMeasuredRequests": 40,
+  "totalMeasuredMicrodollars": 79557,
+  "durableAdditionalMicrodollars": 79557,
+  "unreconciledMicrodollars": 0,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 225000,
+  "cumulativeCeilingMicrodollars": 1447019,
+  "remainingAllowanceMicrodollars": 552981,
+  "inputTokens": 783678,
+  "outputTokens": 2336,
+  "medianClientLatencyMs": 1489.0,
+  "p95ClientLatencyMs": 1926,
+  "maxClientLatencyMs": 2446,
+  "topThreeScores": [10, 10, 10],
+  "fallbacks": 0,
+  "sixToEightCount": 25,
+  "acceptedLlmSixToEightCount": 25,
+  "acceptedLlmThinCount": 5,
+  "expandedCounts": [
+    8, 5, 8, 8, 8, 6, 8, 6, 6, 7, 8, 6, 7, 8, 8, 5, 6, 6, 8, 8, 8, 5, 8, 8, 8,
+    5, 7, 5, 7, 8
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 7
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 7
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": true,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 40,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [],
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 225000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 0,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-role-spoof",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-output-copy",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-empty-task",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "mixed-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "blank-goal-control",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    }
+  ],
+  "responseHeaderRequestCount": 40,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [],
+  "probeCooldowns": [],
+  "recoveryCacheChecks": 0,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": [],
+  "actualServiceTiers": {
+    "fast": 0,
+    "priority": 0,
+    "default": 0
+  },
+  "requestedServiceTier": null
+}

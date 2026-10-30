@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "456746ba9854a3885943e5f1bf7653e2374efcac",
+  "approvedWorkflowRunId": "41116488105",
+  "approvedWorkflowRunAttempt": 3,
+  "expiresAt": "2026-10-30T20:41:17Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v14",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-30",
+  "runtimeDecision": "Jason authorized improving Haiku breadth without regressing injection handling or deduplication, then rerunning within the remaining allowance. V14 retains the V13 breadth text but moves it before existing targeted-ranking priorities for nonblank goals, and omits it for blank browsing to preserve the exact V12 request. Keep the exact V12 final eligibility and uniqueness instruction. Retain V13 failed results. Run all 30 frozen benchmark requests and 10 probes without per-case retries. Labels, catalog tags, diversity gate, low effort, disabled thinking, eight-slot schema, caps and deadlines remain unchanged. Use the same isolated frozen public catalog. Attempt 2 stopped during the initial unpaid readiness request, before any benchmark case. Durable additional spend is zero and cleanup passed. Run the same source as attempt 3, retaining attempt 2 evidence; no paid result is replaced.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $2 cap only. Carry forward $1.367462 including $0.225000 unresolved historical reservations and the $0.079586 failed V13 run. Remaining $0.632538. No new money, resets, refunds or repricing. At most 40 reservations of $0.006756, total $0.270240. Settle known usage at existing Haiku rates; unknown usage keeps its full reservation.",
+  "allowanceMicrodollars": 632538,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 1367462,
+  "totalAllowanceMicrodollars": 2000000,
+  "thinking": "disabled"
+}

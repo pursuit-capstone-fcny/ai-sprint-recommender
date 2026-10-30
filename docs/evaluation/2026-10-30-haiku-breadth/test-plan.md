@@ -84,3 +84,30 @@ in V12's final eligibility/uniqueness instruction remain unchanged. All targets
 above remain fixed. Run another forty requests, maximum reservation $0.270240,
 under the remaining $0.632538 with a new exact-source/attempt approval. Preserve
 V13 as a failed candidate and carry its full cost forward.
+
+## V14 result and V15 revision
+
+V14 run 41116488105 attempt 2 stops during the initial unpaid readiness request,
+before any benchmark case. No response was captured and the exact transport
+cause is unknown. Durable additional spend is zero and shutdown passes. Attempt
+3 runs the same source with its own approval; no paid outcome is replaced.
+
+Attempt 3 restores 10/10 in all trials and raises breadth to 25/30. All four
+injection probes abstain, with no duplicates, invalid responses or timeouts.
+Fundraising-02 retains two hits and 7/8/8 videos. The mixed Operations control
+has two hits but only five videos; blank browsing still returns an empty LLM
+selection even with V12's request. The supplemental audit fails and is retained.
+All forty calls reconcile to $0.079557. Cumulative spend is $1.447019, leaving
+$0.552981 including the unchanged historical unknown reservations.
+
+The hypotheses are ambiguous blank-mode eligibility, narrowing the useful set
+after discarding mixed-goal controls, and sampling variation. V15 adds explicit
+browsing-mode guidance only when the actual goal string is blank. Nonblank
+instruction-only goals never receive it. The nonblank breadth instruction adds
+that ignoring controls does not justify shortening useful recommendations for
+the remaining work. Each input type has its own isolated change. The original
+V12 final eligibility/uniqueness instruction and ranking priorities remain exact.
+
+The blank-mode request test fails before wiring the instruction. Repeat all
+forty requests under the same fixed targets, maximum reservation $0.270240,
+with a new exact-source/attempt approval. Preserve all V13/V14 evidence and costs.

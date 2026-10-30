@@ -16,6 +16,7 @@ import {
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
+  HAIKU_BROWSING_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -55,6 +56,7 @@ describe('optimized Haiku low request', () => {
         haiku.request.system.endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
       if (profile.input.goal.trim()) {
+        expect(haiku.request.system).not.toContain(HAIKU_BROWSING_INSTRUCTION);
         expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
         expect(
           haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION),
@@ -63,11 +65,13 @@ describe('optimized Haiku low request', () => {
         );
       } else {
         expect(haiku.request.system).not.toContain(HAIKU_BREADTH_INSTRUCTION);
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_BROWSING_INSTRUCTION}`,
+        );
       }
-      const v12System = haiku.request.system.replace(
-        ` ${HAIKU_BREADTH_INSTRUCTION}`,
-        '',
-      );
+      const v12System = haiku.request.system
+        .replace(` ${HAIKU_BREADTH_INSTRUCTION}`, '')
+        .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');
       const v12Hash = Object.entries(v12.hashes).find(
         ([id]) => id === profile.id,
       )?.[1];

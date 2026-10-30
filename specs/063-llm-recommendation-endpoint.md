@@ -113,6 +113,10 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 - Given the V14 revision, when adding breadth guidance, then place it before
   existing targeted-ranking priorities and omit it for blank browsing. Preserve
   the exact V12 eligibility/uniqueness instruction and all fixed evaluation gates.
+- Given V15, when the actual goal is blank, then explicitly select browsing
+  recommendations from its area/tools. Nonblank goals never receive this mode.
+  Ignoring control instructions in a mixed goal must not narrow useful real-work
+  recommendations. Keep V12's final checks and the unchanged diversity gate.
 
 - Given the Haiku V12 test, when selecting ranks, then check work eligibility
   before breadth and select each integer position only once. Instruction-only

@@ -3,6 +3,7 @@ import { compactRanking } from './compact-ranking';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
   HAIKU_BREADTH_INSTRUCTION,
+  HAIKU_BROWSING_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
 } from './haiku-policy';
 
@@ -22,7 +23,7 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
         LUNA_TARGETED_RANKING_INSTRUCTION,
         `${HAIKU_BREADTH_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
       )
-    : system;
+    : `${system} ${HAIKU_BROWSING_INSTRUCTION}`;
   return {
     ...body,
     request: {
