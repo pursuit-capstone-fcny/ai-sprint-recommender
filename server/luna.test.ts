@@ -14,6 +14,7 @@ import worker from './worker';
 import { RecommendationBudget, type BudgetNamespace } from './budget-object';
 import type { Ledger } from './budget';
 import { LUNA_PRIOR_SPEND } from '../src/evaluation/luna-ledger';
+import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 
 const env = {
   ...config.vars,
@@ -118,7 +119,7 @@ describe('deployed Luna low candidate', () => {
       expect(fetcher).toHaveBeenCalledTimes(2);
     }
   });
-  it('changes only the service tier from the recorded V12 request', () => {
+  it('preserves V12 payload and Fast tier while adding only the ranking instruction', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
         readFileSync(
@@ -146,9 +147,25 @@ describe('deployed Luna low candidate', () => {
       );
       expect(candidate.service_tier).toBe('fast');
       expect(
-        createHash('sha256')
-          .update(JSON.stringify({ ...candidate, service_tier: 'default' }))
-          .digest('hex'),
+        candidate.input[0].content.endsWith(LUNA_TARGETED_RANKING_INSTRUCTION),
+      ).toBe(true);
+      const normalized = {
+        ...candidate,
+        service_tier: 'default',
+        input: candidate.input.map((message, index) =>
+          index === 0
+            ? {
+                ...message,
+                content: message.content.slice(
+                  0,
+                  -` ${LUNA_TARGETED_RANKING_INSTRUCTION}`.length,
+                ),
+              }
+            : message,
+        ),
+      };
+      expect(
+        createHash('sha256').update(JSON.stringify(normalized)).digest('hex'),
       ).toBe(
         baseline.rows.find(
           (r: { profileId: string }) => r.profileId === profile.id,
@@ -330,7 +347,7 @@ describe('deployed Luna low candidate', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       modelVersion: 'gpt-6-luna',
-      promptVersion: 'catalog-rank-luna-v12-fast',
+      promptVersion: 'catalog-rank-luna-v13-fast',
     });
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(

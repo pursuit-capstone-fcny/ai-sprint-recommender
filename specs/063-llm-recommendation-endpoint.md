@@ -119,3 +119,10 @@ remain pending.
 - Given Jason's additional $1, when reserving test calls, then preserve the
   existing ledger and charges under the $2 cumulative Luna limit. Production
   stays disabled. See the [trial plan](../docs/evaluation/2026-10-30-luna-fast/test-plan.md).
+
+- Given V13 Fast and a multi-part goal, when ranking the first three videos,
+  then prioritize distinct requested activities and the intended counterparty
+  before general research or repeated practice for other audiences. Preserve
+  useful supporting videos in later ranks, V12 breadth instructions, low effort,
+  caps and deadlines. No benchmark labels or diversity checks change. See the
+  [ranking trial plan](../docs/evaluation/2026-10-30-luna-ranking/test-plan.md).
