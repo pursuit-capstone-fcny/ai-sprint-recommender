@@ -1,0 +1,21 @@
+{
+  "approvedSourceRevision": "b8f952dce67ebacca9c48e1d401e00c2e4b2562d",
+  "approvedWorkflowRunId": "40998381725",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-30T04:22:43Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-29",
+  "runtimeDecision": "Jason requested fixing Luna timeouts and missing diagnostics, then one #19 rerun. Use GPT-6 Luna low standard with unchanged V10 prompt, eight-video cap, frozen labels and task-diversity gate. Stream terminal responses, capture authenticated test diagnostics and wait out timeout leases between independent cases without retrying them.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use only the remaining $0.323446 of the shared $1 allowance. Carry forward $0.676554 including $0.175000 of unknown reservations. No budget reset, increased cap or paid retries.",
+  "allowanceMicrodollars": 323446,
+  "maxRequestMicrodollars": 7000,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 676554,
+  "totalAllowanceMicrodollars": 1000000
+}

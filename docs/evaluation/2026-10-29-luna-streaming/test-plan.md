@@ -53,3 +53,13 @@ quality remains pending client review. Failed runs and missing evidence stay
 visible. Always disable test calls, read the durable balance, remove test keys
 and temporary approval/trigger afterward. Production LLM calls and usage
 logging, and evaluation usage logging, stay disabled.
+
+The first execution, run 40998381725 attempt 2, dispatched zero paid calls.
+All 34 requests and four warmups have diagnostics, but period budgets blocked
+model calls: monthly deployed spend was $0.338919 while a mistaken monthly cap
+was set to the remaining $0.323446. That subtracts prior spend twice. Both
+period caps now use the original $1 ceiling. The unchanged cumulative cap and
+$0.676554 floor still allow only $0.323446 more. Counters, reservations and
+historical charges are not reset. A regression test reproduces the block and
+proves the corrected config still rejects a request exceeding $1 total. The
+zero-spend run is preserved; it is not model quality evidence.

@@ -43,6 +43,16 @@ try {
     Number(config.vars.LLM_PRIOR_MICRODOLLARS),
     contracts.LUNA_PRIOR_SPEND,
   );
+  // Period counters already contain prior deployed spend. The cumulative cap
+  // and carried floor enforce the remaining allowance; never subtract it twice.
+  assert.equal(
+    config.vars.LLM_DAILY_MICRODOLLARS,
+    config.vars.LLM_ALLOWANCE_MICRODOLLARS,
+  );
+  assert.equal(
+    config.vars.LLM_MONTHLY_MICRODOLLARS,
+    config.vars.LLM_ALLOWANCE_MICRODOLLARS,
+  );
   const prior = contracts.readLunaPriorSpend();
   const approval = JSON.parse(
     readFileSync(

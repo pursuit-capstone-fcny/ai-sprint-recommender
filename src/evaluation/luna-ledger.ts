@@ -34,6 +34,10 @@ export const LUNA_DEPLOYED_BUDGETS: [string, string][] = [
     'docs/evaluation/2026-10-29-expanded/runs/40995485497-2/state/luna-budget.json',
     'fcef4928d6fbb46fce0cf66b7420d6eb3b5938e163530daecfb17878af329e6e',
   ],
+  [
+    'docs/evaluation/2026-10-29-luna-streaming/runs/40998381725-2/state/luna-budget.json',
+    '17354d3bc46cd4cf14578f09598fa4efdb0d7872ed22df128d956bb4395908b9',
+  ],
 ];
 export const LUNA_SPEND_CAPTURES = [
   [

@@ -1,0 +1,82 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "gpt-6-luna",
+  "promptVersion": "catalog-rank-v10",
+  "reasoningEffort": "low",
+  "runId": "40998381725",
+  "runAttempt": 2,
+  "submittedRequests": 34,
+  "finalMeasuredRequests": 34,
+  "totalMeasuredMicrodollars": 0,
+  "durableAdditionalMicrodollars": 0,
+  "unreconciledMicrodollars": 0,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 175000,
+  "cumulativeCeilingMicrodollars": 676554,
+  "remainingAllowanceMicrodollars": 323446,
+  "inputTokens": 0,
+  "outputTokens": 0,
+  "medianClientLatencyMs": 114.5,
+  "p95ClientLatencyMs": 271,
+  "maxClientLatencyMs": 358,
+  "topThreeScores": [0, 0, 0],
+  "fallbacks": 30,
+  "sixToEightCount": 30,
+  "acceptedLlmSixToEightCount": 0,
+  "acceptedLlmThinCount": 0,
+  "expandedCounts": [
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 0,
+      "expandedHits": 0,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 1,
+      "expandedHits": 1,
+      "count": 8
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 0,
+  "zeroCostDiagnosticRequests": 34,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [],
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 175000,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 0,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "rules",
+      "fallbackReason": "budget-exhausted"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "rules",
+      "fallbackReason": "budget-exhausted"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "budget-exhausted"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "budget-exhausted"
+    }
+  ],
+  "responseHeaderRequestCount": 34,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [],
+  "probeCooldowns": []
+}

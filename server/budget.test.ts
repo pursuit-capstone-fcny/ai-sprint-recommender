@@ -10,6 +10,8 @@ import {
 import { RecommendationBudget } from './budget-object';
 import { readLimits } from './config';
 import { environment, TestStorage } from './test-helpers';
+import lunaConfig from '../wrangler.luna-test.json';
+import haikuConfig from '../wrangler.evaluation.json';
 const limits = readLimits(environment)!;
 afterEach(() => vi.useRealTimers());
 describe('atomic spend reservations', () => {
@@ -146,3 +148,34 @@ describe('atomic spend reservations', () => {
     expect((await storage.get<Ledger>('ledger'))?.clients).toEqual({});
   });
 });
+
+it.each([lunaConfig, haikuConfig])(
+  'does not charge historical monthly spend twice in the shared comparison config',
+  (configuration) => {
+    const configured = {
+      ...readLimits(configuration.vars)!,
+      LLM_PRIOR_MICRODOLLARS: 676554,
+    }; // Replay the saved October 30 balance.
+    const now = Date.parse('2026-10-30T03:45:00Z');
+    const ledger = {
+      ...emptyLedger(),
+      day: '2026-10-30',
+      month: '2026-10',
+      daily: 89385,
+      monthly: 338919,
+      total: 676554,
+    };
+    expect(
+      reserve(ledger, configured, 'one', 'a', 7000, now + 5000, now),
+    ).toEqual({ ok: true });
+    expect(ledger.total).toBe(683554);
+    settle(ledger, 'one', null);
+    expireLedger(ledger, now + 61000);
+    expect(ledger.total).toBe(683554);
+    ledger.total = 999999;
+    expect(
+      reserve(ledger, configured, 'two', 'a', 7000, now + 66000, now + 61000),
+    ).toEqual({ ok: false, reason: 'budget-exhausted' });
+    expect(ledger.total).toBe(999999);
+  },
+);
