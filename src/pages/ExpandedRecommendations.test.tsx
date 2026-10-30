@@ -54,7 +54,8 @@ it('counts model picks and fallback fillers together in the displayed set and ev
     />,
   );
   send.mockClear();
-  fireEvent.change(screen.getByLabelText('Function area'), {
+  fireEvent.click(screen.getByText(/Refine by function area or tool/));
+  fireEvent.change(screen.getByLabelText('Function area (optional)'), {
     target: { value: 'Operations' },
   });
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
@@ -122,7 +123,8 @@ it.each(['rules', 'llm'] as const)(
       </StrictMode>,
     );
     send.mockClear();
-    fireEvent.change(screen.getByLabelText('Function area'), {
+    fireEvent.click(screen.getByText(/Refine by function area or tool/));
+    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
       target: { value: 'Operations' },
     });
     const submit = () =>

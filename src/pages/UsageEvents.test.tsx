@@ -87,12 +87,16 @@ describe('browser usage events', () => {
     await waitFor(() => expect(logged()).toHaveLength(4));
     expect(logged().every((event) => event.type === 'impression')).toBe(true);
     expect(screen.getByText(/Your typed goal is not logged/)).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('Function area'), {
+    fireEvent.click(screen.getByText(/Refine by function area or tool/));
+    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
       target: { value: 'Operations' },
     });
-    fireEvent.change(screen.getByLabelText('What do you want to learn?'), {
-      target: { value: 'report writing plus private fixture words' },
-    });
+    fireEvent.change(
+      screen.getByLabelText('What do you want to learn or do?'),
+      {
+        target: { value: 'report writing plus private fixture words' },
+      },
+    );
     fireEvent.change(screen.getByLabelText('Tool (optional)'), {
       target: { value: 'ChatGPT' },
     });
@@ -122,9 +126,12 @@ describe('browser usage events', () => {
     ).toBe(true);
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     rerender(view);
-    fireEvent.change(screen.getByLabelText('What do you want to learn?'), {
-      target: { value: 'unsubmitted edit' },
-    });
+    fireEvent.change(
+      screen.getByLabelText('What do you want to learn or do?'),
+      {
+        target: { value: 'unsubmitted edit' },
+      },
+    );
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
     );
@@ -179,7 +186,8 @@ describe('browser usage events', () => {
         usage={{ session: session(), catalog: publicCatalog }}
       />,
     );
-    fireEvent.change(screen.getByLabelText('Function area'), {
+    fireEvent.click(screen.getByText(/Refine by function area or tool/));
+    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
       target: { value: 'Operations' },
     });
     submit();

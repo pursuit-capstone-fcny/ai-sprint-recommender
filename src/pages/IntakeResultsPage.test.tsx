@@ -38,7 +38,9 @@ describe('catalog page integration', () => {
     expect(await screen.findByText('No videos available')).toBeTruthy();
     expect(screen.queryByRole('alert')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Refresh catalog' }));
-    expect(await screen.findByLabelText('Function area')).toBeTruthy();
+    expect(
+      await screen.findByLabelText('Function area (optional)'),
+    ).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
@@ -48,12 +50,15 @@ describe('catalog page integration', () => {
       vi.fn().mockResolvedValue({ ok: true, json: async () => fixture }),
     );
     render(<IntakeResultsPage />);
-    const select = await screen.findByLabelText('Function area');
+    const select = await screen.findByLabelText('Function area (optional)');
     expect(
       [...select.querySelectorAll('option')].map((option) => option.value),
     ).toEqual(['', ...fixture.functionAreas]);
     expect(fixture.items.some((item) => item.tools.includes('Claude'))).toBe(
       false,
+    );
+    fireEvent.click(
+      screen.getByText('Refine by function area or tool (optional)'),
     );
     const toolSelect = screen.getByLabelText('Tool (optional)');
     expect(

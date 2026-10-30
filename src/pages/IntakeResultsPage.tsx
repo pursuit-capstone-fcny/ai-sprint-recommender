@@ -36,8 +36,8 @@ export function IntakeResultsPage() {
             <p className="eyebrow">AI Sprint video library</p>
             <h1>Find the right AI video for your work.</h1>
             <p className="hero-lede">
-              Pick your area and tell us what you're working on. We'll suggest a
-              few short Sprint videos to start with.
+              Tell us about your work, your role or what your organization does.
+              We'll suggest Sprint videos to help you get started.
             </p>
           </div>
         </div>
@@ -107,8 +107,8 @@ export function IntakeResultsPage() {
               <h2 id="how-it-works">How we pick videos</h2>
               <p>
                 {llmEnabled
-                  ? "AI suggestions compare your goal with the video catalog. We use standard matching if AI suggestions aren't available. Cards always use the catalog's titles, descriptions and links."
-                  : 'We look at your area first, then what you want to learn, then your tools. If nothing fits exactly, we show the closest videos and say so.'}
+                  ? 'Describe your work and select Find videos. AI suggestions compare your description and any optional refinements with the video catalog. If AI suggestions are unavailable, we use standard matching. No follow-up interview is required.'
+                  : 'Describe your work and select Find videos. Standard matching uses words in your description to look for related tasks, video titles and descriptions. You can optionally refine by function area or tool. If nothing matches, we suggest videos to start with. No follow-up interview is required.'}
               </p>
             </section>
             <section className="info-panel" aria-labelledby="about-library">

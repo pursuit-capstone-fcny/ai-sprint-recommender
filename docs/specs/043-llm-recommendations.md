@@ -25,9 +25,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 ### Acceptance criteria
 
 - AC-43.1 Existing form
-  - Given a valid function area, optional goal and tools
+  - Given #82's plain-language description and optional function area and tool refinements
   - When someone submits Find videos
-  - Then one submission starts at most one LLM request and shows an accessible loading state. Blank goals remain valid; "Not sure" with no goal or tools goes straight to #13's Start-here set without a paid call
+  - Then one submission starts at most one LLM request and shows an accessible loading state. Blank goals remain valid; no selected function area, goal or tools goes straight to #13's Start-here set without a paid call
 - AC-43.2 Ranked results
   - Given a valid response from #63
   - When results render
@@ -60,6 +60,16 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Log or metric: LLM versus rules result sets, fallback reasons and submission-to-results latency, without raw goals.
 - Manual check: signed-out desktop, mobile and keyboard use on preview; one LLM result and one forced fallback.
 - Rollback signal: invalid cards, stuck loading or stale results; disable LLM recommendations and verify the rules path.
+
+### Text-first intake integration from #82
+
+The description is the first input. Examples populate it without requesting
+recommendations. Function area and tool selectors are optional refinements,
+provisionally retained pending Ali and Eliot's decision through #8. One Find
+videos or Enter submission uses the same request and fallback behavior above.
+The matching explainer describes this flow; provider disclosure and existing
+privacy protections continue to apply. This does not enable LLM calls or change
+the separate #83 result-count policy.
 
 ### Result-count policy update
 

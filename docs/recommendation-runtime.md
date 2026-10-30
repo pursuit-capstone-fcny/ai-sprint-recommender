@@ -10,6 +10,40 @@ runtime decision in #1 and the model, owner, permitted data, retention terms,
 pricing and budgets in #8. #19 supplies the relevance evidence required before
 production enablement. An API key alone is insufficient.
 
+## Text-first discovery
+
+Spec #82 starts discovery with a description of the learner's task, role,
+organizational mission or learning need. The field accepts up to 500 characters.
+Task, role and mission examples fill it and return keyboard focus to it without
+submitting. Find videos and Enter use the same native form submission. Results
+appear in one step, without an interview, login or saved profile.
+
+Function area and tool selectors are optional, in a collapsed refinement
+section. Its summary shows selected values so hidden refinements remain visible.
+Keeping these selectors is provisional pending Ali and Eliot's decision through
+#8. Example wording also needs client approval. Clear resets the description,
+selectors and results to the initial state.
+
+Submission preserves the existing recommendation paths. Standard matching
+compares description words and synonyms with catalog tasks, titles and
+descriptions; selected function areas and tools refine the existing ranking.
+This is keyword matching and does not guarantee semantic understanding of roles
+or missions. The separate deterministic prompt engine is not wired into this
+flow. When AI suggestions are explicitly enabled for a remote catalog, the page
+sends one bounded request to the existing endpoint, with the provider disclosure
+shown before submission. Unavailable AI suggestions use standard matching.
+Blank input with no refinements uses Start-here suggestions without a provider
+call. Catalog loading and existing initial impressions are independent of search
+submission; typing, selecting an example and changing refinements make no
+recommendation requests or search events.
+
+Raw descriptions remain in page memory and the disclosed recommendation request
+only. They do not enter URLs, browser storage or usage analytics. A completed
+submission creates one search context; usage events contain canonical dictionary
+tasks and selected tags, never the learner's raw description. These changes do
+not enable a provider, usage collection or a production deployment. #83 owns the
+separate expanded-results policy.
+
 ## Haiku 5.5 test results
 
 `catalog-rank-v8` puts the full catalog first in the
