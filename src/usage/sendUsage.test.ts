@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/public-catalog.json';
+import { impressionEvent } from '../../fixtures/usage-events';
 import { parsePublicCatalog } from '../contracts/publicCatalog';
 import {
   createUsageSender,
@@ -126,6 +127,61 @@ describe('usage delivery', () => {
     },
   );
 
+  it.each(['USAGE_DISABLED', 'USAGE_FULL'])(
+    'explicit feedback cannot resume a collector stopped by %s',
+    async (code) => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(ack({ error: { code } }))
+        .mockResolvedValue(ack());
+      const sender = createUsageSender(url);
+      await sender.send(event(), catalog);
+      const feedback = {
+        ...impressionEvent,
+        schemaVersion: 2,
+        type: 'feedback',
+        helpful: true,
+        voteRevision: 1,
+      };
+      expect(
+        await sender.send(feedback, catalog, { explicitFeedback: true }),
+      ).toBe('dropped');
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+  it('rate-limit recovery rejects automatic traffic and invalid feedback even when flagged explicit', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(ack({ error: { code: 'USAGE_RATE_LIMITED' } }))
+      .mockResolvedValue(ack());
+    const sender = createUsageSender(url);
+    await sender.send(event(), catalog);
+    expect(
+      await sender.send(event(), catalog, { explicitFeedback: true }),
+    ).toBe('dropped');
+    const feedback = {
+      ...impressionEvent,
+      schemaVersion: 2,
+      type: 'feedback',
+      helpful: true,
+      voteRevision: 1,
+    };
+    expect(await sender.send(feedback, catalog)).toBe('dropped');
+    expect(
+      await sender.send({ ...feedback, goal: 'private' }, catalog, {
+        explicitFeedback: true,
+      }),
+    ).toBe('dropped');
+    expect(
+      await sender.send({ ...feedback, youtubeId: 'unknown-id1' }, catalog, {
+        explicitFeedback: true,
+      }),
+    ).toBe('dropped');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(
+      await sender.send(feedback, catalog, { explicitFeedback: true }),
+    ).toBe('accepted');
+    expect(await sender.send(event(), catalog)).toBe('dropped');
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
   it.each([
     opaque,
     new Response(null, { status: 503 }),

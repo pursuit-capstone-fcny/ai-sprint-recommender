@@ -69,3 +69,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Manual check: vote up then down; the event log preserves both changes while the aggregate counts one down vote
 - Rollback signal: feedback events fail validation and get dropped
 - Review: acceptance evidence names the tested release or document version, unresolved failures and follow-up owners. Updating this specification does not mark the implementation complete.
+
+### Implementation evidence, October 30, 2026
+
+- Implementation and setup: [private-feedback](../private-feedback.md).
+- This spec has its own PR branch, based on `8f5e4a6`.
+- Final wording, collection/access/retention decisions, operating ownership and
+  live Cloudflare/collector delivery remain open. The user confirmed no operating
+  approvals are available. This update does not mark acceptance complete.

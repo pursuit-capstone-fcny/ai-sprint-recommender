@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { rank } from '../engine';
+import { feedbackQuestion } from '../feedback/vote';
 import {
   recommendationsEnabled,
   requestRecommendations,
@@ -89,6 +90,7 @@ export function IntakeResults({
   const isGlobalFallback = results[0]?.matchType === 'fallback';
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
+  const question = feedbackQuestion();
   const usageContext = useMemo(
     () =>
       usageSession && usageCatalog
@@ -268,6 +270,11 @@ export function IntakeResults({
             : null}
       </p>
       <ResultsList
+        feedback={
+          question && usageContext
+            ? { question, bind: usageContext.feedback }
+            : undefined
+        }
         loading={loading}
         results={results}
         playingId={playingId}

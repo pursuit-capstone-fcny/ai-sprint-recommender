@@ -29,6 +29,8 @@ const exportedFunctions = [
   'installAnalyticsTriggers',
   'refreshAnalyticsOnEdit',
   'analyticsReportLinks',
+  'refreshFeedbackReport',
+  'installFeedbackReporting',
 ];
 if (testBuild) exportedFunctions.push('initializeTestCatalog');
 await mkdir(directory, { recursive: true });

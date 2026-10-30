@@ -9,6 +9,10 @@ export {
   refreshAnalyticsOnEdit,
   analyticsReportLinks,
 } from './analytics-sheet';
+export {
+  refreshFeedbackReport,
+  installFeedbackReporting,
+} from './feedback-sheet';
 
 export { doPost, initializeUsageLog, purgeUsageLog } from './usage-sheet';
 export {

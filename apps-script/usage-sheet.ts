@@ -87,6 +87,7 @@ export function doPost(event?: { postData?: UsageRequest }) {
     };
     body = receiveUsage(event?.postData, {
       enabled,
+      feedbackEnabled: properties.getProperty('FEEDBACK_ENABLED') === 'true',
       policy: () => readPolicy(properties),
       now: () => new Date(),
       lock: LockService.getScriptLock(),
