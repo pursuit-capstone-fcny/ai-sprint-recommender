@@ -1,9 +1,36 @@
 # Analytics end-to-end test deployment
 
+## Static catalog cutover on October 30, 2026
+
+The existing test collector is now version 4, built from `8f5e4a6`. Its GET
+returns the same 89 public catalog items and version as
+[the published test manifest](https://ai-sprint-library-test.jason-zeng151.workers.dev/catalog/current.json):
+`sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d`.
+Google granted the approved `script.external_request` scope. Both the manifest
+and snapshot returned HTTP 200, and the snapshot digest matched its version.
+
+A controlled backend test accepted one `src=team` topic search for the canonical
+keyword **AI policy drafting**, one impression for **Placeholder AI Guidelines**
+(`6d2bKhdmqqA`), and one embed click. Repeating the impression returned
+`duplicate`. These events used the published version above. No raw goal was sent.
+
+`LIBRARY_TEST_COLLECTION_READY=true` now enables usage delivery in newly built
+PR previews. Production collection and paid LLM recommendations remain disabled.
+The collector keeps its existing URL and anonymous POST access, private usage
+Sheet, one-day retention, 20 events/minute, 100/day and 1,000-row caps.
+
+The private dashboard is now version 3 from the same source, configured with
+`LIBRARY_PUBLIC_ORIGIN` and `LIBRARY_SOURCE_SHEET_URL`. It preserves visitor
+execution, Google-account access and Restricted Sheet membership checks.
+Dashboard authorization and browser-to-dashboard reconciliation are still being
+verified; deployment alone does not establish that the report is working.
+
+## Historical verification
+
 Historical verification of the pre-publishing deployment on October 29, 2026.
-This live Google deployment has not yet been upgraded to the static catalog
-stack. Follow [library publishing](library-publishing.md) to deploy the new
-bundles and configuration after review. This uses the existing isolated test collector and
+At that time the Google deployment still used the pre-publishing catalog.
+The record below describes that earlier verification. Deployment instructions
+are in [library publishing](library-publishing.md). It used the isolated test collector and
 private test copy of the library. The production integration workbook and
 production collection were not changed.
 
