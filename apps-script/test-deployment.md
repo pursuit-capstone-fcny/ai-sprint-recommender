@@ -1,7 +1,10 @@
 # Test catalog and usage deployment
 
-Verified October 20, 2026. This environment uses the user's test copy; production
-configuration was not changed.
+Updated October 30, 2026. This environment uses the user's test copy.
+The collector now validates usage against the published static catalog. See
+[the current analytics cutover record](../docs/analytics/test-deployment.md)
+for the version, authorization and reconciliation evidence. The October 20
+verification below describes the earlier mutable-catalog deployment.
 
 - [Test Sheet](https://docs.google.com/spreadsheets/d/1UO6Biq_clsL8kqmHyBN2qChJ8nbLSwclY_Jdg499xHY/edit#gid=1125105544)
 - [Bound Apps Script project](https://script.google.com/home/projects/144EKtE55YFjUMCvgH0PBOr7-58qYChjXL8oBjVXrnZFIBi337CyuINW-/edit)
@@ -18,8 +21,8 @@ configuration was not changed.
 | Access                     | Anyone, including signed-out visitors                                       |
 | Script ID                  | `144EKtE55YFjUMCvgH0PBOr7-58qYChjXL8oBjVXrnZFIBi337CyuINW-`                 |
 | Deployment ID              | `AKfycbz-MZXRuXo997pUlBO_bZa3ClUAp-vZSOHbpszXcHJ7N6BtqCdeGi4CNXUxWy39pTev`  |
-| Current / previous version | 3 / 2                                                                       |
-| Deployed source            | `e6d0107`, generated `build/apps-script-test/Code.js` saved as `Catalog.gs` |
+| Current / previous version | 4 / 3                                                                       |
+| Deployed source            | `8f5e4a6`, generated `build/apps-script-test/Code.js` saved as `Catalog.gs` |
 | `CATALOG_ENVIRONMENT`      | `test`                                                                      |
 | `CATALOG_SPREADSHEET_ID`   | `1UO6Biq_clsL8kqmHyBN2qChJ8nbLSwclY_Jdg499xHY`                              |
 | `CATALOG_PUBLIC_ENABLED`   | `true`                                                                      |

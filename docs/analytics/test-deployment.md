@@ -22,8 +22,30 @@ Sheet, one-day retention, 20 events/minute, 100/day and 1,000-row caps.
 The private dashboard is now version 3 from the same source, configured with
 `LIBRARY_PUBLIC_ORIGIN` and `LIBRARY_SOURCE_SHEET_URL`. It preserves visitor
 execution, Google-account access and Restricted Sheet membership checks.
-Dashboard authorization and browser-to-dashboard reconciliation are still being
-verified; deployment alone does not establish that the report is working.
+The test owner completed the updated Google consent and connected the private
+Sheet. The authenticated report loaded all 89 videos. With team traffic included,
+**AI policy drafting** showed one keyword search, one appearance and one embed
+click. Its **Placeholder AI Guidelines** association showed one appearance and
+one embed click. A signed-out request returned HTTP 302 to Google sign-in.
+
+Older test events still produce the report's explicit missing-history and
+unattributed-event warnings; they are not assigned guessed keyword associations.
+Temporary editor authorization probes were removed after verification.
+The [new collection-enabled preview](https://ffab5699-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team)
+was then tested in the browser. Selecting Leadership, searching for the
+synthetic goal **AI policy drafting**, and clicking the first video's embed
+added one appearance and one embed click to **Placeholder AI Guidelines**.
+After **Reload data**, its video totals increased from 2/1 to 3/2
+(appearances/embed clicks), including one earlier unattributed appearance.
+The **AI policy drafting** association increased from 1/1 to 2/2. The
+**Tags & keywords** row showed two keyword searches, two catalog-tag appearances
+and two embed clicks. These totals include the controlled backend test above.
+The browser search recorded multiple canonical keywords from the existing
+matcher; association rows are co-occurrences and must not be added together.
+
+Typecheck, lint, all 536 tests and all application/Apps Script/admin builds
+passed locally. The preview deployment passed. No application source changes
+were required for this cutover.
 
 ## Historical verification
 
@@ -37,7 +59,7 @@ production collection were not changed.
 ## Open the test
 
 - [Private analytics dashboard](https://script.google.com/macros/s/AKfycbzw_0TUPaW2VbEEiLonCU_AsG7KJkf7H2iB2zg4oG2dmq3SNZFv2zNY-LRW73sCFS7J/exec)
-- [Test recommender with team attribution](https://e4cdf1ae-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team)
+- [Historical test recommender with team attribution](https://e4cdf1ae-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team)
 - [Private test Sheet](https://docs.google.com/spreadsheets/d/1UO6Biq_clsL8kqmHyBN2qChJ8nbLSwclY_Jdg499xHY/edit)
 
 The recommender footer links **Admin analytics** to the private dashboard in a
