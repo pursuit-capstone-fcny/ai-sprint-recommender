@@ -1,0 +1,51 @@
+.request-section {
+  margin-top: var(--space-6);
+  max-width: 70ch;
+  scroll-margin-top: var(--space-3);
+}
+.request-section h2 {
+  margin-bottom: var(--space-2);
+}
+.request-section a {
+  color: var(--navy);
+  text-underline-offset: 0.2em;
+}
+.request-section fieldset {
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+.request-section legend {
+  font-weight: 700;
+  margin-bottom: var(--space-1);
+}
+.request-section .field {
+  margin-block: var(--space-2);
+}
+.request-section textarea {
+  width: 100%;
+  min-height: 128px;
+  resize: vertical;
+  padding: var(--space-2);
+  border: 1px solid var(--field-line);
+  border-radius: var(--radius-sm);
+  color: var(--ink);
+  background: var(--surface);
+}
+.request-option {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  padding-block: var(--space-1);
+}
+.request-option input {
+  flex: none;
+  accent-color: var(--navy);
+}
+
+.request-section .btn:disabled {
+  cursor: wait;
+  opacity: 0.7;
+  transform: none;
+}
