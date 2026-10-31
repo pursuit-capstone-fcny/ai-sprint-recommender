@@ -36,3 +36,21 @@ historical unknown reservations remain charged. Bind approval to the exact
 commit, run and attempt. Disable calls and remove keys afterward. Production
 LLM calls and usage logging stay disabled. Benchmark labels, goals, catalog,
 task-diversity gate and prior results remain unchanged.
+
+## V39 follow-up
+
+V38 preserves reliability but fails the Fundraising wording control, reduces
+breadth to 27/30 and retains all three podcast flags. All 74 provider calls across
+40 client requests reconcile to $0.071940. The remaining allowance is $0.721387.
+Its results and failed fresh-comparison gate remain recorded.
+
+V39 changes only the review task and its output adapter. The second call receives
+the same draft-plus-alternatives pool without identifying the draft selections.
+It classifies each candidate as 0 unrelated, 1 useful support or 2 direct.
+These temporary model judgments are not benchmark labels. The adapter rejects
+missing/extra/out-of-range fields, removes zeros, ranks direct matches first,
+retains draft priority within each positive group and caps the result at eight.
+The browser task-diversity gate remains unchanged. No positive quota or output
+count is supplied to the classifier. Both stages retain the same combined
+reservation, deadline and strict failure accounting. Run the same forty cases
+once with exact-attempt approval, preserving every outcome.

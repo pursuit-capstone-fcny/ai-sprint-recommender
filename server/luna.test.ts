@@ -613,7 +613,7 @@ describe('deployed Luna low candidate', () => {
       idFromName: vi.fn((name) => name),
       get: () => object,
     };
-    const fetcher = vi.fn<typeof fetch>(async (url) =>
+    const fetcher = vi.fn<typeof fetch>(async (url, init) =>
       String(url).includes('script.google.com')
         ? Response.json(catalog)
         : Response.json({
@@ -624,9 +624,18 @@ describe('deployed Luna low candidate', () => {
                 type: 'text',
                 text: JSON.stringify(
                   Object.fromEntries(
-                    Array.from({ length: 8 }, (_, i) => [
-                      'rank' + (i + 1),
-                      i < 3 ? i : null,
+                    Object.keys(
+                      JSON.parse(String(init?.body)).output_config.format.schema
+                        .properties,
+                    ).map((key, i) => [
+                      key,
+                      key.startsWith('candidate')
+                        ? i < 3
+                          ? 2
+                          : 0
+                        : i < 3
+                          ? i
+                          : null,
                     ]),
                   ),
                 ),

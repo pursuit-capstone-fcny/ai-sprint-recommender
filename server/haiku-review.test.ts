@@ -50,9 +50,24 @@ describe('bounded Haiku review', () => {
     const provider = anthropicProvider('fixture-only', async (_url, init) => {
       requests.push(JSON.parse(String(init?.body)));
       return Response.json(
-        payload(
-          requests.length === 1 ? [22, 23, 24, 25, 26] : [0, 1, 2, 3, 4, 5],
-        ),
+        requests.length === 1
+          ? payload([22, 23, 24, 25, 26])
+          : {
+              ...payload([]),
+              content: [
+                {
+                  type: 'text',
+                  text: JSON.stringify(
+                    Object.fromEntries(
+                      Array.from({ length: 18 }, (_, i) => [
+                        'candidate' + i,
+                        i < 2 ? 2 : i < 6 ? 1 : 0,
+                      ]),
+                    ),
+                  ),
+                },
+              ],
+            },
       );
     });
     const result = await haikuReviewProvider(provider)(
@@ -63,7 +78,7 @@ describe('bounded Haiku review', () => {
     expect(requests.map((r) => r.max_tokens)).toEqual([256, 256]);
     const review = JSON.parse(requests[1].messages[0].content);
     expect(review.catalog).toHaveLength(18);
-    expect(review.draftPositions).toHaveLength(5);
+    expect(review.draftPositions).toBeUndefined();
     expect(result.value).toEqual({
       youtubeIds: items.slice(0, 6).map((i) => i.youtubeId),
     });
@@ -153,7 +168,7 @@ it.each(['empty', 'invalid', 'aborted'] as const)(
   },
 );
 
-it('keeps measured charges from both stages when the review contains a duplicate', async () => {
+it('keeps measured charges from both stages when the review has the wrong schema', async () => {
   let calls = 0;
   const provider = anthropicProvider('fixture-only', async () =>
     Response.json(payload(++calls === 1 ? [0, 1, 2] : [0, 0])),
@@ -162,7 +177,7 @@ it('keeps measured charges from both stages when the review contains a duplicate
     await haikuReviewProvider(provider)(original, new AbortController().signal),
   ).toMatchObject({
     value: null,
-    validationFailure: 'duplicate',
+    validationFailure: 'schema',
     inputTokens: 2000,
     outputTokens: 120,
   });

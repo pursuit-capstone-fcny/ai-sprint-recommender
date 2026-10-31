@@ -31,7 +31,8 @@ try {
               const outbound=new Request(url,init);
               if(outbound.redirect!=='manual')throw new Error('Redirects must not be followed');
               if(redirect)return new Response(null,{status:302,headers:{location:'https://example.com/'}});
-              const text=JSON.stringify(${haiku} ? Object.fromEntries(Array.from({length:8},(_,i)=>['rank'+(i+1),i===0?0:null])) : {positions:[0]});
+              const keys=JSON.parse(String(init.body)).output_config?.format?.schema?.properties;
+              const text=JSON.stringify(${haiku} ? Object.fromEntries(Object.keys(keys??{rank1:0,rank2:0,rank3:0,rank4:0,rank5:0,rank6:0,rank7:0,rank8:0}).map((key,i)=>[key,key.startsWith('candidate')?(i===0?2:0):(i===0?0:null)])) : {positions:[0]});
               const payload = ${haiku ? "{stop_reason:'end_turn',usage:{input_tokens:100,output_tokens:50},content:[{type:'text',text}]}" : "{id:'synthetic',model:'gpt-6-luna',status:'completed',service_tier:'priority',usage:{input_tokens:100,output_tokens:50},output:[{type:'message',content:[{type:'output_text',text}]}]}"};
               if (${haiku}) return Response.json(payload);
               const bytes=new TextEncoder().encode('event: response.completed\\ndata: '+JSON.stringify({type:'response.completed',response:payload})+'\\n\\n');

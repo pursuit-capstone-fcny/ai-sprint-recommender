@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "e086eac5723fc6393846ef4854889d9f7ab1b40c",
+  "approvedWorkflowRunId": "41250093615",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T23:52:44Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v38",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V38 reviews each valid nonempty draft with unused alternatives in a bounded second call. At most two planned calls per client request; combined input bound 65000, total output 512 split 256 each, same 4.5-second deadline and 6756-microdollar reservation. Single-call path for blank/oversized context; no review for empty or invalid drafts. Preserve strict validation, frozen labels, task-diversity gate, metadata, low effort and thinking disabled. Thirty benchmark requests and ten probes; no retries, omitted failures, padding, paid warm-up or added labels.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "User authorized rerun within remaining additive shared $4 cap. Carry forward $3.206673 including $0.292560 historical unknown reservations. Remaining $0.793327; maximum forty-request reservation $0.270240 covers both stages. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 793327,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3206673,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

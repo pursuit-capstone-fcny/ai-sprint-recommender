@@ -31,7 +31,7 @@ describe('frozen test catalog isolation', () => {
         { storage: new TestStorage() },
         env,
       );
-      const fetcher = vi.fn<typeof fetch>(async () =>
+      const fetcher = vi.fn<typeof fetch>(async (_url, init) =>
         Response.json(
           isHaiku
             ? {
@@ -42,9 +42,18 @@ describe('frozen test catalog isolation', () => {
                     type: 'text',
                     text: JSON.stringify(
                       Object.fromEntries(
-                        Array.from({ length: 8 }, (_, i) => [
-                          'rank' + (i + 1),
-                          i < 2 ? i : null,
+                        Object.keys(
+                          JSON.parse(String(init?.body)).output_config.format
+                            .schema.properties,
+                        ).map((key, i) => [
+                          key,
+                          key.startsWith('candidate')
+                            ? i < 2
+                              ? 2
+                              : 0
+                            : i < 2
+                              ? i
+                              : null,
                         ]),
                       ),
                     ),

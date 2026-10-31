@@ -4,13 +4,11 @@ import { taskRelevance } from '../src/engine/relevance';
 import { normalizeText } from '../src/engine/vocabulary';
 import {
   inputTokenBound,
-  RANK_OUTPUT_INSTRUCTION,
   type Provider,
   type ProviderBody,
   type ProviderResult,
 } from './anthropic';
 import { compactRanking } from './compact-ranking';
-import { HAIKU_FINAL_CHECK_INSTRUCTION } from './haiku-policy';
 import { LUNA_GOAL_ELIGIBILITY_INSTRUCTION } from './luna-policy';
 
 const REVIEW_SIZE = 18;
@@ -18,13 +16,15 @@ const INPUT_LIMIT = 65_000;
 const STAGE_OUTPUT_LIMIT = 256;
 const output = z.strictObject({ youtubeIds: RecommendationIdsSchema });
 const REVIEW_INSTRUCTION = [
-  'Review a draft video recommendation for a nonprofit worker. The draft positions are suggestions from an earlier pass, not evidence of relevance. Evaluate the goal and every supplied catalog row independently.',
-  'Identify the real activity, the inputs being worked on, and the intended output. Keep the strongest three direct demonstrations first. For every additional video, verify a concrete operation that helps prepare, produce, check, use or follow up that same output. A shared input, audience, tool or topic alone is insufficient. Do not introduce an unrequested medium or a new assignment merely because it uses the same source material. A method from another department can transfer when it teaches an operation the submitted work actually needs.',
-  'Review the unused alternatives as well as the draft. Replace weak suggestions with stronger useful alternatives. Aim for six to eight useful videos; before stopping below six, check for other direct demonstrations and supporting operations. Preserve strong direct matches while improving the rest. Do not pad, require an exact title match, or limit useful methods to a department or tool. If fewer than six are useful, return fewer.',
-  'Each catalog row uses the field order in catalogFields. draftPositions refer to positions in this supplied catalog only. Emit a fresh complete ranking, not a patch.',
-  RANK_OUTPUT_INSTRUCTION,
-  LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
-  HAIKU_FINAL_CHECK_INSTRUCTION,
+  'Classify each video independently for the real work described by this nonprofit worker. Do not choose a list length or try to fill slots. Every candidate needs a judgment based on its demonstrated method, not its presence in this candidate set.',
+  'Use 2 for a direct demonstration of a requested activity or deliverable. Preserve the intended audience or counterparty and the direction of the work, including whose material is evaluated and who will ask or answer questions. Use 1 for a concrete supporting operation that helps prepare inputs, draft or rehearse, check quality, organize work, or use the requested result. A method can transfer across departments and tools when the operation is still needed. Use 0 when neither connection is demonstrated.',
+  'Shared source material does not make an unrelated output useful. A different medium, unrelated document or new project is 0 unless it is needed for the submitted work. General AI knowledge, generic prompting, or an unrelated departmental task is 0 for a concrete workflow unless its demonstrated operation directly helps perform that workflow. Do not manufacture a prerequisite or imagine a new assignment to justify a pick. Conversely, do not reject a usable supporting method solely because the example uses another department or audience.',
+  'Inspect every row, including later alternatives. A practical supporting method deserves 1 even without matching title words. Keep all genuinely useful methods; there is no quota for any score and no preferred count of positive judgments.',
+  'Each catalog row uses the field order in catalogFields. Return exactly candidate0 through candidateN for the supplied N+1 rows. Every value must be integer 0, 1 or 2. No omissions, repeated keys, explanations or other fields.',
+  LUNA_GOAL_ELIGIBILITY_INSTRUCTION.replace(
+    'return an empty positions array',
+    'give every candidate 0',
+  ),
 ].join(' ');
 
 export interface HaikuReviewDiagnostic {
@@ -51,21 +51,19 @@ function reviewBody(
     })),
   };
   const schema = body.request.output_config.format.schema;
+  const keys = indices.map((_, position) => `candidate${position}`);
   const properties = Object.fromEntries(
-    Object.keys(schema.properties).map((key) => [
-      key,
-      {
-        anyOf: [
-          { type: 'integer', enum: indices.map((_, position) => position) },
-          { type: 'null' },
-        ],
-      },
-    ]),
+    keys.map((key) => [key, { anyOf: [{ type: 'integer', enum: [0, 1, 2] }] }]),
   );
+  const order = [
+    ...draftIds,
+    ...catalogIds.filter((id) => !draftIds.includes(id)),
+  ];
   const compact = JSON.parse(compactRanking({ ...body, data }).content);
   return {
     catalogIds,
     data,
+    reviewPriority: catalogIds.map((id) => order.indexOf(id)),
     request: {
       ...body.request,
       max_tokens: STAGE_OUTPUT_LIMIT,
@@ -73,17 +71,14 @@ function reviewBody(
       messages: [
         {
           role: 'user',
-          content: JSON.stringify({
-            ...compact,
-            draftPositions: draftIds.map((id) => catalogIds.indexOf(id)),
-          }),
+          content: JSON.stringify(compact),
         },
       ],
       output_config: {
         ...body.request.output_config,
         format: {
           ...body.request.output_config.format,
-          schema: { ...schema, properties },
+          schema: { ...schema, properties, required: keys },
         },
       },
     },
@@ -91,7 +86,7 @@ function reviewBody(
 }
 
 // Bound both requests before dispatch. The largest possible review rows and
-// eight two-digit draft positions overestimate every selected review subset.
+// schema framing overestimate every selected review subset.
 export function haikuReviewPlan(body: ProviderBody) {
   if (!body.data.goal.trim() || body.catalogIds.length > 48)
     return { review: false, inputBound: inputTokenBound(body) };

@@ -6,6 +6,7 @@ import {
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { Limits } from './config';
 import { boundedJson } from './bounded-json';
+import { reviewedIds } from './haiku-review-output';
 
 const rankKeys = Array.from(
   { length: MAX_RECOMMENDATIONS },
@@ -84,7 +85,9 @@ export function providerBody(
     data,
   };
 }
-export type ProviderBody = ReturnType<typeof providerBody>;
+export type ProviderBody = ReturnType<typeof providerBody> & {
+  reviewPriority?: number[];
+};
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([
@@ -189,55 +192,65 @@ export function anthropicProvider(
     } else {
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
-        const output = slotsSchema.safeParse(decoded);
-        if (!output.success) {
-          const positions =
-            decoded && typeof decoded === 'object' && !Array.isArray(decoded)
-              ? 'positions' in decoded && Array.isArray(decoded.positions)
-                ? decoded.positions
-                : Object.values(decoded).filter((value) => value !== null)
-              : undefined;
-          validation = {
-            validationFailure: 'schema',
-            ...(positions
-              ? {
-                  selectionCount: Math.min(positions.length, 100),
-                  invalidSelectionCount: Math.min(
-                    positions.filter(
-                      (position) =>
-                        !Number.isSafeInteger(position) || position < 0,
-                    ).length,
-                    100,
-                  ),
-                }
-              : {}),
-          };
+        if (body.reviewPriority) {
+          const ids = reviewedIds(
+            decoded,
+            body.catalogIds,
+            body.reviewPriority,
+          );
+          if (ids) value = { youtubeIds: ids };
+          else validation = { validationFailure: 'schema' };
         } else {
-          const positions = rankKeys
-            .map((key) => output.data[key])
-            .filter((position) => position !== null);
-          const duplicateCount = positions.length - new Set(positions).size;
-          const outOfRangeCount = positions.filter(
-            (position) => position >= body.catalogIds.length,
-          ).length;
-          if (duplicateCount)
+          const output = slotsSchema.safeParse(decoded);
+          if (!output.success) {
+            const positions =
+              decoded && typeof decoded === 'object' && !Array.isArray(decoded)
+                ? 'positions' in decoded && Array.isArray(decoded.positions)
+                  ? decoded.positions
+                  : Object.values(decoded).filter((value) => value !== null)
+                : undefined;
             validation = {
-              validationFailure: 'duplicate',
-              selectionCount: positions.length,
-              duplicateCount,
+              validationFailure: 'schema',
+              ...(positions
+                ? {
+                    selectionCount: Math.min(positions.length, 100),
+                    invalidSelectionCount: Math.min(
+                      positions.filter(
+                        (position) =>
+                          !Number.isSafeInteger(position) || position < 0,
+                      ).length,
+                      100,
+                    ),
+                  }
+                : {}),
             };
-          else if (outOfRangeCount)
-            validation = {
-              validationFailure: 'out-of-range',
-              selectionCount: positions.length,
-              outOfRangeCount,
-            };
-          else
-            value = {
-              youtubeIds: positions.map(
-                (position) => body.catalogIds[position],
-              ),
-            };
+          } else {
+            const positions = rankKeys
+              .map((key) => output.data[key])
+              .filter((position) => position !== null);
+            const duplicateCount = positions.length - new Set(positions).size;
+            const outOfRangeCount = positions.filter(
+              (position) => position >= body.catalogIds.length,
+            ).length;
+            if (duplicateCount)
+              validation = {
+                validationFailure: 'duplicate',
+                selectionCount: positions.length,
+                duplicateCount,
+              };
+            else if (outOfRangeCount)
+              validation = {
+                validationFailure: 'out-of-range',
+                selectionCount: positions.length,
+                outOfRangeCount,
+              };
+            else
+              value = {
+                youtubeIds: positions.map(
+                  (position) => body.catalogIds[position],
+                ),
+              };
+          }
         }
       } catch {
         validation = { validationFailure: 'json' };

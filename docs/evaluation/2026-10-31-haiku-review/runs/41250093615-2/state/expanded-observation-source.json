@@ -1,0 +1,4 @@
+{
+  "source": "live/report.json",
+  "reason": "Wording-control failure prevented fresh comparison assembly. Expanded observations use the original saved live report; no replay is represented as fresh evidence."
+}
