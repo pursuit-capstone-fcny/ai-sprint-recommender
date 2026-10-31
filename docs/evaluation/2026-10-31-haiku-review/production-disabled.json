@@ -1,5 +1,5 @@
 {
-  "checkedAt": "2026-10-31T22:55:23.138223+00:00",
+  "checkedAt": "2026-10-31T23:46:18.672443+00:00",
   "productionRun": {
     "conclusion": "success",
     "databaseId": 41127387660,
@@ -10,5 +10,7 @@
     "deploy\tUNKNOWN STEP\t2026-10-30T20:58:33.0584603Z   VITE_USAGE_ENABLED: false",
     "deploy\tUNKNOWN STEP\t2026-10-30T20:58:50.2365162Z env.LLM_ENABLED (\"false\")                                            Environment Variable      "
   ],
-  "agentChangedProduction": false
+  "agentChangedProduction": false,
+  "temporaryApprovalPresent": false,
+  "paidEvaluationTriggerPresent": false
 }

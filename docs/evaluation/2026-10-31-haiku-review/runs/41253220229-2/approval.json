@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "aea3b4931e568d0a865417745bde2bc32eef6598",
+  "approvedWorkflowRunId": "41253220229",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T00:36:22Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v42",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V42 restores V36 single-pass ranking and applies narrow goal/task compatibility before the same 48-candidate retrieval. Exclude explicitly mismatched audio/song/flier outputs, AI-learning-only topics without AI-learning intent, negotiation-only topics without negotiation work and job-application drafting from non-job record tracking. Use only goal text and existing task tags, no profile or video IDs. Preserve frozen labels, metadata, unchanged task-diversity gate, deadline, 65000 input bound, 512 output cap and reservation. Same thirty benchmark requests and ten probes; no retries, replacement cases, padding or paid warm-up. Preserve permanent-rejection stop and sanitized HTTP status diagnostics.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry forward $3.495433 under the approved additive shared $4 cap, including all $0.360120 unknown reservations. Remaining $0.504567; forty-request maximum reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 504567,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3495433,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

@@ -307,12 +307,14 @@ export async function recommend(
       diagnostic.phase = 'provider';
       const providerStarted = Date.now();
       const result = await provider(body, abort.signal, (timing) => {
+        const providerStatus = timing.providerHttpStatus;
         if (
-          Number.isInteger(timing.providerHttpStatus) &&
-          timing.providerHttpStatus! >= 300 &&
-          timing.providerHttpStatus! <= 599
+          providerStatus !== undefined &&
+          Number.isInteger(providerStatus) &&
+          providerStatus >= 300 &&
+          providerStatus <= 599
         )
-          diagnostic.providerHttpStatus = timing.providerHttpStatus;
+          diagnostic.providerHttpStatus = providerStatus;
         for (const key of ['providerHeadersMs', 'providerBodyMs'] as const) {
           const ms = timing[key];
           if (

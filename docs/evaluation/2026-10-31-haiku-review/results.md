@@ -1,5 +1,9 @@
 # Haiku review-pass results
 
+No candidate fixes weak picks and short lists together. V36 ranking is restored;
+the HTTP rejection diagnostic and stop-on-rejection safeguard are retained.
+The remaining allowance is $0.452053. Production calls and logging stay off.
+
 The starting V36 result scores 10/10 in all three trials with 29/30 six-to-eight
 lists. One Fundraising-01 list has five videos. Three podcast-for-board-deck
 appearances and other weak supporting picks remain. The
@@ -96,3 +100,67 @@ costs $0.078150. Cumulative spend is $3.495433; $0.504567 remains. No new unknow
 reservation occurs. Shutdown and key cleanup pass; approval and trigger are
 removed. The two-pass approach is withdrawn because neither review format
 improves weak picks and breadth together.
+
+## V42: task-compatible single-pass candidates
+
+V42 removes all original review flags, including the podcast-for-board-deck
+picks. The identified AI-concerns and purchasing-negotiation picks no longer
+appear for a staff conversation, and grant fliers no longer appear for
+application preparation. All forty requests have measured accounting, with no
+invalid response, duplicate, timeout, transport failure or new unknown charge.
+Median latency is 1,315ms, p95 2,146ms and maximum 2,547ms. Wording and mixed
+controls, four injection abstentions and blank browsing pass.
+
+The complete fixed audit still fails. Scores are **10/10, 9/10, 10/10** and
+breadth is **27/30**, compared with V36's 10/10 each and 29/30. Fundraising-02
+trial two places generic staff-conversation videos ahead of the donor-roleplay
+video and gets only one labeled top-three hit. Leadership-01 trial two has five
+cards, Leadership-02 trial three has three, and Fundraising-01 trial three still
+has five. The [expanded review](v42-expanded-review.md) contains 212 cards and
+128 unreviewed appearances. Replacements include a SOAP-note demo for course
+planning, AI guidelines for grant preparation, and webinar/social-media planning
+for a board deck. Removing the original flags does not establish full quality.
+V42 is withdrawn; no benchmark labels or task-diversity criteria are relaxed.
+
+Source `aea3b4931e568d0a865417745bde2bc32eef6598`, run `41253220229`, attempt 2,
+costs $0.052514. Cumulative spend is $3.547947, leaving **$0.452053**.
+The workflow's live/probe step passes its original acceptance threshold, but the
+separate unchanged retention audit catches the score regression. Both results
+remain visible. Shutdown, key cleanup and the independent disabled probe pass;
+temporary approval and trigger are removed.
+
+## Retained change and decision
+
+Restore V36's ranking, candidate retrieval and prompt version exactly. Its
+historical 10/10 each, 29/30 result is the retained baseline, not a fresh run of
+the final commit. Weak supporting picks and its five-card Fundraising-01 list
+remain unresolved. The review-pass and task-scope experiments are removed from
+the active implementation; their source commits and complete results remain.
+
+Retain the evaluation safeguard: record only a numeric provider HTTP error
+status and stop further paid cases after a saved permanent request rejection.
+No raw provider error is retained. Transient failures keep the existing cooldown
+and no-retry behavior. Optional stage diagnostic fields remain readable so the
+archived two-pass evidence can still be parsed. This does not change ranking.
+
+The five experiments submitted 170 client cases. Four complete runs have 160
+fully measured requests; V39's ten review failures retain their full reservations.
+Recorded charges total **$0.341274**, comprising $0.273714 measured and $0.067560
+new unknown reservations. All **$0.360120** cumulative unknown reservations remain
+charged under the unchanged $4 cap. Nothing is refunded or repriced. Each
+preliminary attempt made no paid calls; no failed case was retried or replaced.
+
+Test calls are disabled and provider/rate keys removed. The deployed artifact is
+disabled V42; branch ranking is restored V36. Production LLM calls and usage
+logging remain disabled. No merge, approval, review request or follow-up was
+created. The requested complete quality fix has not been demonstrated. Further
+expanded-set human review is needed to distinguish useful supporting methods
+from padding; these experiments add no new paid evaluation labels.
+
+Final local verification passes: 646 tests, typecheck, lint, build and an unpaid
+Cloudflare runtime check with zero external requests. The added integration
+test verifies that a permanent rejection is saved before the sequence stops,
+with exactly one paid-case attempt. V36's ranking and prompt, frozen benchmark
+and catalog, task-diversity gate and production deployment configuration match
+the turn-start revision. The latest production deployment still records both
+LLM calls and logging as disabled; temporary approval and trigger are absent.

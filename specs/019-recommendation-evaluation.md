@@ -1,11 +1,15 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V36 retained: 10/10 each, 29/30 broad lists; weak expanded picks and one short list remain
+- **Status:** V36 restored after V38–V42 fail quality/breadth retention; weak picks and one short list remain
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given a permanent provider request rejection, when evaluation saves the failed
+  case and sanitized HTTP status, then stop before another paid case. Retain
+  uncertain charges and missing evidence; never record the raw error or retry.
 
 - Given test-only candidate retrieval, when selecting a smaller provider context,
   then preserve selected-area coverage and fill remaining slots with cross-area
@@ -91,6 +95,16 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [review and task-scope trials](../docs/evaluation/2026-10-31-haiku-review/results.md)
+reject V38–V42. V42 removes the original flags but scores 10/9/10 with 27/30 broad
+lists; new weak replacements remain. V39's ten provider errors retain full
+reservations. Restore V36 ranking and retain safer evaluation diagnostics.
+The task records $0.341274, leaving $0.452053 with all $0.360120 unknown
+reservations charged. Test and production calls/logging remain disabled.
+No complete quality fix or production readiness is claimed.
+
+Earlier results and balances below are historical.
 
 The [October 31 retrieval trials](../docs/evaluation/2026-10-31-haiku-transfer/results.md)
 retain V36: 10/10 each, 29/30 broad lists, all controls and forty final measured
