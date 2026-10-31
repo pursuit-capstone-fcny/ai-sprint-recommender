@@ -31,8 +31,16 @@ describe('frozen test catalog isolation', () => {
         { storage: new TestStorage() },
         env,
       );
-      const fetcher = vi.fn<typeof fetch>(async () =>
-        Response.json(
+      const fetcher = vi.fn<typeof fetch>(async (_url, options) => {
+        const selected = isHaiku
+          ? snapshot.items.slice(0, 2).map((item) => {
+              const rows: [number, string][] = JSON.parse(
+                JSON.parse(String(options?.body)).messages[0].content,
+              ).catalog;
+              return rows.find((row) => row[1] === item.title)![0];
+            })
+          : [0, 1];
+        return Response.json(
           isHaiku
             ? {
                 stop_reason: 'end_turn',
@@ -44,7 +52,7 @@ describe('frozen test catalog isolation', () => {
                       Object.fromEntries(
                         Array.from({ length: 8 }, (_, i) => [
                           'rank' + (i + 1),
-                          i < 2 ? i : null,
+                          i < 2 ? selected[i] : null,
                         ]),
                       ),
                     ),
@@ -69,8 +77,8 @@ describe('frozen test catalog isolation', () => {
                   },
                 ],
               },
-        ),
-      );
+        );
+      });
       vi.stubGlobal('fetch', fetcher);
       const request = new Request(
         new URL('/api/recommendations', EVALUATION_CATALOG_URL),

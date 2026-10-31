@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
+import v25 from '../docs/evaluation/2026-10-31-haiku-relevance/v25-request-hashes.json';
+import { compactRanking } from './compact-ranking';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
 import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
@@ -56,6 +58,19 @@ describe('optimized Haiku low request', () => {
         limits,
       );
       const haiku = haikuDeployedBody(original);
+      const sourceOrderRequest = {
+        ...haiku.request,
+        messages: [{ role: 'user', content: compactRanking(original).content }],
+      };
+      const v25Hash = Object.entries(v25.hashes).find(
+        ([id]) => id === profile.id,
+      )?.[1];
+      if (v25Hash)
+        expect(
+          createHash('sha256')
+            .update(JSON.stringify(sourceOrderRequest))
+            .digest('hex'),
+        ).toBe(v25Hash);
       expect(
         haiku.request.system
           .replace(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`, '')
@@ -85,7 +100,9 @@ describe('optimized Haiku low request', () => {
       if (v21Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v21System }))
+            .update(
+              JSON.stringify({ ...sourceOrderRequest, system: v21System }),
+            )
             .digest('hex'),
         ).toBe(v21Hash);
       const v18System = v21System.replace(
@@ -98,7 +115,9 @@ describe('optimized Haiku low request', () => {
       if (v18Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v18System }))
+            .update(
+              JSON.stringify({ ...sourceOrderRequest, system: v18System }),
+            )
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
@@ -121,7 +140,9 @@ describe('optimized Haiku low request', () => {
       if (v12Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v12System }))
+            .update(
+              JSON.stringify({ ...sourceOrderRequest, system: v12System }),
+            )
             .digest('hex'),
         ).toBe(v12Hash);
       const v11System = v12System.replace(
@@ -134,11 +155,15 @@ describe('optimized Haiku low request', () => {
       if (expectedHash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v11System }))
+            .update(
+              JSON.stringify({ ...sourceOrderRequest, system: v11System }),
+            )
             .digest('hex'),
         ).toBe(expectedHash);
       const luna = lunaDeployedBody(original);
-      expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
+      expect(sourceOrderRequest.messages[0].content).toBe(
+        luna.input[1].content,
+      );
       const data = JSON.parse(haiku.request.messages[0].content);
       expect(data.catalog).toHaveLength(89);
       expect(
@@ -150,9 +175,15 @@ describe('optimized Haiku low request', () => {
             ]),
           ),
         ),
-      ).toEqual(original.data.catalog);
+      ).toEqual(haiku.data.catalog);
       expect(data.goal).toBe(profile.input.goal);
-      expect(haiku.catalogIds).toEqual(original.catalogIds);
+      expect(new Set(haiku.catalogIds)).toEqual(new Set(original.catalogIds));
+      for (const [position, id] of haiku.catalogIds.entries()) {
+        expect(haiku.data.catalog[position]).toEqual({
+          ...original.data.catalog[original.catalogIds.indexOf(id)],
+          position,
+        });
+      }
       expect(haiku.request.output_config).toEqual(
         original.request.output_config,
       );

@@ -1,6 +1,7 @@
 import type { ProviderBody } from './anthropic';
 import { compactRanking } from './compact-ranking';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
+import { orderHaikuCandidates } from './haiku-candidate-order';
 import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
@@ -11,6 +12,7 @@ import {
 // Anthropic does not support maxItems. Retain its existing eight required
 // slots, strict duplicate/range validation and known-usage accounting.
 export function haikuDeployedBody(body: ProviderBody): ProviderBody {
+  body = orderHaikuCandidates(body);
   const compact = compactRanking(body);
   const system = compact.system
     .replace('return an empty positions array', 'use null in all eight ranks')
