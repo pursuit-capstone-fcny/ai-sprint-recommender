@@ -57,3 +57,24 @@ position-to-ID mapping and output schema stay identical. Normalizing only JSON
 whitespace reconstructs historical request hashes. The new local test first
 failed with one line instead of 91, then passes with row separation. This proves
 serialization, not recommendation quality. No candidate filtering or extra call.
+
+## V33 finding and V34 test
+
+V33 passes the fixed audit with 10/10 in all three trials, all controls and forty
+final measured responses, without duplicate, invalid, transport or timeout
+failures. It still has six short lists and 24/30 broad lists, versus V25's 25/30.
+The total rises to 210 cards, with 126 unreviewed appearances. One original
+podcast flag remains; other weak additions include a lesson-planning generator
+for a board deck and a medical-necessity letter for course design. It is not a
+completed quality fix. Charge $0.080715; cumulative $2.971840, remaining
+$1.028160. No new unknown reservations.
+
+V34 tests whether repeated, overlapping ranking rules obscure the useful-match
+rule. Consolidate the ranking prose into one paragraph while preserving the
+existing eligibility, mixed-goal, blank browsing, counterparty-perspective and
+final validation instructions verbatim. Keep V33 row presentation, all catalog
+values, schema, model/effort, limits and fixed gates. No examples, profile IDs,
+selected titles, handpicked recommendations or new labels enter the prompt.
+The previous complete systems are captured for historical hash reconstruction.
+Current request tests verify shorter prose, frozen input/output mappings and
+preserved guardrail instructions. Only live results can establish quality.

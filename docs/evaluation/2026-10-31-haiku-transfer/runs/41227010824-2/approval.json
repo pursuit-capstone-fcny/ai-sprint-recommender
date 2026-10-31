@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "1172dc3e151122a64355717758589630e963b34f",
+  "approvedWorkflowRunId": "41227010824",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T18:57:36Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v33",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V33 tests presentation independently after withdrawing V32. Restore the complete V25 prompt and place each catalog row on its own line. No changed metadata, ordering, IDs, output schema, guardrails, benchmark labels, task-diversity gate, token limits, deadline, effort or thinking. Same thirty benchmark calls and ten probes. No retries, omitted failures, padding, extra provider call or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Shared additive $4 cap approved by Jason October 31. Carry forward $2.891125 including $0.292560 historical unknown reservations. Remaining $1.108875; full forty-request reservation $0.270240. No reset, refund or repricing. Haiku only; production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 1108875,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2891125,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

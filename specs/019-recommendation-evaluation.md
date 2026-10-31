@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V33 catalog presentation pending; V32 withdrawn, quality and short lists unresolved
+- **Status:** V34 concise ranking pending; V33 passes fixed audit but weak picks and short lists remain
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
