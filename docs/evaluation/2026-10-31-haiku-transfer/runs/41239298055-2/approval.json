@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "eec976be894b5aaf0c73c87ae42ffb759171a2c3",
+  "approvedWorkflowRunId": "41239298055",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T21:31:40Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v37",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V37 combines V36 corrected candidate retrieval with the previously tested V32 transfer-method breadth paragraph. Only that paragraph changes; keep all other prompt instructions, schema, strict duplicate and ID validation, metadata, frozen labels, task-diversity gate, model, low effort, thinking disabled, limits and deadline. Same thirty benchmark calls and ten probes. Retain V36 if the refinement regresses. No retries, omitted failures, padding, added labels or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Jason approved additive shared $4 cap October 31. Carry forward $3.154099 including $0.292560 historical unknown reservations. Remaining $0.845901; maximum forty-request reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 845901,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3154099,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

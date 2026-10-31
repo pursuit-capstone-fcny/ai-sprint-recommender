@@ -1,11 +1,16 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V36 passes with 29/30 broad lists; V37 transfer refinement pending
+- **Status:** V36 retained: 10/10 each, 29/30 broad lists; weak expanded picks and one short list remain
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given test-only candidate retrieval, when selecting a smaller provider context,
+  then preserve selected-area coverage and fill remaining slots with cross-area
+  relevance matches. Keep metadata, numeric schema/ID mapping, labels and the
+  final task-diversity gate consistent. Check paraphrase coverage separately.
 
 - Given a transport or diagnostic-header failure, when a test request fails,
   then preserve its correlation ID, stage, status and allowlisted error code.
@@ -86,6 +91,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [October 31 retrieval trials](../docs/evaluation/2026-10-31-haiku-transfer/results.md)
+retain V36: 10/10 each, 29/30 broad lists, all controls and forty final measured
+responses. No duplicate, timeout, transport or injection failures in that run.
+Expanded quality remains unapproved; one five-card list and weak supporting
+picks remain. Six candidates cost $0.395981, leaving $0.793327 under the additive
+$4 cap with all unknown reservations retained. Production calls/logging stay off.
+
+Earlier results and balances below are historical.
 
 The [structural-selection follow-up](../docs/evaluation/2026-10-31-haiku-order/results.md)
 tests relevance-ordered candidates and a structured work plan. V30 scores 10/9/10

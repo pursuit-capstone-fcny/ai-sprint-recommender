@@ -145,3 +145,12 @@ breadth. Only that paragraph changes. All other prompt text, retrieval, output
 schema, guardrails, labels, metadata, task gate and limits remain. Preserve V36
 as the reliable baseline if this candidate regresses. Same forty requests,
 exact-attempt approval, no retry or paid warm-up, and mandatory shutdown.
+
+## Final decision
+
+V37 passes the fixed audit with 10/10 each and 29/30 broad lists, but does not
+remove the podcast flags and adds questionable later picks. Withdraw the stricter
+paragraph and retain V36's simpler prompt plus corrected retrieval. One five-card
+V36 list and weak expanded picks remain; the task is only partially resolved.
+Six runs cost $0.395981, leaving $0.793327. Preserve all 240 outcomes and final
+accounting, including V34's duplicate. No new unknown reservation occurred.

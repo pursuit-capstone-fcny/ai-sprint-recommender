@@ -2,6 +2,8 @@
 
 Candidate `catalog-rank-haiku-v36`. Existing ideal/good labels are copied unchanged. Every other pick remains unreviewed; this file adds no labels.
 
+Retained test candidate. Automated validation passes, but expanded quality is not approved. Fundraising-01 trial three has five cards. Review the podcast for a board deck, AI-concerns and equipment-negotiation demos for a staff conversation, and the grant-flier demo for evaluating an application. These are review observations, not new benchmark labels.
+
 ## leadership-01
 
 Help our staff try AI responsibly and share what they learn without waiting for a finished policy.
