@@ -78,3 +78,28 @@ selected titles, handpicked recommendations or new labels enter the prompt.
 The previous complete systems are captured for historical hash reconstruction.
 Current request tests verify shorter prose, frozen input/output mappings and
 preserved guardrail instructions. Only live results can establish quality.
+
+## V34 finding and V35 test
+
+V34 is withdrawn. It scores 10/10/9 and reaches 26/30 accepted broad lists, but
+a duplicate in Programs-01 trial three causes a rules fallback. The Fundraising
+wording control returns only four cards; three Leadership-02 lists have five.
+All four injections abstain. All forty responses have final measured diagnostics;
+no timeout or transport failure. Three podcast flags remain. Charge $0.077353;
+cumulative $3.049193, remaining $0.950807. No new unknown reservations.
+
+V35 tests a smaller candidate context, restoring the V33 prompt and row format.
+The existing lexical relevance scorer selects at most 48 catalog items, using
+function area only to break relevance ties. Preserve the source order of the
+selected rows. Blank, small or no-evidence inputs keep the full set. Selection
+uses no benchmark IDs, labels or handpicked videos. The catalog snapshot and
+all metadata remain frozen; only the provider's candidate subset changes.
+
+Run retrieval before providerBody so the schema, numeric positions and trusted
+ID map derive from the same subset. Synthetic tests first fail with the full
+64-item fixture, then verify a 48-item subset, stable order, unchanged values,
+real adapter mapping and rejection of out-of-range responses with usage retained.
+Endpoint tests verify actual wiring and at least two existing labeled candidates
+remain reachable per profile. This is candidate coverage, not quality evidence.
+The rules path, other providers, final selector and task-diversity gate stay unchanged.
+Same forty deployed requests, limits and shutdown requirements. No paid retry.

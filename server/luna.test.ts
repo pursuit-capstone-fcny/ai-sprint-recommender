@@ -8,7 +8,11 @@ import { describe, expect, it, vi } from 'vitest';
 import config from '../wrangler.luna-test.json';
 import { catalog, TestStorage } from './test-helpers';
 import { readLimits } from './config';
-import { providerBody, UNTRUSTED_INPUT_INSTRUCTION } from './anthropic';
+import {
+  providerBody,
+  UNTRUSTED_INPUT_INSTRUCTION,
+  type Provider,
+} from './anthropic';
 import { lunaDeployedBody, lunaProvider, readLunaResponse } from './luna';
 import { recommend } from './recommendations';
 import worker from './worker';
@@ -493,9 +497,9 @@ describe('deployed Luna low candidate', () => {
       ANTHROPIC_API_KEY: 'fixture-only',
       LLM_RATE_KEY: 'x'.repeat(32),
     };
-    const provider = vi.fn(async () => ({
+    const provider = vi.fn<Provider>(async (body) => ({
       value: {
-        youtubeIds: benchmark.catalog.items.slice(0, 3).map((x) => x.youtubeId),
+        youtubeIds: body.catalogIds.slice(0, 3),
       },
       inputTokens: 20000,
       outputTokens: 72,
@@ -516,6 +520,25 @@ describe('deployed Luna low candidate', () => {
         diagnostic: () => {},
       });
       expect((await response.json()).outcome).toBe('success');
+      const sent = provider.mock.calls.at(-1)![0];
+      expect(sent.catalogIds).toHaveLength(48);
+      const known = new Set(
+        [...profile.ideal, ...profile.good].map((item) => item.youtubeId),
+      );
+      expect(
+        sent.catalogIds.filter((id) => known.has(id)).length,
+      ).toBeGreaterThanOrEqual(2);
+      for (const [position, id] of sent.catalogIds.entries()) {
+        const source = benchmark.catalog.items.find(
+          (item) => item.youtubeId === id,
+        )!;
+        expect(sent.data.catalog[position]).toMatchObject({
+          position,
+          title: source.title.slice(0, 200),
+          description: source.description.slice(0, 500),
+          tasks: source.tasks,
+        });
+      }
     }
     expect(provider).toHaveBeenCalledTimes(10);
   });

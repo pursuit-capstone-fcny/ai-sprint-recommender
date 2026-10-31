@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V34 concise ranking pending; V33 passes fixed audit but weak picks and short lists remain
+- **Status:** V35 candidate retrieval pending; V34 withdrawn, expanded quality unresolved
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 

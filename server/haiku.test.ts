@@ -4,7 +4,6 @@ import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
-import v33Systems from '../docs/evaluation/2026-10-31-haiku-transfer/v33-systems.json';
 import v25Breadth from '../docs/evaluation/2026-10-31-haiku-transfer/v25-breadth-instruction.json';
 import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
@@ -20,13 +19,13 @@ import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
-  HAIKU_RANKING_INSTRUCTION,
+  HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
-  it('consolidates ranking while preserving guardrails, schema, prior request evidence and frozen catalog data', () => {
+  it('adds breadth and blank browsing guidance while preserving V12 guardrails, prior requests and frozen catalog data', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
         readFileSync(
@@ -63,22 +62,19 @@ describe('optimized Haiku low request', () => {
           .replace(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`, '')
           .endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
-      expect(haiku.request.system.startsWith(HAIKU_RANKING_INSTRUCTION)).toBe(
-        true,
-      );
-      expect(haiku.request.system).toContain(LUNA_TARGETED_RANKING_INSTRUCTION);
-      const historicalSystem = profile.input.goal.trim()
-        ? v33Systems.nonblank
-        : v33Systems.blank;
-      expect(haiku.request.system.length).toBeLessThan(historicalSystem.length);
       if (profile.input.goal.trim()) {
         expect(haiku.request.system).not.toContain(HAIKU_BROWSING_INSTRUCTION);
-        expect(haiku.request.system).toContain(HAIKU_MIXED_GOAL_INSTRUCTION);
-      } else {
-        expect(haiku.request.system).not.toContain(
-          HAIKU_MIXED_GOAL_INSTRUCTION,
+        expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+        expect(
+          haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION),
+        ).toBeLessThan(
+          haiku.request.system.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
         );
-        expect(haiku.request.system).toContain(HAIKU_BROWSING_INSTRUCTION);
+      } else {
+        expect(haiku.request.system).not.toContain(HAIKU_BREADTH_INSTRUCTION);
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_BROWSING_INSTRUCTION}`,
+        );
       }
       // Only whitespace separates catalog records. All request values and the
       // original numeric position-to-ID mapping must survive serialization.
@@ -95,7 +91,10 @@ describe('optimized Haiku low request', () => {
         const row = JSON.parse(line.replace(/,$/, ''));
         expect(row).toHaveLength(6);
       }
-      const v25System = historicalSystem;
+      const v25System = haiku.request.system.replace(
+        HAIKU_BREADTH_INSTRUCTION,
+        v25Breadth.instruction,
+      );
       const v21System = v25System.replace(
         v25Breadth.instruction,
         v21Breadth.instruction,
@@ -122,6 +121,17 @@ describe('optimized Haiku low request', () => {
             .update(JSON.stringify({ ...normalizedRequest, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
+      if (profile.input.goal.trim()) {
+        expect(
+          haiku.request.system.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION),
+        ).toBeLessThan(haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION));
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
+        );
+      } else
+        expect(haiku.request.system).not.toContain(
+          HAIKU_MIXED_GOAL_INSTRUCTION,
+        );
       const v12System = v18System
         .replace(` ${v21Breadth.instruction}`, '')
         .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');

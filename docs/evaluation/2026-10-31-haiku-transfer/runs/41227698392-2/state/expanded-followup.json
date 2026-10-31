@@ -1,0 +1,59 @@
+{
+  "kind": "unscored-expanded-followup",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [10, 10, 9],
+  "sixToEightLists": 26,
+  "totalCards": 204,
+  "remainingShortLists": [
+    {
+      "trial": 1,
+      "profileId": "leadership-02",
+      "engine": "llm",
+      "count": 5
+    },
+    {
+      "trial": 2,
+      "profileId": "leadership-02",
+      "engine": "llm",
+      "count": 5
+    },
+    {
+      "trial": 3,
+      "profileId": "leadership-02",
+      "engine": "llm",
+      "count": 5
+    },
+    {
+      "trial": 3,
+      "profileId": "programs-01",
+      "engine": "rules",
+      "count": 8
+    }
+  ],
+  "existingReviewFlagAppearances": [
+    {
+      "trial": 1,
+      "profileId": "communications-02",
+      "rank": 3,
+      "youtubeId": "Xlvo2_eUBLo",
+      "title": "Transforming Print to Podcast"
+    },
+    {
+      "trial": 2,
+      "profileId": "communications-02",
+      "rank": 5,
+      "youtubeId": "Xlvo2_eUBLo",
+      "title": "Transforming Print to Podcast"
+    },
+    {
+      "trial": 3,
+      "profileId": "communications-02",
+      "rank": 3,
+      "youtubeId": "Xlvo2_eUBLo",
+      "title": "Transforming Print to Podcast"
+    }
+  ],
+  "requestedSymptomsResolved": false,
+  "allExpandedPicksApproved": false,
+  "note": "Observes the requested short-list and existing review-flag symptoms. Does not change labels, compute new relevance labels, or replace the fixed validation audit. Removing these flags does not establish that every other pick is useful."
+}

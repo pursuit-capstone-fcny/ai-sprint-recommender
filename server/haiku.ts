@@ -1,42 +1,42 @@
 import type { ProviderBody } from './anthropic';
 import { compactRanking } from './compact-ranking';
+import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
-  LUNA_GOAL_ELIGIBILITY_INSTRUCTION,
-  LUNA_TARGETED_RANKING_INSTRUCTION,
-} from './luna-policy';
-import {
-  HAIKU_RANKING_INSTRUCTION,
+  HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
 } from './haiku-policy';
 
-// Keep the existing numeric schema, strict validation and measured accounting.
+// Anthropic does not support maxItems. Retain its existing eight required
+// slots, strict duplicate/range validation and known-usage accounting.
 export function haikuDeployedBody(body: ProviderBody): ProviderBody {
   const compact = compactRanking(body);
-  // Preserve each value and the position-to-ID map, separating complete rows.
+  // Keep each candidate together on its own line without changing any field,
+  // catalog position or response-schema value.
   const data: { catalog: unknown[] } = JSON.parse(compact.content);
   const content = compact.content.replace(
     JSON.stringify(data.catalog),
     `[\n${data.catalog.map((row) => JSON.stringify(row)).join(',\n')}\n]`,
   );
-  const system = [
-    HAIKU_RANKING_INSTRUCTION,
-    LUNA_GOAL_ELIGIBILITY_INSTRUCTION.replace(
-      'return an empty positions array',
-      'use null in all eight ranks',
-    ),
-    body.data.goal.trim()
-      ? HAIKU_MIXED_GOAL_INSTRUCTION
-      : HAIKU_BROWSING_INSTRUCTION,
-    LUNA_TARGETED_RANKING_INSTRUCTION,
-    HAIKU_FINAL_CHECK_INSTRUCTION,
-  ].join(' ');
+  const system = compact.system
+    .replace('return an empty positions array', 'use null in all eight ranks')
+    .replace(
+      'Return one positions array containing six to eight useful, distinct catalog positions when available, best match first.',
+      'Return exactly the eight named fields rank1 through rank8, best match first. Put a distinct catalog position in each useful rank and null in every unused rank. Select six to eight useful videos when available.',
+    )
+    .replace('an empty array when none fit', 'all nulls when none fit');
+  const rankedSystem = body.data.goal.trim()
+    ? system.replace(
+        LUNA_TARGETED_RANKING_INSTRUCTION,
+        `${HAIKU_MIXED_GOAL_INSTRUCTION} ${HAIKU_BREADTH_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
+      )
+    : `${system} ${HAIKU_BROWSING_INSTRUCTION}`;
   return {
     ...body,
     request: {
       ...body.request,
-      system,
+      system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
       messages: [{ role: 'user', content }],
     },
   };

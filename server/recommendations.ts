@@ -25,6 +25,7 @@ import { lunaDeployedBody, lunaProvider } from './luna';
 import { LUNA_DEPLOYED_PROMPT } from './luna-policy';
 import { HAIKU_DEPLOYED_PROMPT } from './haiku-policy';
 import { haikuDeployedBody } from './haiku';
+import { haikuCandidates } from './haiku-candidates';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -248,7 +249,13 @@ export async function recommend(
       return fallback('unavailable');
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
-    const originalBody = providerBody(input, catalog, limits);
+    const originalBody = providerBody(
+      input,
+      boundedHaiku
+        ? { ...catalog, items: haikuCandidates(catalog.items, input) }
+        : catalog,
+      limits,
+    );
     const body = boundedHaiku ? haikuDeployedBody(originalBody) : originalBody;
     let bound: number;
     try {

@@ -108,7 +108,7 @@ describe('frozen test catalog isolation', () => {
         JSON.parse(
           isHaiku ? payload.messages[0].content : payload.input[1].content,
         ).catalog,
-      ).toHaveLength(89);
+      ).toHaveLength(isHaiku ? 48 : 89);
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
