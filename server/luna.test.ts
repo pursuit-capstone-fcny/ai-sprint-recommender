@@ -501,7 +501,7 @@ describe('deployed Luna low candidate', () => {
       value: {
         youtubeIds: body.catalogIds.slice(0, 3),
       },
-      inputTokens: 20000,
+      inputTokens: 4000,
       outputTokens: 72,
     }));
     const wording = JSON.parse(
@@ -542,8 +542,9 @@ describe('deployed Luna low candidate', () => {
         diagnostic: () => {},
       });
       expect((await response.json()).outcome).toBe('success');
-      const sent = provider.mock.calls.at(-1)![0];
+      const sent = provider.mock.calls.at(-2)![0];
       expect(sent.catalogIds).toHaveLength(48);
+      expect(provider.mock.calls.at(-1)![0].catalogIds).toHaveLength(18);
       const known = new Set(
         [...profile.ideal, ...profile.good].map((item) => item.youtubeId),
       );
@@ -562,7 +563,7 @@ describe('deployed Luna low candidate', () => {
         });
       }
     }
-    expect(provider).toHaveBeenCalledTimes(12);
+    expect(provider).toHaveBeenCalledTimes(24);
   });
   it('refuses Haiku dispatch after the shared spend exceeds its original allowance', async () => {
     const fetcher = vi.fn<typeof fetch>();
@@ -640,7 +641,7 @@ describe('deployed Luna low candidate', () => {
     );
     expect((await response.json()).outcome).toBe('success');
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
-    expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 150);
+    expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 300);
     const saved = (await storage.get<Ledger>('ledger'))!;
     saved.total = 3_999_999;
     await storage.put('ledger', saved);

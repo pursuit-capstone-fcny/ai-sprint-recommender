@@ -17,6 +17,11 @@ try {
       loader: 'ts',
       contents: `
         import {${haiku ? 'anthropicProvider' : 'lunaProvider'} as makeProvider} from './server/${haiku ? 'anthropic' : 'luna'}';
+        import {haikuReviewProvider} from './server/haiku-review';
+        import {providerBody} from './server/anthropic';
+        import {haikuDeployedBody} from './server/haiku';
+        import {readLimits} from './server/config';
+        import {catalog,environment} from './server/test-helpers';
         export default {async fetch(request) {
           let calls=0;
           try {
@@ -32,6 +37,11 @@ try {
               const bytes=new TextEncoder().encode('event: response.completed\\ndata: '+JSON.stringify({type:'response.completed',response:payload})+'\\n\\n');
               return new Response(new ReadableStream({start(controller){controller.enqueue(bytes);},cancel(){return new Promise(()=>{});}}),{headers:{'content-type':'text/event-stream'}});
             });
+            if (${haiku} && new URL(request.url).pathname==='/review') {
+              const body=haikuDeployedBody(providerBody({functionArea:null,goal:'organize records',tools:[],catalogVersion:catalog.catalogVersion},catalog,{...readLimits(environment),LLM_MAX_OUTPUT_TOKENS:512}));
+              const result=await haikuReviewProvider(provider)(body,new AbortController().signal);
+              return Response.json({ok:true,calls,inputTokens:result.inputTokens,outputTokens:result.outputTokens});
+            }
             const result=await provider({data:{catalog:[],functionArea:null,goal:'',tools:[]},catalogIds:['abcdefghijk'],request:{system:'Synthetic runtime test',messages:[],output_config:{format:{schema:{}}}}},new AbortController().signal);
             return Response.json({ok:true,calls,ids:result.value.youtubeIds});
           }catch(error){return Response.json({ok:false,calls,error:error.message});}
@@ -66,6 +76,13 @@ try {
     calls: 1,
     error: 'Provider failed',
   });
+  if (haiku)
+    assert.deepEqual(await (await server.fetch('/review')).json(), {
+      ok: true,
+      calls: 2,
+      inputTokens: 200,
+      outputTokens: 100,
+    });
   console.log(
     `Cloudflare runtime accepts ${haiku ? 'Haiku' : 'Luna'} requests and rejects redirects without retries. External requests: 0.`,
   );

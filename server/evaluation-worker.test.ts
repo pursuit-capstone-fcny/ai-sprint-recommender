@@ -97,7 +97,7 @@ describe('frozen test catalog isolation', () => {
         catalogVersion: snapshot.catalogVersion,
         youtubeIds: snapshot.items.slice(0, 2).map((item) => item.youtubeId),
       });
-      expect(fetcher).toHaveBeenCalledTimes(1);
+      expect(fetcher).toHaveBeenCalledTimes(isHaiku ? 2 : 1);
       expect(fetcher.mock.calls[0][0]).toBe(
         isHaiku
           ? 'https://api.anthropic.com/v1/messages'
@@ -110,6 +110,10 @@ describe('frozen test catalog isolation', () => {
         ).catalog,
       ).toHaveLength(isHaiku ? 48 : 89);
       if (isHaiku) {
+        expect(payload.max_tokens).toBe(256);
+        const review = JSON.parse(String(fetcher.mock.calls[1][1]?.body));
+        expect(review.max_tokens).toBe(256);
+        expect(JSON.parse(review.messages[0].content).catalog).toHaveLength(18);
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
         expect(payload.system).toContain('use null in all eight ranks');
