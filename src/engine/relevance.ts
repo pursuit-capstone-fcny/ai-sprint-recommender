@@ -7,7 +7,7 @@ import { expandSynonyms, normalizeText } from './vocabulary';
 // subject, while a description can mention a task only in passing. Repetition
 // within a field never adds votes. No benchmark or profile IDs are consulted.
 export function taskRelevance(
-  catalog: Pick<CatalogItem, 'youtubeId' | 'title' | 'description' | 'tasks'>[],
+  catalog: CatalogItem[],
   goalWords: string[],
 ): Map<string, number> {
   const concepts = new Map<string, string[]>();

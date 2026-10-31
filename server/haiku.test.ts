@@ -3,8 +3,6 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
-import v25 from '../docs/evaluation/2026-10-31-haiku-relevance/v25-request-hashes.json';
-import { compactRanking } from './compact-ranking';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
 import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
@@ -18,7 +16,6 @@ import { haikuDeployedBody } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
-  HAIKU_WORK_PLAN_INSTRUCTION,
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
@@ -59,48 +56,26 @@ describe('optimized Haiku low request', () => {
         limits,
       );
       const haiku = haikuDeployedBody(original);
-      const v25System = haiku.request.system
-        .replace(` ${HAIKU_WORK_PLAN_INSTRUCTION}`, '')
-        .replace(
-          'Return work and steps, then the eight named fields rank1 through rank8',
-          'Return exactly the eight named fields rank1 through rank8',
-        )
-        .replace(
-          'Emit work and steps first, followed by the eight required rank fields.',
-          'Emit only the eight required rank fields.',
-        );
-      expect(haiku.request.system).toContain(HAIKU_WORK_PLAN_INSTRUCTION);
-      const sourceOrderRequest = {
-        ...haiku.request,
-        system: v25System,
-        output_config: original.request.output_config,
-        messages: [{ role: 'user', content: compactRanking(original).content }],
-      };
-      const v25Hash = Object.entries(v25.hashes).find(
-        ([id]) => id === profile.id,
-      )?.[1];
-      if (v25Hash)
-        expect(
-          createHash('sha256')
-            .update(JSON.stringify(sourceOrderRequest))
-            .digest('hex'),
-        ).toBe(v25Hash);
       expect(
-        v25System
+        haiku.request.system
           .replace(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`, '')
           .endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
       if (profile.input.goal.trim()) {
-        expect(v25System).not.toContain(HAIKU_BROWSING_INSTRUCTION);
-        expect(v25System).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
-        expect(v25System.indexOf(HAIKU_BREADTH_INSTRUCTION)).toBeLessThan(
-          v25System.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
+        expect(haiku.request.system).not.toContain(HAIKU_BROWSING_INSTRUCTION);
+        expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+        expect(
+          haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION),
+        ).toBeLessThan(
+          haiku.request.system.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
         );
       } else {
-        expect(v25System).not.toContain(HAIKU_BREADTH_INSTRUCTION);
-        expect(v25System).toContain(` ${HAIKU_BROWSING_INSTRUCTION}`);
+        expect(haiku.request.system).not.toContain(HAIKU_BREADTH_INSTRUCTION);
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_BROWSING_INSTRUCTION}`,
+        );
       }
-      const v21System = v25System.replace(
+      const v21System = haiku.request.system.replace(
         HAIKU_BREADTH_INSTRUCTION,
         v21Breadth.instruction,
       );
@@ -110,9 +85,7 @@ describe('optimized Haiku low request', () => {
       if (v21Hash)
         expect(
           createHash('sha256')
-            .update(
-              JSON.stringify({ ...sourceOrderRequest, system: v21System }),
-            )
+            .update(JSON.stringify({ ...haiku.request, system: v21System }))
             .digest('hex'),
         ).toBe(v21Hash);
       const v18System = v21System.replace(
@@ -125,17 +98,20 @@ describe('optimized Haiku low request', () => {
       if (v18Hash)
         expect(
           createHash('sha256')
-            .update(
-              JSON.stringify({ ...sourceOrderRequest, system: v18System }),
-            )
+            .update(JSON.stringify({ ...haiku.request, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
-        expect(v25System.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION)).toBeLessThan(
-          v25System.indexOf(HAIKU_BREADTH_INSTRUCTION),
+        expect(
+          haiku.request.system.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION),
+        ).toBeLessThan(haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION));
+        expect(haiku.request.system).toContain(
+          ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
         );
-        expect(v25System).toContain(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`);
-      } else expect(v25System).not.toContain(HAIKU_MIXED_GOAL_INSTRUCTION);
+      } else
+        expect(haiku.request.system).not.toContain(
+          HAIKU_MIXED_GOAL_INSTRUCTION,
+        );
       const v12System = v18System
         .replace(` ${v21Breadth.instruction}`, '')
         .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');
@@ -145,9 +121,7 @@ describe('optimized Haiku low request', () => {
       if (v12Hash)
         expect(
           createHash('sha256')
-            .update(
-              JSON.stringify({ ...sourceOrderRequest, system: v12System }),
-            )
+            .update(JSON.stringify({ ...haiku.request, system: v12System }))
             .digest('hex'),
         ).toBe(v12Hash);
       const v11System = v12System.replace(
@@ -160,15 +134,11 @@ describe('optimized Haiku low request', () => {
       if (expectedHash)
         expect(
           createHash('sha256')
-            .update(
-              JSON.stringify({ ...sourceOrderRequest, system: v11System }),
-            )
+            .update(JSON.stringify({ ...haiku.request, system: v11System }))
             .digest('hex'),
         ).toBe(expectedHash);
       const luna = lunaDeployedBody(original);
-      expect(sourceOrderRequest.messages[0].content).toBe(
-        luna.input[1].content,
-      );
+      expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
       const data = JSON.parse(haiku.request.messages[0].content);
       expect(data.catalog).toHaveLength(89);
       expect(
@@ -180,28 +150,12 @@ describe('optimized Haiku low request', () => {
             ]),
           ),
         ),
-      ).toEqual(haiku.data.catalog);
+      ).toEqual(original.data.catalog);
       expect(data.goal).toBe(profile.input.goal);
-      expect(new Set(haiku.catalogIds)).toEqual(new Set(original.catalogIds));
-      for (const [position, id] of haiku.catalogIds.entries()) {
-        expect(haiku.data.catalog[position]).toEqual({
-          ...original.data.catalog[original.catalogIds.indexOf(id)],
-          position,
-        });
-      }
-      expect(haiku.request.output_config.format.schema).toEqual({
-        ...original.request.output_config.format.schema,
-        properties: {
-          work: { type: 'string' },
-          steps: { type: 'string' },
-          ...original.request.output_config.format.schema.properties,
-        },
-        required: [
-          'work',
-          'steps',
-          ...original.request.output_config.format.schema.required,
-        ],
-      });
+      expect(haiku.catalogIds).toEqual(original.catalogIds);
+      expect(haiku.request.output_config).toEqual(
+        original.request.output_config,
+      );
       expect(haiku.request.max_tokens).toBe(512);
       expect(haiku.request.thinking).toEqual({ type: 'disabled' });
       expect(haiku.request.output_config.effort).toBe('low');

@@ -96,3 +96,21 @@ legacy numeric output in the real Worker runtime with synthetic responses only.
 Historical request tests restore V25 hashes by removing the two plan fields and
 format instructions and restoring source order. All catalog values, goal inputs,
 labels and the diversity gate remain unchanged. Full live quality is still unproven.
+
+## V31 outcome and disposition
+
+V31 completes all forty requests with measured usage and final diagnostics, no
+timeout or transport failure. All four instruction-only probes abstain. However,
+scores fall to 10/7/10. One duplicate and one schema-invalid response cause rules
+fallbacks; Fundraising-02 and its wording control each have a one-hit miss. The
+schema diagnostic does not identify the exact failed field, so no specific plan
+length or shape defect is asserted. Breadth is 25/30, with three short LLM lists
+and two fallbacks. One original podcast flag reappears; other weak picks remain.
+
+V31 costs $0.084026, taking this follow-up to $0.164381 and the shared ceiling to
+$2.810692. Remaining $0.189308 cannot reserve another $0.270240 full run. Unknown
+reservations remain $0.292560. No new grant, reset or refund. Both candidates are
+withdrawn, and all runtime changes are restored exactly to the starting V25
+baseline. Source commits, tests and artifacts remain in history. Test provider
+calls are off, keys removed, and production calls/logging stay disabled. The
+requested improvement remains unresolved; no fresh V25 run is claimed.

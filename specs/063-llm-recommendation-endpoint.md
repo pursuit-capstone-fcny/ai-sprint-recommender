@@ -105,14 +105,6 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
-- Given the bounded Haiku V31 test, when ranking, then return a short work/steps
-  plan before numeric IDs in the same call. Reject malformed plans, selections
-  without a plan and invalid ranks without repair; retain measured usage and
-  discard plan text before returning IDs. Keep limits and the diversity gate.
-- Given the bounded Haiku V30 test, when preparing a catalog, then order all items
-  by the existing goal-relevance scorer with stable ties. Reindex positions and
-  trusted IDs together; preserve every value, V25 instructions, numeric schema,
-  limits and diversity gate. Blank or unmatched goals retain source order.
 - Given Haiku V25 and an eligible goal, when ranks four through six would be
   empty, then check unused candidates for concrete supporting methods. Keep
   direct matches first, exclude weak padding, and retain V21's mixed-goal,

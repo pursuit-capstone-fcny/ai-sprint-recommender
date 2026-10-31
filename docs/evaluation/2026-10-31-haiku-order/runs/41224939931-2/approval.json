@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "800f2b3a6f93c1c20de55c97a3b584b5e2a50c8a",
+  "approvedWorkflowRunId": "41224939931",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T18:31:55Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v31",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "Jason requested a different approach to weak expanded picks and short lists within the remaining allowance. V31 retains full-catalog relevance ordering and adds work/steps summaries before eight numeric ranks in the same model call. Strictly validate and discard plan text; preserve usage on invalid responses. Same thirty frozen benchmark calls and ten probes, labels, catalog values, task-diversity gate, model, low effort, thinking disabled, 512 total output tokens and deadline. No retries, padding, extra provider call or paid warm-up. Preserve every failure and inspect all expanded picks.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $3 cap. Carry forward $2.726666 including $0.292560 cumulative unknown reservations. Remaining $0.273334. Maximum reservation forty times $0.006756, or $0.270240, fits with $0.003094 margin. No new grant, reset, refund or repricing. Haiku only; production LLM calls and logging remain disabled.",
+  "allowanceMicrodollars": 273334,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2726666,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}

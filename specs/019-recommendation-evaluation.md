@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V26–V29 follow-up withdrawn; V25 restored, expanded quality and short lists unresolved
+- **Status:** V25 retained; V26–V31 withdrawn, expanded quality and short lists unresolved
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -85,6 +85,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [structural-selection follow-up](../docs/evaluation/2026-10-31-haiku-order/results.md)
+tests relevance-ordered candidates and a structured work plan. V30 scores 10/9/10
+with 26/30 broad lists; V31 scores 10/7/10 with 25/30. Both fail unchanged controls
+or reliability checks and are withdrawn. V25 behavior is restored; weak picks
+and five baseline short lists remain unresolved. Task charge $0.164381 leaves
+$0.189308, below the $0.270240 full-run reservation. Unknown reservations stay
+charged. Labels and the diversity gate are unchanged; test and production
+calls/logging stay disabled. Earlier outcomes and balances below are historical.
 
 The [expanded-relevance follow-up](../docs/evaluation/2026-10-31-haiku-relevance/results.md)
 finds no candidate that fixes both weak picks and short lists without regressions.
