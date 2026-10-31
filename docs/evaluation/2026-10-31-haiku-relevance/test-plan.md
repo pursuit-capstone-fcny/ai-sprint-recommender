@@ -56,3 +56,33 @@ Archive every candidate and charge. After each run, disable test calls, save
 durable spend, remove remote test keys and temporary approval/trigger. Keep
 production configuration and all frozen inputs unchanged. Human review, merge
 and production enablement remain manual.
+
+## V26 result and V27 implied-work check
+
+The first trigger captured the previous PR head and was cancelled with zero
+jobs. Correct-source attempt 1 was cancelled during installation before paid
+work. Attempt 2 stopped on its initial unpaid readiness request: HTTP 200 lacked
+the required diagnostic header. Exact remote cause is unknown. No benchmark
+case ran, durable additional spend was zero, and shutdown/key removal passed.
+Attempt 3 used the same source with a new exact-attempt approval; it did not
+replace a paid outcome. All preliminary artifacts remain saved.
+
+V26 run 41218987637 attempt 3 removes all four appearances of the existing review
+flags. It retains 10/10 each, all forty final diagnostics and reconciled usage,
+all controls and clean reliability. However, it fails the fixed breadth target
+at 23/30, with seven short lists and 190 cards. Cost $0.081568 raises the ceiling
+to $2.406823, leaving $0.593177. Test calls are disabled and keys removed.
+
+The next hypothesis is that the new relevance test treats implied preparation
+and follow-through too narrowly. V27 retains the V26 paragraph and adds a check
+for operations that directly help the same work even when not explicitly named
+in the goal. It names general operations, not profiles, videos or label facts.
+Require a direct benefit; an extra project remains ineligible. Keep all other
+instructions, inputs, limits and validation targets fixed. Removing the whole
+method-connection paragraph still restores V25 requests. Repeat the same forty
+cases with at most $0.270240 reserved from $0.593177.
+
+Local V26 checks initially hit an existing approval-entry test's five-second
+limit under full parallel load. The isolated test and all 629 tests with two
+workers pass without changing assertions or timeout limits. Candidate CI also
+passes with its normal configuration.

@@ -1,0 +1,10 @@
+{
+  "runId": "41218987637",
+  "runAttempt": 2,
+  "paidCalls": 0,
+  "submittedBenchmarkRequests": 0,
+  "failure": "Initial all-blank unpaid readiness request returned HTTP 200 without the required diagnostic header. Exact remote cause unknown. Strict diagnostics stopped before trials.",
+  "additionalMicrodollars": 0,
+  "benchmarkResult": "not-run",
+  "preserved": true
+}

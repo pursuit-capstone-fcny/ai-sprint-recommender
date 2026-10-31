@@ -1,0 +1,8 @@
+{
+  "runId": "41218922887",
+  "runAttempt": 1,
+  "conclusion": "cancelled",
+  "jobs": 0,
+  "paidCalls": 0,
+  "note": "Initial label event captured the previous PR head. Cancelled with zero jobs and no approval or paid work. A fresh label event targets V26."
+}
