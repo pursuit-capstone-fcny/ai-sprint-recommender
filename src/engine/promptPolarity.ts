@@ -41,6 +41,13 @@ export function promptPolarity(words: string[]) {
         following.some((part) =>
           ['experience', 'knowledge', 'training'].includes(part),
         )) ||
+      // A lack of time to read a source does not reject its application or subject.
+      (word === 'not' &&
+        following[0] === 'have' &&
+        following.slice(1).includes('time') &&
+        words
+          .slice(start + 1, start + 8)
+          .some((part) => ['read', 'reading', 'review'].includes(part))) ||
       (word === 'not' &&
         /^(?:really )?(?:know|sure|understand|familiar)\b/.test(
           following.join(' '),

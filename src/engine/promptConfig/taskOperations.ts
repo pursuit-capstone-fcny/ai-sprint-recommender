@@ -35,6 +35,7 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Accessible content'], 75, {
         allTasks: ['Educational materials'],
         excludeTasks: ['Custom assistants'],
+        when: ['visual', 'icon', 'parent', 'student right', 'version'],
       }),
     ],
   ),
@@ -53,11 +54,18 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Document drafting'], 80, {
         allTasks: ['Role play'],
         excludeTasks: ['Difficult conversations'],
+        when: ['tone', 'style', 'bio', 'resume', 'calm'],
+      }),
+      c(['Reimbursement documentation'], 80, {
+        when: ['blank', 'placeholder', 'identifying', 'anonymous'],
       }),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
+        when: ['upload', 'reference document', 'supplied document', 'overview'],
       }),
-      c(['Editing proofreading'], 75),
+      c(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'proofread', 'check'],
+      }),
     ],
   ),
   r(
@@ -75,6 +83,7 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Meeting minutes'], 80),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
+        when: ['summary', 'word', 'export', 'document'],
       }),
     ],
   ),
@@ -96,7 +105,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'reimbursement-letter',
     [
-      ['reimbursement', 'medical necessity'],
+      ['reimbursement', 'medical necessity', 'medically necessary', 'insurer'],
       ['letter', 'draft'],
       ['outline', 'placeholder', 'fact', 'treatment'],
     ],
@@ -105,10 +114,24 @@ export const taskOperations: readonly OperationRule[] = [
     ['document'],
     [
       c(['Reimbursement documentation']),
-      c(['Client correspondence'], 80),
-      c(['Editing proofreading'], 75),
+      c(['Client correspondence'], 80, {
+        when: [
+          'letter to',
+          'landlord',
+          'correspondence',
+          'question',
+          'clarify',
+          'fact',
+          'confirm',
+          'checklist',
+        ],
+      }),
+      c(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'proofread', 'check', 'fact', 'confirm'],
+      }),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
+        when: ['word', 'copilot', 'overview', 'summary', 'outline'],
       }),
     ],
   ),

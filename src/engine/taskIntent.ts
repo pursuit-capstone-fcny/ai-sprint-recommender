@@ -33,6 +33,8 @@ export interface OperationRule {
   candidates: CandidateRequirement[];
   explanatory?: boolean;
   precedence?: number;
+  clearSource?: boolean;
+  outputWhen?: Record<string, string[]>;
 }
 export function containsPhrase(words: readonly string[], phrase: string) {
   const parts = languageTokens(phrase);
@@ -114,8 +116,8 @@ export function interpretOperation(
     ...catalog.synonyms
       .filter((row) => row.category === 'tool' && row.target === tool)
       .map((row) => row.alias),
-    ...(/^(?:Microsoft|Adobe|Google|Apple) \S+$/.test(tool)
-      ? [tool.split(' ').at(-1)!]
+    ...(/^(?:Microsoft|Adobe|Google|Apple) /.test(tool)
+      ? [tool.replace(/^(?:Microsoft|Adobe|Google|Apple) /, '')]
       : []),
   ];
   const excludedTools = catalog.tools.filter((tool) =>
@@ -125,9 +127,37 @@ export function interpretOperation(
   const mentionedTools = catalog.tools.filter((tool) =>
     aliasesFor(tool).some((alias) => containsPhrase(positiveToolWords, alias)),
   );
+  const toolMentions = (tool: string) =>
+    aliasesFor(tool).flatMap((alias) => {
+      const parts = languageTokens(alias);
+      return positiveToolWords.flatMap((_, start) =>
+        parts.every(
+          (part, offset) => positiveToolWords[start + offset] === part,
+        )
+          ? [{ start, end: start + parts.length }]
+          : [],
+      );
+    });
   const tools = [...new Set([...current.tools, ...mentionedTools])].filter(
     (tool) =>
       !excludedTools.includes(tool) &&
+      // Bare forms/slides are artifacts, not evidence of a Google application.
+      (!['Google Forms', 'Google Slides'].includes(tool) ||
+        containsPhrase(positiveToolWords, tool) ||
+        new RegExp(`\\b(?:in|with|using) ${tool.split(' ').at(-1)}\\b`).test(
+          prompt,
+        )) &&
+      // Prefer a named product over a shorter product name inside it.
+      (!mentionedTools.includes(tool) ||
+        !toolMentions(tool).every((span) =>
+          mentionedTools.some(
+            (specific) =>
+              specific.startsWith(`${tool} `) &&
+              toolMentions(specific).some(
+                (outer) => outer.start <= span.start && outer.end >= span.end,
+              ),
+          ),
+        )) &&
       (tool !== 'Microsoft Word' ||
         /\b(?:Microsoft Word|(?:in|with|using) Word)\b/.test(prompt)),
   );
@@ -186,10 +216,16 @@ export function interpretOperation(
     ? {
         ...current,
         tasks: operation.tasks.filter((task) => catalog.tasks.includes(task)),
-        sourceMaterials: operation.source
-          ? [operation.source]
-          : current.sourceMaterials,
-        desiredOutputs: operation.outputs,
+        sourceMaterials: operation.clearSource
+          ? []
+          : operation.source
+            ? [operation.source]
+            : current.sourceMaterials,
+        desiredOutputs: operation.outputs.filter(
+          (output) =>
+            !operation.outputWhen?.[output] ||
+            operation.outputWhen[output].some(has),
+        ),
         intermediateMaterials: [],
         tools,
         excludedTools: [

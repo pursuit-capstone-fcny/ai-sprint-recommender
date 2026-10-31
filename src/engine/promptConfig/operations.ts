@@ -2,6 +2,7 @@ import type { OperationRule } from '../taskIntent';
 
 import { candidate, rule } from './operationRules';
 import { taskOperations } from './taskOperations';
+import { taskDiscovery } from './taskDiscovery';
 const formulas = [candidate(['Spreadsheet formulas'])];
 const survey = [
   candidate(['Survey analysis'], 100, {
@@ -26,6 +27,7 @@ const citedDocuments = candidate(['Document Q&A'], 80, {
 /** Predicate groups express requested operations; candidate links describe transferable instruction. */
 export const operationRules: readonly OperationRule[] = [
   ...taskOperations,
+  ...taskDiscovery,
   rule(
     'vocabulary-helper',
     [
@@ -55,13 +57,21 @@ export const operationRules: readonly OperationRule[] = [
         'presentation',
         'conceptual',
         'design discussion',
+        'understand',
+        'structure',
       ],
     ],
     ['Custom assistants'],
     undefined,
     [],
-    [candidate(['Custom assistants'], 100, { allTasks: ['Lesson planning'] })],
-    { explanatory: true },
+    [
+      candidate(['Custom assistants'], 100, { allTasks: ['Lesson planning'] }),
+      candidate(['Accessible content'], 75, {
+        when: ['accessibility', 'accessible', 'parent', 'student'],
+        excludeTasks: ['Custom assistants'],
+      }),
+    ],
+    { explanatory: true, clearSource: true },
   ),
   rule(
     'scanned-feedback',
@@ -104,8 +114,8 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'conditional-totals',
     [
-      ['total', 'amount owed', 'sum'],
-      ['each', 'per', 'only where'],
+      ['total', 'amount owed', 'sum', 'add up', 'adds up'],
+      ['each', 'per', 'only where', 'one volunteer', 'one person'],
       ['hour', 'employee', 'person', 'volunteer', 'claim'],
     ],
     ['Spreadsheet formulas', 'Data aggregation'],
@@ -123,6 +133,7 @@ export const operationRules: readonly OperationRule[] = [
     'spreadsheet',
     ['formula'],
     formulas,
+    { precedence: 1 },
   ),
   rule(
     'participation-comparison',
@@ -157,7 +168,21 @@ export const operationRules: readonly OperationRule[] = [
     ['Data cleaning'],
     'spreadsheet',
     ['cleaned-data'],
-    [candidate(['Data cleaning']), candidate(['Terminology updates'], 75)],
+    [
+      candidate(['Data cleaning']),
+      candidate(['Exploratory analysis'], 80, { teaching: ['data cleaning'] }),
+      candidate(['Terminology updates'], 75, {
+        when: [
+          'term',
+          'category',
+          'replacement',
+          'language',
+          'standardize',
+          'corrected',
+          'change log',
+        ],
+      }),
+    ],
   ),
   rule(
     'directory-structuring',
@@ -213,6 +238,7 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document Q&A'], 80, {
         teaching: ['collection of source documents', 'cross document'],
         excludeTasks: ['App building'],
+        when: ['citation', 'source', 'original wording', 'cross document'],
       }),
     ],
   ),
@@ -281,6 +307,11 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Social media writing'], 80),
       candidate(['Content repurposing'], 75, {
         allTasks: ['Custom assistants'],
+        when: ['speech', 'op ed', 'article', 'blog', 'opening remark'],
+      }),
+      candidate(['Presentation creation'], 75, {
+        teaching: ['presentation outline'],
+        when: ['webinar', 'outline', 'slide', 'presentation'],
       }),
     ],
   ),
@@ -288,7 +319,7 @@ export const operationRules: readonly OperationRule[] = [
     'biography',
     [
       ['bio', 'biography'],
-      ['resume', 'qualification', 'experience'],
+      ['resume', 'cv', 'qualification', 'experience'],
       ['draft', 'website', 'word'],
     ],
     ['Document drafting'],
@@ -296,7 +327,10 @@ export const operationRules: readonly OperationRule[] = [
     ['document'],
     [
       candidate(['Document drafting'], 100, { teaching: ['bio'] }),
-      candidate(['Editing proofreading'], 75),
+      candidate(['Cover letter writing'], 80),
+      candidate(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'check', 'proofread'],
+      }),
     ],
   ),
   rule(
@@ -316,7 +350,15 @@ export const operationRules: readonly OperationRule[] = [
     [
       ['technical', 'security', 'jargon'],
       ['trustee', 'board', 'nontechnical'],
-      ['explain', 'understand', 'adapt', 'decision'],
+      [
+        'explain',
+        'explanation',
+        'understand',
+        'adapt',
+        'decision',
+        'act on',
+        'rewrite',
+      ],
     ],
     ['Plain language', 'Board communications'],
     'document',
@@ -342,7 +384,21 @@ export const operationRules: readonly OperationRule[] = [
         allTasks: ['Educational materials'],
         excludeTasks: ['Custom assistants'],
       }),
-      candidate(['Outreach materials', 'Plain language'], 80),
+      candidate(['Outreach materials'], 80),
+      candidate(['Plain language'], 80, {
+        when: [
+          'english',
+          'reading level',
+          'simplify',
+          'sentence',
+          'language',
+          'wording',
+        ],
+      }),
+      candidate(['Board communications'], 80, { minimumStrength: 0.5 }),
+      candidate(['Design feedback'], 75, {
+        when: ['icon', 'layout', 'critique'],
+      }),
     ],
   ),
   rule(
@@ -388,15 +444,22 @@ export const operationRules: readonly OperationRule[] = [
       ['committee', 'meeting', 'minute'],
     ],
     ['Meeting minutes', 'Transcription'],
-    'recording',
+    'transcript',
     ['minutes'],
-    [candidate(['Meeting minutes']), candidate(['Transcription'], 80)],
+    [
+      candidate(['Meeting minutes']),
+      candidate(['Transcription'], 80),
+      candidate(['Document summary'], 75, {
+        teaching: ['panel', 'speaker'],
+        when: ['transcript', 'outline'],
+      }),
+    ],
   ),
   rule(
     'policy-helper',
     [
-      ['helper', 'assistant', 'bot'],
-      ['policy', 'manual', 'leave', 'reimbursement'],
+      ['helper', 'assistant', 'bot', 'help desk'],
+      ['policy', 'manual', 'leave', 'reimbursement', 'handbook'],
       ['answer', 'question', 'cite', 'admit'],
     ],
     ['Knowledge management', 'Custom assistants'],
@@ -405,14 +468,14 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Custom assistants'], 100, {
         allTasks: ['Knowledge management'],
-        excludeTasks: ['Workflow automation'],
+        excludeTasks: ['Workflow automation', 'Process documentation'],
         minimumStrength: 0.5,
       }),
       candidate(['Document Q&A'], 75, {
-        teaching: ['citation', 'notebook'],
-        excludeTasks: ['App building'],
+        teaching: ['citation', 'notebook', 'cited source'],
       }),
     ],
+    { precedence: 1 },
   ),
   rule(
     'historical-document-question',
@@ -488,7 +551,13 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'peer-learning',
     [
-      ['cross department', 'peer learning', 'sharing'],
+      [
+        'cross department',
+        'across department',
+        'peer learning',
+        'sharing',
+        'share what',
+      ],
       ['practice time', 'protected', 'experiment', 'demonstration', 'group'],
     ],
     ['Peer learning', 'Change management'],
@@ -498,6 +567,19 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Peer learning']),
       candidate(['AI policy', 'Responsible AI'], 80, {
         excludeTasks: ['Document drafting', 'Custom assistants'],
+        when: [
+          'policy',
+          'privacy',
+          'responsible',
+          'safe',
+          'guideline',
+          'risk',
+          'sensitive',
+          'stopped',
+          'adoption',
+          'barrier',
+          'concern',
+        ],
       }),
     ],
     { explanatory: true },
@@ -507,12 +589,21 @@ export const operationRules: readonly OperationRule[] = [
     [
       ['audio', 'podcast'],
       ['document', 'training pack', 'source material'],
-      ['video', 'explainer', 'conversation', 'listen'],
+      [
+        'video',
+        'explainer',
+        'conversation',
+        'listen',
+        'overview',
+        'reinforcement',
+        'sample',
+      ],
     ],
     ['Audio generation', 'Video creation'],
     'document',
     ['audio', 'video'],
     [candidate(['Audio generation']), candidate(['Audio review'], 80)],
+    { outputWhen: { video: ['video', 'explainer'] } },
   ),
   rule(
     'song-generation',
@@ -584,8 +675,15 @@ export const operationRules: readonly OperationRule[] = [
     'context',
     ['form'],
     [
+      candidate(['Form generation'], 110, {
+        allTasks: ['Evaluation design'],
+        when: ['rubric', 'evaluation'],
+      }),
       candidate(['Form generation']),
-      candidate(['Process documentation'], 75, { allTasks: ['Client intake'] }),
+      candidate(['Process documentation'], 75, {
+        allTasks: ['Client intake'],
+        when: ['intake', 'handoff', 'procedure', 'accommodation'],
+      }),
     ],
   ),
   rule(
@@ -602,6 +700,7 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Code debugging']),
       candidate(['Code generation'], 75, {
         teaching: ['execution error', 'error message', 'corrected full script'],
+        when: ['apps script', 'google form', 'javascript'],
       }),
     ],
   ),

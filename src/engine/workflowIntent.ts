@@ -375,6 +375,22 @@ export function interpretWorkflowIntent(
   }
   for (const mention of materials) {
     if (sources.has(mention) || outputs.has(mention)) continue;
+    // A recording described as already made is source material, even after "need".
+    if (
+      mention.type.id === 'video' &&
+      (normalized
+        .slice(
+          Math.max(clauseStart(mention.start), mention.start - 3),
+          mention.start,
+        )
+        .includes('recorded') ||
+        /^(?:(?:that|which|we|have|already) )*recorded\b/.test(
+          normalized.slice(mention.end, mention.end + 6).join(' '),
+        ))
+    ) {
+      sources.add(mention);
+      continue;
+    }
     const verb = lastVerb(mention.start);
     const word = normalized[verb];
     const prefix = normalized.slice(clauseStart(mention.start), mention.start);

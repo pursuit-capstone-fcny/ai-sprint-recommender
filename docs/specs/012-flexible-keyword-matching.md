@@ -75,6 +75,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given free-text input, reviewed task evidence and any explicit method or tool constraints
   - When either an operation profile or a canonical task produces candidates
   - Then every candidate passes the same instruction, exclusion and capability checks before the result limit; keyword overlap alone cannot admit a candidate, and generic task matches must respect their source/output pair.
+- AC-12.11 Natural task and component recognition
+  - Given common task paraphrases, supplied documents or a named application
+  - When interpreting and ranking free text
+  - Then it recognizes source-grounded actions without requiring the canonical task name, treats a lack of reading time as context rather than a tool exclusion, prefers the specifically named application, and admits a cross-task transfer only under its declared component conditions; a direct requested method ranks before generic methods or learning-format preferences.
 
 ### Open questions
 

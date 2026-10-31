@@ -54,6 +54,228 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.7 recognizes funding fit without treating an application as software', () => {
+    const grant = lesson(
+      1,
+      ['RFP review', 'Grant drafting'],
+      'Check program eligibility and plan a funding application.',
+    );
+    const app = lesson(2, ['App building'], 'Build a software application.');
+    const { run } = fixture([app, grant]);
+    const result = run(
+      'Compare our program with this funding call and its eligibility rules before writing an application.',
+    );
+    expect(ids(result)).toEqual([grant.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).not.toContain('app');
+  });
+  it('AC-12.7 recognizes add-up wording and keeps repair instruction eligible', () => {
+    const sum = lesson(
+      1,
+      ['Data aggregation', 'Spreadsheet formulas'],
+      'Add volunteer time with conditional sums.',
+    );
+    const repair = lesson(
+      2,
+      ['Spreadsheet formulas'],
+      'Explain a timesheet formula error.',
+    );
+    const { run } = fixture([repair, sum]);
+    expect(
+      ids(
+        run("Give me a formula that adds up one volunteer's hours in a sheet."),
+      )[0],
+    ).toBe(sum.youtubeId);
+    expect(ids(run('Explain the error in our timesheet formula.'))).toContain(
+      sum.youtubeId,
+    );
+  });
+  it('AC-12.8 distinguishes duplicate-name formulas from conditional totals', () => {
+    const unique = lesson(
+      1,
+      ['Spreadsheet formulas', 'List comparison'],
+      'List repeated and unique names.',
+    );
+    const sum = lesson(
+      2,
+      ['Spreadsheet formulas', 'Data aggregation'],
+      'Sum time by name.',
+    );
+    const { run } = fixture([sum, unique]);
+    expect(
+      ids(
+        run(
+          'A formula in our sheet should list names that occur once and repeated names.',
+        ),
+      ),
+    ).toEqual([unique.youtubeId]);
+  });
+  it('AC-12.7 does not reject Word when the user lacks time to read a report', () => {
+    const document = lesson(
+      1,
+      ['Document Q&A', 'Document summary'],
+      'Answer questions with source references against the text.',
+      ['Microsoft Word'],
+    );
+    const { run } = fixture([document]);
+    const result = run(
+      "I don't have time to read the report in Word. Answer my question with a source I can verify.",
+    );
+    expect(ids(result)).toEqual([document.youtubeId]);
+    expect(result.interpretation.tools).toContain('Microsoft Word');
+    expect(result.interpretation.excludedTools).not.toContain('Microsoft Word');
+  });
+  it('AC-12.7 interprets an audio version as a transformation, not comparison', () => {
+    const audio = lesson(
+      1,
+      ['Audio generation'],
+      'Generate a podcast overview from training material.',
+    );
+    const comparison = lesson(
+      2,
+      ['Document comparison'],
+      'Compare versions of a document.',
+    );
+    const { run } = fixture([comparison, audio]);
+    const result = run(
+      'Turn our training document into an audio version and check a sample.',
+    );
+    expect(ids(result)).toEqual([audio.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).toEqual(['audio']);
+  });
+  it('AC-12.7 keeps handbook and forms as help-desk sources and does not infer Google Forms', () => {
+    const faq = lesson(
+      1,
+      ['Custom assistants', 'Knowledge management'],
+      'Curate a handbook for an internal FAQ.',
+    );
+    const form = lesson(2, ['Form generation'], 'Generate a form.', [
+      'Google Forms',
+    ]);
+    const { run } = fixture([form, faq]);
+    const result = run(
+      'An AI help desk should answer questions from our handbook and forms.',
+    );
+    expect(ids(result)).toEqual([faq.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).toEqual(['assistant']);
+    expect(result.interpretation.tools).not.toContain('Google Forms');
+  });
+  it('AC-12.7 keeps an already recorded video as a source when requesting captions', () => {
+    const video = lesson(1, ['Video creation'], 'Create a training video.');
+    const { catalog, options } = fixture([video]);
+    const result = recommendVideos(
+      catalog,
+      { prompt: 'We need captions for a video we already recorded.' },
+      {
+        ...options,
+        workflows: {
+          artifacts: [
+            { id: 'video', label: 'Video', aliases: ['video'], tasks: [] },
+          ],
+          workflows: [],
+        },
+      },
+    );
+    expect(result.interpretation.sourceMaterials).toContain('video');
+    expect(result.interpretation.desiredOutputs).not.toContain('video');
+    expect(result.recommendations).toEqual([]);
+  });
+  it('AC-12.7 prefers the named Studio product over its shorter tool name', () => {
+    const studio = lesson(
+      1,
+      ['Custom assistants', 'Lesson planning'],
+      'Explain instructions for a course assistant.',
+      ['Microsoft Copilot Studio'],
+    );
+    const copilot = lesson(2, ['Document drafting'], 'Draft a document.', [
+      'Microsoft Copilot',
+    ]);
+    const { run } = fixture([copilot, studio]);
+    const result = run(
+      'Understand how to structure a course assistant in Copilot Studio.',
+    );
+    expect(result.interpretation.tools).toEqual(['Microsoft Copilot Studio']);
+    expect(result.interpretation.sourceMaterials).toEqual([]);
+    expect(ids(result)).toEqual([studio.youtubeId]);
+    expect(
+      run(
+        'Understand how to structure a course assistant using Copilot and Copilot Studio.',
+      ).interpretation.tools,
+    ).toEqual(['Microsoft Copilot', 'Microsoft Copilot Studio']);
+  });
+  it('AC-12.8 requires a requested component before admitting a cross-task transfer', () => {
+    const cleanup = lesson(
+      1,
+      ['Data cleaning'],
+      'Clean duplicate rows and invalid dates.',
+    );
+    const terminology = lesson(
+      2,
+      ['Terminology updates'],
+      'Replace approved terms and export an audit.',
+    );
+    const { run } = fixture([terminology, cleanup]);
+    expect(
+      ids(run('Clean duplicate rows and impossible dates in an export.')),
+    ).toEqual([cleanup.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Clean duplicate rows and standardize category values in an export.',
+        ),
+      ),
+    ).toContain(terminology.youtubeId);
+  });
+  it('AC-12.8 ranks direct rubric instruction before a preferred format for another form task', () => {
+    const rubric = lesson(
+      1,
+      ['Form generation', 'Evaluation design'],
+      'Turn a rubric into evaluation questions.',
+    );
+    const other = lesson(
+      2,
+      ['Form generation'],
+      'Generate an accommodation form.',
+    );
+    const procedure = lesson(
+      3,
+      ['Process documentation', 'Client intake'],
+      'Write an intake checklist.',
+    );
+    const { catalog, options } = fixture([procedure, other, rubric]);
+    const result = recommendVideos(
+      catalog,
+      {
+        prompt:
+          'A walkthrough should show questions from a rubric in a Google Form.',
+      },
+      {
+        ...options,
+        learningFormats: {
+          formats: [
+            { id: 'demo', label: 'Demonstration', aliases: ['demo'] },
+            {
+              id: 'walkthrough',
+              label: 'Walkthrough',
+              aliases: ['walkthrough'],
+            },
+          ],
+          videos: [
+            { youtubeId: rubric.youtubeId, primary: 'demo', secondary: [] },
+            {
+              youtubeId: other.youtubeId,
+              primary: 'walkthrough',
+              secondary: [],
+            },
+          ],
+        },
+      },
+    );
+    expect(result.interpretation.learningFormats).toEqual(['walkthrough']);
+    expect(ids(result)).toEqual([rubric.youtubeId, other.youtubeId]);
+  });
   it('AC-12.10 rejects keyword-only results when no requested task is recognized', () => {
     const row = lesson(
       1,
