@@ -27,10 +27,6 @@ import { HAIKU_DEPLOYED_PROMPT } from './haiku-policy';
 import { haikuDeployedBody } from './haiku';
 import { haikuCandidates } from './haiku-candidates';
 import {
-  haikuReviewProvider,
-  type HaikuReviewDiagnostic,
-} from './haiku-review';
-import {
   defaultCatalogCache,
   readCatalogSnapshot,
   type CatalogCache,
@@ -43,8 +39,7 @@ export interface WorkerEnv extends Variables {
   ASSETS?: { fetch(request: Request): Promise<Response> };
   RECOMMENDATION_BUDGET?: BudgetNamespace;
 }
-export interface Diagnostic
-  extends Partial<ProviderValidation>, HaikuReviewDiagnostic {
+export interface Diagnostic extends Partial<ProviderValidation> {
   requestId: string;
   environment: 'test' | 'production' | 'unconfigured';
   outcome: 'success' | RecommendationFallbackReason;
@@ -278,16 +273,11 @@ export async function recommend(
     const budget =
       deps.budget ??
       durableBudget(env.RECOMMENDATION_BUDGET!, budgetKey(limits));
-    const baseProvider =
+    const provider =
       deps.provider ??
       (limits.LLM_PROVIDER === 'openai'
         ? lunaProvider(providerKey, fetcher)
         : anthropicProvider(providerKey, fetcher));
-    const provider = boundedHaiku
-      ? haikuReviewProvider(baseProvider, (progress) =>
-          Object.assign(diagnostic, progress),
-        )
-      : baseProvider;
     const identifier = await (deps.clientKey?.() ??
       clientKey(request, env.LLM_RATE_KEY));
     active();

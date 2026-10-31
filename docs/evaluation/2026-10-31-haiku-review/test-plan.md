@@ -83,3 +83,24 @@ pool without changing its usage checks or any quality threshold.
 
 Repeat the same forty cases within the $0.582717 remainder. Retain every failed
 case and all $0.360120 prior unknown reservations. Production stays disabled.
+
+## V42 task compatibility before single-pass ranking
+
+Restore V36's single-call ranking and use a narrow metadata-based eligibility
+check before its 48-candidate retrieval. An explicitly requested output does
+not admit an unrelated audio, song or flier deliverable. Pure AI-learning topics
+require an AI-learning goal; purchasing/negotiation demos require negotiation
+work. Job-application drafting does not substitute for record follow-up without
+a job-seeking goal. Mixed-output tutorials remain eligible when an output
+matches. Blank browsing and general supporting methods remain available.
+
+The rule uses goal text and existing task tags, never profile IDs, video IDs or
+benchmark labels. Catalog metadata is unchanged. The unpaid coverage comparison
+runs the real retained V36 retrieval and candidate retrieval on the frozen inputs;
+all existing ideal/good candidates remain available. It is not a quality score.
+Retain sanitized HTTP rejection diagnostics and stop-on-rejection behavior.
+
+Repeat forty cases within $0.504567, preserving all $0.360120 unknown reservations.
+The model, low effort, 512-token output limit, input bound, request reservation,
+4.5-second server deadline and task-diversity gate remain unchanged. No second
+review call, retries, replaced failures or paid warm-up. Production stays off.

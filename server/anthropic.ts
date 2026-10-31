@@ -6,7 +6,6 @@ import {
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { Limits } from './config';
 import { boundedJson } from './bounded-json';
-import { reviewedIds } from './haiku-review-output';
 
 const rankKeys = Array.from(
   { length: MAX_RECOMMENDATIONS },
@@ -85,24 +84,7 @@ export function providerBody(
     data,
   };
 }
-type RankBody = ReturnType<typeof providerBody>;
-type RankFormat = RankBody['request']['output_config']['format'];
-type RankProperty = RankFormat['schema']['properties'][string];
-export type ProviderBody = Omit<RankBody, 'request'> & {
-  request: Omit<RankBody['request'], 'output_config'> & {
-    output_config: Omit<RankBody['request']['output_config'], 'format'> & {
-      format: Omit<RankFormat, 'schema'> & {
-        schema: Omit<RankFormat['schema'], 'properties'> & {
-          properties: Record<
-            string,
-            RankProperty | { type: string; enum: number[] }
-          >;
-        };
-      };
-    };
-  };
-  reviewPriority?: number[];
-};
+export type ProviderBody = ReturnType<typeof providerBody>;
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([
@@ -211,65 +193,55 @@ export function anthropicProvider(
     } else {
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
-        if (body.reviewPriority) {
-          const ids = reviewedIds(
-            decoded,
-            body.catalogIds,
-            body.reviewPriority,
-          );
-          if (ids) value = { youtubeIds: ids };
-          else validation = { validationFailure: 'schema' };
+        const output = slotsSchema.safeParse(decoded);
+        if (!output.success) {
+          const positions =
+            decoded && typeof decoded === 'object' && !Array.isArray(decoded)
+              ? 'positions' in decoded && Array.isArray(decoded.positions)
+                ? decoded.positions
+                : Object.values(decoded).filter((value) => value !== null)
+              : undefined;
+          validation = {
+            validationFailure: 'schema',
+            ...(positions
+              ? {
+                  selectionCount: Math.min(positions.length, 100),
+                  invalidSelectionCount: Math.min(
+                    positions.filter(
+                      (position) =>
+                        !Number.isSafeInteger(position) || position < 0,
+                    ).length,
+                    100,
+                  ),
+                }
+              : {}),
+          };
         } else {
-          const output = slotsSchema.safeParse(decoded);
-          if (!output.success) {
-            const positions =
-              decoded && typeof decoded === 'object' && !Array.isArray(decoded)
-                ? 'positions' in decoded && Array.isArray(decoded.positions)
-                  ? decoded.positions
-                  : Object.values(decoded).filter((value) => value !== null)
-                : undefined;
+          const positions = rankKeys
+            .map((key) => output.data[key])
+            .filter((position) => position !== null);
+          const duplicateCount = positions.length - new Set(positions).size;
+          const outOfRangeCount = positions.filter(
+            (position) => position >= body.catalogIds.length,
+          ).length;
+          if (duplicateCount)
             validation = {
-              validationFailure: 'schema',
-              ...(positions
-                ? {
-                    selectionCount: Math.min(positions.length, 100),
-                    invalidSelectionCount: Math.min(
-                      positions.filter(
-                        (position) =>
-                          !Number.isSafeInteger(position) || position < 0,
-                      ).length,
-                      100,
-                    ),
-                  }
-                : {}),
+              validationFailure: 'duplicate',
+              selectionCount: positions.length,
+              duplicateCount,
             };
-          } else {
-            const positions = rankKeys
-              .map((key) => output.data[key])
-              .filter((position) => position !== null);
-            const duplicateCount = positions.length - new Set(positions).size;
-            const outOfRangeCount = positions.filter(
-              (position) => position >= body.catalogIds.length,
-            ).length;
-            if (duplicateCount)
-              validation = {
-                validationFailure: 'duplicate',
-                selectionCount: positions.length,
-                duplicateCount,
-              };
-            else if (outOfRangeCount)
-              validation = {
-                validationFailure: 'out-of-range',
-                selectionCount: positions.length,
-                outOfRangeCount,
-              };
-            else
-              value = {
-                youtubeIds: positions.map(
-                  (position) => body.catalogIds[position],
-                ),
-              };
-          }
+          else if (outOfRangeCount)
+            validation = {
+              validationFailure: 'out-of-range',
+              selectionCount: positions.length,
+              outOfRangeCount,
+            };
+          else
+            value = {
+              youtubeIds: positions.map(
+                (position) => body.catalogIds[position],
+              ),
+            };
         }
       } catch {
         validation = { validationFailure: 'json' };

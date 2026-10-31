@@ -80,3 +80,19 @@ Source `dfb51bb448e180713c419176ccd0057740776d7a`, run `41251931104`, attempt 2,
 costs $0.071110. Cumulative spend is $3.417283; $0.582717 remains under the $4 cap.
 All $0.360120 unknown reservations stay charged. Shutdown, key cleanup and the
 independent disabled probe pass. Temporary approval and trigger are removed.
+
+## V41: larger review pool
+
+V41 completes all forty requests and 74 provider calls with measured accounting,
+no invalid responses, duplicates, timeouts or transport failures. Scores remain
+10/10 in every trial, but breadth falls to 22/30. Eight lists are short; the
+Fundraising wording control has four cards. There are 205 cards, 122 unreviewed
+appearances and two podcast flags in the [expanded review](v41-expanded-review.md).
+Median latency is 2,422ms, p95 3,139ms and maximum 3,777ms. All four injection
+probes abstain; mixed controls and blank browsing pass. The fixed audit fails.
+
+Source `48cd9d9138f4964d2bdb2cf300cedc004e6cab77`, run `41252434631`, attempt 2,
+costs $0.078150. Cumulative spend is $3.495433; $0.504567 remains. No new unknown
+reservation occurs. Shutdown and key cleanup pass; approval and trigger are
+removed. The two-pass approach is withdrawn because neither review format
+improves weak picks and breadth together.

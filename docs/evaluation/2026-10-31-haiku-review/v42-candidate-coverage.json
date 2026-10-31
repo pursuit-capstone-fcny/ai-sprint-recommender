@@ -1,0 +1,153 @@
+{
+  "kind": "unpaid-candidate-coverage",
+  "frozenLabelsUnchanged": true,
+  "allExistingLabeledCandidatesRetained": true,
+  "rows": [
+    {
+      "profileId": "leadership-01",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "YACIPFCbGV8",
+          "title": "Using AI in Negotiations"
+        }
+      ]
+    },
+    {
+      "profileId": "leadership-02",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "bxfxzx-_MME",
+          "title": "Top 7 Concerns With AI"
+        },
+        {
+          "youtubeId": "YACIPFCbGV8",
+          "title": "Using AI in Negotiations"
+        }
+      ]
+    },
+    {
+      "profileId": "operations-01",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "xpbFvf5lM-w",
+          "title": "Creating Resources to Share with Students and Parents with ChatGPT"
+        },
+        {
+          "youtubeId": "0kMuHMGvhBE",
+          "title": "Amplify your impact with a song"
+        }
+      ]
+    },
+    {
+      "profileId": "operations-02",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": []
+    },
+    {
+      "profileId": "programs-01",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": []
+    },
+    {
+      "profileId": "programs-02",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "tAhSI5nok0s",
+          "title": "Job Applications"
+        }
+      ]
+    },
+    {
+      "profileId": "communications-01",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "ZlfTvy2PT1w",
+          "title": "Design a Polished Grant Flier with AI"
+        },
+        {
+          "youtubeId": "0kMuHMGvhBE",
+          "title": "Amplify your impact with a song"
+        },
+        {
+          "youtubeId": "Xlvo2_eUBLo",
+          "title": "Transforming Print to Podcast"
+        }
+      ]
+    },
+    {
+      "profileId": "communications-02",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "ZlfTvy2PT1w",
+          "title": "Design a Polished Grant Flier with AI"
+        },
+        {
+          "youtubeId": "xpbFvf5lM-w",
+          "title": "Creating Resources to Share with Students and Parents with ChatGPT"
+        },
+        {
+          "youtubeId": "0kMuHMGvhBE",
+          "title": "Amplify your impact with a song"
+        },
+        {
+          "youtubeId": "Xlvo2_eUBLo",
+          "title": "Transforming Print to Podcast"
+        }
+      ]
+    },
+    {
+      "profileId": "fundraising-01",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": [
+        {
+          "youtubeId": "ZlfTvy2PT1w",
+          "title": "Design a Polished Grant Flier with AI"
+        },
+        {
+          "youtubeId": "bxfxzx-_MME",
+          "title": "Top 7 Concerns With AI"
+        },
+        {
+          "youtubeId": "YACIPFCbGV8",
+          "title": "Using AI in Negotiations"
+        },
+        {
+          "youtubeId": "xpbFvf5lM-w",
+          "title": "Creating Resources to Share with Students and Parents with ChatGPT"
+        }
+      ]
+    },
+    {
+      "profileId": "fundraising-02",
+      "beforeCount": 48,
+      "afterCount": 48,
+      "missingExistingLabels": [],
+      "removedCandidates": []
+    }
+  ],
+  "note": "Context coverage is not a model-quality score. No paid calls or new labels."
+}

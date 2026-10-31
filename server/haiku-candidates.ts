@@ -2,15 +2,17 @@ import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { RecommendationRequest } from '../src/contracts/recommendation';
 import { taskRelevance } from '../src/engine/relevance';
 import { normalizeText } from '../src/engine/vocabulary';
+import { haikuTaskScope } from './haiku-task-scope';
 
 const CANDIDATE_LIMIT = 48;
 
 // Test-only retrieval. Keep selected-area coverage for unfamiliar paraphrases,
 // then add cross-area matches. Source order and all metadata stay unchanged.
 export function haikuCandidates(
-  items: PublicCatalog['items'],
+  allItems: PublicCatalog['items'],
   input: RecommendationRequest,
 ): PublicCatalog['items'] {
+  const items = haikuTaskScope(allItems, input.goal);
   if (items.length <= CANDIDATE_LIMIT || !input.goal.trim()) return items;
   const scores = taskRelevance(items, normalizeText(input.goal));
   if (![...scores.values()].some((score) => score > 0)) return items;

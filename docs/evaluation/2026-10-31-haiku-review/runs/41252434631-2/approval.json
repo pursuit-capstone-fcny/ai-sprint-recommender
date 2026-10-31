@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "48cd9d9138f4964d2bdb2cf300cedc004e6cab77",
+  "approvedWorkflowRunId": "41252434631",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T00:25:06Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v41",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V41 expands the review pool from 18 to 26 candidates, retaining valid draft IDs and adding unused alternatives with the same scorer. Keep metadata, source order, classifier prompt, plain integer schema, strict validation, unchanged browser task-diversity gate, deadline and shared token/reservation limits. At most two planned calls per request. Same thirty benchmark requests and ten probes; permanent rejection stops only after saving its failed case. No retries, replacement cases, padding, changed benchmark labels or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry forward $3.417283 under the approved additive shared $4 cap, including all $0.360120 unknown reservations. Remaining $0.582717; maximum forty-request reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 582717,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3417283,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

@@ -501,7 +501,7 @@ describe('deployed Luna low candidate', () => {
       value: {
         youtubeIds: body.catalogIds.slice(0, 3),
       },
-      inputTokens: 4000,
+      inputTokens: 20000,
       outputTokens: 72,
     }));
     const wording = JSON.parse(
@@ -542,9 +542,8 @@ describe('deployed Luna low candidate', () => {
         diagnostic: () => {},
       });
       expect((await response.json()).outcome).toBe('success');
-      const sent = provider.mock.calls.at(-2)![0];
+      const sent = provider.mock.calls.at(-1)![0];
       expect(sent.catalogIds).toHaveLength(48);
-      expect(provider.mock.calls.at(-1)![0].catalogIds).toHaveLength(26);
       const known = new Set(
         [...profile.ideal, ...profile.good].map((item) => item.youtubeId),
       );
@@ -563,7 +562,7 @@ describe('deployed Luna low candidate', () => {
         });
       }
     }
-    expect(provider).toHaveBeenCalledTimes(24);
+    expect(provider).toHaveBeenCalledTimes(12);
   });
   it('refuses Haiku dispatch after the shared spend exceeds its original allowance', async () => {
     const fetcher = vi.fn<typeof fetch>();
@@ -613,7 +612,7 @@ describe('deployed Luna low candidate', () => {
       idFromName: vi.fn((name) => name),
       get: () => object,
     };
-    const fetcher = vi.fn<typeof fetch>(async (url, init) =>
+    const fetcher = vi.fn<typeof fetch>(async (url) =>
       String(url).includes('script.google.com')
         ? Response.json(catalog)
         : Response.json({
@@ -624,18 +623,9 @@ describe('deployed Luna low candidate', () => {
                 type: 'text',
                 text: JSON.stringify(
                   Object.fromEntries(
-                    Object.keys(
-                      JSON.parse(String(init?.body)).output_config.format.schema
-                        .properties,
-                    ).map((key, i) => [
-                      key,
-                      key.startsWith('candidate')
-                        ? i < 3
-                          ? 2
-                          : 0
-                        : i < 3
-                          ? i
-                          : null,
+                    Array.from({ length: 8 }, (_, i) => [
+                      'rank' + (i + 1),
+                      i < 3 ? i : null,
                     ]),
                   ),
                 ),
@@ -650,7 +640,7 @@ describe('deployed Luna low candidate', () => {
     );
     expect((await response.json()).outcome).toBe('success');
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
-    expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 300);
+    expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 150);
     const saved = (await storage.get<Ledger>('ledger'))!;
     saved.total = 3_999_999;
     await storage.put('ledger', saved);
