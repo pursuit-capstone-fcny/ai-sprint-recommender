@@ -460,3 +460,19 @@ describe('Anthropic adapter', () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
 });
+
+it('reports only HTTP status for a rejected request without reading or exposing provider errors', async () => {
+  const timing = vi.fn();
+  const fetcher = vi.fn<typeof fetch>(
+    async () => new Response('private provider error', { status: 400 }),
+  );
+  await expect(
+    anthropicProvider('fixture-only', fetcher)(
+      body,
+      new AbortController().signal,
+      timing,
+    ),
+  ).rejects.toThrow('Provider failed');
+  expect(timing).toHaveBeenCalledExactlyOnceWith({ providerHttpStatus: 400 });
+  expect(fetcher).toHaveBeenCalledTimes(1);
+});

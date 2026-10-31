@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "f50b4987e73b5f4d4ef87a4b9997912f28036132",
+  "approvedWorkflowRunId": "41250737844",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T00:01:46Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v39",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V39 independently classifies each review candidate as unrelated, useful support or direct, without exposing draft selections or a preferred positive count to that pass. Temporary judgments do not change benchmark labels. Keep positive judgments, direct methods first, draft priority within groups, at most eight results, then unchanged browser task-diversity gate. At most two calls per client request with combined 65000 input/512 output and unchanged deadline/reservation. Same thirty benchmark requests and ten probes; strict schema validation; no retries, padding, omissions or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry forward $3.278613 under the user-approved additive $4 cap, including all $0.292560 historical unknown reservations. Remaining $0.721387; forty-request maximum reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 721387,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3278613,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

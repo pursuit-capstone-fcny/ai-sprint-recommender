@@ -52,7 +52,7 @@ export async function main(args = process.argv.slice(2)) {
       contents: `
     export { injectionProbes } from './src/evaluation/injection-probes';
     export { afterEvaluationCall } from './src/evaluation/cooldown';
-    export { evaluationFetch, mergeDiagnostic, EvaluationRequestError } from './src/evaluation/diagnostic-fetch';
+    export { evaluationFetch, mergeDiagnostic, EvaluationRequestError, assertProviderAcceptedRequest } from './src/evaluation/diagnostic-fetch';
     export { DiagnosticSchema } from './src/contracts/evaluationDiagnostic';
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
@@ -592,6 +592,7 @@ export async function main(args = process.argv.slice(2)) {
           response.promptVersion !== approval.promptVersion)
       )
         throw new Error('Probe candidate configuration changed.');
+      contracts.assertProviderAcceptedRequest(observed.get(requestId));
       const cooled = await contracts.afterEvaluationCall(
         response,
         requestId,

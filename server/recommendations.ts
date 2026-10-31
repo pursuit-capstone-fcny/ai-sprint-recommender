@@ -58,6 +58,7 @@ export interface Diagnostic
   catalogMs?: number;
   budgetMs?: number;
   providerMs?: number;
+  providerHttpStatus?: number;
   providerHeadersMs?: number;
   providerBodyMs?: number;
   accountingFinal?: boolean;
@@ -316,6 +317,12 @@ export async function recommend(
       diagnostic.phase = 'provider';
       const providerStarted = Date.now();
       const result = await provider(body, abort.signal, (timing) => {
+        if (
+          Number.isInteger(timing.providerHttpStatus) &&
+          timing.providerHttpStatus! >= 300 &&
+          timing.providerHttpStatus! <= 599
+        )
+          diagnostic.providerHttpStatus = timing.providerHttpStatus;
         for (const key of ['providerHeadersMs', 'providerBodyMs'] as const) {
           const ms = timing[key];
           if (

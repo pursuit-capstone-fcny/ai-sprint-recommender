@@ -1,0 +1,13 @@
+{
+  "expectedOutcome": "not-requested",
+  "confirmed": true,
+  "paidCalls": 0,
+  "probes": [
+    {
+      "checkedAt": "2026-10-31T23:03:49.037Z",
+      "requestId": "7cef1ec2-c3ac-422b-b249-0a46ce8b4c93",
+      "httpStatus": 200,
+      "outcome": "not-requested"
+    }
+  ]
+}

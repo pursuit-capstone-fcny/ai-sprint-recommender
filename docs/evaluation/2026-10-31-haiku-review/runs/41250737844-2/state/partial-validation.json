@@ -1,0 +1,17 @@
+{
+  "passed": false,
+  "submittedClientRequests": 10,
+  "plannedClientRequests": 40,
+  "providerCalls": 20,
+  "providerErrors": 10,
+  "phase": "second provider call",
+  "firstStageMeasuredRequests": 10,
+  "completeMeasuredRequests": 0,
+  "newUnknownReservationsMicrodollars": 67560,
+  "historicalUnknownReservationsMicrodollars": 292560,
+  "cumulativeUnknownReservationsMicrodollars": 360120,
+  "conservativeAccountingReconciled": true,
+  "additionalMicrodollars": 67560,
+  "remainingMicrodollars": 653827,
+  "note": "Overall ten-minute runner limit stops after the first ten cases. No retry or replacement. No three-trial score or expanded quality result. Full reservations remain charged even though first-stage usage is known."
+}

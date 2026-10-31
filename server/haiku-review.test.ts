@@ -76,6 +76,11 @@ describe('bounded Haiku review', () => {
     );
     expect(requests).toHaveLength(2);
     expect(requests.map((r) => r.max_tokens)).toEqual([256, 256]);
+    for (const request of requests) {
+      expect(
+        JSON.stringify(request).match(/"anyOf"/g)?.length ?? 0,
+      ).toBeLessThanOrEqual(16);
+    }
     const review = JSON.parse(requests[1].messages[0].content);
     expect(review.catalog).toHaveLength(18);
     expect(review.draftPositions).toBeUndefined();

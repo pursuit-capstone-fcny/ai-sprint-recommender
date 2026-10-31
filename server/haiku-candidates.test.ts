@@ -74,8 +74,9 @@ describe('Haiku candidate retrieval', () => {
     expect(data.catalog.map((row: unknown[]) => row[1])).toEqual(
       selected.map((i) => i.title),
     );
-    const positions =
-      body.request.output_config.format.schema.properties.rank1.anyOf[0].enum;
+    const rank = body.request.output_config.format.schema.properties.rank1;
+    if (!('anyOf' in rank)) throw new Error('Expected positional rank schema');
+    const positions = rank.anyOf[0].enum;
     expect(positions).toEqual(Array.from({ length: 48 }, (_, i) => i));
     const response = (position: number) =>
       anthropicProvider('fixture-only', async () =>

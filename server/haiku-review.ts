@@ -53,7 +53,7 @@ function reviewBody(
   const schema = body.request.output_config.format.schema;
   const keys = indices.map((_, position) => `candidate${position}`);
   const properties = Object.fromEntries(
-    keys.map((key) => [key, { anyOf: [{ type: 'integer', enum: [0, 1, 2] }] }]),
+    keys.map((key) => [key, { type: 'integer', enum: [0, 1, 2] }]),
   );
   const order = [
     ...draftIds,

@@ -1,6 +1,10 @@
 // @vitest-environment node
 import { expect, it, vi } from 'vitest';
-import { evaluationFetch, mergeDiagnostic } from './diagnostic-fetch';
+import {
+  evaluationFetch,
+  mergeDiagnostic,
+  assertProviderAcceptedRequest,
+} from './diagnostic-fetch';
 import type { EvaluationDiagnostic } from '../contracts/evaluationDiagnostic';
 
 const endpoint = 'https://test.example/api/recommendations';
@@ -84,4 +88,23 @@ it('rejects headers for another request and missing diagnostics', async () => {
     );
     await expect(wrapped(endpoint, { method: 'POST' })).rejects.toThrow();
   }
+});
+
+it.each([400, 401, 403, 404, 422])(
+  'stops a paid sequence on a permanent provider rejection %s',
+  (providerHttpStatus) => {
+    expect(() =>
+      assertProviderAcceptedRequest({
+        ...row,
+        outcome: 'provider-error',
+        providerHttpStatus,
+      }),
+    ).toThrow('stop before further paid calls');
+  },
+);
+it('keeps transient failures on the existing no-retry cooldown path', () => {
+  for (const providerHttpStatus of [429, 500, 503])
+    expect(() =>
+      assertProviderAcceptedRequest({ ...row, providerHttpStatus }),
+    ).not.toThrow();
 });

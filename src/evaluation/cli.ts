@@ -13,6 +13,7 @@ import { runLiveTrials } from './live';
 import { afterEvaluationCall, type Cooldown } from './cooldown';
 import {
   evaluationFetch,
+  assertProviderAcceptedRequest,
   mergeDiagnostic,
   type TransportFailure,
 } from './diagnostic-fetch';
@@ -106,14 +107,18 @@ export async function main(args = process.argv.slice(2)) {
         );
       },
       checkout,
-      (response, requestId) =>
-        afterEvaluationCall(response, requestId, async (entry) => {
+      (response, requestId) => {
+        assertProviderAcceptedRequest(
+          requestId ? captured.get(requestId) : undefined,
+        );
+        return afterEvaluationCall(response, requestId, async (entry) => {
           cooldowns.push(entry);
           await writeFile(
             resolve(output, 'cooldowns.json'),
             `${JSON.stringify(cooldowns, null, 2)}\n`,
           );
-        }),
+        });
+      },
       async (warmups) => {
         await saveCaptured();
         await writeFile(

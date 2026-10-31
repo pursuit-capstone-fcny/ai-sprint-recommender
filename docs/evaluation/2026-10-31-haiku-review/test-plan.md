@@ -54,3 +54,18 @@ The browser task-diversity gate remains unchanged. No positive quota or output
 count is supplied to the classifier. Both stages retain the same combined
 reservation, deadline and strict failure accounting. Run the same forty cases
 once with exact-attempt approval, preserving every outcome.
+
+## V40 request-format correction
+
+V39 violates the provider's documented limit of 16 union parameters by wrapping
+18 plain integer judgments in `anyOf`. Remove those unnecessary wrappers without
+changing classification, candidates, labels or gates. Add a red-capable schema
+limit regression. Allowlisted HTTP status diagnostics distinguish provider
+rejection from transport failure without storing error bodies. After saving a
+permanent 400/401/403/404/422 rejection, stop before submitting another paid case;
+unsubmitted cases remain missing and the failed run cannot pass validation.
+
+Repeat the forty-case validation within the $0.653827 balance. Carry the new
+$0.067560 unknown reservations forward, for $0.360120 total unknown spend.
+Keep the combined stage reservation and deadline unchanged. No retries or
+replacement cases; production LLM calls and usage logging stay disabled.

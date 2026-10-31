@@ -142,3 +142,14 @@ export function evaluationFetch(
     return response;
   };
 }
+
+// Save the failed case first; a rejected request/configuration must not be sent
+// again for the next independent profile. No raw provider error is exposed.
+export function assertProviderAcceptedRequest(
+  diagnostic?: EvaluationDiagnostic,
+) {
+  if ([400, 401, 403, 404, 422].includes(diagnostic?.providerHttpStatus ?? 0))
+    throw new Error(
+      'Provider rejected the request configuration; stop before further paid calls.',
+    );
+}

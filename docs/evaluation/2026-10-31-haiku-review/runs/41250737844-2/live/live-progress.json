@@ -1,0 +1,133 @@
+{
+  "kind": "live",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v39",
+  "trials": [
+    {
+      "startedAt": "2026-10-31T23:03:49.983Z",
+      "calls": [
+        {
+          "profileId": "leadership-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "5f1754b6-c39d-4ec2-9f9d-51f52b41e806",
+          "latencyMs": 1591
+        },
+        {
+          "profileId": "leadership-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "90d0cdd4-c61c-44e1-8de9-4c33f6edab1b",
+          "latencyMs": 1343
+        },
+        {
+          "profileId": "operations-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "8697a3e5-4490-49d2-b68f-8dbb48f15018",
+          "latencyMs": 1523
+        },
+        {
+          "profileId": "operations-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "3151af29-92d7-424b-a9e8-65277653f11e",
+          "latencyMs": 1572
+        },
+        {
+          "profileId": "programs-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "0656ae1f-6b39-4344-8de0-edcfce7b8bd9",
+          "latencyMs": 1552
+        },
+        {
+          "profileId": "programs-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "ec18802a-d464-4c00-a817-89917957613f",
+          "latencyMs": 1372
+        },
+        {
+          "profileId": "communications-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "467f3f5f-0ea1-4ed7-9a3a-e0175a2805e1",
+          "latencyMs": 1644
+        },
+        {
+          "profileId": "communications-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "683c770b-3407-4c41-8f8c-c33ae062c850",
+          "latencyMs": 1646
+        },
+        {
+          "profileId": "fundraising-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "dfda706a-b798-4252-a305-635b4ca8d34f",
+          "latencyMs": 1490
+        },
+        {
+          "profileId": "fundraising-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "provider-error",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v39"
+          },
+          "requestId": "83e31363-8b46-444e-869e-8316dd16118d",
+          "latencyMs": 1417
+        }
+      ]
+    }
+  ]
+}

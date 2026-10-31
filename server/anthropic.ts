@@ -85,7 +85,22 @@ export function providerBody(
     data,
   };
 }
-export type ProviderBody = ReturnType<typeof providerBody> & {
+type RankBody = ReturnType<typeof providerBody>;
+type RankFormat = RankBody['request']['output_config']['format'];
+type RankProperty = RankFormat['schema']['properties'][string];
+export type ProviderBody = Omit<RankBody, 'request'> & {
+  request: Omit<RankBody['request'], 'output_config'> & {
+    output_config: Omit<RankBody['request']['output_config'], 'format'> & {
+      format: Omit<RankFormat, 'schema'> & {
+        schema: Omit<RankFormat['schema'], 'properties'> & {
+          properties: Record<
+            string,
+            RankProperty | { type: string; enum: number[] }
+          >;
+        };
+      };
+    };
+  };
   reviewPriority?: number[];
 };
 const count = z.number().int().min(0).max(100).optional();
@@ -120,6 +135,7 @@ export type Provider = (
   body: ProviderBody,
   signal: AbortSignal,
   timing?: (value: {
+    providerHttpStatus?: number;
     providerHeadersMs?: number;
     providerBodyMs?: number;
   }) => void,
@@ -155,7 +171,7 @@ export function anthropicProvider(
   key: string,
   fetcher: typeof fetch = fetch,
 ): Provider {
-  return async (body, signal) => {
+  return async (body, signal, timing) => {
     const response = await fetcher('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       signal,
@@ -167,7 +183,10 @@ export function anthropicProvider(
       },
       body: JSON.stringify(body.request),
     });
-    if (!response.ok) throw new Error('Provider failed');
+    if (!response.ok) {
+      timing?.({ providerHttpStatus: response.status });
+      throw new Error('Provider failed');
+    }
     const parsed = responseSchema.parse(await boundedJson(response, 32_768));
     // Preserve known usage even when a model result is malformed or truncated.
     const content = contentSchema.safeParse(parsed.content);
