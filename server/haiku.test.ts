@@ -13,7 +13,7 @@ import { parseBenchmark } from '../src/evaluation/benchmark';
 import { injectionProbes } from '../src/evaluation/injection-probes';
 import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
-import { haikuDeployedBody } from './haiku';
+import { haikuDeployedBody, HAIKU_CATALOG_FIELDS_INSTRUCTION } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
@@ -23,7 +23,6 @@ import {
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
   HAIKU_METHOD_CONNECTION_INSTRUCTION,
-  HAIKU_SELECTION_ENCODING_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -86,18 +85,17 @@ describe('optimized Haiku low request', () => {
         expect(haiku.request.system).not.toContain(
           HAIKU_METHOD_CONNECTION_INSTRUCTION,
         );
+      const luna = lunaDeployedBody(original);
       const numericRequest = {
         ...haiku.request,
-        system: haiku.request.system.replace(
-          HAIKU_SELECTION_ENCODING_INSTRUCTION,
-          'Copy the integer position provided for each item; never invent a position or return IDs, titles, URLs, or explanations.',
-        ),
-        output_config: original.request.output_config,
+        messages: [{ role: 'user', content: luna.input[1].content }],
       };
-      const v25System = numericRequest.system.replace(
-        ` ${HAIKU_METHOD_CONNECTION_INSTRUCTION}`,
-        '',
-      );
+      const v25System = haiku.request.system
+        .replace(
+          HAIKU_CATALOG_FIELDS_INSTRUCTION,
+          'Each catalog row uses the field order in catalogFields.',
+        )
+        .replace(` ${HAIKU_METHOD_CONNECTION_INSTRUCTION}`, '');
       const v25Hash = Object.entries(v25.hashes).find(
         ([id]) => id === profile.id,
       )?.[1];
@@ -169,37 +167,39 @@ describe('optimized Haiku low request', () => {
             .update(JSON.stringify({ ...numericRequest, system: v11System }))
             .digest('hex'),
         ).toBe(expectedHash);
-      const luna = lunaDeployedBody(original);
-      expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
       const data = JSON.parse(haiku.request.messages[0].content);
-      expect(data.catalog).toHaveLength(89);
-      expect(
-        data.catalog.map((row: unknown[]) =>
-          Object.fromEntries(
-            data.catalogFields.map((field: string, i: number) => [
-              field,
-              row[i],
-            ]),
-          ),
+      expect({
+        ...data,
+        catalog: data.catalog.map(
+          (item: {
+            p: number;
+            t: string;
+            d: string;
+            areas: string[];
+            tasks: string[];
+            tools: string[];
+          }) => ({
+            position: item.p,
+            title: item.t,
+            description: item.d,
+            functionAreas: item.areas,
+            tasks: item.tasks,
+            tools: item.tools,
+          }),
         ),
-      ).toEqual(original.data.catalog);
+      }).toEqual(original.data);
+      expect(data.catalog).toHaveLength(89);
+      expect(haiku.request.system).toContain(HAIKU_CATALOG_FIELDS_INSTRUCTION);
       expect(data.goal).toBe(profile.input.goal);
       expect(haiku.catalogIds).toEqual(original.catalogIds);
-      expect(haiku.request.output_config.effort).toEqual(
-        original.request.output_config.effort,
+      expect(haiku.request.output_config).toEqual(
+        original.request.output_config,
       );
       expect(haiku.request.max_tokens).toBe(512);
       expect(haiku.request.thinking).toEqual({ type: 'disabled' });
       expect(haiku.request.output_config.effort).toBe('low');
       expect(inputTokenBound(haiku)).toBeLessThanOrEqual(
         limits.LLM_MAX_INPUT_TOKENS,
-      );
-      // Compare catalog encodings with the same new choice schema and prompt.
-      expect(inputTokenBound(haiku)).toBeLessThan(
-        inputTokenBound({
-          ...haiku,
-          request: { ...haiku.request, messages: original.request.messages },
-        }),
       );
       const normalized = v11System
         .replace(

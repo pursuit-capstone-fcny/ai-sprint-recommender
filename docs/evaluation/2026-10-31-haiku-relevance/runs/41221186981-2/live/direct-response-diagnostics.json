@@ -1,0 +1,17 @@
+[
+  {
+    "requestId": "664b48a8-ae9f-412c-8f16-f2b82ec738ae",
+    "environment": "test",
+    "outcome": "not-requested",
+    "latencyMs": 0,
+    "providerDispatched": false,
+    "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+    "accountingFinal": true,
+    "phase": "request",
+    "inputTokens": 0,
+    "outputTokens": 0,
+    "costMicrodollars": 0,
+    "modelVersion": "claude-haiku-5-5",
+    "promptVersion": "catalog-rank-haiku-v28"
+  }
+]

@@ -134,3 +134,33 @@ affect latency. Record failures normally, with no hidden paid warm-up or retry.
 
 Repeat the same forty requests with at most $0.270240 reserved from $0.510953.
 Keep every fixed audit and separate follow-up observation, then inspect all picks.
+
+## V28 failure and V29 named catalog records
+
+V28 run 41221186981 attempt 2 times out in the provider phase on all ten submitted
+benchmark requests. The ten-minute runner deadline stops remaining trials and
+probes. No complete score or breadth result exists. Nine requests have final
+diagnostics; the first has only a nonfinal diagnostic. No measured usage arrived,
+so retain all ten $0.006756 reservations, adding $0.067560. Cumulative ceiling is
+$2.556607, leaving $0.443393. Unknown reservations now total $0.292560. Shutdown
+and key removal pass. The exact provider-side cause is unobserved; the experiment
+regresses runtime and is withdrawn, including its adapter and synthetic tests.
+Its source commit, partial records and charges remain preserved.
+
+V29 restores V27's numeric schema, adapter and all semantic guidance. Instead of
+compact positional arrays, send the same catalog values in named object fields,
+with the same order, positions and trusted IDs. Full field names initially exceed
+the 65,000-byte guard and fail local request tests before dispatch. Short explicit
+keys p/t/d/areas/tasks/tools plus a field legend fit the existing bound; no content
+is shortened further and the guard is not raised. Change only the field-format
+instruction to match. The hypothesis is that explicit field names reduce
+confusion between title, description and task metadata for later selections.
+This is a model-readability hypothesis, not a proven server mapping bug.
+
+The wiring assertion fails on the old array format. Restoring array messages
+and the field-format instruction reconstructs historical V25 and earlier
+requests; frozen content remains identical. Preserve the hard input limit,
+512 output tokens, deadline, numeric validation, model/effort and browser gate.
+Run local checks and the unchanged forty-case audit, with $0.270240 reserved
+from $0.443393. No retry, refund, paid warm-up or new grant. Review all returned
+picks; do not count more cards as evidence that weak selections are fixed.

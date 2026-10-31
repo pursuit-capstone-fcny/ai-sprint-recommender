@@ -1,0 +1,11 @@
+{
+  "passed": false,
+  "complete": false,
+  "submittedRequests": 10,
+  "timeouts": 10,
+  "fullBenchmarkScore": null,
+  "paidProbesRun": 0,
+  "newUnknownReservationsMicrodollars": 67560,
+  "cumulativeUnknownReservationsMicrodollars": 292560,
+  "reason": "All ten submitted benchmark requests time out in provider phase; overall ten-minute runner limit stops remaining trials/probes. No final comparison report. First request lacks final accounting diagnostic; reserve every request in full. No retries or refund."
+}

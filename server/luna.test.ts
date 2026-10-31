@@ -580,7 +580,7 @@ describe('deployed Luna low candidate', () => {
                   Object.fromEntries(
                     Array.from({ length: 8 }, (_, i) => [
                       'rank' + (i + 1),
-                      i < 3 ? `${i}: ${catalog.items[i].title}` : null,
+                      i < 3 ? i : null,
                     ]),
                   ),
                 ),

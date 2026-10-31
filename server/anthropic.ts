@@ -84,16 +84,7 @@ export function providerBody(
     data,
   };
 }
-type OriginalBody = ReturnType<typeof providerBody>;
-export type ProviderBody = Omit<OriginalBody, 'request'> & {
-  // Only the bounded Haiku test candidate uses exact position/title choices.
-  selectionKeys?: string[];
-  request: Omit<OriginalBody['request'], 'output_config'> & {
-    output_config: Omit<OriginalBody['request']['output_config'], 'format'> & {
-      format: { type: string; schema: Record<string, unknown> };
-    };
-  };
-};
+export type ProviderBody = ReturnType<typeof providerBody>;
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([
@@ -142,9 +133,6 @@ const slotsSchema = z.strictObject(
     rankKeys.map((key) => [key, z.number().int().nonnegative().nullable()]),
   ),
 );
-const choiceSlotsSchema = z.strictObject(
-  Object.fromEntries(rankKeys.map((key) => [key, z.string().nullable()])),
-);
 
 const responseSchema = z.object({
   stop_reason: z.string(),
@@ -165,12 +153,6 @@ export function anthropicProvider(
   fetcher: typeof fetch = fetch,
 ): Provider {
   return async (body, signal) => {
-    if (
-      body.selectionKeys &&
-      (body.selectionKeys.length !== body.catalogIds.length ||
-        new Set(body.selectionKeys).size !== body.selectionKeys.length)
-    )
-      throw new Error('Invalid trusted selection map');
     const response = await fetcher('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       signal,
@@ -207,9 +189,7 @@ export function anthropicProvider(
     } else {
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
-        const output = (
-          body.selectionKeys ? choiceSlotsSchema : slotsSchema
-        ).safeParse(decoded);
+        const output = slotsSchema.safeParse(decoded);
         if (!output.success) {
           const positions =
             decoded && typeof decoded === 'object' && !Array.isArray(decoded)
@@ -223,11 +203,9 @@ export function anthropicProvider(
               ? {
                   selectionCount: Math.min(positions.length, 100),
                   invalidSelectionCount: Math.min(
-                    positions.filter((position) =>
-                      body.selectionKeys
-                        ? typeof position !== 'string' ||
-                          !body.selectionKeys.includes(position)
-                        : !Number.isSafeInteger(position) || position < 0,
+                    positions.filter(
+                      (position) =>
+                        !Number.isSafeInteger(position) || position < 0,
                     ).length,
                     100,
                   ),
@@ -235,19 +213,12 @@ export function anthropicProvider(
               : {}),
           };
         } else {
-          const selected = rankKeys
+          const positions = rankKeys
             .map((key) => output.data[key])
             .filter((position) => position !== null);
-          // Exact lookup only. Never accept a title with a mismatched prefix,
-          // normalize capitalization, parse a partial index or repair a result.
-          const positions = selected.map((choice) =>
-            typeof choice === 'string'
-              ? body.selectionKeys!.indexOf(choice)
-              : choice,
-          );
           const duplicateCount = positions.length - new Set(positions).size;
           const outOfRangeCount = positions.filter(
-            (position) => position < 0 || position >= body.catalogIds.length,
+            (position) => position >= body.catalogIds.length,
           ).length;
           if (duplicateCount)
             validation = {
