@@ -53,3 +53,20 @@ remain unreviewed, not new labels or evidence of production readiness.
 
 After evaluation, disable test calls, save cumulative spend, remove test keys
 and temporary approval/trigger. Keep the production configuration unchanged.
+
+## V22 result and V23 placement check
+
+V22 run 41215956221 attempt 2 retains 10/10 each, forty final diagnostics,
+complete accounting, clean transport and all injection/deduplication controls.
+It still fails breadth at 23/30, with 202 cards and 118 unreviewed appearances.
+Operations-02 improves, but Programs-02 remains thin twice, Communications-02
+three times and Leadership-02 twice. Cost $0.080968 raises the carried ceiling
+to $2.084027, leaving $0.915973. Shutdown, key removal and independent disabled
+verification pass. Attempt 1 was cancelled with zero jobs and no paid work.
+
+The next hypothesis is instruction order: the supporting-step check precedes
+targeted ranking, which may narrow the set again. V23 moves the exact paragraph
+after targeted ranking, immediately before the unchanged final eligibility and
+uniqueness checks. No new text or input facts are added. The placement test fails
+before this change; removing that paragraph still restores all V21 requests.
+Repeat the same forty requests and all fixed targets, reserving at most $0.270240.

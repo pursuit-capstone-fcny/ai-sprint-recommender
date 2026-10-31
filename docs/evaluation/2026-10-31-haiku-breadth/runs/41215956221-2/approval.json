@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "2183c8b8c441896cbe08d9838e0b9174fe15d624",
+  "approvedWorkflowRunId": "41215956221",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T16:40:51Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v22",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "Jason authorized fixing remaining Haiku breadth and rerunning #19 within the remaining allowance. V22 adds one supporting-work-step check before leaving short lists. Preserve exact V21 mixed-goal, final eligibility and uniqueness instructions. Thirty frozen benchmark requests and ten unchanged probes; no per-case retries. Model, effort, schema, limits, transport, catalog, labels and task-diversity gate remain unchanged.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $3 cap. Carry forward $2.003059 including $0.225000 historical unknown reservations. Remaining $0.996941. Maximum reservation forty times $0.006756, or $0.270240. No new grant, reset, refund or repricing. Haiku only; production LLM calls and logging stay disabled.",
+  "allowanceMicrodollars": 996941,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2003059,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}

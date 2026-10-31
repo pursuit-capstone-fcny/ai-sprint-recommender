@@ -77,7 +77,7 @@ describe('optimized Haiku low request', () => {
       }
       if (profile.input.goal.trim()) {
         expect(haiku.request.system).toContain(
-          `${HAIKU_BREADTH_INSTRUCTION} ${HAIKU_SUPPORTING_STEPS_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
+          `${LUNA_TARGETED_RANKING_INSTRUCTION} ${HAIKU_SUPPORTING_STEPS_INSTRUCTION} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
         );
       } else {
         expect(haiku.request.system).not.toContain(

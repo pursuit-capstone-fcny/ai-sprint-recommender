@@ -1,0 +1,8 @@
+{
+  "runId": "41215956221",
+  "runAttempt": 1,
+  "conclusion": "cancelled",
+  "jobs": 0,
+  "paidCalls": 0,
+  "note": "Cancelled while queued. The attempt jobs API returned no jobs; no paid work ran."
+}
