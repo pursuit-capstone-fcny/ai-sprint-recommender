@@ -48,7 +48,7 @@ export function interpretOperation(
   catalog: PublicCatalog,
   options: PromptOptions,
 ) {
-  // Commas can delimit an exclusion list, so retain sentence boundaries but not comma boundaries.
+  // Keep clause boundaries for operation scope. Explicit tool lists are extended below.
   // Handle a noun phrase rejected after its mention: "a slide deck isn't the goal".
   const normalized = prompt
     .replace(
@@ -56,7 +56,7 @@ export function interpretOperation(
       'not $1',
     )
     .replace(/\brules? out\b/gi, 'not');
-  const scoped = promptWords(normalized).filter((word) => word !== '\u0001');
+  const scoped = promptWords(normalized);
   const polarity = promptPolarity(scoped);
   const positive = polarity.positiveWords.map((word) =>
     word === '\u0000' ? word : languageTokens(word).join(' '),

@@ -83,6 +83,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given a reusable-helper request and instruction for project context or a standalone cited lookup
   - When selecting transferable components
   - Then project context remains a lower-priority partial method, while the standalone lookup requires a declared source/reference or handbook lookup cue; neither component is treated as full helper-configuration instruction.
+- AC-12.13 Clause scope and source-based task paraphrases
+  - Given a task expressed through its source and requested action, including unread material or a rejected learning format
+  - When recognizing operations and excluding tools
+  - Then ordinary phrases such as IRS filings, distinct-record counts and reusable writing helpers can select instructional methods, comma-separated exclusions remain scoped to their clause, and word-for-word text does not exclude Microsoft Word; source-summary, review and design transfers require their declared requested component.
 
 ### Open questions
 

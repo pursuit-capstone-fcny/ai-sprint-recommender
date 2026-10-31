@@ -149,9 +149,11 @@ export function languageTokens(text: string): string[] {
     .map(languageWord);
 }
 
-/** Preserve sentence scope without changing token offsets inside each sentence. */
+/** Normalize lexical idioms and preserve sentence/clause boundaries for every parser. */
 export function promptWords(text: string): string[] {
+  // This describes verbatim text, not the Microsoft application.
   return text
+    .replace(/\bword[ -]+for[ -]+word\b/gi, 'verbatim')
     .replace(/[’']/g, "'")
     .replace(/\b(i|we|you|they)'d\b/gi, '$1 would')
     .replace(

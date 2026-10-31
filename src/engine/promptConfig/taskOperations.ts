@@ -61,6 +61,18 @@ export const taskOperations: readonly OperationRule[] = [
       }),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
+        when: [
+          'upload',
+          'reference',
+          'document',
+          'overview',
+          'tone',
+          'calm',
+          'style',
+          'review',
+          'edit',
+          'check',
+        ],
       }),
       c(['Editing proofreading'], 75, {
         when: ['review', 'edit', 'proofread', 'check'],
@@ -183,7 +195,20 @@ export const taskOperations: readonly OperationRule[] = [
     ['Career frameworks', 'Job description writing'],
     'document',
     ['document', 'spreadsheet'],
-    [c(['Career frameworks']), c(['Editing proofreading'], 75)],
+    [
+      c(['Career frameworks']),
+      c(['Editing proofreading'], 75, {
+        when: [
+          'competency',
+          'framework',
+          'compare',
+          'review',
+          'proofread',
+          'edit',
+          'grammar',
+        ],
+      }),
+    ],
   ),
   r(
     'budget-consolidation',
@@ -256,7 +281,16 @@ export const taskOperations: readonly OperationRule[] = [
     [
       ['supervisor', 'employee', 'manager'],
       ['play', 'practice', 'practise', 'rehearse'],
-      ['conversation', 'wording', 'feedback', 'pause'],
+      [
+        'conversation',
+        'wording',
+        'feedback',
+        'pause',
+        'telling',
+        'expectation',
+        'push back',
+        'pushing back',
+      ],
     ],
     ['Role play', 'Difficult conversations'],
     'context',
@@ -334,7 +368,12 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'job-application',
     [
-      ['cover letter', 'applying for a job', 'job application'],
+      [
+        'cover letter',
+        'applying for a job',
+        'job application',
+        'application letter',
+      ],
       ['resume', 'cv', 'experience', 'role'],
     ],
     ['Cover letter writing', 'Interview preparation'],
@@ -343,7 +382,9 @@ export const taskOperations: readonly OperationRule[] = [
     [
       c(['Cover letter writing']),
       c(['Document drafting'], 80, { teaching: ['bio', 'resume'] }),
-      c(['Editing proofreading'], 75),
+      c(['Editing proofreading'], 75, {
+        when: ['interview', 'review', 'edit', 'proofread', 'check', 'revise'],
+      }),
     ],
   ),
   r(

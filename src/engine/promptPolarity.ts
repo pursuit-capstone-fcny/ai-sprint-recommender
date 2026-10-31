@@ -30,6 +30,8 @@ export function promptPolarity(words: string[]) {
     // Additive comparisons and lack of experience do not reject a tool/task.
     if (
       (word === 'not' && following[0] === 'only') ||
+      // "People will not read the guide" describes the audience, not rejected input.
+      (word === 'not' && prefix.at(-1) === 'will' && following[0] === 'read') ||
       // A topic such as "explain what we should and should not upload" is
       // discussing a rule, not excluding the topic from recommendations.
       (word === 'not' &&

@@ -3,6 +3,7 @@ import type { OperationRule } from '../taskIntent';
 import { candidate, rule } from './operationRules';
 import { taskOperations } from './taskOperations';
 import { taskDiscovery } from './taskDiscovery';
+import { taskParaphrases } from './taskParaphrases';
 const formulas = [candidate(['Spreadsheet formulas'])];
 const survey = [
   candidate(['Survey analysis'], 100, {
@@ -28,11 +29,12 @@ const citedDocuments = candidate(['Document Q&A'], 80, {
 export const operationRules: readonly OperationRule[] = [
   ...taskOperations,
   ...taskDiscovery,
+  ...taskParaphrases,
   rule(
     'vocabulary-helper',
     [
       ['word', 'vocabulary'],
-      ['grade', 'teaching', 'sentence'],
+      ['grade', 'teaching', 'sentence', 'teach', 'class'],
       ['helper', 'assistant', 'routine'],
     ],
     ['Lesson planning', 'Custom assistants'],
@@ -43,6 +45,9 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Lesson planning'], 80, {
         excludeTasks: ['Curriculum design', 'Language learning'],
         excludeTeaching: ['accessible personalized syllabus'],
+      }),
+      candidate(['Storytelling'], 75, {
+        when: ['visual', 'character', 'picture'],
       }),
     ],
   ),
@@ -187,7 +192,15 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'directory-structuring',
     [
-      ['directory', 'copied text', 'unstructured', 'jumble'],
+      [
+        'directory',
+        'copied text',
+        'unstructured',
+        'jumble',
+        'pasted',
+        'one cell',
+        'mess',
+      ],
       ['column', 'table', 'row'],
     ],
     ['Data structuring'],
@@ -215,8 +228,23 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'financial-review',
     [
-      ['financial statement', 'public account', 'ratio', 'reserve'],
-      ['year', 'income', 'expense', 'spending', 'revenue'],
+      [
+        'financial statement',
+        'public account',
+        'ratio',
+        'reserve',
+        'irs filing',
+        'auditor pdf',
+      ],
+      [
+        'year',
+        'income',
+        'expense',
+        'spending',
+        'revenue',
+        'financial',
+        'finance',
+      ],
     ],
     ['Financial analysis'],
     'document',
@@ -267,6 +295,7 @@ export const operationRules: readonly OperationRule[] = [
         'submission',
         'allow',
         'eligibility',
+        'eligible',
       ],
     ],
     ['RFP review'],
@@ -334,19 +363,29 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'document-review',
     [
-      ['review', 'check', 'proofread'],
+      ['review', 'check', 'proofread', 'edit', 'comment'],
       ['grammar', 'claim', 'tracked change', 'accept or reject'],
       ['draft', 'letter', 'document', 'word'],
     ],
     ['Editing proofreading', 'Document review'],
     'document',
     ['edited-document'],
-    [candidate(['Editing proofreading', 'Document review'])],
+    [
+      candidate(['Editing proofreading', 'Document review']),
+      candidate(['Document drafting'], 75, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['voice', 'style', 'summarize', 'draft from'],
+      }),
+      candidate(['Brand voice'], 75, {
+        allTasks: ['Custom assistants', 'Document drafting'],
+        when: ['voice', 'style'],
+      }),
+    ],
   ),
   rule(
     'technical-plain-language',
     [
-      ['technical', 'security', 'jargon'],
+      ['technical', 'security', 'jargon', 'risk assessment', 'it consultant'],
       ['trustee', 'board', 'nontechnical'],
       [
         'explain',
@@ -360,12 +399,28 @@ export const operationRules: readonly OperationRule[] = [
     ],
     ['Plain language', 'Board communications'],
     'document',
-    ['document'],
+    ['document', 'email'],
     [
       candidate(['Board communications']),
-      candidate(['Plain language', 'Editing proofreading'], 80),
+      candidate(['Plain language'], 80),
+      candidate(['Editing proofreading'], 80, {
+        when: [
+          'security',
+          'fact',
+          'version',
+          'draft',
+          'claim',
+          'proofread',
+          'review',
+          'check',
+        ],
+      }),
+      candidate(['Document drafting'], 75, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['email', 'summary'],
+      }),
     ],
-    { explanatory: true },
+    { explanatory: true, outputWhen: { email: ['email'] } },
   ),
   rule(
     'visual-rights-guide',
@@ -426,7 +481,7 @@ export const operationRules: readonly OperationRule[] = [
     'outlook-thread',
     [
       ['outlook'],
-      ['thread', 'exchange'],
+      ['thread', 'exchange', 'back and forth'],
       ['reply', 'invitation', 'invite', 'summary', 'agreed'],
     ],
     ['Email summary', 'Email drafting', 'Meeting scheduling'],
@@ -449,7 +504,7 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Transcription'], 80),
       candidate(['Document summary'], 75, {
         teaching: ['panel', 'speaker'],
-        when: ['transcript', 'outline'],
+        when: ['outline', 'word file', 'download', 'detailed summary'],
       }),
     ],
   ),
@@ -472,6 +527,14 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Knowledge management'], 75, {
         allTasks: ['Process documentation'],
         minimumStrength: 0.5,
+        when: [
+          'manual',
+          'policy pdf',
+          'reference',
+          'project',
+          'source document',
+          'knowledge file',
+        ],
       }),
       candidate(['Document Q&A'], 75, {
         teaching: ['notebook', 'collection of source documents'],
@@ -602,7 +665,14 @@ export const operationRules: readonly OperationRule[] = [
     'training-media',
     [
       ['audio', 'podcast'],
-      ['document', 'training pack', 'source material'],
+      [
+        'document',
+        'training pack',
+        'source material',
+        'guide',
+        'induction',
+        'manual',
+      ],
       [
         'video',
         'explainer',
@@ -728,6 +798,15 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Photo editing']),
       candidate(['Design feedback'], 75, {
         teaching: ['diagnose', 'screenshot'],
+        when: [
+          'crop',
+          'subject',
+          'background',
+          'mask',
+          'layout',
+          'balance',
+          'critique',
+        ],
       }),
     ],
   ),

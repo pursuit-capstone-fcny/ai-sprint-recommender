@@ -54,6 +54,145 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.13 recognizes financial source wording without an accounting task label', () => {
+    const finance = lesson(
+      1,
+      ['Financial analysis'],
+      'Review public financial filings.',
+    );
+    const reports = lesson(
+      2,
+      ['Grant due diligence'],
+      'Review organizational reports.',
+    );
+    const { run } = fixture([reports, finance]);
+    const result = run(
+      'Spot financial warning signs in these public IRS filings and auditor PDFs.',
+    );
+    expect(ids(result)).toEqual([finance.youtubeId, reports.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+  });
+  it('AC-12.13 recognizes distinct-record counts without admitting conditional totals', () => {
+    const distinct = lesson(
+      1,
+      ['List comparison', 'Spreadsheet formulas'],
+      'Count unique identifiers.',
+    );
+    const totals = lesson(
+      2,
+      ['Data aggregation', 'Spreadsheet formulas'],
+      'Total hours by name.',
+    );
+    const { run } = fixture([totals, distinct]);
+    expect(ids(run('Count distinct client IDs in spreadsheet rows.'))).toEqual([
+      distinct.youtubeId,
+    ]);
+  });
+  it('AC-12.13 treats word-for-word as text and preserves formal-minutes methods', () => {
+    const minutes = lesson(1, ['Meeting minutes'], 'Draft formal minutes.', [
+      'Microsoft Word',
+    ]);
+    const summary = lesson(
+      2,
+      ['Document summary'],
+      'Summarize a panel speaker.',
+    );
+    const { run } = fixture([summary, minutes]);
+    const result = run(
+      'Use a transcript of our planning call for minutes with decisions, not a word-for-word transcript.',
+    );
+    expect(result.interpretation.excludedTools).not.toContain('Microsoft Word');
+    expect(ids(result)).toEqual([minutes.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Use a committee transcript for minutes with actions and a detailed summary in a Word file.',
+        ),
+      ),
+    ).toContain(summary.youtubeId);
+  });
+  it('AC-12.13 keeps a rejected lecture separate from the requested setup topic', () => {
+    const writing = lesson(
+      1,
+      ['Brand voice', 'Custom assistants'],
+      'Configure a reusable writing assistant.',
+    );
+    const slides = lesson(
+      2,
+      ['Presentation creation'],
+      'Create presentation slides.',
+    );
+    const { run } = fixture([slides, writing]);
+    const result = run(
+      'Watch someone doing it, not a slide lecture, about setting up a reusable writing helper.',
+    );
+    expect(ids(result)).toEqual([writing.youtubeId]);
+    expect(result.interpretation.desiredOutputs).toEqual(['assistant']);
+  });
+  it('AC-12.13 keeps an unread guide as source material for requested audio', () => {
+    const audio = lesson(
+      1,
+      ['Audio generation'],
+      'Generate audio from a guide.',
+    );
+    const { run } = fixture([audio]);
+    const result = run(
+      "People won't read the guide. I want an audio version they can listen to.",
+    );
+    expect(ids(result)).toEqual([audio.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).toEqual(['audio']);
+  });
+  it('AC-12.13 separates career-level alignment from a document-review subtask', () => {
+    const career = lesson(
+      1,
+      ['Career frameworks'],
+      'Align job descriptions and levels.',
+    );
+    const edit = lesson(
+      2,
+      ['Editing proofreading'],
+      'Review the wording of a document.',
+    );
+    const { run } = fixture([edit, career]);
+    expect(
+      ids(
+        run(
+          'Make job descriptions consistent across levels and fill in a progression grid.',
+        ),
+      ),
+    ).toEqual([career.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Review job descriptions against our competency framework and progression levels.',
+        ),
+      ),
+    ).toContain(edit.youtubeId);
+  });
+  it('AC-12.13 keeps generic drafting out of correspondence without a requested component', () => {
+    const letter = lesson(
+      1,
+      ['Client correspondence'],
+      'Draft a landlord response.',
+    );
+    const draft = lesson(
+      2,
+      ['Document drafting', 'Document Q&A', 'Document summary'],
+      'Draft a grounded document.',
+    );
+    const { run } = fixture([draft, letter]);
+    expect(
+      ids(run('Draft a tenant response to a landlord after asking questions.')),
+    ).toEqual([letter.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Draft a calm tenant response to a landlord after asking questions.',
+        ),
+      ),
+    ).toContain(draft.youtubeId);
+  });
   it('AC-12.8 retains grounded cross-document questioning as a grantee-review component', () => {
     const review = lesson(
       1,
@@ -112,12 +251,19 @@ describe('deterministic free-text recommendations', () => {
     );
     const { run } = fixture([lookup, context, assistant]);
     const helper =
-      'An internal helper should answer policy questions and refer exceptions to a person.';
+      'An internal helper should answer questions from our policy manual and refer exceptions to a person.';
     const result = run(helper);
     expect(ids(result)).toEqual([assistant.youtubeId, context.youtubeId]);
     expect(result.recommendations[1].reason).toContain(
       'transferable component',
     );
+    expect(
+      ids(
+        run(
+          'An internal helper should answer policy questions and refer exceptions.',
+        ),
+      ),
+    ).not.toContain(context.youtubeId);
     expect(
       ids(run(`${helper} Provide a source reference for each answer.`)),
     ).toContain(lookup.youtubeId);

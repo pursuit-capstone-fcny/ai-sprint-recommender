@@ -7,8 +7,15 @@ export const taskDiscovery: readonly OperationRule[] = [
     'funding-application-fit',
     [
       ['funding call', 'funding notice', 'rfp', 'funding opportunity'],
-      ['eligibility', 'fit', 'spending rule', 'qualify'],
-      ['application', 'project', 'program'],
+      ['eligibility', 'eligible', 'fit', 'spending rule', 'qualify'],
+      [
+        'application',
+        'project',
+        'program',
+        'lay out',
+        'staff role',
+        'work plan',
+      ],
     ],
     ['RFP review', 'Grant drafting'],
     'document',
