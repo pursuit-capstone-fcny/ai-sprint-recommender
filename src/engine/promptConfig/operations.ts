@@ -167,8 +167,15 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'data-cleaning',
     [
-      ['duplicate', 'impossible', 'missing', 'blank field'],
-      ['row', 'export', 'date', 'value'],
+      [
+        'duplicate',
+        'impossible',
+        'missing',
+        'blank field',
+        'blank',
+        'inconsistent',
+      ],
+      ['row', 'export', 'date', 'value', 'spreadsheet'],
     ],
     ['Data cleaning'],
     'spreadsheet',
@@ -266,6 +273,7 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document Q&A'], 80, {
         teaching: ['collection of source documents', 'cross document'],
         excludeTasks: ['App building'],
+        when: ['several', 'renewing', 'over time', 'evolved', 'developed'],
       }),
     ],
   ),
@@ -296,6 +304,9 @@ export const operationRules: readonly OperationRule[] = [
         'allow',
         'eligibility',
         'eligible',
+        'summary',
+        'draft',
+        'template',
       ],
     ],
     ['RFP review'],
@@ -313,7 +324,7 @@ export const operationRules: readonly OperationRule[] = [
     [
       ['foundation', 'funder', 'inquiry'],
       ['response', 'answer', 'draft'],
-      ['instruction', 'overview', 'future', 'launch'],
+      ['instruction', 'overview', 'future', 'launch', 'guidance'],
     ],
     ['Grant drafting'],
     'document',
@@ -335,6 +346,7 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Social media writing'], 80),
       candidate(['Content repurposing'], 75, {
         allTasks: ['Custom assistants'],
+        when: ['voice', 'opening remark', 'briefing event', 'online event'],
       }),
       candidate(['Presentation creation'], 75, {
         teaching: ['presentation outline'],
@@ -493,7 +505,7 @@ export const operationRules: readonly OperationRule[] = [
     'formal-minutes',
     [
       ['recording', 'transcript', 'discussion'],
-      ['formal minute', 'decision', 'deadline', 'action'],
+      ['formal minute', 'decision', 'deadline', 'action', 'structured minute'],
       ['committee', 'meeting', 'minute'],
     ],
     ['Meeting minutes', 'Transcription'],
@@ -668,6 +680,7 @@ export const operationRules: readonly OperationRule[] = [
       [
         'document',
         'training pack',
+        'training material',
         'source material',
         'guide',
         'induction',
@@ -693,7 +706,7 @@ export const operationRules: readonly OperationRule[] = [
     'song-generation',
     [
       ['song', 'music'],
-      ['style', 'voice', 'lyric', 'version'],
+      ['style', 'voice', 'lyric', 'version', 'mood', 'brief'],
     ],
     ['Music generation'],
     'context',

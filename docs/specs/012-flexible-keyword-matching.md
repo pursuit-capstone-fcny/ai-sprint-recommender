@@ -88,6 +88,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When recognizing operations and excluding tools
   - Then ordinary phrases such as IRS filings, distinct-record counts and reusable writing helpers can select instructional methods, comma-separated exclusions remain scoped to their clause, and word-for-word text does not exclude Microsoft Word; source-summary, review and design transfers require their declared requested component.
 
+- AC-12.14 Action and source coverage
+  - Given a supplied document, spreadsheet, curriculum or tracking brief and a requested action
+  - When matching recognizes its registered workflow, including ordinary paraphrases
+  - Then it keeps the primary task ahead of incidental summary or question wording, prefers document-to-slide instruction over a planning example for generic document conversion, and applies the shared compatibility checks. Cross-document grantee and reusable donor-writing transfers require their declared source or writing-method cues.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

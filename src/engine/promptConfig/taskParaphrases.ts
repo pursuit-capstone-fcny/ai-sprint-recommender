@@ -4,6 +4,89 @@ import type { OperationRule } from '../taskIntent';
 /** Action/source combinations for work described without canonical task names. */
 export const taskParaphrases: readonly OperationRule[] = [
   r(
+    'spreadsheet-report',
+    [
+      ['spreadsheet', 'csv', 'dataset'],
+      ['pattern', 'explore', 'exploratory'],
+      ['chart', 'visualization'],
+      ['report', 'article'],
+    ],
+    ['Exploratory analysis', 'Chart creation', 'Report generation'],
+    'spreadsheet',
+    ['analysis', 'chart', 'document'],
+    [
+      c(['Exploratory analysis'], 110, {
+        allTasks: ['Report generation', 'Chart creation'],
+      }),
+    ],
+  ),
+  r(
+    'source-document-summary',
+    [
+      ['document', 'word', 'pdf'],
+      ['summarize', 'summary'],
+    ],
+    ['Document summary'],
+    'document',
+    ['summary'],
+    [
+      c(['Document summary'], 110, {
+        allTasks: ['Document Q&A', 'Document drafting'],
+        teaching: ['source reference', 'against the text'],
+      }),
+    ],
+    { unless: ['rfp', 'compare', 'flier', 'flyer'] },
+  ),
+  r(
+    'configure-faq-assistant',
+    [
+      ['faq', 'repeated internal question'],
+      ['assistant', 'gpt', 'helper'],
+      ['configure', 'instruction', 'reference knowledge', 'reference file'],
+    ],
+    ['Knowledge management', 'Custom assistants'],
+    'document',
+    ['assistant'],
+    [
+      c(['Custom assistants'], 110, {
+        allTasks: ['Knowledge management'],
+        teaching: ['faq', 'internal question'],
+        minimumStrength: 0.5,
+      }),
+    ],
+    { explanatory: true, precedence: 1 },
+  ),
+  r(
+    'intervention-app',
+    [
+      ['student', 'intervention'],
+      ['track', 'tracking', 'follow up'],
+      ['app', 'apps script', 'record'],
+    ],
+    ['Student interventions', 'App building'],
+    'context',
+    ['app', 'spreadsheet'],
+    [c(['Student interventions'], 110, { allTasks: ['App building'] })],
+  ),
+  r(
+    'curriculum-activity-assistant',
+    [
+      ['curriculum', 'lesson'],
+      ['activity', 'icebreaker'],
+      ['assistant', 'generator', 'playlab'],
+    ],
+    ['Lesson planning', 'Custom assistants'],
+    'curriculum',
+    ['assistant', 'lesson'],
+    [
+      c(['Custom assistants'], 110, {
+        allTasks: ['Lesson planning'],
+        teaching: ['activity', 'reference curriculum'],
+        excludeTasks: ['Language learning'],
+      }),
+    ],
+  ),
+  r(
     'distinct-record-count',
     [
       ['distinct', 'unique', 'repeat'],
@@ -179,9 +262,9 @@ export const taskParaphrases: readonly OperationRule[] = [
   r(
     'accessible-agent-introduction',
     [
-      ['accessible', 'accessibility'],
+      ['accessible', 'accessibility', 'adapting lesson'],
       ['agent', 'assistant'],
-      ['introduction', 'setting'],
+      ['introduction', 'setting', 'introductory', 'proposed instruction'],
     ],
     ['Custom assistants'],
     undefined,

@@ -151,7 +151,7 @@ export const taskOperations: readonly OperationRule[] = [
     [
       ['survey', 'questionnaire', 'rating'],
       ['chart', 'graph', 'bar'],
-      ['comment', 'written answer', 'main issue', 'theme'],
+      ['comment', 'written answer', 'written response', 'main issue', 'theme'],
     ],
     ['Chart creation', 'Qualitative analysis', 'Survey analysis'],
     'survey',
@@ -214,7 +214,7 @@ export const taskOperations: readonly OperationRule[] = [
     'budget-consolidation',
     [
       ['budget'],
-      ['folder', 'file', 'workbook'],
+      ['folder', 'file', 'workbook', 'spreadsheet'],
       ['pull', 'consolidate', 'combine', 'master', 'copying'],
     ],
     ['Budget consolidation', 'Spreadsheet automation'],
@@ -239,7 +239,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'case-tracking',
     [
-      ['client', 'caseworker', 'case manager'],
+      ['client', 'caseworker', 'case manager', 'patient'],
       ['milestone', 'overdue', 'due date', 'worker view', 'manager overview'],
     ],
     ['Case management', 'Dashboard design'],
@@ -253,7 +253,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'quick-contact-capture',
     [
-      ['desk', 'reception', 'outreach worker'],
+      ['desk', 'reception', 'outreach worker', 'client intake'],
       ['capture', 'jot', 'field', 'record'],
       ['phone', 'thirty second', 'two minute', 'follow up', 'call them back'],
     ],
@@ -325,7 +325,14 @@ export const taskOperations: readonly OperationRule[] = [
     'negotiation-preparation',
     [
       ['counteroffer', 'counter offer', 'low offer', 'lump sum'],
-      ['condition', 'used', 'equipment', 'furniture', 'laptop'],
+      [
+        'condition',
+        'used',
+        'equipment',
+        'furniture',
+        'laptop',
+        'proposed agreement',
+      ],
     ],
     ['Negotiation preparation'],
     'context',
@@ -340,7 +347,13 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'guest-research',
     [
-      ['guest', 'interview subject', 'campaigner', 'interview the'],
+      [
+        'guest',
+        'interview subject',
+        'campaigner',
+        'interview the',
+        'public figure',
+      ],
       ['public', 'source', 'speech', 'briefing', 'research'],
     ],
     ['Research', 'Interview preparation'],
@@ -354,8 +367,16 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'official-source-search',
     [
-      ['government', 'official', 'regulatory'],
-      ['guidance', 'pdf', 'source', 'original'],
+      ['government', 'official', 'regulatory', 'regulation'],
+      ['guidance', 'pdf', 'source', 'original', 'source document'],
+      [
+        'research',
+        'perplexity',
+        'search',
+        'government',
+        'official',
+        'regulatory',
+      ],
     ],
     ['Research', 'Regulatory document review'],
     'web',
@@ -364,6 +385,7 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Regulatory document review']),
       c(['Research'], 80, { allTasks: ['Interview preparation'] }),
     ],
+    { precedence: 1 },
   ),
   r(
     'job-application',
@@ -390,9 +412,9 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'classroom-story',
     [
-      ['character', 'mascot', 'fox', 'owl'],
+      ['character', 'mascot', 'fox', 'owl', 'illustration'],
       ['story', 'adventure', 'chapter', 'note'],
-      ['class', 'classroom', 'children', 'school'],
+      ['class', 'classroom', 'children', 'school', 'student', 'lesson'],
     ],
     ['Storytelling', 'Image generation'],
     'context',
@@ -419,9 +441,9 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'one-off-learning-activity',
     [
-      ['math', 'maths', 'escape room', 'worksheet'],
+      ['math', 'maths', 'escape room', 'worksheet', 'teaching resource'],
       ['session', 'activity', 'lesson', 'tutor'],
-      ['material', 'answer key', 'outline', 'timed'],
+      ['material', 'answer key', 'outline', 'timed', 'activity'],
     ],
     ['Lesson planning', 'Educational materials'],
     'curriculum',
@@ -524,7 +546,15 @@ export const taskOperations: readonly OperationRule[] = [
     'responsible-ai-explanation',
     [
       ['mistake', 'privacy', 'bias', 'overreliance', 'wrong'],
-      ['talk', 'explain', 'learn', 'judge', 'consider'],
+      [
+        'talk',
+        'explain',
+        'learn',
+        'judge',
+        'consider',
+        'discuss responsible',
+        'discussing responsible',
+      ],
     ],
     ['Responsible AI', 'AI literacy'],
     undefined,
@@ -573,8 +603,8 @@ export const taskOperations: readonly OperationRule[] = [
     'improve-prompt',
     [
       ['prompt', 'request', 'brief', 'instruction'],
-      ['rewrite', 'improve', 'refine'],
-      ['background', 'audience', 'answer', 'output', 'generic'],
+      ['rewrite', 'improve', 'refine', 'small change', 'follow up'],
+      ['background', 'audience', 'answer', 'output', 'generic', 'context'],
     ],
     ['Prompting'],
     'context',
@@ -645,8 +675,8 @@ export const taskOperations: readonly OperationRule[] = [
     'saved-workflow',
     [
       ['claude', 'skill'],
-      ['routine', 'workflow', 'monthly'],
-      ['invoke', 'package', 'copying', 'save', 'again'],
+      ['routine', 'workflow', 'monthly', 'skill'],
+      ['invoke', 'package', 'copying', 'save', 'again', 'reuse'],
     ],
     ['Workflow automation', 'Custom assistants'],
     'context',

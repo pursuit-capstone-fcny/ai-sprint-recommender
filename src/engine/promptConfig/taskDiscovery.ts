@@ -84,12 +84,25 @@ export const taskDiscovery: readonly OperationRule[] = [
     [
       ['slide', 'deck', 'presentation'],
       ['roadmap', 'pdf', 'document', 'strategic plan'],
-      ['outline', 'draft', 'convert', 'turn'],
+      [
+        'outline',
+        'draft',
+        'convert',
+        'turn',
+        'repurpose',
+        'presentation from',
+        'slides from',
+        'deck from',
+      ],
     ],
     ['Presentation creation'],
     'document',
     ['presentation'],
     [
+      c(['Presentation creation'], 115, {
+        allTasks: ['Content repurposing'],
+        teaching: ['gamma'],
+      }),
       c(['Presentation creation'], 110, { teaching: ['gamma'] }),
       c(['Presentation creation'], 80, {
         excludeTasks: ['Survey analysis', 'Document Q&A'],
@@ -99,9 +112,16 @@ export const taskDiscovery: readonly OperationRule[] = [
   r(
     'organization-visibility-audit',
     [
-      ['ai', 'assistant'],
+      ['ai', 'assistant', 'copilot'],
       ['website', 'online'],
-      ['audit', 'inaccurate', 'leaves out', 'missing', 'old event'],
+      [
+        'audit',
+        'inaccurate',
+        'leaves out',
+        'missing',
+        'old event',
+        'incomplete answer',
+      ],
     ],
     ['AI search visibility'],
     'website',

@@ -54,6 +54,221 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.14 prefers a document-to-slides method over a planning example', () => {
+    const convert = lesson(
+      1,
+      ['Presentation creation', 'Content repurposing'],
+      'Generate a deck in Gamma.',
+    );
+    const planning = lesson(
+      2,
+      ['Presentation creation', 'Strategic planning'],
+      'Use Gamma for an operations board presentation.',
+    );
+    const { run } = fixture([planning, convert]);
+    const result = run(
+      'In operations, we need a presentation from a document for our board.',
+    );
+    expect(ids(result)).toEqual([convert.youtubeId, planning.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).toEqual(['presentation']);
+    expect(ids(run('Repurpose this document into slides.'))[0]).toBe(
+      convert.youtubeId,
+    );
+  });
+  it('AC-12.14 recognizes a spreadsheet-to-report workflow with chart evidence', () => {
+    const report = lesson(
+      1,
+      ['Exploratory analysis', 'Chart creation', 'Report generation'],
+      'Analyze datasets, chart patterns and write an article.',
+    );
+    const chartOnly = lesson(2, ['Chart creation'], 'Draw a chart.');
+    const { run } = fixture([chartOnly, report]);
+    const result = run(
+      'Explore patterns in this CSV, make charts and assemble a report.',
+    );
+    expect(ids(result)).toEqual([report.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['spreadsheet']);
+    expect(result.interpretation.desiredOutputs).toEqual([
+      'analysis',
+      'chart',
+      'document',
+    ]);
+  });
+  it('AC-12.14 keeps a comparison task ahead of a requested summary component', () => {
+    const summary = lesson(
+      1,
+      ['Document summary', 'Document Q&A', 'Document drafting'],
+      'Summarize with source references.',
+    );
+    const compare = lesson(
+      2,
+      ['Document comparison'],
+      'Compare document versions.',
+    );
+    const { run } = fixture([summary, compare]);
+    expect(ids(run('Summarize a document in Microsoft Word.'))).toEqual([
+      summary.youtubeId,
+    ]);
+    const result = run(
+      'Compare these policy documents and summarize the changes.',
+    );
+    expect(ids(result)[0]).toBe(compare.youtubeId);
+    expect(result.interpretation.desiredOutputs).toEqual(['comparison']);
+  });
+  it('AC-12.14 distinguishes configuring an FAQ assistant from reading a source', () => {
+    const faq = lesson(
+      1,
+      ['Custom assistants', 'Knowledge management'],
+      'Configure an internal FAQ with reference knowledge.',
+    );
+    const answers = lesson(
+      2,
+      ['Document Q&A', 'Document summary'],
+      'Answer questions with source references.',
+    );
+    const { run } = fixture([answers, faq]);
+    const result = run(
+      'Configure an FAQ assistant using documents and reference knowledge, then check its answers.',
+    );
+    expect(ids(result)).toEqual([faq.youtubeId]);
+    expect(result.interpretation.desiredOutputs).toEqual(['assistant']);
+  });
+  it('AC-12.14 distinguishes web-source research from questions about a supplied document', () => {
+    const research = lesson(
+      1,
+      ['Regulatory document review', 'Research'],
+      'Research regulations using government sources.',
+    );
+    const sourceQA = lesson(
+      2,
+      ['Document Q&A', 'Document summary'],
+      'Answer questions with source references.',
+    );
+    const { run } = fixture([sourceQA, research]);
+    const result = run(
+      'Use Perplexity to research regulations and inspect source documents behind an answer.',
+    );
+    expect(ids(result)).toEqual([research.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['web']);
+  });
+  it('AC-12.14 keeps responsible-use discussion separate from a performance conversation', () => {
+    const responsible = lesson(
+      1,
+      ['Responsible AI'],
+      'Discuss responsible AI use.',
+    );
+    const roleplay = lesson(
+      2,
+      ['Difficult conversations', 'Role play'],
+      'Practice a performance conversation.',
+    );
+    const { run } = fixture([roleplay, responsible]);
+    expect(
+      ids(run('I need help discussing responsible AI use and privacy.')),
+    ).toEqual([responsible.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Discuss a sensitive performance issue with a colleague and role-play responses when the scenario is wrong.',
+        ),
+      ),
+    ).toContain(roleplay.youtubeId);
+    expect(
+      ids(
+        run(
+          'Discuss a sensitive performance issue with a colleague and role-play responses when the scenario is wrong.',
+        ),
+      ),
+    ).not.toContain(responsible.youtubeId);
+  });
+  it('AC-12.14 recognizes curriculum activity setup without admitting language tutoring', () => {
+    const activity = lesson(
+      1,
+      ['Lesson planning', 'Custom assistants'],
+      'Generate activities from reference curriculum.',
+    );
+    const tutoring = lesson(
+      2,
+      ['Custom assistants', 'Lesson planning', 'Language learning'],
+      'Generate activities for language learning.',
+    );
+    const { run } = fixture([tutoring, activity]);
+    const result = run(
+      'Configure a curriculum assistant for icebreaker activities.',
+    );
+    expect(ids(result)).toEqual([activity.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['curriculum']);
+    expect(result.interpretation.desiredOutputs).toEqual([
+      'assistant',
+      'lesson',
+    ]);
+  });
+  it('AC-12.14 recognizes student tracking apps with task evidence', () => {
+    const tracking = lesson(
+      1,
+      ['Student interventions', 'App building'],
+      'Track student interventions in an app.',
+    );
+    const generic = lesson(2, ['App building'], 'Create an app.');
+    const { run } = fixture([generic, tracking]);
+    expect(
+      ids(
+        run(
+          'We need an app for tracking student interventions and follow-up records.',
+        ),
+      ),
+    ).toEqual([tracking.youtubeId]);
+  });
+  it('AC-12.14 requires a longitudinal or multi-source cue for cross-document grantee transfers', () => {
+    const direct = lesson(
+      1,
+      ['Grant due diligence'],
+      'Compare grantee annual reports.',
+    );
+    const lookup = lesson(
+      2,
+      ['Document Q&A'],
+      'Ask questions across a collection of source documents.',
+    );
+    const { run } = fixture([lookup, direct]);
+    expect(
+      ids(
+        run(
+          'Compare annual reports from our grantee and prepare review questions.',
+        ),
+      ),
+    ).toEqual([direct.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Compare several partners using annual reports and how programs developed over time.',
+        ),
+      ),
+    ).toContain(lookup.youtubeId);
+  });
+  it('AC-12.14 requires a writing-method cue for reusable donor-copy transfers', () => {
+    const webinar = lesson(1, ['Webinar planning'], 'Plan a donor webinar.');
+    const writing = lesson(
+      2,
+      ['Content repurposing', 'Custom assistants'],
+      'Reuse writing instructions.',
+    );
+    const { run } = fixture([writing, webinar]);
+    expect(
+      ids(
+        run('Use a report to plan a donor webinar and draft invitation posts.'),
+      ),
+    ).toEqual([webinar.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Use a report for a donor online event, with opening remarks in our voice and invitation posts.',
+        ),
+      ),
+    ).toContain(writing.youtubeId);
+  });
+
   it('AC-12.13 recognizes financial source wording without an accounting task label', () => {
     const finance = lesson(
       1,
