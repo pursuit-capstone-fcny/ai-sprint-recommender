@@ -3,6 +3,7 @@ import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
+import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
@@ -19,6 +20,7 @@ import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
+  HAIKU_SUPPORTING_STEPS_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -73,7 +75,29 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
-      const v18System = haiku.request.system.replace(
+      if (profile.input.goal.trim()) {
+        expect(haiku.request.system).toContain(
+          `${HAIKU_BREADTH_INSTRUCTION} ${HAIKU_SUPPORTING_STEPS_INSTRUCTION} ${LUNA_TARGETED_RANKING_INSTRUCTION}`,
+        );
+      } else {
+        expect(haiku.request.system).not.toContain(
+          HAIKU_SUPPORTING_STEPS_INSTRUCTION,
+        );
+      }
+      const v21System = haiku.request.system.replace(
+        ` ${HAIKU_SUPPORTING_STEPS_INSTRUCTION}`,
+        '',
+      );
+      const v21Hash = Object.entries(v21.hashes).find(
+        ([id]) => id === profile.id,
+      )?.[1];
+      if (v21Hash)
+        expect(
+          createHash('sha256')
+            .update(JSON.stringify({ ...haiku.request, system: v21System }))
+            .digest('hex'),
+        ).toBe(v21Hash);
+      const v18System = v21System.replace(
         ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
         '',
       );
