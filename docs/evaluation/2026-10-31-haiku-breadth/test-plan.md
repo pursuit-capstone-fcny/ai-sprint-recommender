@@ -70,3 +70,26 @@ after targeted ranking, immediately before the unchanged final eligibility and
 uniqueness checks. No new text or input facts are added. The placement test fails
 before this change; removing that paragraph still restores all V21 requests.
 Repeat the same forty requests and all fixed targets, reserving at most $0.270240.
+
+## V23 result and V24 selection check
+
+V23 run 41216398502 attempt 2 retains 10/10 and clean reliability, but breadth
+falls to 22/30 and mixed Operations returns five cards. Fundraising-02 is thin
+in one trial. Both quality and breadth audits fail. Preserve the result and its
+$0.080968 cost. Two runs cost $0.161936; cumulative ceiling $2.164995 leaves
+$0.835005. All forty diagnostics and measured usage reconcile. Calls are off and
+keys removed. Attempt 1 was cancelled before any job or paid work.
+
+V24 returns to V21's instruction order and changes only its breadth paragraph.
+Identify the useful set across the catalog before assigning ranks, then order
+direct matches first and retain the selected supporting methods. Choose each
+position once, with the same no-padding and eligibility rules. Remove the extra
+V22 paragraph. This tests whether sequential rank filling stops after the
+closest matches. The earlier V16 tried set-first selection before V21's mixed-goal
+fix existed; that historical failure remains recorded. This test uses the fixed
+current baseline and all forty probes, not a rerun of an unchanged candidate.
+
+Restoring the saved V21 breadth paragraph reconstructs every V21 request hash.
+No new unit assertion can establish semantic adherence; the already-red live
+artifact audit is the regression check. Keep the same targets and reserve at
+most $0.270240 from $0.835005. Do not change model settings or inputs.

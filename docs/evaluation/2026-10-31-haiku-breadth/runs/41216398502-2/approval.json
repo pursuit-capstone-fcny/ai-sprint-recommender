@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "3ec1db23a69b24dfd9b4e5d43cfcf7656ce14a6d",
+  "approvedWorkflowRunId": "41216398502",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T16:46:37Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v23",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "Jason authorized fixing remaining Haiku breadth and rerunning #19 within the remaining allowance. V23 moves the exact V22 supporting-work-step check after targeted ranking and before unchanged final eligibility and uniqueness checks. Preserve V21 mixed-goal guidance, thirty frozen benchmark requests and ten probes; no per-case retries. Model, effort, schema, limits, transport, catalog, labels and task-diversity gate remain unchanged. Preserve failed V22 results.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $3 cap. Carry forward $2.084027 including $0.225000 historical unknown reservations and $0.080968 V22 cost. Remaining $0.915973. Maximum reservation forty times $0.006756, or $0.270240. No new grant, reset, refund or repricing. Haiku only; production LLM calls and logging stay disabled.",
+  "allowanceMicrodollars": 915973,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2084027,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}

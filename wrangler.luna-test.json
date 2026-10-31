@@ -28,7 +28,7 @@
     "LLM_PROVIDER": "openai",
     "LLM_REASONING_EFFORT": "low",
     "LLM_ALLOWANCE_MICRODOLLARS": "3000000",
-    "LLM_PRIOR_MICRODOLLARS": "2084027",
+    "LLM_PRIOR_MICRODOLLARS": "2164995",
     "LLM_SERVICE_TIER": "fast"
   },
   "durable_objects": {

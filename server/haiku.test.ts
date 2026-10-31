@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
+import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
@@ -20,7 +21,6 @@ import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
-  HAIKU_SUPPORTING_STEPS_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -75,18 +75,9 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
-      if (profile.input.goal.trim()) {
-        expect(haiku.request.system).toContain(
-          `${LUNA_TARGETED_RANKING_INSTRUCTION} ${HAIKU_SUPPORTING_STEPS_INSTRUCTION} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
-        );
-      } else {
-        expect(haiku.request.system).not.toContain(
-          HAIKU_SUPPORTING_STEPS_INSTRUCTION,
-        );
-      }
       const v21System = haiku.request.system.replace(
-        ` ${HAIKU_SUPPORTING_STEPS_INSTRUCTION}`,
-        '',
+        HAIKU_BREADTH_INSTRUCTION,
+        v21Breadth.instruction,
       );
       const v21Hash = Object.entries(v21.hashes).find(
         ([id]) => id === profile.id,
@@ -122,7 +113,7 @@ describe('optimized Haiku low request', () => {
           HAIKU_MIXED_GOAL_INSTRUCTION,
         );
       const v12System = v18System
-        .replace(` ${HAIKU_BREADTH_INSTRUCTION}`, '')
+        .replace(` ${v21Breadth.instruction}`, '')
         .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');
       const v12Hash = Object.entries(v12.hashes).find(
         ([id]) => id === profile.id,

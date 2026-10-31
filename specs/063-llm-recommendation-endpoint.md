@@ -105,10 +105,10 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
-- Given Haiku V22 and an eligible short list, when checking unused candidates,
-  then review concrete preparation, execution, checking and follow-through
-  methods supported by their descriptions. Keep direct matches first, exclude
-  weak padding and retain V21's exact eligibility and uniqueness checks.
+- Given Haiku V24 and an eligible goal, when selecting videos, then identify
+  useful direct and supporting methods before ranking. Keep direct matches
+  first without shrinking that useful set, exclude weak padding, and retain
+  V21's exact eligibility and uniqueness checks.
 - Given the Haiku V13 test, when an eligible goal has fewer than six direct
   matches, then review unused catalog items for concrete supporting methods.
   Keep direct matches first and preserve V12's exact eligibility/uniqueness
