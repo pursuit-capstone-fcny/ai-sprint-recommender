@@ -1,6 +1,6 @@
 // Original names and all charges are retained. Grants add to the shared test
 // ceiling; live calls still require exact-source, provider and attempt approval.
-export const LUNA_PRIOR_SPEND = 2_164_995;
+export const LUNA_PRIOR_SPEND = 2_244_897;
 export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
     'docs/evaluation/2026-10-29-luna-deployed/runs/40908665576-2/state/luna-budget.json',
@@ -157,6 +157,11 @@ export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
   [
     'docs/evaluation/2026-10-31-haiku-breadth/runs/41216398502-2/state/comparison-budget.json',
     '77f82a118036080a159b43dc26dea207489a1c598eb7ebfd66d1aea71ad34ee7',
+    3_000_000,
+  ],
+  [
+    'docs/evaluation/2026-10-31-haiku-breadth/runs/41216910164-2/state/comparison-budget.json',
+    '07dc78925292e06fea7bc8880a132628d4deb9e8d3677cbe189e0af0bdb72cf5',
     3_000_000,
   ],
 ];

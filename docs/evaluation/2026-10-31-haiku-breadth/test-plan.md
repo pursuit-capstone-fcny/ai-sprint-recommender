@@ -93,3 +93,23 @@ Restoring the saved V21 breadth paragraph reconstructs every V21 request hash.
 No new unit assertion can establish semantic adherence; the already-red live
 artifact audit is the regression check. Keep the same targets and reserve at
 most $0.270240 from $0.835005. Do not change model settings or inputs.
+
+## V24 result and V25 historical breadth check
+
+V24 run 41216910164 attempt 2 retains 10/10 each and clean reliability but falls
+to 21/30 breadth, with 190 cards and 106 unreviewed appearances. Mixed Operations
+returns six; wording and blank controls pass. The quality audit still fails on
+overall breadth. Cost $0.079902 brings these three runs to $0.241838, cumulative
+ceiling $2.244897 and remaining allowance $0.755103. All forty requests have final
+accounting. Calls are disabled and keys removed. Preliminary attempt 1 was
+cancelled during Node setup and skipped both paid steps.
+
+V25 replaces only the V24 breadth paragraph with the exact V14 paragraph from
+commit 456746b. That historical paragraph reached 25/30 breadth, but its candidate
+predated the blank and mixed-goal fixes. Retain V21's current blank handling,
+mixed-goal guidance and exact final safeguards. The hypothesis is that explicit
+checks before null ranks four through six recover supporting methods without
+the regressions observed when summarizing the procedure. No historical outcome
+is reclassified; another complete run tests this previously untested combination.
+All frozen inputs, targets, settings and accounting requirements remain fixed.
+Reserve at most $0.270240 from $0.755103.
