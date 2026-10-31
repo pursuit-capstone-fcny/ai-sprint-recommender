@@ -61,7 +61,6 @@ export const taskOperations: readonly OperationRule[] = [
       }),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
-        when: ['upload', 'reference document', 'supplied document', 'overview'],
       }),
       c(['Editing proofreading'], 75, {
         when: ['review', 'edit', 'proofread', 'check'],

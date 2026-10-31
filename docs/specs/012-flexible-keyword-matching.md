@@ -79,6 +79,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given common task paraphrases, supplied documents or a named application
   - When interpreting and ranking free text
   - Then it recognizes source-grounded actions without requiring the canonical task name, treats a lack of reading time as context rather than a tool exclusion, prefers the specifically named application, and admits a cross-task transfer only under its declared component conditions; a direct requested method ranks before generic methods or learning-format preferences.
+- AC-12.12 Partial methods for reusable helpers
+  - Given a reusable-helper request and instruction for project context or a standalone cited lookup
+  - When selecting transferable components
+  - Then project context remains a lower-priority partial method, while the standalone lookup requires a declared source/reference or handbook lookup cue; neither component is treated as full helper-configuration instruction.
 
 ### Open questions
 

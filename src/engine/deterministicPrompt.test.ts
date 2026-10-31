@@ -54,6 +54,97 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.8 retains grounded cross-document questioning as a grantee-review component', () => {
+    const review = lesson(
+      1,
+      ['Grant due diligence'],
+      'Compare annual grantee reports.',
+    );
+    const questions = lesson(
+      2,
+      ['Document Q&A'],
+      'Ask questions across a collection of source documents.',
+    );
+    const { run } = fixture([questions, review]);
+    const result = run(
+      'Compare grantee annual reports and prepare questions about how programs evolved.',
+    );
+    expect(ids(result)).toEqual([review.youtubeId, questions.youtubeId]);
+    expect(result.recommendations[1].reason).toContain(
+      'transferable component',
+    );
+  });
+  it('AC-12.8 retains reusable writing as a report-to-donor-event component', () => {
+    const webinar = lesson(
+      1,
+      ['Webinar planning'],
+      'Outline a donor webinar from a report.',
+    );
+    const writing = lesson(
+      2,
+      ['Content repurposing', 'Custom assistants'],
+      'Reuse source material with a writing assistant.',
+    );
+    const { run } = fixture([writing, webinar]);
+    const result = run(
+      'Turn a research report into a donor briefing event and social posts.',
+    );
+    expect(ids(result)).toEqual([webinar.youtubeId, writing.youtubeId]);
+    expect(result.recommendations[1].reason).toContain(
+      'transferable component',
+    );
+  });
+  it('AC-12.8 retains project context as a lower-ranked helper component and gates standalone lookups', () => {
+    const assistant = lesson(
+      1,
+      ['Custom assistants', 'Knowledge management'],
+      'Configure a policy assistant with boundaries.',
+    );
+    const context = lesson(
+      2,
+      ['Knowledge management', 'Process documentation'],
+      'Organize policy reference files in a project.',
+    );
+    const lookup = lesson(
+      3,
+      ['Document Q&A'],
+      'Retrieve one answer with a citation and its cited source.',
+    );
+    const { run } = fixture([lookup, context, assistant]);
+    const helper =
+      'An internal helper should answer policy questions and refer exceptions to a person.';
+    const result = run(helper);
+    expect(ids(result)).toEqual([assistant.youtubeId, context.youtubeId]);
+    expect(result.recommendations[1].reason).toContain(
+      'transferable component',
+    );
+    expect(
+      ids(run(`${helper} Provide a source reference for each answer.`)),
+    ).toContain(lookup.youtubeId);
+    expect(
+      ids(run('Build a help desk for questions from our handbook.')),
+    ).toContain(lookup.youtubeId);
+  });
+  it('AC-12.8 retains grounded drafting as a client-correspondence component', () => {
+    const letter = lesson(
+      1,
+      ['Client correspondence'],
+      'Draft a landlord response after gathering facts.',
+    );
+    const drafting = lesson(
+      2,
+      ['Document drafting', 'Document Q&A', 'Document summary'],
+      'Draft from an organizational overview in a document editor.',
+    );
+    const { run } = fixture([drafting, letter]);
+    const result = run(
+      'A tenant needs a calm response to a landlord notice. Ask questions before writing.',
+    );
+    expect(ids(result)).toEqual([letter.youtubeId, drafting.youtubeId]);
+    expect(result.recommendations[1].reason).toContain(
+      'transferable component',
+    );
+  });
   it('AC-12.7 recognizes funding fit without treating an application as software', () => {
     const grant = lesson(
       1,

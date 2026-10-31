@@ -238,7 +238,6 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document Q&A'], 80, {
         teaching: ['collection of source documents', 'cross document'],
         excludeTasks: ['App building'],
-        when: ['citation', 'source', 'original wording', 'cross document'],
       }),
     ],
   ),
@@ -307,7 +306,6 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Social media writing'], 80),
       candidate(['Content repurposing'], 75, {
         allTasks: ['Custom assistants'],
-        when: ['speech', 'op ed', 'article', 'blog', 'opening remark'],
       }),
       candidate(['Presentation creation'], 75, {
         teaching: ['presentation outline'],
@@ -471,8 +469,24 @@ export const operationRules: readonly OperationRule[] = [
         excludeTasks: ['Workflow automation', 'Process documentation'],
         minimumStrength: 0.5,
       }),
+      candidate(['Knowledge management'], 75, {
+        allTasks: ['Process documentation'],
+        minimumStrength: 0.5,
+      }),
       candidate(['Document Q&A'], 75, {
-        teaching: ['citation', 'notebook', 'cited source'],
+        teaching: ['notebook', 'collection of source documents'],
+      }),
+      candidate(['Document Q&A'], 75, {
+        teaching: ['cited source'],
+        when: [
+          'source',
+          'reference',
+          'handbook',
+          'faq',
+          'lookup',
+          'look up',
+          'retrieve',
+        ],
       }),
     ],
     { precedence: 1 },
