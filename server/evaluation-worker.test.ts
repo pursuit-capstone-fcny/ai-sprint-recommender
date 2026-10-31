@@ -44,7 +44,7 @@ describe('frozen test catalog isolation', () => {
                       Object.fromEntries(
                         Array.from({ length: 8 }, (_, i) => [
                           'rank' + (i + 1),
-                          i < 2 ? i : null,
+                          i < 2 ? `${i}: ${snapshot.items[i].title}` : null,
                         ]),
                       ),
                     ),

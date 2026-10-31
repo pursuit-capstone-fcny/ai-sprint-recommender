@@ -86,3 +86,51 @@ Local V26 checks initially hit an existing approval-entry test's five-second
 limit under full parallel load. The isolated test and all 629 tests with two
 workers pass without changing assertions or timeout limits. Candidate CI also
 passes with its normal configuration.
+
+## V27 result and V28 choice encoding
+
+V27 run 41219954995 attempt 2 retains 10/10 each, all controls and forty final
+diagnostics with clean reliability. Existing review flags stay absent, but seven
+lists remain short and the fixed breadth check fails at 23/30. Total cards are 194. Cost $0.082224 brings this follow-up to $0.163792, cumulative ceiling
+$2.489047 and remaining allowance $0.510953. Calls are off and keys removed.
+The preliminary attempt skipped both paid steps.
+
+More prose did not improve recall. A different hypothesis is that numeric
+positions weaken the model's connection between a later selection and its
+intended video. The server mapping itself is consistent; this is a model-selection
+hypothesis, not a proven indexing defect. V28 keeps V27's semantic guidance and
+replaces only the output-choice representation and its copying instruction.
+Each required rank is an exact `position: title` string from the trusted catalog,
+or null. One shared schema definition avoids repeating the full choice list.
+
+The adapter maps only exact strings to the original IDs. Unknown choices,
+mismatched number/title pairs, altered case, duplicates, numeric values in this
+protocol, missing fields and extra fields reject the whole result. Known usage
+still settles on invalid results; no repair, paid retry or fallback padding is
+introduced. The old numeric provider path remains unchanged. Only the bounded
+Haiku test candidate requests the new protocol. Browser output and the diversity
+gate stay unchanged.
+
+[Anthropic's structured-output documentation](https://platform.claude.com/docs/en/build-with-claude/structured-outputs)
+supports string enums and internal schema references. It also warns that enum
+capitalization can differ, so exact server validation remains necessary. Schema
+acceptance and runtime quality still require live evidence; the documentation
+does not establish the hypothesis.
+
+The new adapter tests fail before implementation. They cover exact mapping in
+rank order, empty/partial selections, strict failures, measured usage and invalid
+trusted maps before dispatch. Real workerd tests exercise both numeric and title
+choices with synthetic responses only. Restoring the numeric schema/copying
+instruction and removing the method paragraph reconstructs V25 request hashes.
+Catalog fields, goals and label facts remain intact.
+
+The largest frozen request bound is 62,584 bytes against the unchanged 65,000
+limit. The longest eight choice strings serialize to 604 JSON characters. Keep
+the 512-token output cap, 4.5-second server deadline and $0.006756 maximum charge
+reservation. The compactness test now compares the same schema/prompt with compact
+versus object catalog encoding; the hard input limit is unchanged. Schema size
+and output tokens may increase measured cost, and first-use schema processing may
+affect latency. Record failures normally, with no hidden paid warm-up or retry.
+
+Repeat the same forty requests with at most $0.270240 reserved from $0.510953.
+Keep every fixed audit and separate follow-up observation, then inspect all picks.

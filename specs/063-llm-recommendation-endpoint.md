@@ -105,6 +105,11 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
+- Given the bounded Haiku V28 test, when selecting a catalog item, then return
+  its exact position/title choice string in one of eight nullable rank slots.
+  Map exact choices to trusted IDs; reject unknown, mismatched, duplicate or
+  malformed choices without repair, retaining measured usage. Keep the numeric
+  path, input/output limits, deadline and browser diversity gate unchanged.
 - Given Haiku V26 and a supporting candidate, when matching its described method,
   then require a concrete contribution to the requested work without inventing
   a different objective or output. Check unused candidates for replacements

@@ -1,0 +1,17 @@
+{
+  "runId": "41219954995",
+  "runAttempt": 1,
+  "conclusion": "cancelled",
+  "paidCalls": 0,
+  "paidSteps": [
+    {
+      "name": "Enable approved Haiku 5.5 test candidate",
+      "conclusion": "skipped"
+    },
+    {
+      "name": "Run approved endpoint trials and separate probes",
+      "conclusion": "skipped"
+    }
+  ],
+  "note": "Cancelled before approval or model enablement; both paid steps skipped."
+}

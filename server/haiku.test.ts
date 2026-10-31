@@ -23,6 +23,7 @@ import {
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
   HAIKU_METHOD_CONNECTION_INSTRUCTION,
+  HAIKU_SELECTION_ENCODING_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -85,7 +86,15 @@ describe('optimized Haiku low request', () => {
         expect(haiku.request.system).not.toContain(
           HAIKU_METHOD_CONNECTION_INSTRUCTION,
         );
-      const v25System = haiku.request.system.replace(
+      const numericRequest = {
+        ...haiku.request,
+        system: haiku.request.system.replace(
+          HAIKU_SELECTION_ENCODING_INSTRUCTION,
+          'Copy the integer position provided for each item; never invent a position or return IDs, titles, URLs, or explanations.',
+        ),
+        output_config: original.request.output_config,
+      };
+      const v25System = numericRequest.system.replace(
         ` ${HAIKU_METHOD_CONNECTION_INSTRUCTION}`,
         '',
       );
@@ -95,7 +104,7 @@ describe('optimized Haiku low request', () => {
       if (v25Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v25System }))
+            .update(JSON.stringify({ ...numericRequest, system: v25System }))
             .digest('hex'),
         ).toBe(v25Hash);
       const v21System = v25System.replace(
@@ -108,7 +117,7 @@ describe('optimized Haiku low request', () => {
       if (v21Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v21System }))
+            .update(JSON.stringify({ ...numericRequest, system: v21System }))
             .digest('hex'),
         ).toBe(v21Hash);
       const v18System = v21System.replace(
@@ -121,7 +130,7 @@ describe('optimized Haiku low request', () => {
       if (v18Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v18System }))
+            .update(JSON.stringify({ ...numericRequest, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
@@ -144,7 +153,7 @@ describe('optimized Haiku low request', () => {
       if (v12Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v12System }))
+            .update(JSON.stringify({ ...numericRequest, system: v12System }))
             .digest('hex'),
         ).toBe(v12Hash);
       const v11System = v12System.replace(
@@ -157,7 +166,7 @@ describe('optimized Haiku low request', () => {
       if (expectedHash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v11System }))
+            .update(JSON.stringify({ ...numericRequest, system: v11System }))
             .digest('hex'),
         ).toBe(expectedHash);
       const luna = lunaDeployedBody(original);
@@ -176,8 +185,8 @@ describe('optimized Haiku low request', () => {
       ).toEqual(original.data.catalog);
       expect(data.goal).toBe(profile.input.goal);
       expect(haiku.catalogIds).toEqual(original.catalogIds);
-      expect(haiku.request.output_config).toEqual(
-        original.request.output_config,
+      expect(haiku.request.output_config.effort).toEqual(
+        original.request.output_config.effort,
       );
       expect(haiku.request.max_tokens).toBe(512);
       expect(haiku.request.thinking).toEqual({ type: 'disabled' });
@@ -185,7 +194,13 @@ describe('optimized Haiku low request', () => {
       expect(inputTokenBound(haiku)).toBeLessThanOrEqual(
         limits.LLM_MAX_INPUT_TOKENS,
       );
-      expect(inputTokenBound(haiku)).toBeLessThan(inputTokenBound(original));
+      // Compare catalog encodings with the same new choice schema and prompt.
+      expect(inputTokenBound(haiku)).toBeLessThan(
+        inputTokenBound({
+          ...haiku,
+          request: { ...haiku.request, messages: original.request.messages },
+        }),
+      );
       const normalized = v11System
         .replace(
           'use null in all eight ranks',
