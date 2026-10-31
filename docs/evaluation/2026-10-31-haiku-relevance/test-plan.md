@@ -164,3 +164,12 @@ requests; frozen content remains identical. Preserve the hard input limit,
 Run local checks and the unchanged forty-case audit, with $0.270240 reserved
 from $0.443393. No retry, refund, paid warm-up or new grant. Review all returned
 picks; do not count more cards as evidence that weak selections are fixed.
+
+## Disposition
+
+V29 completes but regresses to 10/9/10, 21/30 accepted broad lists, one duplicate
+response and two injection failures. Its measured charge is $0.089704; $0.353689
+remains. All candidate changes are withdrawn and V25 construction is restored
+exactly. No paid rerun of the restored baseline is claimed. Preserve all new
+artifacts and the $2.646311 ledger floor. Expanded quality and five baseline
+short lists remain unresolved; production and test provider calls remain off.

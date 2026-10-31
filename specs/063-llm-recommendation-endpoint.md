@@ -105,14 +105,6 @@ manual signed-out enabled/failure checks remain prerequisites for enablement.
 
 ## Candidate evaluation
 
-- Given the bounded Haiku V29 test, when reading the catalog, then use named
-  fields with the same values and order. Retain numeric output, strict validation,
-  all limits and the diversity gate. V28's title-choice experiment is withdrawn
-  after ten provider timeouts; preserve its evidence and full reservations.
-- Given Haiku V26 and a supporting candidate, when matching its described method,
-  then require a concrete contribution to the requested work without inventing
-  a different objective or output. Check unused candidates for replacements
-  after rejecting weak picks; keep all eligibility and uniqueness checks.
 - Given Haiku V25 and an eligible goal, when ranks four through six would be
   empty, then check unused candidates for concrete supporting methods. Keep
   direct matches first, exclude weak padding, and retain V21's mixed-goal,

@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Haiku V25 passes the fixed automated quality, breadth and reliability targets; expanded review pending
+- **Status:** V26–V29 follow-up withdrawn; V25 restored, expanded quality and short lists unresolved
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -85,6 +85,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [expanded-relevance follow-up](../docs/evaluation/2026-10-31-haiku-relevance/results.md)
+finds no candidate that fixes both weak picks and short lists without regressions.
+V26/V27 retain 10/10 each but fall to 23/30 broad lists. V28 times out on all ten
+submitted requests; V29 scores 10/9/10 with 21/30 broad lists and control failures.
+All are withdrawn and V25 behavior is restored. Task charge $0.321056 leaves
+$0.353689; all unknown reservations remain charged. Labels and the diversity gate
+are unchanged. Test calls and keys are disabled/removed; production LLM calls
+and logging remain off. The following outcomes and balances are historical.
 
 The [Haiku V25 rerun](../docs/evaluation/2026-10-31-haiku-breadth/results.md)
 retains 10/10 each and improves qualifying six-to-eight lists from 23/30 to 25/30.

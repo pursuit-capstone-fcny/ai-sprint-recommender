@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "eea27e7e175292bcaefa256679dd5db30ffbbf34",
+  "approvedWorkflowRunId": "41222563302",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T18:02:50Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v29",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "Jason authorized fixing weak expanded picks and remaining short lists within the remaining allowance. V29 restores V27 numeric output and keeps its semantic guidance, using named catalog fields with explicit short-key definitions instead of positional arrays. Same catalog values and order, thirty frozen benchmark requests plus ten probes, model, low effort, labels, diversity gate, token caps and deadline. No repairs, retries or paid warm-ups. Preserve V28 partial timeout evidence and charges; inspect expanded picks separately.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Existing shared $3 cap. Carry forward $2.556607 including $0.292560 cumulative unknown reservations, of which $0.067560 is V28. Remaining $0.443393. Maximum reservation forty times $0.006756, or $0.270240. No new grant, reset, refund or repricing. Haiku only; production LLM calls and logging stay disabled.",
+  "allowanceMicrodollars": 443393,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2556607,
+  "totalAllowanceMicrodollars": 3000000,
+  "thinking": "disabled"
+}

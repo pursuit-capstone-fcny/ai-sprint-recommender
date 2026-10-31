@@ -1,0 +1,6 @@
+{
+  "historicalUnknownReservationsMicrodollars": 292560,
+  "originalUnknownReservationsMicrodollars": 225000,
+  "v28UnknownReservationsMicrodollars": 67560,
+  "note": "The unchanged fixed audit initially uses its historical 225000 default. The same accounting helper is rerun with its supported prior-unknown argument 292560. This corrects descriptive carry-forward totals only; all charges, inputs, scores and pass/fail checks remain unchanged."
+}

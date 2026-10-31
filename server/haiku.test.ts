@@ -5,7 +5,6 @@ import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hash
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
 import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
-import v25 from '../docs/evaluation/2026-10-31-haiku-relevance/v25-request-hashes.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
 import config from '../wrangler.evaluation.json';
@@ -13,7 +12,7 @@ import { parseBenchmark } from '../src/evaluation/benchmark';
 import { injectionProbes } from '../src/evaluation/injection-probes';
 import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
-import { haikuDeployedBody, HAIKU_CATALOG_FIELDS_INSTRUCTION } from './haiku';
+import { haikuDeployedBody } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
@@ -22,7 +21,6 @@ import {
   HAIKU_BREADTH_INSTRUCTION,
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
-  HAIKU_METHOD_CONNECTION_INSTRUCTION,
 } from './haiku-policy';
 
 describe('optimized Haiku low request', () => {
@@ -77,35 +75,7 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
-      if (profile.input.goal.trim()) {
-        expect(haiku.request.system).toContain(
-          `${HAIKU_MIXED_GOAL_INSTRUCTION} ${HAIKU_METHOD_CONNECTION_INSTRUCTION} ${HAIKU_BREADTH_INSTRUCTION}`,
-        );
-      } else
-        expect(haiku.request.system).not.toContain(
-          HAIKU_METHOD_CONNECTION_INSTRUCTION,
-        );
-      const luna = lunaDeployedBody(original);
-      const numericRequest = {
-        ...haiku.request,
-        messages: [{ role: 'user', content: luna.input[1].content }],
-      };
-      const v25System = haiku.request.system
-        .replace(
-          HAIKU_CATALOG_FIELDS_INSTRUCTION,
-          'Each catalog row uses the field order in catalogFields.',
-        )
-        .replace(` ${HAIKU_METHOD_CONNECTION_INSTRUCTION}`, '');
-      const v25Hash = Object.entries(v25.hashes).find(
-        ([id]) => id === profile.id,
-      )?.[1];
-      if (v25Hash)
-        expect(
-          createHash('sha256')
-            .update(JSON.stringify({ ...numericRequest, system: v25System }))
-            .digest('hex'),
-        ).toBe(v25Hash);
-      const v21System = v25System.replace(
+      const v21System = haiku.request.system.replace(
         HAIKU_BREADTH_INSTRUCTION,
         v21Breadth.instruction,
       );
@@ -115,7 +85,7 @@ describe('optimized Haiku low request', () => {
       if (v21Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...numericRequest, system: v21System }))
+            .update(JSON.stringify({ ...haiku.request, system: v21System }))
             .digest('hex'),
         ).toBe(v21Hash);
       const v18System = v21System.replace(
@@ -128,7 +98,7 @@ describe('optimized Haiku low request', () => {
       if (v18Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...numericRequest, system: v18System }))
+            .update(JSON.stringify({ ...haiku.request, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
@@ -151,7 +121,7 @@ describe('optimized Haiku low request', () => {
       if (v12Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...numericRequest, system: v12System }))
+            .update(JSON.stringify({ ...haiku.request, system: v12System }))
             .digest('hex'),
         ).toBe(v12Hash);
       const v11System = v12System.replace(
@@ -164,32 +134,23 @@ describe('optimized Haiku low request', () => {
       if (expectedHash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...numericRequest, system: v11System }))
+            .update(JSON.stringify({ ...haiku.request, system: v11System }))
             .digest('hex'),
         ).toBe(expectedHash);
+      const luna = lunaDeployedBody(original);
+      expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
       const data = JSON.parse(haiku.request.messages[0].content);
-      expect({
-        ...data,
-        catalog: data.catalog.map(
-          (item: {
-            p: number;
-            t: string;
-            d: string;
-            areas: string[];
-            tasks: string[];
-            tools: string[];
-          }) => ({
-            position: item.p,
-            title: item.t,
-            description: item.d,
-            functionAreas: item.areas,
-            tasks: item.tasks,
-            tools: item.tools,
-          }),
-        ),
-      }).toEqual(original.data);
       expect(data.catalog).toHaveLength(89);
-      expect(haiku.request.system).toContain(HAIKU_CATALOG_FIELDS_INSTRUCTION);
+      expect(
+        data.catalog.map((row: unknown[]) =>
+          Object.fromEntries(
+            data.catalogFields.map((field: string, i: number) => [
+              field,
+              row[i],
+            ]),
+          ),
+        ),
+      ).toEqual(original.data.catalog);
       expect(data.goal).toBe(profile.input.goal);
       expect(haiku.catalogIds).toEqual(original.catalogIds);
       expect(haiku.request.output_config).toEqual(
@@ -201,6 +162,7 @@ describe('optimized Haiku low request', () => {
       expect(inputTokenBound(haiku)).toBeLessThanOrEqual(
         limits.LLM_MAX_INPUT_TOKENS,
       );
+      expect(inputTokenBound(haiku)).toBeLessThan(inputTokenBound(original));
       const normalized = v11System
         .replace(
           'use null in all eight ranks',
