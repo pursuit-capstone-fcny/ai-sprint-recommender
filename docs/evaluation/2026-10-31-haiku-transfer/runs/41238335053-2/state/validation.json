@@ -1,0 +1,40 @@
+{
+  "checks": {
+    "audit-failures": true,
+    "audit-quality": false,
+    "audit-accounting": true,
+    "assess": true,
+    "fortyFinalDiagnostics": true,
+    "accountingComplete": true,
+    "freshCompleteEvidence": true,
+    "breadthAtLeastV18": true,
+    "transportClean": true
+  },
+  "passed": false,
+  "scores": [10, 10, 10],
+  "sixToEightLists": 26,
+  "controls": {
+    "wording-operations-01": {
+      "engine": "llm",
+      "hits": 1,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "engine": "llm",
+      "hits": 1,
+      "count": 7
+    },
+    "mixed-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 5
+    },
+    "mixed-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 7
+    }
+  },
+  "recordedCostMicrodollars": 52410,
+  "remainingMicrodollars": 898397
+}

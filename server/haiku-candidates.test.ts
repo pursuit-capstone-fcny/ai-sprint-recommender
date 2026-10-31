@@ -35,6 +35,28 @@ describe('Haiku candidate retrieval', () => {
       expect(haikuCandidates(items, { ...input, goal })).toEqual(items);
     },
   );
+  it('keeps selected-area candidates even when an unfamiliar paraphrase scores other areas higher', () => {
+    const scoped = items.map((item, i) => ({
+      ...item,
+      functionAreas: [i < 16 ? 'Communications' : 'Operations'],
+    }));
+    const selected = haikuCandidates(scoped, {
+      ...input,
+      functionArea: 'Communications',
+    });
+    expect(selected).toEqual(scoped.slice(0, 48));
+    expect(
+      selected.some((item) => item.functionAreas.includes('Operations')),
+    ).toBe(true);
+  });
+  it('keeps all candidates when the selected area alone exceeds the shortlist limit', () => {
+    expect(
+      haikuCandidates(items, {
+        ...input,
+        functionArea: items[0].functionAreas[0],
+      }),
+    ).toEqual(items);
+  });
   it('preserves small catalogs', () => {
     expect(haikuCandidates(items.slice(0, 12), input)).toEqual(
       items.slice(0, 12),

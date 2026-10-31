@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "efc74691f7a1e15d65511b9974b6e60e07e529eb",
+  "approvedWorkflowRunId": "41238335053",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T21:19:19Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v35",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V35 restores the V33 prompt and catalog-row formatting, then uses existing lexical relevance to retrieve up to 48 candidates before creating the provider request. Use function area only to break relevance ties and retain original source order. Blank, small or no-evidence goals retain all candidates. Keep catalog metadata, frozen labels and task-diversity gate, numeric ID validation, low effort, thinking disabled, token limits and deadline. Same thirty benchmark calls and ten probes, no retries, padding, extra provider call, handpicked IDs or new labels.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Jason approved additive shared $4 cap October 31. Carry forward $3.049193, including $0.292560 historical unknown reservations. Remaining $0.950807. Forty-request maximum reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 950807,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3049193,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

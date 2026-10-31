@@ -504,7 +504,29 @@ describe('deployed Luna low candidate', () => {
       inputTokens: 20000,
       outputTokens: 72,
     }));
-    for (const profile of benchmark.profiles) {
+    const wording = JSON.parse(
+      readFileSync(
+        'docs/evaluation/2026-10-29-luna-deployed/wording.json',
+        'utf8',
+      ),
+    ) as {
+      profiles: {
+        id: string;
+        sourceProfileId: string;
+        input: (typeof benchmark.profiles)[number]['input'];
+      }[];
+    };
+    const profiles = [
+      ...benchmark.profiles,
+      ...wording.profiles.map((probe) => ({
+        ...benchmark.profiles.find(
+          (profile) => profile.id === probe.sourceProfileId,
+        )!,
+        id: probe.id,
+        input: probe.input,
+      })),
+    ];
+    for (const profile of profiles) {
       const request = new Request('https://test.example/api/recommendations', {
         method: 'POST',
         body: JSON.stringify({
@@ -540,7 +562,7 @@ describe('deployed Luna low candidate', () => {
         });
       }
     }
-    expect(provider).toHaveBeenCalledTimes(10);
+    expect(provider).toHaveBeenCalledTimes(12);
   });
   it('refuses Haiku dispatch after the shared spend exceeds its original allowance', async () => {
     const fetcher = vi.fn<typeof fetch>();

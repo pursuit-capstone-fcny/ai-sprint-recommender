@@ -103,3 +103,28 @@ Endpoint tests verify actual wiring and at least two existing labeled candidates
 remain reachable per profile. This is candidate coverage, not quality evidence.
 The rules path, other providers, final selector and task-diversity gate stay unchanged.
 Same forty deployed requests, limits and shutdown requirements. No paid retry.
+
+## V35 finding and V36 correction
+
+V35 scores 10/10 in all three trials, with 26/30 broad lists, 215 LLM cards and
+four short lists. All forty responses have final measured diagnostics; no
+invalid, duplicate, transport, timeout or injection failure. However, both
+wording checks have only one labeled hit, and mixed Operations returns five.
+One original podcast flag remains. Charge $0.052410; cumulative $3.101603,
+remaining $0.898397. No new unknown reservations. V35 is withdrawn.
+
+Unpaid retrieval inspection identifies a specific regression. Although all
+original profile labels remain available, the Operations wording shortlist
+excludes its director-report and pattern-analysis videos, and Fundraising
+wording excludes donor role-play. These are existing labels, not new ratings.
+The captured coverage files preserve that failure.
+
+V36 retains all candidates from the selected function area before filling the
+remaining slots with cross-area relevance matches. Keep source order. If the
+area alone reaches the limit, retain the full catalog rather than excluding
+cross-area candidates. Blank, small and no-evidence behavior remains unchanged.
+No new synonym, profile-specific rule or catalog metadata. Synthetic tests first
+reproduce area recall loss, then verify the correction. Endpoint tests add the
+two unchanged wording inputs to verify their known matches remain reachable.
+Prompt, limits, strict schema, task-diversity gate and forty-request audit stay
+unchanged. Do not substitute these local coverage tests for the paid outcome.

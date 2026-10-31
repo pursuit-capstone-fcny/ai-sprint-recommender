@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V35 candidate retrieval pending; V34 withdrawn, expanded quality unresolved
+- **Status:** V36 paraphrase coverage pending; V35 wording regression identified
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
