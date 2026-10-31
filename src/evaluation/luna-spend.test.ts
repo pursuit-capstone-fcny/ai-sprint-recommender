@@ -21,6 +21,36 @@ import {
 afterEach(() => vi.unstubAllEnvs());
 
 describe('shared evaluation allowance evidence', () => {
+  it('carries the October 31 grant forward while retaining historical three-dollar budgets', () => {
+    const old = {
+      kind: 'deployed-model-budget',
+      allowanceMicrodollars: 3_000_000,
+      priorSpendMicrodollars: 2_726_666,
+      spentMicrodollars: 2_810_692,
+      additionalMicrodollars: 84_026,
+      remainingMicrodollars: 189_308,
+    };
+    expect(deployedLunaSpend(old, 2_726_666, 3_000_000)).toBe(84_026);
+    const current = {
+      ...old,
+      allowanceMicrodollars: 4_000_000,
+      priorSpendMicrodollars: 2_810_692,
+      spentMicrodollars: 2_810_792,
+      additionalMicrodollars: 100,
+      remainingMicrodollars: 1_189_208,
+    };
+    expect(deployedLunaSpend(current, 2_810_692, LUNA_TOTAL_ALLOWANCE)).toBe(
+      100,
+    );
+    expect(() =>
+      deployedLunaSpend(
+        { ...current, priorSpendMicrodollars: 0 },
+        2_810_692,
+        LUNA_TOTAL_ALLOWANCE,
+      ),
+    ).toThrow();
+    expect(readLunaPriorSpend()).toBeGreaterThanOrEqual(2_810_692);
+  });
   it('adds the new grant without resetting earlier charges or repricing old records', () => {
     const record = {
       kind: 'deployed-luna-budget',

@@ -239,3 +239,9 @@ export const HAIKU_RELIABILITY_ALLOWANCE_GRANT = [
   'docs/evaluation/2026-10-30-haiku-reliability/allowance.json',
   'ec925493785e2e394d18370c5ef7fc94b59f49f83c81f18adb6b3c3d752b3595',
 ] as const;
+
+// October 31: additive Haiku quality grant; preserve all prior reservations.
+export const HAIKU_QUALITY_ALLOWANCE_GRANT = [
+  'docs/evaluation/2026-10-31-haiku-transfer/allowance.json',
+  '3ceb88e842e1d3e16fb60813bd65dc5444de0bd485848d55fa0a6c8e9696e48a',
+] as const;

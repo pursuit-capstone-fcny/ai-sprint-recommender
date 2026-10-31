@@ -4,6 +4,7 @@ import { createHash } from 'node:crypto';
 import v11 from '../docs/evaluation/2026-10-30-haiku-guardrails/v11-request-hashes.json';
 import v18 from '../docs/evaluation/2026-10-30-haiku-reliability/v18-request-hashes.json';
 import v21 from '../docs/evaluation/2026-10-31-haiku-breadth/v21-request-hashes.json';
+import v25Breadth from '../docs/evaluation/2026-10-31-haiku-transfer/v25-breadth-instruction.json';
 import v21Breadth from '../docs/evaluation/2026-10-31-haiku-breadth/v21-breadth-instruction.json';
 import v12 from '../docs/evaluation/2026-10-30-haiku-breadth/v12-request-hashes.json';
 import { describe, expect, it } from 'vitest';
@@ -75,8 +76,12 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
-      const v21System = haiku.request.system.replace(
+      const v25System = haiku.request.system.replace(
         HAIKU_BREADTH_INSTRUCTION,
+        v25Breadth.instruction,
+      );
+      const v21System = v25System.replace(
+        v25Breadth.instruction,
         v21Breadth.instruction,
       );
       const v21Hash = Object.entries(v21.hashes).find(

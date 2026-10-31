@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V25 retained; V26–V31 withdrawn, expanded quality and short lists unresolved
+- **Status:** V32 transfer-method candidate pending; prior weak picks and short lists unresolved
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -10,8 +10,9 @@
 - Given a transport or diagnostic-header failure, when a test request fails,
   then preserve its correlation ID, stage, status and allowlisted error code.
   Never save raw errors or retry a paid POST. Missing server usage stays missing.
-- Given the additional $1 Haiku grant, when a new run is approved, then retain
-  the $1.762935 prior ceiling and $0.225000 unknown reservations under a $3 cap.
+- Given the October 31 additional $1 Haiku grant, when a new run is approved,
+  then retain the $2.810692 prior ceiling and $0.292560 unknown reservations
+  under the additive $4 cap.
   Keep production LLM calls and logging disabled.
 
 - Given an independent case times out or encounters a transport/rate failure,

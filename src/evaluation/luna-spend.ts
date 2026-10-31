@@ -9,6 +9,7 @@ import {
   LUNA_ALLOWANCE_GRANT,
   HAIKU_ALLOWANCE_SCOPE,
   HAIKU_RELIABILITY_ALLOWANCE_GRANT,
+  HAIKU_QUALITY_ALLOWANCE_GRANT,
 } from './luna-ledger';
 import { lunaSpent } from './luna';
 import { LUNA_TOTAL_ALLOWANCE } from '../../server/luna-policy';
@@ -19,6 +20,7 @@ const deployedBudget = z.object({
   allowanceMicrodollars: z.union([
     z.literal(1_000_000),
     z.literal(2_000_000),
+    z.literal(3_000_000),
     z.literal(LUNA_TOTAL_ALLOWANCE),
   ]),
   priorSpendMicrodollars: amount,
@@ -103,7 +105,7 @@ export function readLunaPriorSpend(): number {
       approvedAt: z.literal('2026-10-30'),
       previousAllowanceMicrodollars: z.literal(2_000_000),
       additionalAllowanceMicrodollars: z.literal(1_000_000),
-      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      totalAllowanceMicrodollars: z.literal(3_000_000),
       priorCeilingMicrodollars: z.literal(1_762_935),
       unresolvedReservationsMicrodollars: z.literal(225_000),
       scope: z.string().min(1),
@@ -112,6 +114,24 @@ export function readLunaPriorSpend(): number {
   assert.equal(
     reliabilityGrant.previousAllowanceMicrodollars +
       reliabilityGrant.additionalAllowanceMicrodollars,
+    3_000_000,
+  );
+  const qualityGrant = z
+    .strictObject({
+      kind: z.literal('evaluation-allowance-increase'),
+      approvedBy: z.literal('Jason'),
+      approvedAt: z.literal('2026-10-31'),
+      previousAllowanceMicrodollars: z.literal(3_000_000),
+      additionalAllowanceMicrodollars: z.literal(1_000_000),
+      totalAllowanceMicrodollars: z.literal(LUNA_TOTAL_ALLOWANCE),
+      priorCeilingMicrodollars: z.literal(2_810_692),
+      unresolvedReservationsMicrodollars: z.literal(292_560),
+      scope: z.string().min(1),
+    })
+    .parse(read(...HAIKU_QUALITY_ALLOWANCE_GRANT));
+  assert.equal(
+    qualityGrant.previousAllowanceMicrodollars +
+      qualityGrant.additionalAllowanceMicrodollars,
     LUNA_TOTAL_ALLOWANCE,
   );
   let prior = LUNA_SPEND_CAPTURES.reduce(
@@ -123,10 +143,13 @@ export function readLunaPriorSpend(): number {
     if (allowance > 1_000_000) assert(prior >= grant.priorCeilingMicrodollars);
     if (allowance > 2_000_000)
       assert(prior >= reliabilityGrant.priorCeilingMicrodollars);
+    if (allowance > 3_000_000)
+      assert(prior >= qualityGrant.priorCeilingMicrodollars);
     prior += deployedLunaSpend(read(path, hash), prior, allowance);
   }
   assert(prior >= scope.priorCeilingMicrodollars);
   assert(prior >= reliabilityGrant.priorCeilingMicrodollars);
+  assert(prior >= qualityGrant.priorCeilingMicrodollars);
   assert.equal(
     prior,
     LUNA_PRIOR_SPEND,

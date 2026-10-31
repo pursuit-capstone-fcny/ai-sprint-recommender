@@ -57,8 +57,8 @@ describe('paid evaluation approval preflight', () => {
       reasoningEffort: 'low',
       serviceTier: 'fast',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
-      totalAllowanceMicrodollars: 3000000,
-      allowanceMicrodollars: 3000000 - LUNA_PRIOR_SPEND,
+      totalAllowanceMicrodollars: 4000000,
+      allowanceMicrodollars: 4000000 - LUNA_PRIOR_SPEND,
       maxRequestMicrodollars: 11000,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');
@@ -91,12 +91,12 @@ describe('paid evaluation approval preflight', () => {
     const haiku = {
       ...approval,
       modelVersion: 'claude-haiku-5-5',
-      promptVersion: 'catalog-rank-haiku-v25',
+      promptVersion: 'catalog-rank-haiku-v32',
       reasoningEffort: 'low',
       thinking: 'disabled',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
-      totalAllowanceMicrodollars: 3000000,
-      allowanceMicrodollars: 3000000 - LUNA_PRIOR_SPEND,
+      totalAllowanceMicrodollars: 4000000,
+      allowanceMicrodollars: 4000000 - LUNA_PRIOR_SPEND,
       maxRequestMicrodollars: 6756,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');

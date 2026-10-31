@@ -1,0 +1,11 @@
+{
+  "kind": "evaluation-allowance-increase",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "previousAllowanceMicrodollars": 3000000,
+  "additionalAllowanceMicrodollars": 1000000,
+  "totalAllowanceMicrodollars": 4000000,
+  "priorCeilingMicrodollars": 2810692,
+  "unresolvedReservationsMicrodollars": 292560,
+  "scope": "Fix Haiku weak picks and short lists without regressing reliability, then rerun #19. Keep benchmark labels and the task-diversity gate unchanged. Production LLM calls and logging stay disabled. Earlier charges and unknown reservations remain charged."
+}
