@@ -12,6 +12,13 @@ import {
 // slots, strict duplicate/range validation and known-usage accounting.
 export function haikuDeployedBody(body: ProviderBody): ProviderBody {
   const compact = compactRanking(body);
+  // Keep each candidate together on its own line without changing any field,
+  // catalog position or response-schema value.
+  const data: { catalog: unknown[] } = JSON.parse(compact.content);
+  const content = compact.content.replace(
+    JSON.stringify(data.catalog),
+    `[\n${data.catalog.map((row) => JSON.stringify(row)).join(',\n')}\n]`,
+  );
   const system = compact.system
     .replace('return an empty positions array', 'use null in all eight ranks')
     .replace(
@@ -30,7 +37,7 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
     request: {
       ...body.request,
       system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
-      messages: [{ role: 'user', content: compact.content }],
+      messages: [{ role: 'user', content }],
     },
   };
 }

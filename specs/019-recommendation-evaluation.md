@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V32 transfer-method candidate pending; prior weak picks and short lists unresolved
+- **Status:** V33 catalog presentation pending; V32 withdrawn, quality and short lists unresolved
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 

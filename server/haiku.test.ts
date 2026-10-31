@@ -76,6 +76,21 @@ describe('optimized Haiku low request', () => {
           ` ${HAIKU_BROWSING_INSTRUCTION}`,
         );
       }
+      // Only whitespace separates catalog records. All request values and the
+      // original numeric position-to-ID mapping must survive serialization.
+      const normalizedRequest = {
+        ...haiku.request,
+        messages: haiku.request.messages.map((message) => ({
+          ...message,
+          content: JSON.stringify(JSON.parse(message.content)),
+        })),
+      };
+      const rows = haiku.request.messages[0].content.split('\n');
+      expect(rows).toHaveLength(91);
+      for (const line of rows.slice(1, -1)) {
+        const row = JSON.parse(line.replace(/,$/, ''));
+        expect(row).toHaveLength(6);
+      }
       const v25System = haiku.request.system.replace(
         HAIKU_BREADTH_INSTRUCTION,
         v25Breadth.instruction,
@@ -90,7 +105,7 @@ describe('optimized Haiku low request', () => {
       if (v21Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v21System }))
+            .update(JSON.stringify({ ...normalizedRequest, system: v21System }))
             .digest('hex'),
         ).toBe(v21Hash);
       const v18System = v21System.replace(
@@ -103,7 +118,7 @@ describe('optimized Haiku low request', () => {
       if (v18Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v18System }))
+            .update(JSON.stringify({ ...normalizedRequest, system: v18System }))
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
@@ -126,7 +141,7 @@ describe('optimized Haiku low request', () => {
       if (v12Hash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v12System }))
+            .update(JSON.stringify({ ...normalizedRequest, system: v12System }))
             .digest('hex'),
         ).toBe(v12Hash);
       const v11System = v12System.replace(
@@ -139,11 +154,11 @@ describe('optimized Haiku low request', () => {
       if (expectedHash)
         expect(
           createHash('sha256')
-            .update(JSON.stringify({ ...haiku.request, system: v11System }))
+            .update(JSON.stringify({ ...normalizedRequest, system: v11System }))
             .digest('hex'),
         ).toBe(expectedHash);
       const luna = lunaDeployedBody(original);
-      expect(haiku.request.messages[0].content).toBe(luna.input[1].content);
+      expect(normalizedRequest.messages[0].content).toBe(luna.input[1].content);
       const data = JSON.parse(haiku.request.messages[0].content);
       expect(data.catalog).toHaveLength(89);
       expect(

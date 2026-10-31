@@ -42,3 +42,18 @@ Approve one source and workflow attempt with an expiry. Disable test calls,
 preserve the durable budget, remove provider/rate keys and delete the temporary
 approval and label afterward. Production LLM calls and usage logging stay off.
 No human review, merge or production approval is implied by automated results.
+
+## V32 finding and V33 test
+
+V32 is withdrawn. Its forty final measured responses have no invalid output,
+timeout, duplicate, transport failure or injection failure, but scores are
+10/10/9 and only 21/30 lists have six to eight videos. Nine lists remain short;
+the podcast-for-board-deck flag appears three times. Charge $0.080433; cumulative
+$2.891125, remaining $1.108875. No new unknown reservations.
+
+V33 tests hypothesis 3 independently. Restore V25's complete prompt, then place
+each compact catalog row on its own line. All 89 rows, field values, ordering,
+position-to-ID mapping and output schema stay identical. Normalizing only JSON
+whitespace reconstructs historical request hashes. The new local test first
+failed with one line instead of 91, then passes with row separation. This proves
+serialization, not recommendation quality. No candidate filtering or extra call.

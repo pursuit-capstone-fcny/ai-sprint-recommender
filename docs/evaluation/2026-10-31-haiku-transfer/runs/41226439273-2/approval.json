@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "ade459e3deaf5343d2de8ea710e71977c5437230",
+  "approvedWorkflowRunId": "41226439273",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T18:50:25Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v32",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "Jason authorized improving Haiku weak picks and short lists without reliability regression. V32 changes only the breadth paragraph to test transferable operations against goal inputs and needed results. Keep V25 numeric format, catalog order and values, guardrails, labels, task-diversity gate, low effort, thinking disabled, token limits and deadline. Same thirty frozen benchmark cases and ten probes. No retries, omitted failures, padding, added labels or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Jason approved another $1 on October 31. Additive shared $4 cap with $2.810692 carried forward, including $0.292560 unknown reservations. Remaining $1.189308. Forty requests reserve at most $0.270240. No reset, refund or repricing. Haiku only; production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 1189308,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 2810692,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}
