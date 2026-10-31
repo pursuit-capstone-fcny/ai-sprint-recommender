@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V36 paraphrase coverage pending; V35 wording regression identified
+- **Status:** V36 passes with 29/30 broad lists; V37 transfer refinement pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 

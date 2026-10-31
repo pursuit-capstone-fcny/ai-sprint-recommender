@@ -2,6 +2,8 @@
 
 Candidate `catalog-rank-haiku-v35`. Existing ideal/good labels are copied unchanged. Every other pick remains unreviewed; this file adds no labels.
 
+Withdrawn after wording and mixed-Operations failures. Review AI-concerns and equipment-negotiation videos for an employee conversation, organizational-voice support for student tracking, and survey-pattern analysis for a funder conversation. More cards do not establish relevance. These observations add no labels.
+
 ## leadership-01
 
 Help our staff try AI responsibly and share what they learn without waiting for a finished policy.

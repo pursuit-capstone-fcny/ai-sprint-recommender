@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "4e05d5c09ed6cffcea3882cdc3ac0e30617abcc8",
+  "approvedWorkflowRunId": "41238818267",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-10-31T21:25:28Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v36",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V36 corrects the reproduced lexical-retrieval paraphrase coverage loss. Keep all selected-function-area candidates, then fill to 48 with cross-area relevance matches in source order; retain the full catalog if the area reaches the limit. Blank, small and no-evidence behavior unchanged. Same V33 prompt, catalog values, numeric schema and trusted mapping, labels, task-diversity gate, Haiku low/thinking disabled, limits and deadline. Same thirty benchmark calls and ten probes. No retries, omitted failures, padding, handpicked IDs, new labels or paid warm-up.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Shared $4 cap approved by Jason October 31. Carry forward $3.101603 including $0.292560 historical unknown reservations; remaining $0.898397. Forty-request maximum reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 898397,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3101603,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

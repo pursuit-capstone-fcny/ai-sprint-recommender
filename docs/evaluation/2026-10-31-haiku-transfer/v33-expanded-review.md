@@ -2,6 +2,8 @@
 
 Candidate `catalog-rank-haiku-v33`. Existing ideal/good labels are copied unchanged. Every other pick remains unreviewed; this file adds no labels.
 
+Passes the fixed audit but is not a completed quality fix. Six lists remain short. Review the activity-idea generator for a board deck, the medical-necessity letter for course design, and the grantmaker-review video for survey analysis. These observations add no labels.
+
 ## leadership-01
 
 Help our staff try AI responsibly and share what they learn without waiting for a finished policy.

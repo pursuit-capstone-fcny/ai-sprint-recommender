@@ -2,6 +2,8 @@
 
 Candidate `catalog-rank-haiku-v32`. Existing ideal/good labels are copied unchanged. Every other pick remains unreviewed; this file adds no labels.
 
+Withdrawn. Besides the three original podcast appearances for a board deck, review the activity-idea generator ranked first for Fundraising-02 trial three and the organizational-voice GPT for attendance follow-up. These observations add no labels.
+
 ## leadership-01
 
 Help our staff try AI responsibly and share what they learn without waiting for a finished policy.

@@ -2,6 +2,8 @@
 
 Candidate `catalog-rank-haiku-v34`. Existing ideal/good labels are copied unchanged. Every other pick remains unreviewed; this file adds no labels.
 
+Withdrawn. Programs-01 trial three falls back after a duplicate response; those eight cards are rules results. The Fundraising wording probe is short. Original podcast flags remain in all three board-deck trials. These observations add no labels.
+
 ## leadership-01
 
 Help our staff try AI responsibly and share what they learn without waiting for a finished policy.

@@ -128,3 +128,20 @@ reproduce area recall loss, then verify the correction. Endpoint tests add the
 two unchanged wording inputs to verify their known matches remain reachable.
 Prompt, limits, strict schema, task-diversity gate and forty-request audit stay
 unchanged. Do not substitute these local coverage tests for the paid outcome.
+
+## V36 finding and V37 test
+
+V36 passes the fixed audit: 10/10 each, 29/30 broad lists, 213 LLM cards, all
+wording/mixed controls, four injection abstentions and forty final measured
+responses. No duplicate, invalid response, timeout or transport failure. One
+Fundraising-01 list has five cards, and the board-deck podcast flag appears
+three times in later ranks. All expanded picks remain unapproved. Charge
+$0.052496; cumulative $3.154099, remaining $0.845901. No new unknown reservations.
+
+V37 tests the stricter V32 transfer-method paragraph with V36's corrected
+candidate retrieval. V32 failed with all 89 candidates; this tests whether the
+narrower context permits a stricter supporting-method rule without losing
+breadth. Only that paragraph changes. All other prompt text, retrieval, output
+schema, guardrails, labels, metadata, task gate and limits remain. Preserve V36
+as the reliable baseline if this candidate regresses. Same forty requests,
+exact-attempt approval, no retry or paid warm-up, and mandatory shutdown.

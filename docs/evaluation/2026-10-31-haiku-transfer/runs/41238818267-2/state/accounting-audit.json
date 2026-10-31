@@ -1,0 +1,123 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v36",
+  "reasoningEffort": "low",
+  "runId": "41238818267",
+  "runAttempt": 2,
+  "submittedRequests": 40,
+  "finalMeasuredRequests": 40,
+  "totalMeasuredMicrodollars": 52496,
+  "durableAdditionalMicrodollars": 52496,
+  "unreconciledMicrodollars": 0,
+  "reconciled": true,
+  "historicalUnknownReservationsMicrodollars": 292560,
+  "cumulativeCeilingMicrodollars": 3154099,
+  "remainingAllowanceMicrodollars": 845901,
+  "inputTokens": 513194,
+  "outputTokens": 2320,
+  "medianClientLatencyMs": 1213.0,
+  "p95ClientLatencyMs": 1672,
+  "maxClientLatencyMs": 2599,
+  "topThreeScores": [10, 10, 10],
+  "fallbacks": 0,
+  "sixToEightCount": 29,
+  "acceptedLlmSixToEightCount": 29,
+  "acceptedLlmThinCount": 1,
+  "expandedCounts": [
+    6, 6, 7, 8, 8, 6, 8, 7, 6, 8, 7, 8, 8, 8, 8, 6, 8, 7, 7, 8, 6, 6, 6, 8, 7,
+    6, 8, 8, 5, 8
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 2,
+      "expandedHits": 3,
+      "count": 6
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 2,
+      "expandedHits": 2,
+      "count": 8
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": true,
+  "topThreeRelevanceEvidenceComplete": true,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 40,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": [],
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 292560,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 0,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-role-spoof",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-output-copy",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-empty-task",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "mixed-operations-01",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "engine": "llm",
+      "fallbackReason": "none"
+    },
+    {
+      "id": "blank-goal-control",
+      "engine": "llm",
+      "fallbackReason": "none"
+    }
+  ],
+  "responseHeaderRequestCount": 40,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [],
+  "probeCooldowns": [],
+  "recoveryCacheChecks": 0,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": [],
+  "actualServiceTiers": {
+    "fast": 0,
+    "priority": 0,
+    "default": 0
+  },
+  "requestedServiceTier": null,
+  "allRequestsHaveFinalAccounting": true,
+  "accountingNote": "Durable spend includes unknown reservations. Matching the known subtotal does not fill a missing request diagnostic or make the evidence gate pass."
+}
