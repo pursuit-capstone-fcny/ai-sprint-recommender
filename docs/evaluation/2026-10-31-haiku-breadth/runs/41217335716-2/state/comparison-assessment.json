@@ -1,0 +1,113 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [10, 10, 10],
+  "acceptedLlmSixToEight": 25,
+  "totalDisplayedCards": 193,
+  "meanDisplayedCards": 6.433333333333334,
+  "acceptedLlmTotalCards": 193,
+  "meanAcceptedLlmCards": 6.433333333333334,
+  "topThreeMisses": [],
+  "thinAcceptedLists": [
+    {
+      "trial": 1,
+      "profileId": "leadership-02",
+      "count": 4
+    },
+    {
+      "trial": 2,
+      "profileId": "leadership-02",
+      "count": 4
+    },
+    {
+      "trial": 3,
+      "profileId": "leadership-02",
+      "count": 4
+    },
+    {
+      "trial": 3,
+      "profileId": "communications-02",
+      "count": 4
+    },
+    {
+      "trial": 3,
+      "profileId": "fundraising-01",
+      "count": 4
+    }
+  ],
+  "instructionOnlyAbstentions": [
+    "goal-injection",
+    "injection-role-spoof",
+    "injection-output-copy",
+    "injection-empty-task"
+  ],
+  "instructionOnlyFailures": [],
+  "duplicateRequestIds": [],
+  "invalidResponses": [],
+  "controls": {
+    "wording-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 7
+    },
+    "wording-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "mixed-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 6
+    },
+    "mixed-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    }
+  },
+  "blankGoalCount": 8,
+  "blankGoalEngine": "llm",
+  "blankGoalProviderCount": 8,
+  "fundraising02Counts": [6, 8, 7],
+  "expandedUnreviewedAppearances": 109,
+  "benchmarkFailures": [],
+  "completeMeasuredEvidence": true,
+  "reportSource": "comparison/report.json",
+  "freshComparisonSaved": true,
+  "comparison": {
+    "haiku-v25": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 60300,
+      "benchmarkCostMicrodollars": 60300,
+      "meanCostDollars": 0.00201,
+      "estimatedDollarsPer1000": 2.01,
+      "medianLatencyMs": 1294.0
+    },
+    "haiku-v12": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58554,
+      "benchmarkCostMicrodollars": 58554,
+      "meanCostDollars": 0.0019518,
+      "estimatedDollarsPer1000": 1.9518,
+      "medianLatencyMs": 1584.5
+    },
+    "luna-v15-fast": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58004,
+      "benchmarkCostMicrodollars": 58004,
+      "meanCostDollars": 0.0019334666666666668,
+      "estimatedDollarsPer1000": 1.9334666666666667,
+      "medianLatencyMs": 1278.5
+    }
+  },
+  "productionApproval": "not-approved"
+}

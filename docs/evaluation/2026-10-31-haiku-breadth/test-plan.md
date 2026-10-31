@@ -113,3 +113,18 @@ the regressions observed when summarizing the procedure. No historical outcome
 is reclassified; another complete run tests this previously untested combination.
 All frozen inputs, targets, settings and accounting requirements remain fixed.
 Reserve at most $0.270240 from $0.755103.
+
+## V25 result and stopping point
+
+V25 run 41217335716 attempt 2 passes the unchanged automated audit: 10/10 each,
+25/30 accepted six-to-eight lists, all controls, forty final diagnostics and
+complete accounting. No transport, timeout, duplicate or invalid response occurs.
+Cost $0.080358 brings this task to $0.322196, cumulative ceiling $2.325255 and
+remaining allowance $0.674745. Paid tests stop here. Calls are disabled, keys and
+temporary approval removed. Preliminary attempt 1 skipped both paid steps.
+
+Total cards decrease from V21's 205 to 193, despite more lists reaching six.
+Five lists remain thin and 109 expanded appearances remain unreviewed. Separate
+review flags identify possible weak picks without changing labels. The fixed
+automated target passes; expanded quality and production readiness are not
+approved. See [results](results.md) and [expanded review](expanded-review.md).

@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Haiku V21 fixes transport and mixed-goal failures; breadth remains below the 24/30 target; expanded review pending
+- **Status:** Haiku V25 passes the fixed automated quality, breadth and reliability targets; expanded review pending
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -85,6 +85,15 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [Haiku V25 rerun](../docs/evaluation/2026-10-31-haiku-breadth/results.md)
+retains 10/10 each and improves qualifying six-to-eight lists from 23/30 to 25/30.
+All forty diagnostics and usage records reconcile; controls and reliability pass.
+Total cards fall from 205 to 193, and five lists remain thin. Potentially weak
+unreviewed picks are flagged separately; full expanded-set quality is not approved.
+Four runs cost $0.322196, leaving $0.674745 under the unchanged $3 cap. Labels and
+the diversity gate stay fixed. Test calls and keys are disabled/removed; production
+LLM calls and logging remain off. Earlier balances below are historical.
 
 The [Haiku V21 rerun](../docs/evaluation/2026-10-30-haiku-reliability/results.md)
 scores 10/10 each with forty final diagnostics, reconciled usage and no observed
