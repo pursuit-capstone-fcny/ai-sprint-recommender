@@ -59,3 +59,24 @@ is inferred from the suspected rejection or known draft usage. Cumulative spend
 is $3.346173; $0.653827 remains. Unknown reservations increase from $0.292560
 to $0.360120. The run is withdrawn. Shutdown, key cleanup and an independent
 disabled probe pass; temporary approval and trigger are removed.
+
+## V40: valid classification request
+
+V40 corrects the schema defect and completes all forty client requests, including
+74 provider calls. All usage is measured and reconciled. There are no timeouts,
+invalid responses, duplicates, transport failures or new unknown reservations.
+Median latency is 2,284ms, p95 3,112ms and maximum 3,494ms. Scores remain 10/10
+in each trial; wording, mixed controls, four injection abstentions and blank
+browsing pass.
+
+Expanded quality remains incomplete. The [review](v40-expanded-review.md) has
+205 cards, 121 unreviewed appearances, seven short lists and one podcast flag.
+Breadth falls to 23/30, below the fixed 24/30 audit threshold and V36's 29/30.
+The three board-deck lists have five, four and five cards. V40 is not retained as
+a complete quality fix. The live report is preserved; the failed breadth check
+prevents fresh comparison assembly.
+
+Source `dfb51bb448e180713c419176ccd0057740776d7a`, run `41251931104`, attempt 2,
+costs $0.071110. Cumulative spend is $3.417283; $0.582717 remains under the $4 cap.
+All $0.360120 unknown reservations stay charged. Shutdown, key cleanup and the
+independent disabled probe pass. Temporary approval and trigger are removed.

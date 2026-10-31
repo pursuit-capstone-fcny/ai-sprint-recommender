@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "dfb51bb448e180713c419176ccd0057740776d7a",
+  "approvedWorkflowRunId": "41251931104",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T00:18:10Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v40",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V40 corrects V39 review schema by using plain integer enums rather than 18 unnecessary anyOf wrappers, exceeding the provider union-parameter limit. Classification and candidate pool unchanged. Add numeric HTTP error status diagnostics and stop subsequent paid cases after a saved permanent provider rejection. At most two planned calls per client request with combined 65000 input/512 output and unchanged deadline/reservation. Same thirty benchmark requests and ten probes; no retries, padding, omissions or paid warm-up. No benchmark label or task-diversity gate change.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry forward $3.346173 under the approved additive shared $4 cap, including all $0.360120 unknown reservations. Remaining $0.653827; forty-request maximum reservation $0.270240. No reset, refund or repricing. Production LLM calls and usage logging disabled.",
+  "allowanceMicrodollars": 653827,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3346173,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

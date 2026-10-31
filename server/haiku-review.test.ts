@@ -59,7 +59,7 @@ describe('bounded Haiku review', () => {
                   type: 'text',
                   text: JSON.stringify(
                     Object.fromEntries(
-                      Array.from({ length: 18 }, (_, i) => [
+                      Array.from({ length: 26 }, (_, i) => [
                         'candidate' + i,
                         i < 2 ? 2 : i < 6 ? 1 : 0,
                       ]),
@@ -82,7 +82,7 @@ describe('bounded Haiku review', () => {
       ).toBeLessThanOrEqual(16);
     }
     const review = JSON.parse(requests[1].messages[0].content);
-    expect(review.catalog).toHaveLength(18);
+    expect(review.catalog).toHaveLength(26);
     expect(review.draftPositions).toBeUndefined();
     expect(result.value).toEqual({
       youtubeIds: items.slice(0, 6).map((i) => i.youtubeId),

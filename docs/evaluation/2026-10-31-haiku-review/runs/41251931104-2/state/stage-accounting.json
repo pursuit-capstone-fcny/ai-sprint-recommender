@@ -1,0 +1,10 @@
+{
+  "kind": "unscored-provider-stage-accounting",
+  "clientRequests": 40,
+  "providerCalls": 74,
+  "twoStageRequests": 34,
+  "singleStageRequests": 6,
+  "errors": [],
+  "passed": true,
+  "note": "Does not change the fixed quality audit, labels or diversity gate. Two planned stages are not retries."
+}

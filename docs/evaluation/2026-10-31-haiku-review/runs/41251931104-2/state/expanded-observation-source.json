@@ -1,0 +1,4 @@
+{
+  "source": "live/report.json",
+  "reason": "Breadth failure prevented fresh comparison assembly. Expanded observations use original saved live report, not replay as fresh evidence."
+}

@@ -69,3 +69,17 @@ Repeat the forty-case validation within the $0.653827 balance. Carry the new
 $0.067560 unknown reservations forward, for $0.360120 total unknown spend.
 Keep the combined stage reservation and deadline unchanged. No retries or
 replacement cases; production LLM calls and usage logging stay disabled.
+
+## V41 alternative coverage
+
+V40 repairs provider reliability and reduces the original podcast flags from
+three to one, but has seven short lists. Test a single change: expand the review
+pool from 18 to 26 candidates, retaining all valid draft IDs and adding more
+unused alternatives with the same relevance scorer. Preserve metadata, order,
+classification instructions, output limits, accounting and deadline. The
+conservative combined input bound is verified for every frozen profile and
+wording probe before paid work. The stage audit recognizes this version's larger
+pool without changing its usage checks or any quality threshold.
+
+Repeat the same forty cases within the $0.582717 remainder. Retain every failed
+case and all $0.360120 prior unknown reservations. Production stays disabled.

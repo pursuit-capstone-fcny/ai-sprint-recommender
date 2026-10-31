@@ -36,7 +36,7 @@ export const DiagnosticSchema = z.strictObject({
   providerHeadersMs: z.number().nonnegative().max(600_000).optional(),
   providerBodyMs: z.number().nonnegative().max(600_000).optional(),
   providerCallCount: z.number().int().min(0).max(2).optional(),
-  reviewCandidateCount: z.number().int().min(0).max(18).optional(),
+  reviewCandidateCount: z.number().int().min(0).max(26).optional(),
   draftInputTokens: count.optional(),
   draftOutputTokens: count.optional(),
   reviewInputTokens: count.optional(),

@@ -17,6 +17,7 @@ errors = []
 stages = []
 for call in calls:
     row = by.get(call['requestId'], {})
+    review_limit = 26 if row.get('promptVersion') == 'catalog-rank-haiku-v41' else 18
     count = row.get('providerCallCount')
     known = all(key in row for key in ('inputTokens', 'outputTokens', 'costMicrodollars'))
     if count not in (1, 2) or not known or not row.get('accountingFinal'):
@@ -30,7 +31,7 @@ for call in calls:
     if count == 2:
         valid &= all(key in row for key in ('reviewInputTokens', 'reviewOutputTokens', 'reviewCandidateCount'))
         valid &= row.get('draftOutputTokens', 999) <= 256 and row.get('reviewOutputTokens', 999) <= 256
-        valid &= row.get('reviewCandidateCount', 999) <= 18
+        valid &= row.get('reviewCandidateCount', 999) <= review_limit
         valid &= row.get('reviewDecision') == 'reviewed'
     else:
         valid &= 'reviewInputTokens' not in row and 'reviewOutputTokens' not in row

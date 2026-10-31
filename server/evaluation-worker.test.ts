@@ -122,7 +122,7 @@ describe('frozen test catalog isolation', () => {
         expect(payload.max_tokens).toBe(256);
         const review = JSON.parse(String(fetcher.mock.calls[1][1]?.body));
         expect(review.max_tokens).toBe(256);
-        expect(JSON.parse(review.messages[0].content).catalog).toHaveLength(18);
+        expect(JSON.parse(review.messages[0].content).catalog).toHaveLength(26);
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
         expect(payload.system).toContain('use null in all eight ranks');

@@ -11,7 +11,7 @@ import {
 import { compactRanking } from './compact-ranking';
 import { LUNA_GOAL_ELIGIBILITY_INSTRUCTION } from './luna-policy';
 
-const REVIEW_SIZE = 18;
+const REVIEW_SIZE = 26;
 const INPUT_LIMIT = 65_000;
 const STAGE_OUTPUT_LIMIT = 256;
 const output = z.strictObject({ youtubeIds: RecommendationIdsSchema });
