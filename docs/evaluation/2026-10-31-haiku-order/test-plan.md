@@ -58,3 +58,41 @@ Keep every attempt and charge. Afterward disable test calls, save durable spend,
 remove provider/rate keys and temporary authorization. Carry all unknown charges
 forward, using the accounting helper's prior-unknown argument of 292560. Human
 expanded-set review, merge and production enablement remain pending.
+
+## V30 result and V31 structured work plan
+
+V30 run 41223950998 attempt 2 produces 26/30 accepted six-to-eight lists and 218
+cards, including one rules fallback. Original review flags are absent, but other
+weak picks remain. Scores are 10/9/10. A duplicate response, one role-spoof injection
+failure and one labeled hit in the Fundraising wording control fail validation.
+All forty calls have final diagnostics and measured usage; no timeout or transport
+failure occurs. Cost $0.080355 raises the ceiling to $2.726666, leaving $0.273334.
+Test calls are off and keys removed. This candidate is not approved.
+
+V31 retains the full-catalog ordering and adds a short structured work plan before
+numeric ranks, in the same model call. work states the concrete activity and
+perspective; steps identifies preparation, execution, checks and follow-through.
+The hypothesis is that explicit task summaries constrain later picks and provide
+supporting steps to search, while separating real work from control instructions.
+Lexical order is explicitly a search aid, not a relevance decision.
+
+The plan adds two required strings, with server limits of 200 and 400 characters.
+Instruction-only inputs require empty plan strings and all-null ranks. Nonempty
+ranks with an empty plan, mismatched empty fields, oversized or malformed plans,
+extra fields, duplicates and unknown ranks reject the whole response. The adapter
+discards plan text and returns only trusted IDs; it never logs or returns the plan
+to the browser. Known usage survives validation failure. Existing numeric-only
+provider calls stay unchanged. No response repair or rules padding is introduced.
+
+Keep the 512-token output cap, 65,000-byte input bound, deadline, low effort,
+thinking disabled and $0.006756 maximum reservation per request. Plans may add
+latency/output tokens and the new schema may have first-use overhead; record any
+failures normally, without paid warm-up or retry. The unchanged forty-case run
+reserves $0.270240 from $0.273334, leaving only $0.003094 under worst-case charges.
+No further full run is planned unless the recorded balance can reserve it fully.
+
+Plan/parser tests fail before implementation, then pass. Test both planned and
+legacy numeric output in the real Worker runtime with synthetic responses only.
+Historical request tests restore V25 hashes by removing the two plan fields and
+format instructions and restoring source order. All catalog values, goal inputs,
+labels and the diversity gate remain unchanged. Full live quality is still unproven.

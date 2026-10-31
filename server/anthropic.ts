@@ -84,7 +84,15 @@ export function providerBody(
     data,
   };
 }
-export type ProviderBody = ReturnType<typeof providerBody>;
+type OriginalBody = ReturnType<typeof providerBody>;
+export type ProviderBody = Omit<OriginalBody, 'request'> & {
+  workPlan?: true;
+  request: Omit<OriginalBody['request'], 'output_config'> & {
+    output_config: Omit<OriginalBody['request']['output_config'], 'format'> & {
+      format: { type: string; schema: Record<string, unknown> };
+    };
+  };
+};
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([
@@ -133,6 +141,10 @@ const slotsSchema = z.strictObject(
     rankKeys.map((key) => [key, z.number().int().nonnegative().nullable()]),
   ),
 );
+const workPlanSchema = z.strictObject({
+  work: z.string().max(200),
+  steps: z.string().max(400),
+});
 
 const responseSchema = z.object({
   stop_reason: z.string(),
@@ -189,13 +201,36 @@ export function anthropicProvider(
     } else {
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
-        const output = slotsSchema.safeParse(decoded);
-        if (!output.success) {
+        const entries =
+          decoded && typeof decoded === 'object' && !Array.isArray(decoded)
+            ? Object.entries(decoded)
+            : [];
+        const isPlan = (key: string) => key === 'work' || key === 'steps';
+        const plan = workPlanSchema.safeParse(
+          Object.fromEntries(entries.filter(([key]) => isPlan(key))),
+        );
+        const ranks = body.workPlan
+          ? Object.fromEntries(entries.filter(([key]) => !isPlan(key)))
+          : decoded;
+        const output = slotsSchema.safeParse(ranks);
+        const invalidPlan =
+          body.workPlan &&
+          (!plan.success ||
+            Boolean(plan.data.work.trim()) !==
+              Boolean(plan.data.steps.trim()) ||
+            (!plan.data.work.trim() &&
+              entries.some(
+                ([key, value]) => rankKeys.includes(key) && value !== null,
+              )));
+        if (!output.success || invalidPlan) {
           const positions =
             decoded && typeof decoded === 'object' && !Array.isArray(decoded)
               ? 'positions' in decoded && Array.isArray(decoded.positions)
                 ? decoded.positions
-                : Object.values(decoded).filter((value) => value !== null)
+                : entries
+                    .filter(([key]) => !body.workPlan || !isPlan(key))
+                    .map(([, value]) => value)
+                    .filter((value) => value !== null)
               : undefined;
           validation = {
             validationFailure: 'schema',

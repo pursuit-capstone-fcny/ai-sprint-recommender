@@ -576,14 +576,16 @@ describe('deployed Luna low candidate', () => {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify(
-                  Object.fromEntries(
+                text: JSON.stringify({
+                  work: 'Prepare fictional work',
+                  steps: 'Review sources; organize findings; check the result.',
+                  ...Object.fromEntries(
                     Array.from({ length: 8 }, (_, i) => [
                       'rank' + (i + 1),
                       i < 3 ? i : null,
                     ]),
                   ),
-                ),
+                }),
               },
             ],
           }),

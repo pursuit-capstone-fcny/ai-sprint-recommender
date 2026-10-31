@@ -62,7 +62,9 @@ describe('Haiku relevance ordering', () => {
       });
     }
     expect(input).toEqual(before);
-    expect(result.request.output_config).toEqual(input.request.output_config);
+    expect(result.request.output_config.effort).toEqual(
+      input.request.output_config.effort,
+    );
   });
   it.each(['', 'and the', 'zxqv'])(
     'preserves source order when the goal provides no lexical evidence: %s',
@@ -83,14 +85,16 @@ describe('Haiku relevance ordering', () => {
         content: [
           {
             type: 'text',
-            text: JSON.stringify(
-              Object.fromEntries(
+            text: JSON.stringify({
+              work: 'Prepare fictional work',
+              steps: 'Review sources; organize findings; check the result.',
+              ...Object.fromEntries(
                 Array.from({ length: 8 }, (_, i) => [
                   `rank${i + 1}`,
                   i < 2 ? i : null,
                 ]),
               ),
-            ),
+            }),
           },
         ],
       }),

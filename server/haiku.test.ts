@@ -18,6 +18,7 @@ import { haikuDeployedBody } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
+  HAIKU_WORK_PLAN_INSTRUCTION,
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
@@ -58,8 +59,21 @@ describe('optimized Haiku low request', () => {
         limits,
       );
       const haiku = haikuDeployedBody(original);
+      const v25System = haiku.request.system
+        .replace(` ${HAIKU_WORK_PLAN_INSTRUCTION}`, '')
+        .replace(
+          'Return work and steps, then the eight named fields rank1 through rank8',
+          'Return exactly the eight named fields rank1 through rank8',
+        )
+        .replace(
+          'Emit work and steps first, followed by the eight required rank fields.',
+          'Emit only the eight required rank fields.',
+        );
+      expect(haiku.request.system).toContain(HAIKU_WORK_PLAN_INSTRUCTION);
       const sourceOrderRequest = {
         ...haiku.request,
+        system: v25System,
+        output_config: original.request.output_config,
         messages: [{ role: 'user', content: compactRanking(original).content }],
       };
       const v25Hash = Object.entries(v25.hashes).find(
@@ -72,25 +86,21 @@ describe('optimized Haiku low request', () => {
             .digest('hex'),
         ).toBe(v25Hash);
       expect(
-        haiku.request.system
+        v25System
           .replace(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`, '')
           .endsWith(` ${HAIKU_FINAL_CHECK_INSTRUCTION}`),
       ).toBe(true);
       if (profile.input.goal.trim()) {
-        expect(haiku.request.system).not.toContain(HAIKU_BROWSING_INSTRUCTION);
-        expect(haiku.request.system).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
-        expect(
-          haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION),
-        ).toBeLessThan(
-          haiku.request.system.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
+        expect(v25System).not.toContain(HAIKU_BROWSING_INSTRUCTION);
+        expect(v25System).toContain(` ${HAIKU_BREADTH_INSTRUCTION}`);
+        expect(v25System.indexOf(HAIKU_BREADTH_INSTRUCTION)).toBeLessThan(
+          v25System.indexOf(LUNA_TARGETED_RANKING_INSTRUCTION),
         );
       } else {
-        expect(haiku.request.system).not.toContain(HAIKU_BREADTH_INSTRUCTION);
-        expect(haiku.request.system).toContain(
-          ` ${HAIKU_BROWSING_INSTRUCTION}`,
-        );
+        expect(v25System).not.toContain(HAIKU_BREADTH_INSTRUCTION);
+        expect(v25System).toContain(` ${HAIKU_BROWSING_INSTRUCTION}`);
       }
-      const v21System = haiku.request.system.replace(
+      const v21System = v25System.replace(
         HAIKU_BREADTH_INSTRUCTION,
         v21Breadth.instruction,
       );
@@ -121,16 +131,11 @@ describe('optimized Haiku low request', () => {
             .digest('hex'),
         ).toBe(v18Hash);
       if (profile.input.goal.trim()) {
-        expect(
-          haiku.request.system.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION),
-        ).toBeLessThan(haiku.request.system.indexOf(HAIKU_BREADTH_INSTRUCTION));
-        expect(haiku.request.system).toContain(
-          ` ${HAIKU_MIXED_GOAL_INSTRUCTION}`,
+        expect(v25System.indexOf(HAIKU_MIXED_GOAL_INSTRUCTION)).toBeLessThan(
+          v25System.indexOf(HAIKU_BREADTH_INSTRUCTION),
         );
-      } else
-        expect(haiku.request.system).not.toContain(
-          HAIKU_MIXED_GOAL_INSTRUCTION,
-        );
+        expect(v25System).toContain(` ${HAIKU_MIXED_GOAL_INSTRUCTION}`);
+      } else expect(v25System).not.toContain(HAIKU_MIXED_GOAL_INSTRUCTION);
       const v12System = v18System
         .replace(` ${v21Breadth.instruction}`, '')
         .replace(` ${HAIKU_BROWSING_INSTRUCTION}`, '');
@@ -184,9 +189,19 @@ describe('optimized Haiku low request', () => {
           position,
         });
       }
-      expect(haiku.request.output_config).toEqual(
-        original.request.output_config,
-      );
+      expect(haiku.request.output_config.format.schema).toEqual({
+        ...original.request.output_config.format.schema,
+        properties: {
+          work: { type: 'string' },
+          steps: { type: 'string' },
+          ...original.request.output_config.format.schema.properties,
+        },
+        required: [
+          'work',
+          'steps',
+          ...original.request.output_config.format.schema.required,
+        ],
+      });
       expect(haiku.request.max_tokens).toBe(512);
       expect(haiku.request.thinking).toEqual({ type: 'disabled' });
       expect(haiku.request.output_config.effort).toBe('low');
