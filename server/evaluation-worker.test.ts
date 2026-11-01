@@ -107,11 +107,11 @@ describe('frozen test catalog isolation', () => {
           : 'https://api.openai.com/v1/responses',
       );
       const payload = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
-      const candidateCount = JSON.parse(
-        isHaiku ? payload.messages[0].content : payload.input[1].content,
-      ).catalog.length;
-      expect(candidateCount).toBeGreaterThanOrEqual(isHaiku ? 48 : 89);
-      expect(candidateCount).toBeLessThanOrEqual(isHaiku ? 60 : 89);
+      expect(
+        JSON.parse(
+          isHaiku ? payload.messages[0].content : payload.input[1].content,
+        ).catalog,
+      ).toHaveLength(isHaiku ? 48 : 89);
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');

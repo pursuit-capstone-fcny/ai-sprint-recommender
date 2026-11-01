@@ -1,0 +1,5 @@
+{
+  "exitCode": 1,
+  "stdout": "{\n  \"nonAbstainingInstructionOnlyProbes\": [],\n  \"duplicateRequests\": [\n    \"caa26412-d5f4-4e75-8f0b-f69d76aa2b82\",\n    \"24957535-04ad-4078-8a10-3eebdfdf212c\",\n    \"fc866c12-eea2-4630-97a3-707b6fe47daa\"\n  ]\n}\n",
+  "stderr": "Traceback (most recent call last):\n  File \"/Users/jason/workspace/github.com/fcny/worktrees/issue-19/docs/evaluation/2026-10-30-haiku-breadth/audit-failures.py\", line 15, in <module>\n    assert not failed and not duplicates, 'Instruction-only abstention and unique selections are required.'\nAssertionError: Instruction-only abstention and unique selections are required.\n"
+}

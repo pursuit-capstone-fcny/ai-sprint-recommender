@@ -1,0 +1,121 @@
+{
+  "kind": "unscored-prior-review-observations",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [7, 10, 10],
+  "sixToEightLists": 27,
+  "shortLists": [
+    {
+      "trial": 1,
+      "profileId": "communications-02",
+      "engine": "rules",
+      "count": 8
+    },
+    {
+      "trial": 1,
+      "profileId": "fundraising-01",
+      "engine": "rules",
+      "count": 8
+    },
+    {
+      "trial": 1,
+      "profileId": "fundraising-02",
+      "engine": "rules",
+      "count": 8
+    }
+  ],
+  "priorConcernAppearances": [
+    {
+      "trial": 1,
+      "profileId": "leadership-02",
+      "rank": 5,
+      "youtubeId": "YACIPFCbGV8",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "leadership-02",
+      "rank": 6,
+      "youtubeId": "AjI2GF1b6zo",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "leadership-02",
+      "rank": 7,
+      "youtubeId": "6d2bKhdmqqA",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "operations-02",
+      "rank": 7,
+      "youtubeId": "33a0qYtCMvc",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "programs-01",
+      "rank": 8,
+      "youtubeId": "wu6DHIkJH7k",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "programs-02",
+      "rank": 7,
+      "youtubeId": "9Np4JDDQvpA",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "programs-02",
+      "rank": 8,
+      "youtubeId": "wxJVc1q_nnY",
+      "engine": "llm"
+    },
+    {
+      "trial": 1,
+      "profileId": "communications-02",
+      "rank": 6,
+      "youtubeId": "5vR5cPnqT-Q",
+      "engine": "rules"
+    },
+    {
+      "trial": 2,
+      "profileId": "programs-01",
+      "rank": 7,
+      "youtubeId": "wu6DHIkJH7k",
+      "engine": "llm"
+    },
+    {
+      "trial": 3,
+      "profileId": "leadership-02",
+      "rank": 4,
+      "youtubeId": "YACIPFCbGV8",
+      "engine": "llm"
+    },
+    {
+      "trial": 3,
+      "profileId": "operations-02",
+      "rank": 8,
+      "youtubeId": "33a0qYtCMvc",
+      "engine": "llm"
+    },
+    {
+      "trial": 3,
+      "profileId": "programs-01",
+      "rank": 8,
+      "youtubeId": "wu6DHIkJH7k",
+      "engine": "llm"
+    },
+    {
+      "trial": 3,
+      "profileId": "programs-02",
+      "rank": 8,
+      "youtubeId": "9Np4JDDQvpA",
+      "engine": "llm"
+    }
+  ],
+  "allExpandedPicksApproved": false,
+  "note": "Absence of these prior concerns does not approve replacements. Review the complete expanded output. Labels and scores are unchanged."
+}

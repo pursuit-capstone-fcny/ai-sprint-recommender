@@ -7,10 +7,10 @@
 
 ## Acceptance criteria
 
-- Given the bounded Haiku context test, when expanding its candidate shortlist,
-  then preserve existing candidates and add at most twelve related methods using
-  public metadata. Keep source order, labels, trusted positions and the
-  task-diversity gate unchanged. Enforce the existing input bound pre-dispatch.
+- Given the bounded Haiku context test, when serializing candidate metadata,
+  then present descriptions and task tags before titles without changing values,
+  source order, trusted positions or the original shortlist. Preserve the input
+  bound, benchmark labels and task-diversity gate.
 
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the

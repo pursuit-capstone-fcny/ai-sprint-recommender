@@ -1,4 +1,3 @@
-import { methodNeighbors } from './haiku-method-neighbors';
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { RecommendationRequest } from '../src/contracts/recommendation';
 import { taskRelevance } from '../src/engine/relevance';
@@ -7,8 +6,7 @@ import { normalizeText } from '../src/engine/vocabulary';
 const CANDIDATE_LIMIT = 48;
 
 // Test-only retrieval. Keep selected-area coverage for unfamiliar paraphrases,
-// then add related methods without removing any original candidate.
-// Source order and all metadata stay unchanged.
+// then add cross-area matches. Source order and all metadata stay unchanged.
 export function haikuCandidates(
   items: PublicCatalog['items'],
   input: RecommendationRequest,
@@ -36,22 +34,6 @@ export function haikuCandidates(
   for (const index of ranked) {
     if (selected.size >= CANDIDATE_LIMIT) break;
     selected.add(index);
-  }
-  const strongest = scores.get(items[ranked[0]].youtubeId)!;
-  const anchors = ranked
-    .slice(0, 8)
-    .filter((index) => (scores.get(items[index].youtubeId) ?? 0) > 0)
-    .map((index) => ({
-      index,
-      weight: scores.get(items[index].youtubeId)! / strongest,
-    }));
-  const related = methodNeighbors(items, anchors);
-  const supportOrder = [...ranked].sort(
-    (a, b) => related[b] - related[a] || ranked.indexOf(a) - ranked.indexOf(b),
-  );
-  for (const index of supportOrder) {
-    if (selected.size >= CANDIDATE_LIMIT + 12) break;
-    if (related[index] >= 0.1) selected.add(index);
   }
   return items.filter((_, index) => selected.has(index));
 }

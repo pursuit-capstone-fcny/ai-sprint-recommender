@@ -72,3 +72,29 @@ less noise and input than V51. The model still chooses its own useful videos;
 the retrieval similarity is not a relevance label or a final recommendation
 threshold. Keep V44's prompt, parser, effort, deadlines and token bounds. Run the
 same forty cases within the existing allowance and preserve all failures.
+
+## V53: descriptions before titles
+
+V52 is rejected. It scores 7/10, 10/10 and 10/10, with three benchmark fallbacks
+and only 27/30 accepted broad lists. Mixed Fundraising also falls back. All forty
+requests have measured usage, costing $0.061861 and leaving $0.826091. The method
+expansion and its runtime helper are removed; their source and evidence remain
+in history.
+
+Restore V44's original 48-candidate retrieval. Change only the order of fields in
+its transmitted rows: position, description, tasks, title, functionAreas, tools.
+This puts the actual demonstration before the broad title. The hypothesis is
+that method evidence read first reduces title-based substitutions, such as a
+purchasing-negotiation demonstration being selected for a staff conversation.
+It adds no instruction, relevance label, content summary or exception.
+
+The provider-adapter regression initially sees title before description. After
+implementation it requires the new field order and reconstructs every original
+catalog record to prove all values and positions survive unchanged. The same
+serializer feeds input reservation and dispatch. All schema, parser, prompt,
+source ordering, output format, deadlines and limits remain V44's. Historical
+request checks remain intact; only the final transmitted row layout changes.
+
+Run the unchanged forty cases under a new exact-attempt approval within the
+remaining allowance. Retain every failed case and charge. Keep production calls
+and usage logging off, and disable the test endpoint after the run.

@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "360fc5bd77e2df6e58d8c1948fbc2b9e61f471f5",
+  "approvedWorkflowRunId": "41325133036",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T16:58:29Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v52",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V52 preserves every V44 shortlist candidate and adds at most twelve related methods from existing public metadata. Eight goal-relevant anchors, frequency-weighted cosine similarity >=0.1, no profile or video-ID rules. Source order, metadata, benchmark labels, task-diversity gate, V44 model prompt, strict parser and limits unchanged. One Haiku 5.5 low call with thinking disabled. Same thirty benchmark cases and ten controls, no retries, repairs, padding or replacement cases.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Continue within existing additive $5 cap and remaining $0.887952. Carry $4.112048 including all $0.379988 unknown reservations. Maximum request reservation $0.006556; forty-case maximum $0.262240. Preserve V51 full measured cost $0.088380 and all historical charges. No new grant, reset or refund. Production calls and logging disabled.",
+  "allowanceMicrodollars": 887952,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 4112048,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}
