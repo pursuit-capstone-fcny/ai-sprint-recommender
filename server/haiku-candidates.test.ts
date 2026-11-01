@@ -22,6 +22,30 @@ const input = {
 const limits = readLimits(environment)!;
 
 describe('Haiku candidate retrieval', () => {
+  it('retains a supporting method without requiring the goal words', () => {
+    const examples = structuredClone(items);
+    examples[16] = {
+      ...examples[16],
+      title: 'Organize inventory records',
+      description:
+        'Organize inventory ledger. Normalize identifiers and reconcile records before aggregating totals.',
+    };
+    examples[0] = {
+      ...examples[0],
+      title: 'Normalize identifiers',
+      description:
+        'Reconcile records and normalize identifiers before aggregating totals.',
+      tasks: ['data cleaning'],
+    };
+    const before = structuredClone(examples);
+    const selected = haikuCandidates(examples, input);
+    expect(selected.map((item) => item.youtubeId)).toContain(
+      examples[0].youtubeId,
+    );
+    expect(selected).toContainEqual(examples[16]);
+    expect(selected).toHaveLength(49);
+    expect(examples).toEqual(before);
+  });
   it('retains the strongest 48 candidates in source order without mutating metadata', () => {
     const before = structuredClone(items);
     const selected = haikuCandidates(items, input);
@@ -44,7 +68,7 @@ describe('Haiku candidate retrieval', () => {
       ...input,
       functionArea: 'Communications',
     });
-    expect(selected).toEqual(scoped.slice(0, 48));
+    expect(selected).toEqual(scoped.slice(0, 60));
     expect(
       selected.some((item) => item.functionAreas.includes('Operations')),
     ).toBe(true);

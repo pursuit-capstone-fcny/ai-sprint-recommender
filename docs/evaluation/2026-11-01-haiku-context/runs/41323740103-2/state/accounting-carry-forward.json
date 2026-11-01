@@ -1,0 +1,6 @@
+{
+  "historicalUnknownReservationsMicrodollars": 379988,
+  "cumulativeCeilingMicrodollars": 4112048,
+  "remainingAllowanceMicrodollars": 887952,
+  "note": "Re-ran accounting with actual carried unknown reservations rather than the original combined audit default. Charges and scores are unchanged."
+}

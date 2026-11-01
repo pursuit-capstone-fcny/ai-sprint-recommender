@@ -42,3 +42,33 @@ reservations. Available allowance is $0.976332. Maximum reservation stays
 $0.006556 per request and $0.262240 for forty cases. No new grant, refund or
 reset. Disable test calls, remove keys and revoke temporary authorization after
 the run. Production LLM calls and usage logging stay disabled.
+
+## V52: add related methods to the original shortlist
+
+V51 is rejected. It scores 9/10, 10/10 and 8/10, with 28/30 accepted broad lists,
+one timeout, one duplicate and a Fundraising-02 top-three miss. All forty calls
+have measured accounting. Its $0.088380 charge leaves $0.887952. The full catalog
+adds useful methods but also weak substitutes, more input and a reliability
+regression. All results and failed audits are retained.
+
+V52 restores the original 48-candidate retrieval, preserving every baseline
+candidate and all selected-area coverage. Add at most twelve candidate methods
+related to the eight strongest goal matches. Similarity uses existing public
+titles, descriptions and task tags, inverse document-frequency weighting and
+cosine similarity. Each anchor's influence is weighted by its goal relevance.
+Only similarity of at least 0.1 qualifies; no slot must be filled. There are no
+video IDs, profile IDs, new metadata labels or benchmark judgments in selection.
+The final source order and browser task-diversity gate remain unchanged.
+
+The initial unpaid design replaced twelve original slots. Inspection showed it
+could remove useful candidates, so it was discarded before any live call. The
+final design only adds candidates. The regression uses fictional inventory
+videos: a record-normalization method absent from the goal is excluded before
+the change and included afterward. Existing direct matches remain. The frozen
+input audit separately confirms that no baseline candidate is lost.
+
+This tests whether bounded expansion can recover useful supporting methods with
+less noise and input than V51. The model still chooses its own useful videos;
+the retrieval similarity is not a relevance label or a final recommendation
+threshold. Keep V44's prompt, parser, effort, deadlines and token bounds. Run the
+same forty cases within the existing allowance and preserve all failures.

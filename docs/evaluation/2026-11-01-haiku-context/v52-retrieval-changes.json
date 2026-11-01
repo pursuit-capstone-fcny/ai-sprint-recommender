@@ -1,0 +1,192 @@
+[
+  {
+    "profileId": "leadership-01",
+    "candidateCount": 50,
+    "newlyAvailable": [
+      {
+        "id": "DNfFMZxAI-0",
+        "title": "Build Your Own Lesson Planning Tool",
+        "tasks": [
+          "lesson planning",
+          "curriculum development",
+          "instructional design",
+          "custom GPT setup",
+          "teacher support"
+        ]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      }
+    ],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "leadership-02",
+    "candidateCount": 51,
+    "newlyAvailable": [
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "dooZWSQCNSs",
+        "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+        "tasks": ["lesson planning", "instructional design"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      }
+    ],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "operations-01",
+    "candidateCount": 48,
+    "newlyAvailable": [],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "operations-02",
+    "candidateCount": 53,
+    "newlyAvailable": [
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ]
+      },
+      {
+        "id": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "tasks": ["grant application drafting", "fundraising copy"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      }
+    ],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "programs-01",
+    "candidateCount": 48,
+    "newlyAvailable": [],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "programs-02",
+    "candidateCount": 48,
+    "newlyAvailable": [],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "communications-01",
+    "candidateCount": 54,
+    "newlyAvailable": [
+      {
+        "id": "rKn6KASMk50",
+        "title": "Build an AI Agent for Accessible Course Content",
+        "tasks": ["curriculum development", "accessibility adaptation"]
+      },
+      {
+        "id": "AjI2GF1b6zo",
+        "title": "Build an HR Policy Bot with Perplexity",
+        "tasks": ["internal FAQ", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "tasks": ["flier design", "accessibility adaptation"]
+      },
+      {
+        "id": "Kv0C743lCUw",
+        "title": "Design a Class Syllabus in Minutes with AI",
+        "tasks": ["curriculum development", "lesson planning"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      }
+    ],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "communications-02",
+    "candidateCount": 48,
+    "newlyAvailable": [],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "fundraising-01",
+    "candidateCount": 49,
+    "newlyAvailable": [
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      }
+    ],
+    "newlyExcluded": []
+  },
+  {
+    "profileId": "fundraising-02",
+    "candidateCount": 51,
+    "newlyAvailable": [
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      }
+    ],
+    "newlyExcluded": []
+  }
+]

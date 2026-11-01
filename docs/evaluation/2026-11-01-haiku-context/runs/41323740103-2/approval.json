@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "c7d5511a9ac4a4d9b34b5ed1b0e4b0509c0f781e",
+  "approvedWorkflowRunId": "41323740103",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T16:42:03Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v51",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V51 changes only candidate availability: V44 request and parser receive all 89 catalog items in source order instead of the 48-item shortlist. Same low effort, thinking disabled, one call, selection-evidence objects, 63000 input bound, 512 output tokens and 4.5-second deadline. Frozen catalog, labels, task-diversity gate, thirty benchmark cases and ten controls unchanged. No retries, replacement cases, padding or repair. Preserve every result and sanitized diagnostic.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Continue within existing additive $5 cap and remaining $0.976332. Carry all $4.023668, including $0.379988 unknown reservations. Maximum request reservation $0.006556, forty-case maximum $0.262240. No new grant, reset, refund or repricing. Production calls and usage logging remain disabled.",
+  "allowanceMicrodollars": 976332,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 4023668,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

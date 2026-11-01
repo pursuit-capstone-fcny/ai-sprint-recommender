@@ -51,7 +51,7 @@ const bounds = cases.map((p) => {
   return {
     id: p.id,
     full: bound(b.catalog),
-    baselineShortlisted: bound({
+    retrieved: bound({
       ...b.catalog,
       items: c.haikuCandidates(b.catalog.items, input),
     }),
@@ -60,8 +60,7 @@ const bounds = cases.map((p) => {
 assert(
   bounds.every(
     (x) =>
-      x.full <= l.LLM_MAX_INPUT_TOKENS &&
-      x.baselineShortlisted <= l.LLM_MAX_INPUT_TOKENS,
+      x.full <= l.LLM_MAX_INPUT_TOKENS && x.retrieved <= l.LLM_MAX_INPUT_TOKENS,
   ),
 );
 const max = c.callCost(l, l.LLM_MAX_INPUT_TOKENS, l.LLM_MAX_OUTPUT_TOKENS);
