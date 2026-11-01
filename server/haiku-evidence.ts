@@ -9,49 +9,58 @@ const EVIDENCE_INSTRUCTION =
 // The original numeric schema remains the authority for allowable positions.
 export function anthropicRequest(body: ProviderBody) {
   if (!body.selectionEvidence) return body.request;
+  const planned = typeof body.selectionEvidence === 'string';
+  const numeric = body.selectionEvidence === 'planned-numeric';
+  // Retain the selection criteria without the per-rank prose-format directions.
+  const guidance = numeric
+    ? EVIDENCE_INSTRUCTION.slice(
+        EVIDENCE_INSTRUCTION.indexOf('For a nonblank goal,'),
+        EVIDENCE_INSTRUCTION.indexOf('Keep the existing eligibility'),
+      ).trim()
+    : EVIDENCE_INSTRUCTION;
   const format = body.request.output_config.format;
-  const ranks = {
-    ...format.schema,
-    properties: Object.fromEntries(
-      Object.entries(format.schema.properties).map(([key, position]) => [
-        key,
-        {
-          type: 'object',
-          properties: { use: { type: 'string' }, position },
-          required: ['use', 'position'],
-          additionalProperties: false,
-        },
-      ]),
-    ),
-  };
+  const ranks = numeric
+    ? format.schema
+    : {
+        ...format.schema,
+        properties: Object.fromEntries(
+          Object.entries(format.schema.properties).map(([key, position]) => [
+            key,
+            {
+              type: 'object',
+              properties: { use: { type: 'string' }, position },
+              required: ['use', 'position'],
+              additionalProperties: false,
+            },
+          ]),
+        ),
+      };
   return {
     ...body.request,
-    system:
-      body.selectionEvidence === 'planned'
-        ? `${body.request.system} ${EVIDENCE_INSTRUCTION}`
-            .replaceAll(
-              'Return exactly the eight named fields rank1 through rank8, best match first.',
-              'Within ranks, return exactly the eight named fields rank1 through rank8, best match first.',
-            )
-            .replace('Emit only the eight required rank fields.', '')
-            .replace(
-              'emit only these eight rank objects.',
-              'put these eight rank objects under ranks.',
-            ) + ` ${HAIKU_PLANNING_INSTRUCTION}`
-        : `${body.request.system} ${EVIDENCE_INSTRUCTION}`,
+    system: planned
+      ? `${body.request.system} ${guidance}`
+          .replaceAll(
+            'Return exactly the eight named fields rank1 through rank8, best match first.',
+            'Within ranks, return exactly the eight named fields rank1 through rank8, best match first.',
+          )
+          .replace('Emit only the eight required rank fields.', '')
+          .replace(
+            'emit only these eight rank objects.',
+            'put these eight rank objects under ranks.',
+          ) + ` ${HAIKU_PLANNING_INSTRUCTION}`
+      : `${body.request.system} ${EVIDENCE_INSTRUCTION}`,
     output_config: {
       ...body.request.output_config,
       format: {
         ...format,
-        schema:
-          body.selectionEvidence === 'planned'
-            ? {
-                type: 'object',
-                properties: { workSteps: { type: 'string' }, ranks },
-                required: ['workSteps', 'ranks'],
-                additionalProperties: false,
-              }
-            : ranks,
+        schema: planned
+          ? {
+              type: 'object',
+              properties: { workSteps: { type: 'string' }, ranks },
+              required: ['workSteps', 'ranks'],
+              additionalProperties: false,
+            }
+          : ranks,
       },
     },
   };
@@ -80,11 +89,15 @@ export const evidenceSlotsSchema = z
     ),
   );
 
-export const plannedEvidenceSlotsSchema = z
-  .strictObject({ workSteps: z.string(), ranks: evidenceSlotsSchema })
-  .refine(
-    ({ workSteps, ranks }) =>
-      workSteps.trim().length > 0 ||
-      Object.values(ranks).every((position) => position === null),
-  )
-  .transform(({ ranks }) => ranks);
+export function withWorkPlan(ranks: z.ZodType<Record<string, number | null>>) {
+  return z
+    .strictObject({ workSteps: z.string(), ranks })
+    .refine(
+      ({ workSteps, ranks }) =>
+        workSteps.trim().length > 0 ||
+        Object.values(ranks).every((position) => position === null),
+    )
+    .transform(({ ranks }) => ranks);
+}
+
+export const plannedEvidenceSlotsSchema = withWorkPlan(evidenceSlotsSchema);

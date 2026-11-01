@@ -45,10 +45,7 @@ describe('frozen test catalog isolation', () => {
                       ranks: Object.fromEntries(
                         Array.from({ length: 8 }, (_, i) => [
                           'rank' + (i + 1),
-                          {
-                            use: i < 2 ? 'Prepare an AI policy' : '',
-                            position: i < 2 ? i : null,
-                          },
+                          i < 2 ? i : null,
                         ]),
                       ),
                     }),

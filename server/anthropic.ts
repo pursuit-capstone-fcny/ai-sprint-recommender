@@ -10,6 +10,7 @@ import {
   anthropicRequest,
   evidenceSlotsSchema,
   plannedEvidenceSlotsSchema,
+  withWorkPlan,
 } from './haiku-evidence';
 
 const rankKeys = Array.from(
@@ -90,7 +91,7 @@ export function providerBody(
   };
 }
 export type ProviderBody = ReturnType<typeof providerBody> & {
-  selectionEvidence?: true | 'planned';
+  selectionEvidence?: true | 'planned' | 'planned-numeric';
 };
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
@@ -146,6 +147,7 @@ const slotsSchema = z.strictObject(
     rankKeys.map((key) => [key, z.number().int().nonnegative().nullable()]),
   ),
 );
+const plannedNumericSlotsSchema = withWorkPlan(slotsSchema);
 
 const responseSchema = z.object({
   stop_reason: z.string(),
@@ -206,15 +208,17 @@ export function anthropicProvider(
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
         const output = (
-          body.selectionEvidence === 'planned'
-            ? plannedEvidenceSlotsSchema
-            : body.selectionEvidence
-              ? evidenceSlotsSchema
-              : slotsSchema
+          body.selectionEvidence === 'planned-numeric'
+            ? plannedNumericSlotsSchema
+            : body.selectionEvidence === 'planned'
+              ? plannedEvidenceSlotsSchema
+              : body.selectionEvidence
+                ? evidenceSlotsSchema
+                : slotsSchema
         ).safeParse(decoded);
         if (!output.success) {
           const selections =
-            body.selectionEvidence === 'planned' &&
+            typeof body.selectionEvidence === 'string' &&
             decoded &&
             typeof decoded === 'object' &&
             'ranks' in decoded

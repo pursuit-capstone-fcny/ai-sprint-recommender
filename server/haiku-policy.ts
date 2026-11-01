@@ -1,5 +1,5 @@
 // Current bounded test candidate. Historical requests and production stay unchanged.
-export const HAIKU_DEPLOYED_PROMPT = 'catalog-rank-haiku-v48';
+export const HAIKU_DEPLOYED_PROMPT = 'catalog-rank-haiku-v49';
 export const HAIKU_DEPLOYED_MAX_INPUT = 63_000;
 export const HAIKU_DEPLOYED_RESERVATION = 6_556;
 export const HAIKU_BROWSING_INSTRUCTION =

@@ -17,6 +17,8 @@ const body = haikuDeployedBody(
     readLimits(environment)!,
   ),
 );
+// Preserve adapter coverage for the V47/V48 format.
+body.selectionEvidence = 'planned';
 const ranks = () =>
   Object.fromEntries(
     Array.from({ length: 8 }, (_, i) => [
@@ -116,5 +118,96 @@ describe('plan before Haiku selections', () => {
     expect(
       (await call('Organize source records. '.repeat(8), ranks())).value,
     ).toEqual({ youtubeIds: [catalog.items[0].youtubeId] });
+  });
+});
+
+describe('plan followed by numeric ranks', () => {
+  const numericBody = {
+    ...body,
+    selectionEvidence: 'planned-numeric' as const,
+  };
+  const numericRanks = () =>
+    Object.fromEntries(
+      Array.from({ length: 8 }, (_, i) => [`rank${i + 1}`, i === 0 ? 0 : null]),
+    );
+  it('dispatches a single request and strips the work plan before returning IDs', async () => {
+    let sent = '';
+    const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
+      sent = String(init?.body);
+      return response({
+        workSteps: 'Group source records',
+        ranks: numericRanks(),
+      });
+    });
+    expect(
+      await anthropicProvider('fixture-only', fetcher)(
+        numericBody,
+        new AbortController().signal,
+      ),
+    ).toEqual({
+      value: { youtubeIds: [catalog.items[0].youtubeId] },
+      inputTokens: 1200,
+      outputTokens: 220,
+    });
+    const schema = JSON.parse(sent).output_config.format.schema;
+    expect(schema.properties.ranks.properties).toEqual(
+      body.request.output_config.format.schema.properties,
+    );
+    expect(inputTokenBound(numericBody)).toBe(
+      new TextEncoder().encode(sent).length + 4096,
+    );
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+  it.each([
+    'duplicate',
+    'range',
+    'missing-rank',
+    'extra-rank',
+    'missing-plan',
+    'empty-plan',
+  ])(
+    'rejects %s without dropping duplicates or filling slots',
+    async (mode) => {
+      const selected = numericRanks();
+      if (mode === 'duplicate') selected.rank2 = 0;
+      if (mode === 'range') selected.rank1 = catalog.items.length;
+      if (mode === 'missing-rank') delete selected.rank8;
+      if (mode === 'extra-rank') selected.rank9 = null;
+      const value: Record<string, unknown> = {
+        workSteps: mode === 'empty-plan' ? '' : 'Group source records',
+        ranks: selected,
+      };
+      if (mode === 'missing-plan') delete value.workSteps;
+      const fetcher = vi.fn<typeof fetch>(async () => response(value));
+      expect(
+        await anthropicProvider('fixture-only', fetcher)(
+          numericBody,
+          new AbortController().signal,
+        ),
+      ).toMatchObject({
+        value: null,
+        inputTokens: 1200,
+        outputTokens: 220,
+        validationFailure:
+          mode === 'duplicate'
+            ? 'duplicate'
+            : mode === 'range'
+              ? 'out-of-range'
+              : 'schema',
+      });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    },
+  );
+  it('preserves all-null abstention', async () => {
+    const selected = Object.fromEntries(
+      Object.keys(numericRanks()).map((key) => [key, null]),
+    );
+    expect(
+      (
+        await anthropicProvider('fixture-only', async () =>
+          response({ workSteps: '', ranks: selected }),
+        )(numericBody, new AbortController().signal)
+      ).value,
+    ).toEqual({ youtubeIds: [] });
   });
 });

@@ -626,10 +626,7 @@ describe('deployed Luna low candidate', () => {
                   ranks: Object.fromEntries(
                     Array.from({ length: 8 }, (_, i) => [
                       'rank' + (i + 1),
-                      {
-                        use: i < 3 ? 'Organize source records' : '',
-                        position: i < 3 ? i : null,
-                      },
+                      i < 3 ? i : null,
                     ]),
                   ),
                 }),

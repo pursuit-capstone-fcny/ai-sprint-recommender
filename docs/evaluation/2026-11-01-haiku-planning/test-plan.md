@@ -66,3 +66,25 @@ from V47's wholesale instruction consolidation. Keep the format/parser, retrieva
 limits, labels, gates, forty cases and no-retry policy unchanged. Recheck wire
 bounds and all local checks before another exact-attempt test. Production stays
 off; V47 is disabled and its keys and temporary approval have been removed.
+
+## V49: plan followed by numeric ranks
+
+V48 restores every injection/wording control and scores 10/10, 9/10 and 10/10,
+with 29/30 accepted broad lists. One duplicate causes the remaining benchmark
+fallback. Every accepted list has six to eight cards, but questionable supports
+remain. Preserve its $0.063994 measured charge, leaving $1.081552 with no new
+unknown reservation. V48 is not retained as the completed fix.
+
+Test whether removing per-rank prose reduces the duplicate risk without losing
+the work-plan benefit. Return `workSteps` followed by eight numeric/null ranks.
+Keep V44's selection criteria and V48's planning instruction; remove only the
+per-rank note format and adapt the envelope wording. The adapter still rejects
+all missing/extra ranks, invalid IDs and repeated positions. It never drops a
+duplicate, fills a slot, repairs a response or bypasses the browser gate. The
+legacy response formats retain their adapter tests. A new real-adapter test first
+fails for the numeric plan format, then passes after implementation.
+
+Use the same provider, low effort, one call, limits, frozen data and forty-case
+validation. Recheck every wire bound. Retain all prior failures, charges and
+unknown reservations under the existing $5 cap. Test calls and production
+logging remain disabled outside the exact-attempt run.
