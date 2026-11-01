@@ -1,11 +1,19 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V36 restored after V38–V42 fail quality/breadth retention; weak picks and one short list remain
+- **Status:** V44 retained: 10/10 each, 30/30 broad lists and clean reliability; expanded supporting picks still need review
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given auxiliary selection statements, when parsing a test response, then
+  validate its complete shape and numeric IDs, discard the statements before
+  returning recommendations, and preserve the existing task-diversity gate.
+  Save and stop on a structural schema rejection before another paid case.
+- Given an unpaid all-blank readiness request, when HTTP 200 lacks a diagnostic
+  header during deployment propagation, then wait only within the existing
+  deadline and retain the failure. Never retry a paid intake.
 
 - Given a permanent provider request rejection, when evaluation saves the failed
   case and sanitized HTTP status, then stop before another paid case. Retain
@@ -95,6 +103,17 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [selection-evidence trials](../docs/evaluation/2026-11-01-haiku-evidence/results.md)
+retain V44: 10/10 in each trial, 30/30 six-to-eight lists and forty measured
+requests without timeout, transport, invalid-response or duplicate failures.
+Original podcast flags and the short list are resolved; some supporting picks
+remain questionable. V43's format failures and V45's duplicate regression are
+preserved. This task records $0.189217, leaving $0.262836 with all $0.366876 unknown
+reservations charged. Labels and the gate are unchanged. Test calls are off;
+production LLM calls and logging stay disabled. Expanded quality is not approved.
+
+Earlier results and balances below are historical.
 
 The [review and task-scope trials](../docs/evaluation/2026-10-31-haiku-review/results.md)
 reject V38–V42. V42 removes the original flags but scores 10/9/10 with 27/30 broad

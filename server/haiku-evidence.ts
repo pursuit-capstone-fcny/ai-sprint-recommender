@@ -6,15 +6,12 @@ const EVIDENCE_INSTRUCTION =
 
 // Build exactly the request used for both input reservation and provider dispatch.
 // The original numeric schema remains the authority for allowable positions.
-const SUPPORT_INSTRUCTION =
-  'For supporting selections, verify input, operation and result together. The demonstrated operation must act on material the user actually has or needs and produce something usable in the requested work now. Preserve what the demo does when writing use; do not rename its task to manufacture relevance. A shared input such as a document does not make every output format useful. Do not substitute audio, music, event promotion or meeting records for an explicitly written or slide-based deliverable. A content assistant restricted to one subject does not answer a different subject merely because both use documents; its setup method transfers when the goal is to build an assistant. Do not add general AI policy, introductory prompting or unrelated future work as a prerequisite. Before ending a short list, look for actual input preparation, research, evidence review, editing or workflow organization that supports this goal. Retain every useful direct or supporting method; six to eight remains preferred, but a convincing-sounding use statement cannot make an unrelated tutorial useful.';
-
 export function anthropicRequest(body: ProviderBody) {
   if (!body.selectionEvidence) return body.request;
   const format = body.request.output_config.format;
   return {
     ...body.request,
-    system: `${body.request.system} ${EVIDENCE_INSTRUCTION} ${SUPPORT_INSTRUCTION}`,
+    system: `${body.request.system} ${EVIDENCE_INSTRUCTION}`,
     output_config: {
       ...body.request.output_config,
       format: {

@@ -1,0 +1,258 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [8, 8, 8],
+  "acceptedLlmSixToEight": 24,
+  "totalDisplayedCards": 237,
+  "meanDisplayedCards": 7.9,
+  "acceptedLlmTotalCards": 189,
+  "meanAcceptedLlmCards": 7.875,
+  "topThreeMisses": [],
+  "thinAcceptedLists": [],
+  "instructionOnlyAbstentions": [
+    "goal-injection",
+    "injection-role-spoof",
+    "injection-output-copy",
+    "injection-empty-task"
+  ],
+  "instructionOnlyFailures": [],
+  "duplicateRequestIds": [
+    "5eea8be6-8e54-459e-a2b2-08d64cf5393a",
+    "dfdfe9bc-a732-4269-8f11-02fb45a5e00d",
+    "fc2b5fab-0ee8-40c6-81e2-c3fc5c2f3bd9",
+    "0e6fe9e9-e509-4356-b442-f198bf09239d",
+    "35f148d2-f7e7-4560-9e11-a239b4877c92",
+    "e8d15cb4-2f28-461e-b2f0-003ea9d5141e"
+  ],
+  "invalidResponses": [
+    {
+      "requestId": "5eea8be6-8e54-459e-a2b2-08d64cf5393a",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1849,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 12,
+      "budgetMs": 64,
+      "providerMs": 1715,
+      "inputTokens": 13756,
+      "outputTokens": 246,
+      "costMicrodollars": 1499,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    },
+    {
+      "requestId": "dfdfe9bc-a732-4269-8f11-02fb45a5e00d",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1523,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 8,
+      "budgetMs": 64,
+      "providerMs": 1393,
+      "inputTokens": 13686,
+      "outputTokens": 224,
+      "costMicrodollars": 1481,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    },
+    {
+      "requestId": "fc2b5fab-0ee8-40c6-81e2-c3fc5c2f3bd9",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2019,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 6,
+      "budgetMs": 65,
+      "providerMs": 1891,
+      "inputTokens": 13894,
+      "outputTokens": 289,
+      "costMicrodollars": 1534,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    },
+    {
+      "requestId": "0e6fe9e9-e509-4356-b442-f198bf09239d",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1848,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 7,
+      "budgetMs": 62,
+      "providerMs": 1724,
+      "inputTokens": 14091,
+      "outputTokens": 263,
+      "costMicrodollars": 1541,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    },
+    {
+      "requestId": "35f148d2-f7e7-4560-9e11-a239b4877c92",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1741,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 7,
+      "budgetMs": 66,
+      "providerMs": 1610,
+      "inputTokens": 13756,
+      "outputTokens": 249,
+      "costMicrodollars": 1501,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    },
+    {
+      "requestId": "e8d15cb4-2f28-461e-b2f0-003ea9d5141e",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1891,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 10,
+      "budgetMs": 71,
+      "providerMs": 1756,
+      "inputTokens": 13686,
+      "outputTokens": 232,
+      "costMicrodollars": 1485,
+      "reservedMicrodollars": 6756,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v45"
+    }
+  ],
+  "controls": {
+    "wording-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "mixed-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "mixed-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 6
+    }
+  },
+  "blankGoalCount": 8,
+  "blankGoalEngine": "llm",
+  "blankGoalProviderCount": 8,
+  "fundraising02Counts": [8, 8, 8],
+  "expandedUnreviewedAppearances": 155,
+  "benchmarkFailures": [
+    {
+      "profileId": "leadership-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "fundraising-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "operations-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "programs-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "leadership-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "fundraising-01",
+      "reason": "invalid-response"
+    }
+  ],
+  "completeMeasuredEvidence": true,
+  "reportSource": "comparison/report.json",
+  "freshComparisonSaved": true,
+  "comparison": {
+    "haiku-v45": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 45209,
+      "benchmarkCostMicrodollars": 45209,
+      "meanCostDollars": 0.0015069666666666667,
+      "estimatedDollarsPer1000": 1.5069666666666668,
+      "medianLatencyMs": 1926.5
+    },
+    "haiku-v12": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58554,
+      "benchmarkCostMicrodollars": 58554,
+      "meanCostDollars": 0.0019518,
+      "estimatedDollarsPer1000": 1.9518,
+      "medianLatencyMs": 1584.5
+    },
+    "luna-v15-fast": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58004,
+      "benchmarkCostMicrodollars": 58004,
+      "meanCostDollars": 0.0019334666666666668,
+      "estimatedDollarsPer1000": 1.9334666666666667,
+      "medianLatencyMs": 1278.5
+    }
+  },
+  "productionApproval": "not-approved"
+}

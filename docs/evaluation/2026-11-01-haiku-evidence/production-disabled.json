@@ -1,0 +1,14 @@
+{
+  "checkedAt": "2026-11-01T01:23:15.784678+00:00",
+  "productionRun": {
+    "conclusion": "success",
+    "databaseId": 41127387660,
+    "headSha": "639fe465dff12ea6c925b0dad1c38d1792918547",
+    "status": "completed"
+  },
+  "flags": [
+    "deploy\tUNKNOWN STEP\t2026-10-30T20:58:33.0584603Z   VITE_USAGE_ENABLED: false",
+    "deploy\tUNKNOWN STEP\t2026-10-30T20:58:50.2365162Z env.LLM_ENABLED (\"false\")                                            Environment Variable      "
+  ],
+  "agentChangedProduction": false
+}

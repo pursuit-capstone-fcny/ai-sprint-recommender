@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "f00d53d630c69bc5cb95a9db1724cf7144d23757",
+  "approvedWorkflowRunId": "41260777156",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T02:02:57Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v45",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V45 changes only the V44 prompt by checking supporting methods against the requested input, demonstrated operation and usable output. Exclude changing output medium, reinterpreting a subject-specific content bot, generic prerequisites or unrelated future work; retain genuinely useful preparation, research, evidence review, editing and workflow organization. Preserve V44 one-call schema, parsing, short statements, strict IDs/duplicates, frozen labels, candidate metadata/retrieval, task-diversity gate, deadline and input/output/reservation caps. Same 30 cases and ten controls. No paid retries, replaced cases or warm-up; preserve failure-stop behavior.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry $3.675748 under the same $4 cap, including all $0.366876 unknown reservations. Remaining $0.324252; forty requests can reserve at most $0.270240. No reset, refunds or repricing. Production calls and logging disabled.",
+  "allowanceMicrodollars": 324252,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3675748,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}
