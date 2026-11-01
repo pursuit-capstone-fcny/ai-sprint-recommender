@@ -2,6 +2,21 @@ import type { CapabilityConstraint } from '../taskIntent';
 
 /** A named method or hard environment needs matching teaching evidence, regardless of retrieval route. */
 export const capabilityConstraints: readonly CapabilityConstraint[] = [
+  {
+    when: [
+      [
+        'offline only',
+        'network disconnected',
+        'without a network',
+        'no network',
+      ],
+    ],
+    teaching: [['offline', 'network disconnected', 'without a network']],
+  },
+  {
+    when: [['bulk create'], ['csv', 'field binding']],
+    teaching: [['bulk create'], ['csv', 'field binding']],
+  },
   { when: [['power query']], teaching: [['power query']] },
   {
     when: [

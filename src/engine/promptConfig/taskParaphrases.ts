@@ -4,6 +4,55 @@ import type { OperationRule } from '../taskIntent';
 /** Action/source combinations for work described without canonical task names. */
 export const taskParaphrases: readonly OperationRule[] = [
   r(
+    'conversational-prompting',
+    [
+      ['ai'],
+      ['answer'],
+      ['background', 'role'],
+      ['alternative', 'next', 'follow up'],
+    ],
+    ['Prompting'],
+    'context',
+    [],
+    [
+      c(['Prompting'], 110, {
+        teaching: ['persona', 'role', 'context'],
+        excludeTasks: [
+          'Custom assistants',
+          'Role play',
+          'Grant drafting',
+          'Brand naming',
+          'Difficult conversations',
+        ],
+      }),
+      c(['Prompting'], 85, { allTasks: ['Custom assistants'] }),
+      c(['Document drafting'], 80, {
+        allTasks: ['Role play'],
+        excludeTasks: ['Difficult conversations'],
+      }),
+    ],
+    { explanatory: true },
+  ),
+  r(
+    'source-flier',
+    [
+      ['pdf', 'guidance', 'document'],
+      ['flier', 'flyer', 'handout'],
+      ['visual', 'recruitment', 'layout'],
+    ],
+    ['Outreach materials', 'Design feedback', 'Document summary'],
+    'document',
+    ['image', 'document'],
+    [
+      c(['Outreach materials'], 110, { allTasks: ['Document summary'] }),
+      c(['Design feedback'], 80),
+      c(['Accessible content'], 75, {
+        allTasks: ['Outreach materials'],
+        when: ['family', 'parent', 'student'],
+      }),
+    ],
+  ),
+  r(
     'spreadsheet-report',
     [
       ['spreadsheet', 'csv', 'dataset'],

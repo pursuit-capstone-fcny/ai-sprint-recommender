@@ -19,6 +19,9 @@ export const taskOperations: readonly OperationRule[] = [
       ['newsletter', 'bulletin', 'article'],
       [
         'adult learner',
+        'adult learning',
+        'everyday english',
+        'short sentence',
         'easier english',
         'reading level',
         'discussion',
@@ -31,7 +34,18 @@ export const taskOperations: readonly OperationRule[] = [
     ['document'],
     [
       c(['Newsletter writing']),
-      c(['Plain language'], 80, { minimumStrength: 0.5 }),
+      c(['Plain language'], 80, {
+        minimumStrength: 0.5,
+        when: [
+          'rewrite',
+          'version',
+          'beginner',
+          'easier',
+          'reading level',
+          'simplify',
+          '150 word',
+        ],
+      }),
       c(['Accessible content'], 75, {
         allTasks: ['Educational materials'],
         excludeTasks: ['Custom assistants'],
@@ -149,7 +163,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'combined-survey-analysis',
     [
-      ['survey', 'questionnaire', 'rating'],
+      ['survey', 'questionnaire', 'rating', 'pulse check'],
       ['chart', 'graph', 'bar'],
       ['comment', 'written answer', 'written response', 'main issue', 'theme'],
     ],
@@ -159,6 +173,10 @@ export const taskOperations: readonly OperationRule[] = [
     [
       c(['Survey analysis'], 110, {
         allTasks: ['Chart creation', 'Qualitative analysis'],
+      }),
+      c(['Survey analysis'], 110, {
+        allTasks: ['Chart creation'],
+        teaching: ['qualitative comment'],
       }),
       c(['Survey analysis'], 85),
       c(['Chart creation'], 80, { allTasks: ['Exploratory analysis'] }),
@@ -253,7 +271,14 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'quick-contact-capture',
     [
-      ['desk', 'reception', 'outreach worker', 'client intake'],
+      [
+        'desk',
+        'reception',
+        'outreach worker',
+        'client intake',
+        'outreach session',
+        'contact detail',
+      ],
       ['capture', 'jot', 'field', 'record'],
       ['phone', 'thirty second', 'two minute', 'follow up', 'call them back'],
     ],
@@ -353,6 +378,7 @@ export const taskOperations: readonly OperationRule[] = [
         'campaigner',
         'interview the',
         'public figure',
+        'public conversation',
       ],
       ['public', 'source', 'speech', 'briefing', 'research'],
     ],
@@ -441,7 +467,14 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'one-off-learning-activity',
     [
-      ['math', 'maths', 'escape room', 'worksheet', 'teaching resource'],
+      [
+        'math',
+        'maths',
+        'numeracy',
+        'escape room',
+        'worksheet',
+        'teaching resource',
+      ],
       ['session', 'activity', 'lesson', 'tutor'],
       ['material', 'answer key', 'outline', 'timed', 'activity'],
     ],
@@ -515,10 +548,12 @@ export const taskOperations: readonly OperationRule[] = [
     ],
     ['Social media writing', 'Brand voice'],
     'context',
-    ['email'],
+    ['assistant'],
     [
       c(['Social media writing'], 110, { allTasks: ['Custom assistants'] }),
-      c(['Social media writing'], 85),
+      c(['Social media writing'], 85, {
+        when: ['draft', 'revise', 'opening remark', 'outline', 'promotion'],
+      }),
       c(['Brand voice'], 80, {
         allTasks: ['Custom assistants', 'Document drafting'],
       }),
@@ -622,7 +657,7 @@ export const taskOperations: readonly OperationRule[] = [
     'program-naming',
     [
       ['name', 'naming'],
-      ['program', 'brand', 'alternative'],
+      ['program', 'brand', 'alternative', 'group'],
       ['question', 'welcoming', 'narrow', 'one at a time', 'feedback'],
     ],
     ['Brand naming', 'Brainstorming'],

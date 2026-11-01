@@ -4,6 +4,7 @@ import type {
 } from '../contracts/publicCatalog';
 import { prepareInstructions, type PromptOptions } from './prompt';
 import { languageTokens } from './promptLanguage';
+import { usesRequiredPlatform } from './promptPlatform';
 import {
   containsPhrase,
   type CandidateRequirement,
@@ -134,9 +135,7 @@ export function compatibleCandidates(
       return [];
     if (
       intent.requiredTool &&
-      !item.tools.some((tool) =>
-        languageTokens(tool).includes(intent.requiredTool!.toLowerCase()),
-      )
+      !usesRequiredPlatform(item.tools, intent.requiredTool)
     )
       return [];
     const teaching = languageTokens(`${item.title} ${item.description}`);
@@ -193,6 +192,13 @@ export function compatibleCandidates(
           'en',
         ),
       )[0];
+    const explanationOnly =
+      !!options.instructions &&
+      evidence.taught.every(
+        (task) =>
+          instructions.get(JSON.stringify([item.youtubeId, task])) ===
+          'explained',
+      );
     const sourceMatch = flow?.source === operation.source;
     const toolScore = intent.interpretation.tools.filter((tool) =>
       item.tools.includes(tool),
@@ -205,7 +211,7 @@ export function compatibleCandidates(
         lexical,
         toolScore,
         sourceMatch,
-        reason: `Teaches ${evidence.taught.join(' and ')} for ${operation.tasks.join(' / ')}.${flow ? ` Example: ${flow.source} → ${flow.output}.` : ''}${evidence.priority < 100 ? ' Covers a transferable component; additional steps may be needed.' : ''}`,
+        reason: `Teaches ${evidence.taught.join(' and ')} for ${operation.tasks.join(' / ')}.${flow ? ` Example: ${flow.source} → ${flow.output}.` : ''}${evidence.priority < 100 ? ' Covers a transferable component; additional steps may be needed.' : ''}${explanationOnly ? ' Explains the approach; a complete demonstrated workflow may be missing.' : ''}`,
       },
     ];
   });

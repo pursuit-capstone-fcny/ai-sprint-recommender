@@ -93,6 +93,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When matching recognizes its registered workflow, including ordinary paraphrases
   - Then it keeps the primary task ahead of incidental summary or question wording, prefers document-to-slide instruction over a planning example for generic document conversion, and applies the shared compatibility checks. Cross-document grantee and reusable donor-writing transfers require their declared source or writing-method cues.
 
+- AC-12.15 Task paraphrases and platform requirements
+  - Given a task described with ordinary source/action wording, qualified exclusions or a required native platform
+  - When free-text interpretation and candidate compatibility run
+  - Then the matcher distinguishes a rejected role assumption from rejected rehearsal, preserves declared source/output goals, treats answer sheets and durations as content rather than application/material names, and requires native-platform and offline/bulk-operation teaching evidence before ranking. Named tools remain preferences unless the user requires their own controls or explicitly constrains the environment.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

@@ -20,6 +20,27 @@ export function promptPolarity(words: string[]) {
       ].includes(word)
     )
       continue;
+    const roleQualifier = words.findIndex(
+      (part, index) =>
+        index > start &&
+        index < start + 15 &&
+        ['treating', 'treat', 'assuming', 'assume'].includes(part),
+    );
+    // Rejecting how a practice partner behaves does not reject the rehearsal itself.
+    if (
+      word === 'not' &&
+      words[start + 1] === 'want' &&
+      roleQualifier > start &&
+      words.slice(start + 2, roleQualifier).includes('partner') &&
+      words.slice(start + 2, roleQualifier).includes('practice') &&
+      !words.slice(start, roleQualifier).some((part) => boundaries.has(part))
+    ) {
+      excluded.add(start);
+      let end = roleQualifier;
+      while (end < words.length && !boundaries.has(words[end]))
+        excluded.add(end++);
+      continue;
+    }
     const following = words.slice(start + 1, start + 5);
     const clauseStart =
       Math.max(

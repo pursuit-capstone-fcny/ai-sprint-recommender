@@ -83,13 +83,14 @@ export const taskDiscovery: readonly OperationRule[] = [
     'source-presentation',
     [
       ['slide', 'deck', 'presentation'],
-      ['roadmap', 'pdf', 'document', 'strategic plan'],
+      ['roadmap', 'pdf', 'document', 'strategic plan', 'paper'],
       [
         'outline',
         'draft',
         'convert',
         'turn',
         'repurpose',
+        'generate',
         'presentation from',
         'slides from',
         'deck from',

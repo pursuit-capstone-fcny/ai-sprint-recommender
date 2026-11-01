@@ -4,6 +4,7 @@ import { languageTokens, promptWords } from './promptLanguage';
 import { promptPolarity } from './promptPolarity';
 import { operationRules } from './promptConfig/operations';
 import { capabilityConstraints } from './promptConfig/capabilityConstraints';
+import { requiredPlatform } from './promptPlatform';
 
 export interface CandidateRequirement {
   tasks: string[];
@@ -142,7 +143,7 @@ export function interpretOperation(
     (tool) =>
       !excludedTools.includes(tool) &&
       // Bare forms/slides are artifacts, not evidence of a Google application.
-      (!['Google Forms', 'Google Slides'].includes(tool) ||
+      (!['Google Forms', 'Google Slides', 'Google Sheets'].includes(tool) ||
         containsPhrase(positiveToolWords, tool) ||
         new RegExp(`\\b(?:in|with|using) ${tool.split(' ').at(-1)}\\b`).test(
           prompt,
@@ -159,18 +160,11 @@ export function interpretOperation(
           ),
         )) &&
       (tool !== 'Microsoft Word' ||
-        /\b(?:Microsoft Word|(?:in|with|using) Word)\b/.test(prompt)),
+        /\b(?:Microsoft Word|(?:in|with|using) Word|Word (?:record|document|file|minutes))\b/.test(
+          prompt,
+        )),
   );
-  // Required native applications are hard constraints, including apps outside the catalog dictionary.
-  const native =
-    /\b(?:built[ -]in\s+)?([A-Z][a-zA-Z]+)\s+app\b/.exec(prompt)?.[1] ??
-    /\b([A-Z][a-zA-Z]+)['’]s own\b/.exec(prompt)?.[1];
-  const nativeRequired =
-    !!native &&
-    /\b(?:only|actual controls|own controls|own formula|without switching|native)\b/i.test(
-      prompt,
-    );
-  const requiredTool = nativeRequired ? native : undefined;
+  const requiredTool = requiredPlatform(prompt);
   const language = /\b(spanish|french|mandarin|german|arabic|english)\b/i
     .exec(prompt)?.[1]
     .toLowerCase();

@@ -225,7 +225,7 @@ export function interpretWorkflowIntent(
         // A duration is not a meeting-minutes source, even when hyphenated.
         if (
           alias.type.id === 'minutes' &&
-          /^\d+$|^(one|two|three|four|five|ten|fifteen|thirty|sixty)$/.test(
+          /^\d+$|^(a|an|few|several|one|two|three|four|five|ten|fifteen|thirty|sixty)$/.test(
             normalized[start - 1] ?? '',
           )
         )
@@ -249,9 +249,12 @@ export function interpretWorkflowIntent(
           continue;
         if (
           alias.type.id === 'answer' &&
-          normalized
-            .slice(Math.max(clauseStart(start), start - 3), end + 3)
-            .some((word) => ['clarifying', 'clarify', 'missing'].includes(word))
+          (normalized[end] === 'sheet' ||
+            normalized
+              .slice(Math.max(clauseStart(start), start - 3), end + 3)
+              .some((word) =>
+                ['clarifying', 'clarify', 'missing'].includes(word),
+              ))
         )
           continue;
         for (let i = start; i < end; i += 1) occupied.add(i);

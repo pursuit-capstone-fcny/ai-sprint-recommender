@@ -34,7 +34,16 @@ export const operationRules: readonly OperationRule[] = [
     'vocabulary-helper',
     [
       ['word', 'vocabulary'],
-      ['grade', 'teaching', 'sentence', 'teach', 'class'],
+      [
+        'grade',
+        'teaching',
+        'sentence',
+        'teach',
+        'class',
+        'classroom',
+        'year group',
+        'unit',
+      ],
       ['helper', 'assistant', 'routine'],
     ],
     ['Lesson planning', 'Custom assistants'],
@@ -144,7 +153,15 @@ export const operationRules: readonly OperationRule[] = [
     'participation-comparison',
     [
       ['partner', 'organization', 'participation', 'list'],
-      ['new', 'joining', 'came back', 'stopped', 'distinct'],
+      [
+        'new',
+        'joining',
+        'came back',
+        'stopped',
+        'distinct',
+        'first time',
+        'different organization',
+      ],
       ['separate', 'event', 'fair', 'file', 'across'],
     ],
     ['List comparison'],
@@ -174,6 +191,10 @@ export const operationRules: readonly OperationRule[] = [
         'blank field',
         'blank',
         'inconsistent',
+        'empty field',
+        'repeated row',
+        'odd date',
+        'spelling',
       ],
       ['row', 'export', 'date', 'value', 'spreadsheet'],
     ],
@@ -261,8 +282,15 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'grantee-comparison',
     [
-      ['annual report', 'grantee'],
-      ['compare', 'comparison', 'renewing', 'developed', 'evolved'],
+      ['annual report', 'grantee', 'publication'],
+      [
+        'compare',
+        'comparison',
+        'renewing',
+        'developed',
+        'evolved',
+        'side by side',
+      ],
     ],
     ['Grant due diligence', 'Document comparison'],
     'document',
@@ -493,7 +521,7 @@ export const operationRules: readonly OperationRule[] = [
     'outlook-thread',
     [
       ['outlook'],
-      ['thread', 'exchange', 'back and forth'],
+      ['thread', 'exchange', 'back and forth', 'chain'],
       ['reply', 'invitation', 'invite', 'summary', 'agreed'],
     ],
     ['Email summary', 'Email drafting', 'Meeting scheduling'],
@@ -504,9 +532,9 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'formal-minutes',
     [
-      ['recording', 'transcript', 'discussion'],
+      ['recording', 'transcript', 'discussion', 'text of'],
       ['formal minute', 'decision', 'deadline', 'action', 'structured minute'],
-      ['committee', 'meeting', 'minute'],
+      ['committee', 'meeting', 'minute', 'call', 'steering group'],
     ],
     ['Meeting minutes', 'Transcription'],
     'transcript',
@@ -523,7 +551,7 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'policy-helper',
     [
-      ['helper', 'assistant', 'bot', 'help desk'],
+      ['helper', 'assistant', 'bot', 'help desk', 'answer service'],
       ['policy', 'manual', 'leave', 'reimbursement', 'handbook'],
       ['answer', 'question', 'cite', 'admit'],
     ],
@@ -605,8 +633,8 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'peer-conversation',
     [
-      ['peer', 'coordinator', 'coworker'],
-      ['conversation', 'deadline', 'handoff'],
+      ['peer', 'coordinator', 'coworker', 'teammate'],
+      ['conversation', 'deadline', 'handoff', 'shift', 'unfinished'],
       ['practice', 'feedback', 'pause', 'role play'],
     ],
     ['Role play', 'Difficult conversations'],
@@ -626,7 +654,7 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'staff-process',
     [
-      ['process', 'procedure', 'handoff'],
+      ['process', 'procedure', 'handoff', 'step', 'hand over'],
       ['checklist', 'responsibility', 'responsibilities', 'requirement'],
     ],
     ['Process documentation'],
@@ -644,6 +672,7 @@ export const operationRules: readonly OperationRule[] = [
         'cross department',
         'across department',
         'peer learning',
+        'mixed group',
         'sharing',
         'share what',
       ],
@@ -681,6 +710,8 @@ export const operationRules: readonly OperationRule[] = [
         'document',
         'training pack',
         'training material',
+        'text',
+        'refresher',
         'source material',
         'guide',
         'induction',

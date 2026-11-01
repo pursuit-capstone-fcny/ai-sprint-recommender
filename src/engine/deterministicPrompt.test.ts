@@ -54,6 +54,263 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it.each([
+    {
+      name: 'email chain',
+      tasks: ['Email summary', 'Email drafting', 'Meeting scheduling'],
+      prompt: 'Use this Outlook chain to draft an invitation and reply.',
+      source: 'email',
+      output: 'email',
+    },
+    {
+      name: 'briefing paper',
+      tasks: ['Presentation creation', 'Content repurposing'],
+      prompt: 'Generate a slide deck from this briefing paper.',
+      source: 'document',
+      output: 'presentation',
+    },
+    {
+      name: 'supplied refresher text',
+      tasks: ['Audio generation'],
+      prompt:
+        'Make an audio explanation from this refresher text and let us hear a sample.',
+      source: 'document',
+      output: 'audio',
+    },
+    {
+      name: 'handbook answer service',
+      tasks: ['Custom assistants', 'Knowledge management'],
+      prompt:
+        'Build an answer service from the handbook so staff can ask questions.',
+      source: 'document',
+      output: 'assistant',
+    },
+    {
+      name: 'empty fields',
+      tasks: ['Data cleaning'],
+      prompt: 'Check empty fields and odd dates in these rows.',
+      source: 'spreadsheet',
+      output: 'cleaned-data',
+    },
+    {
+      name: 'written handover steps',
+      tasks: ['Process documentation'],
+      prompt: 'Write down the reception steps and handover checklist.',
+      source: 'context',
+      output: 'checklist',
+    },
+    {
+      name: 'different organisations',
+      tasks: ['List comparison'],
+      prompt:
+        'Count different organisations across event spreadsheets and find first-time participants.',
+      source: 'spreadsheet',
+      output: 'comparison',
+    },
+  ])(
+    'AC-12.15 recognizes $name with a bounded source/action route',
+    ({ tasks, prompt, source, output }) => {
+      const supported = lesson(
+        1,
+        tasks,
+        'A fictional instructional method in Gamma.',
+      );
+      const unrelated = lesson(2, ['Photo editing'], 'Adjust photo exposure.');
+      const { run } = fixture([unrelated, supported]);
+      const result = run(prompt);
+      expect(ids(result)[0]).toBe(supported.youtubeId);
+      expect(ids(result)).not.toContain(unrelated.youtubeId);
+      expect(result.interpretation.sourceMaterials).toEqual([source]);
+      expect(result.interpretation.desiredOutputs).toContain(output);
+    },
+  );
+  it('AC-12.15 preserves rehearsal when rejecting the practice partner role assumption', () => {
+    const peer = lesson(
+      1,
+      ['Difficult conversations', 'Role play'],
+      'Practise a coworker conversation.',
+    );
+    const { run } = fixture([peer]);
+    const result = run(
+      "Practise raising an unfinished shift task with a teammate. I don't want the practice partner treating me like their boss.",
+    );
+    expect(ids(result)).toEqual([peer.youtubeId]);
+    expect(result.interpretation.excludedTasks).not.toContain('Role play');
+    expect(result.interpretation.desiredOutputs).toEqual(['role-play']);
+  });
+  it('AC-12.15 excludes an alternative rejected after its mention', () => {
+    const cleaning = lesson(1, ['Data cleaning'], 'Clean spreadsheet rows.');
+    const { run } = fixture([cleaning]);
+    const result = run(
+      "I need a native contact merge. Exporting a spreadsheet and cleaning duplicate rows won't solve it.",
+    );
+    expect(ids(result)).toEqual([]);
+    expect(result.interpretation.tasks).not.toContain('Data cleaning');
+  });
+  it('AC-12.15 enforces native screens even for a platform absent from the dictionary', () => {
+    const generic = lesson(
+      1,
+      ['Data cleaning'],
+      'Clean duplicate spreadsheet rows.',
+      ['Claude'],
+    );
+    const { run } = fixture([generic]);
+    expect(
+      ids(run('Clean duplicate rows using actual Salesforce screens.')),
+    ).toEqual([]);
+    expect(
+      ids(
+        run(
+          "I don't need actual Salesforce screens. Clean duplicate spreadsheet rows.",
+        ),
+      ),
+    ).toEqual([generic.youtubeId]);
+    expect(ids(run('Clean duplicate rows exported from Salesforce.'))).toEqual([
+      generic.youtubeId,
+    ]);
+  });
+  it('AC-12.15 matches the complete native application name', () => {
+    const native = lesson(
+      1,
+      ['Email automation'],
+      'Save email attachments in the native application.',
+      ['Microsoft Outlook'],
+    );
+    const other = lesson(2, ['Email automation'], 'Save email attachments.', [
+      'Google Workspace Studio',
+    ]);
+    const { run } = fixture([other, native]);
+    expect(
+      ids(
+        run('Save email attachments using actual Microsoft Outlook screens.'),
+      ),
+    ).toEqual([native.youtubeId]);
+  });
+  it('AC-12.15 requires offline teaching evidence across the retrieval path', () => {
+    const cloud = lesson(
+      1,
+      ['Data cleaning'],
+      'Clean duplicate spreadsheet rows.',
+      ['Cloud Lab'],
+    );
+    const local = lesson(
+      2,
+      ['Data cleaning'],
+      'Clean duplicate spreadsheet rows offline.',
+      ['Local Lab'],
+    );
+    const { run } = fixture([cloud, local]);
+    expect(ids(run('Clean duplicate spreadsheet rows offline only.'))).toEqual([
+      local.youtubeId,
+    ]);
+  });
+  it('AC-12.15 requires bulk field-binding evidence alongside a native platform', () => {
+    const single = lesson(
+      1,
+      ['Outreach materials', 'Document summary'],
+      'Create a visual flier from a PDF.',
+      ['Canva'],
+    );
+    const bulk = lesson(
+      2,
+      ['Outreach materials', 'Document summary'],
+      'Create fliers with Bulk Create and CSV fields.',
+      ['Canva'],
+    );
+    const { run } = fixture([single, bulk]);
+    expect(
+      ids(
+        run(
+          "Create a visual flier from a PDF using Canva's own Bulk Create controls and a CSV.",
+        ),
+      ),
+    ).toEqual([bulk.youtubeId]);
+  });
+  it('AC-12.15 separates answer sheets and short durations from tool and material names', () => {
+    const activity = lesson(
+      1,
+      ['Lesson planning', 'Brainstorming'],
+      'Plan a numeracy activity.',
+    );
+    const intake = lesson(
+      2,
+      ['Client intake', 'App building'],
+      'Capture contact details.',
+    );
+    const sheet = lesson(3, ['Spreadsheet formulas'], 'Generate formulas.', [
+      'Google Sheets',
+    ]);
+    const { run } = fixture([activity, intake, sheet]);
+    const result = run(
+      'Plan a timed numeracy session with materials and an answer sheet.',
+    );
+    expect(ids(result)[0]).toBe(activity.youtubeId);
+    expect(result.interpretation.tools).not.toContain('Google Sheets');
+    const contact = run(
+      'Capture contact details in an outreach session with only a minute for phone follow-up.',
+    );
+    expect(ids(contact)[0]).toBe(intake.youtubeId);
+    expect(contact.interpretation.sourceMaterials).toEqual(['context']);
+    expect(contact.interpretation.sourceMaterials).not.toContain('minutes');
+  });
+  it('AC-12.15 does not interpret an indefinite short duration as meeting minutes', () => {
+    const minutes = lesson(1, ['Meeting minutes'], 'Prepare meeting minutes.');
+    const { catalog, options } = fixture([minutes]);
+    options.workflows = {
+      artifacts: [
+        {
+          id: 'minutes',
+          label: 'Meeting minutes',
+          aliases: ['minutes'],
+          tasks: ['Meeting minutes'],
+        },
+      ],
+      workflows: [],
+    };
+    const result = recommendVideos(
+      catalog,
+      { prompt: 'We have a minute to talk.' },
+      options,
+    );
+    expect(result.interpretation.sourceMaterials).not.toContain('minutes');
+  });
+  it('AC-12.15 recognizes Word output without excluding its application', () => {
+    const minutes = lesson(
+      1,
+      ['Meeting minutes'],
+      'Create structured minutes.',
+      ['Microsoft Word'],
+    );
+    const { run } = fixture([minutes]);
+    const result = run(
+      'Use the text of our steering-group call for a Word record of decisions.',
+    );
+    expect(ids(result)).toEqual([minutes.youtubeId]);
+    expect(result.interpretation.tools).toContain('Microsoft Word');
+    expect(result.interpretation.sourceMaterials).toEqual(['transcript']);
+    expect(result.interpretation.desiredOutputs).toEqual(['minutes']);
+  });
+  it('AC-12.15 retains the qualitative-analysis goal and prefers the named application', () => {
+    const broad = lesson(
+      1,
+      ['Chart creation', 'Survey analysis', 'Qualitative analysis'],
+      'Chart survey results and analyze themes.',
+      ['ChatGPT'],
+    );
+    const named = lesson(
+      2,
+      ['Chart creation', 'Survey analysis'],
+      'Chart scores and inspect qualitative comments.',
+      ['Gemini'],
+    );
+    const { run } = fixture([broad, named]);
+    const result = run(
+      'Use Gemini for a pulse check chart and analyze written responses.',
+    );
+    expect(ids(result)).toEqual([named.youtubeId, broad.youtubeId]);
+    expect(result.interpretation.desiredOutputs).toEqual(['chart', 'analysis']);
+  });
+
   it('AC-12.14 prefers a document-to-slides method over a planning example', () => {
     const convert = lesson(
       1,
