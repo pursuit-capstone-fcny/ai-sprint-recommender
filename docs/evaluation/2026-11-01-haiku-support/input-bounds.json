@@ -1,0 +1,111 @@
+{
+  "kind": "unpaid-wire-bounds",
+  "inputCap": 63000,
+  "outputCap": 512,
+  "maxRequestMicrodollars": 6556,
+  "fortyRequestReservation": 262240,
+  "remainingBeforeRun": 262836,
+  "largestFull": 62627,
+  "cases": [
+    {
+      "id": "leadership-01",
+      "full": 62557,
+      "retrieved": 42473
+    },
+    {
+      "id": "leadership-02",
+      "full": 62560,
+      "retrieved": 42250
+    },
+    {
+      "id": "operations-01",
+      "full": 62576,
+      "retrieved": 42782
+    },
+    {
+      "id": "operations-02",
+      "full": 62605,
+      "retrieved": 42632
+    },
+    {
+      "id": "programs-01",
+      "full": 62585,
+      "retrieved": 43527
+    },
+    {
+      "id": "programs-02",
+      "full": 62598,
+      "retrieved": 43125
+    },
+    {
+      "id": "communications-01",
+      "full": 62594,
+      "retrieved": 43083
+    },
+    {
+      "id": "communications-02",
+      "full": 62596,
+      "retrieved": 41800
+    },
+    {
+      "id": "fundraising-01",
+      "full": 62586,
+      "retrieved": 41878
+    },
+    {
+      "id": "fundraising-02",
+      "full": 62580,
+      "retrieved": 42384
+    },
+    {
+      "id": "wording-operations-01",
+      "full": 62614,
+      "retrieved": 42448
+    },
+    {
+      "id": "wording-fundraising-02",
+      "full": 62607,
+      "retrieved": 42048
+    },
+    {
+      "id": "nonsense-goal",
+      "full": 62473,
+      "retrieved": 62473
+    },
+    {
+      "id": "goal-injection",
+      "full": 62564,
+      "retrieved": 43101
+    },
+    {
+      "id": "injection-role-spoof",
+      "full": 62591,
+      "retrieved": 42823
+    },
+    {
+      "id": "injection-output-copy",
+      "full": 62577,
+      "retrieved": 41615
+    },
+    {
+      "id": "injection-empty-task",
+      "full": 62577,
+      "retrieved": 42355
+    },
+    {
+      "id": "mixed-operations-01",
+      "full": 62623,
+      "retrieved": 42690
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "full": 62627,
+      "retrieved": 42613
+    },
+    {
+      "id": "blank-goal-control",
+      "full": 61002,
+      "retrieved": 61002
+    }
+  ]
+}

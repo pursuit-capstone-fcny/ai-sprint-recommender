@@ -20,6 +20,7 @@ describe('recommendation configuration', () => {
       { LLM_REASONING_EFFORT: undefined },
       { LLM_REASONING_EFFORT: 'medium' },
       { LLM_SERVICE_TIER: 'fast' },
+      { LLM_MAX_INPUT_TOKENS: '65000' },
       { LLM_MAX_OUTPUT_TOKENS: '513' },
       { LLM_INPUT_MICRODOLLARS_PER_MILLION: '1' },
     ])

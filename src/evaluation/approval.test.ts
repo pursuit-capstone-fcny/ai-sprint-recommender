@@ -91,13 +91,13 @@ describe('paid evaluation approval preflight', () => {
     const haiku = {
       ...approval,
       modelVersion: 'claude-haiku-5-5',
-      promptVersion: 'catalog-rank-haiku-v44',
+      promptVersion: 'catalog-rank-haiku-v46',
       reasoningEffort: 'low',
       thinking: 'disabled',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,
       totalAllowanceMicrodollars: 4000000,
       allowanceMicrodollars: 4000000 - LUNA_PRIOR_SPEND,
-      maxRequestMicrodollars: 6756,
+      maxRequestMicrodollars: 6556,
     };
     const now = Date.parse('2026-10-21T12:00:00Z');
     expect(validateLiveApproval(benchmark, haiku, checkout, now, 34)).toEqual(

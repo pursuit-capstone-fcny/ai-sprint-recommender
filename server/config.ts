@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { HAIKU_DEPLOYED_MAX_INPUT } from './haiku-policy';
 import { EVALUATION_CATALOG_URL } from './evaluation-catalog-policy';
 import {
   LUNA_DEPLOYED_MAX_INPUT,
@@ -81,7 +82,7 @@ export function readLimits(env: Variables): Limits | null {
           limits.LLM_SERVICE_TIER !== undefined ||
           limits.LLM_MODEL !== 'claude-haiku-5-5' ||
           limits.LLM_REASONING_EFFORT !== 'low' ||
-          limits.LLM_MAX_INPUT_TOKENS !== 65_000 ||
+          limits.LLM_MAX_INPUT_TOKENS !== HAIKU_DEPLOYED_MAX_INPUT ||
           limits.LLM_MAX_OUTPUT_TOKENS !== 512 ||
           limits.LLM_INPUT_MICRODOLLARS_PER_MILLION !== 100_000 ||
           limits.LLM_OUTPUT_MICRODOLLARS_PER_MILLION !== 500_000)))
