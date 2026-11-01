@@ -1,0 +1,19 @@
+{
+  "checkedAt": "2026-11-01T17:00:10.438928+00:00",
+  "testsPassed": 654,
+  "testsFailed": 0,
+  "typecheck": "passed",
+  "lint": "passed",
+  "formatting": "passed",
+  "build": "passed",
+  "runtimeChecks": "Both provider adapters passed before evaluation with synthetic responses and zero external model calls. Server code is unchanged from tested source 2fb3920131526a99a400f8c573bd1ae2db13a82d.",
+  "budgetArtifactHashes": "validated by the full suite",
+  "labelsCatalogGateAndProductionFiles": "unchanged",
+  "paidRequests": 40,
+  "paidRetries": 0,
+  "newUnknownReservationsMicrodollars": 0,
+  "fullQualityValidationPassed": false,
+  "cleanupOnlyRun": 41328869933,
+  "testDisabledIndependentlyConfirmed": true,
+  "fullCatalogScopeRetained": true
+}

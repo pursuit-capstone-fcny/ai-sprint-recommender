@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** Full-catalog Haiku validation pending. Weak supporting picks remain unresolved.
+- **Status:** V54 full catalog retained; duplicate failures and expanded review remain open.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -112,6 +112,18 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [full-catalog Haiku run](../docs/evaluation/2026-11-01-haiku-full-catalog/results.md)
+retains the requested scope: user input and all 89 videos, with no rules-based
+prefiltering. V54 scores 9/10, 10/10 and 9/10 with 28/30 accepted six-to-eight
+lists. Three duplicate responses, including mixed Operations, fail full validation.
+All forty calls have measured usage and no timeouts. Cost $0.088525 leaves
+$0.677208; all $0.379988 historical unknown reservations remain charged.
+Labels and the task-diversity gate stay fixed. A Cloudflare shutdown upload
+failure is preserved; a cleanup-only deployment and independent check confirm
+test calls disabled and keys removed. Production LLM calls and logging stay off.
+
+Earlier results and balances below are historical.
 
 The [candidate-context trials](../docs/evaluation/2026-11-01-haiku-context/results.md)
 reject V51–V53. Full-catalog access, related-method expansion and description-first

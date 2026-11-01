@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "2fb3920131526a99a400f8c573bd1ae2db13a82d",
+  "approvedWorkflowRunId": "41328286303",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T17:34:58Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v54",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "Jason explicitly selects user input plus all 89 frozen videos without rules-based prefiltering. V54 removes candidate retrieval and retains V44 instructions, source order, metadata and strict selection-evidence parser. Same Haiku low, disabled thinking, 63000 input bound, 512 output tokens, 4.5-second server deadline and five-second client deadline. Three ten-profile trials and ten controls, once each. No retries, replacement cases, repairs, padding or extra model call. Retain the full-catalog scope regardless of scores; preserve labels, gate, failures and diagnostics.",
+  "privacyDecision": "Synthetic user inputs and existing public catalog only. No expected-answer labels or conversation sent to model. Production and test usage logging remain off.",
+  "budgetDecision": "Use the existing remaining $0.765733 under the unchanged additive $5 cap. Carry $4.234267, including all $0.379988 historical unknown reservations. Maximum request $0.006556 and forty-case reservation $0.262240. No new grant, reset, refund or repricing. Keep production LLM calls and logging disabled.",
+  "allowanceMicrodollars": 765733,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 4234267,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

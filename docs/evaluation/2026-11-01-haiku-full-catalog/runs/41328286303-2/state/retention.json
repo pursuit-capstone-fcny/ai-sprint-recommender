@@ -1,0 +1,8 @@
+{
+  "retainedScope": true,
+  "scope": "All 89 frozen videos reach Haiku without rules-based prefiltering, as explicitly requested. Do not restore the shortlist based on this score.",
+  "fullQualityValidationPassed": false,
+  "reason": "Scores 9/10, 10/10, 9/10; 28/30 accepted broad lists. Two benchmark duplicates and one mixed Operations duplicate cause rules fallbacks. Expanded quality remains unreviewed.",
+  "labelsChanged": false,
+  "taskDiversityGateChanged": false
+}

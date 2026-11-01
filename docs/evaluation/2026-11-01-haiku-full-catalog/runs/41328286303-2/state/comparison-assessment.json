@@ -1,0 +1,170 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [9, 10, 9],
+  "acceptedLlmSixToEight": 28,
+  "totalDisplayedCards": 230,
+  "meanDisplayedCards": 7.666666666666667,
+  "acceptedLlmTotalCards": 214,
+  "meanAcceptedLlmCards": 7.642857142857143,
+  "topThreeMisses": [],
+  "thinAcceptedLists": [],
+  "instructionOnlyAbstentions": [
+    "goal-injection",
+    "injection-role-spoof",
+    "injection-output-copy",
+    "injection-empty-task"
+  ],
+  "instructionOnlyFailures": [],
+  "duplicateRequestIds": [
+    "983aa889-0bc8-4154-b127-cbe11d6e67b2",
+    "705bbe7d-abec-4919-a15d-7af8dc8de9d7",
+    "011adbfd-af9b-4659-8868-44ec169b8910"
+  ],
+  "invalidResponses": [
+    {
+      "requestId": "983aa889-0bc8-4154-b127-cbe11d6e67b2",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2163,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 42,
+      "budgetMs": 99,
+      "providerMs": 1938,
+      "inputTokens": 20959,
+      "outputTokens": 254,
+      "costMicrodollars": 2223,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v54"
+    },
+    {
+      "requestId": "705bbe7d-abec-4919-a15d-7af8dc8de9d7",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2076,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 8,
+      "budgetMs": 99,
+      "providerMs": 1881,
+      "inputTokens": 20951,
+      "outputTokens": 261,
+      "costMicrodollars": 2226,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v54"
+    },
+    {
+      "requestId": "011adbfd-af9b-4659-8868-44ec169b8910",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2233,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 4,
+      "budgetMs": 94,
+      "providerMs": 2048,
+      "inputTokens": 20969,
+      "outputTokens": 296,
+      "costMicrodollars": 2245,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v54"
+    }
+  ],
+  "controls": {
+    "wording-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 8
+    },
+    "mixed-operations-01": {
+      "engine": "rules",
+      "hits": 2,
+      "count": 8
+    },
+    "mixed-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 7
+    }
+  },
+  "blankGoalCount": 8,
+  "blankGoalEngine": "llm",
+  "blankGoalProviderCount": 8,
+  "fundraising02Counts": [8, 8, 8],
+  "expandedUnreviewedAppearances": 146,
+  "benchmarkFailures": [
+    {
+      "profileId": "programs-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "leadership-01",
+      "reason": "invalid-response"
+    }
+  ],
+  "completeMeasuredEvidence": true,
+  "reportSource": "comparison/report.json",
+  "freshComparisonSaved": true,
+  "comparison": {
+    "haiku-v54": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 66690,
+      "benchmarkCostMicrodollars": 66690,
+      "meanCostDollars": 0.002223,
+      "estimatedDollarsPer1000": 2.223,
+      "medianLatencyMs": 2249.0
+    },
+    "haiku-v12": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58554,
+      "benchmarkCostMicrodollars": 58554,
+      "meanCostDollars": 0.0019518,
+      "estimatedDollarsPer1000": 1.9518,
+      "medianLatencyMs": 1584.5
+    },
+    "luna-v15-fast": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58004,
+      "benchmarkCostMicrodollars": 58004,
+      "meanCostDollars": 0.0019334666666666668,
+      "estimatedDollarsPer1000": 1.9334666666666667,
+      "medianLatencyMs": 1278.5
+    }
+  },
+  "productionApproval": "not-approved"
+}

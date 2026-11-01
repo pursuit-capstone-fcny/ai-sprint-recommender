@@ -1,0 +1,12 @@
+{
+  "workflowRun": 41328286303,
+  "runAttempt": 2,
+  "failedStep": "Disable test provider calls after evaluation",
+  "cloudflareErrorCode": 10013,
+  "stage": "assets-upload-session",
+  "providerAndRateKeysRemoved": true,
+  "durableBudgetSaved": true,
+  "cleanupOnlyRun": 41328869933,
+  "paidRetries": 0,
+  "note": "Cloudflare rejected the disabled redeployment. Preserve the failed workflow result. An existing cleanup-only workflow redeploys with LLM_ENABLED=false and cannot enable or call the provider."
+}
