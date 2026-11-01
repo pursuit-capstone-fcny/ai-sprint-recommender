@@ -1,0 +1,57 @@
+name: Frozen AI proxy pilot
+on:
+  pull_request:
+    types: [labeled]
+permissions:
+  contents: read
+concurrency:
+  group: fcny-llm-test-deployment
+  cancel-in-progress: false
+jobs:
+  pilot:
+    if: >-
+      github.event.label.name == 'execute-ai-proxy-once' &&
+      github.event.pull_request.head.ref == 'eval/shared-ai-proxy-40' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
+        with:
+          node-version: '24.22.1'
+      - name: Mechanical driver checks
+        run: |
+          node --test .evaluation-ai-pilot/driver.node-tests.mjs
+          PYTHONDONTWRITEBYTECODE=1 python3 .evaluation-ai-pilot/analysis_test.py
+      - name: Verify exact one-run authorization
+        env:
+          AI_PILOT_APPROVAL: ${{ vars.AI_PILOT_APPROVAL }}
+          PILOT_SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          node .evaluation-ai-pilot/payload.mjs check-approval
+      - name: Decrypt and verify sealed payload
+        env:
+          AI_PILOT_PAYLOAD_KEY: ${{ secrets.AI_PILOT_PAYLOAD_KEY }}
+        run: node .evaluation-ai-pilot/payload.mjs decrypt "$RUNNER_TEMP/pilot-input"
+      - name: Execute one frozen pass
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          PILOT_SOURCE_SHA: ${{ github.event.pull_request.head.sha }}
+          AI_PILOT_APPROVAL: ${{ vars.AI_PILOT_APPROVAL }}
+        run: |
+          export GITHUB_SHA="$PILOT_SOURCE_SHA"
+          node .evaluation-ai-pilot/driver.mjs --execute "$RUNNER_TEMP/pilot-input" "$RUNNER_TEMP/pilot-output"
+      - name: Preserve all completed attempts and pessimistic accounting
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ai-proxy-pilot-private-evidence
+          path: ${{ runner.temp }}/pilot-output
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Remove decrypted local material
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/pilot-input" "$RUNNER_TEMP/pilot-approval.json"
