@@ -42,6 +42,7 @@ export const LiveApprovalSchema = z
         z.literal(1_000_000),
         z.literal(2_000_000),
         z.literal(3_000_000),
+        z.literal(4_000_000),
         z.literal(LUNA_TOTAL_ALLOWANCE),
       ])
       .optional(),

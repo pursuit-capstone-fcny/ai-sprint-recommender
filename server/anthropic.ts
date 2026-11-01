@@ -6,7 +6,11 @@ import {
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { Limits } from './config';
 import { boundedJson } from './bounded-json';
-import { anthropicRequest, evidenceSlotsSchema } from './haiku-evidence';
+import {
+  anthropicRequest,
+  evidenceSlotsSchema,
+  plannedEvidenceSlotsSchema,
+} from './haiku-evidence';
 
 const rankKeys = Array.from(
   { length: MAX_RECOMMENDATIONS },
@@ -86,7 +90,7 @@ export function providerBody(
   };
 }
 export type ProviderBody = ReturnType<typeof providerBody> & {
-  selectionEvidence?: true;
+  selectionEvidence?: true | 'planned';
 };
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
@@ -202,14 +206,27 @@ export function anthropicProvider(
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
         const output = (
-          body.selectionEvidence ? evidenceSlotsSchema : slotsSchema
+          body.selectionEvidence === 'planned'
+            ? plannedEvidenceSlotsSchema
+            : body.selectionEvidence
+              ? evidenceSlotsSchema
+              : slotsSchema
         ).safeParse(decoded);
         if (!output.success) {
+          const selections =
+            body.selectionEvidence === 'planned' &&
+            decoded &&
+            typeof decoded === 'object' &&
+            'ranks' in decoded
+              ? decoded.ranks
+              : decoded;
           const positions =
-            decoded && typeof decoded === 'object' && !Array.isArray(decoded)
-              ? 'positions' in decoded && Array.isArray(decoded.positions)
-                ? decoded.positions
-                : Object.values(decoded)
+            selections &&
+            typeof selections === 'object' &&
+            !Array.isArray(selections)
+              ? 'positions' in selections && Array.isArray(selections.positions)
+                ? selections.positions
+                : Object.values(selections)
                     .map((value) =>
                       body.selectionEvidence &&
                       value &&

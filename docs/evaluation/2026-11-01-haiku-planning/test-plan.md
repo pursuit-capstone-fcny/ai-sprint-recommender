@@ -1,0 +1,46 @@
+# Plan before selection
+
+V47 changes the ordering of the reasoning task. Haiku first writes a short work
+plan from the goal, then compares catalog candidates for those operations. This
+is one provider call. A concise procedure replaces the accumulated ranking
+instructions; it covers eligibility, mixed inputs, method comparison, direct
+matches, supporting steps, breadth and unique positions.
+
+The response contains `workSteps` followed by `ranks`. The eight existing rank
+objects retain their short `use` statements and numeric positions. The adapter
+requires a nonempty plan for selected videos, validates the complete response,
+and discards the plan and notes before returning trusted IDs. Plans have no new
+prose-length constraint; the existing whole-response and token limits remain.
+Empty plans with empty selections support abstention. Missing/extra fields,
+duplicate or invalid positions are rejected with measured usage retained.
+
+The hypothesis is that choosing against an established work plan reduces
+post-hoc rationalization of weak supports. Removing competing instructions may
+also help uniqueness. The saved V44 replay remains red with 22 previously
+questioned support appearances. This observation is not a relevance label set.
+Semantic improvement requires the live comparison; synthetic adapter tests only
+verify format, isolation, accounting and failure behavior. A new format regression
+first failed on the real adapter, then passed after implementing the wrapper.
+
+Candidate retrieval, public metadata, benchmark labels and the browser
+task-diversity gate remain unchanged. No profile-specific exclusions, automatic
+padding, second call, paid retry or replacement case is introduced. Keep Haiku
+5.5 low, thinking disabled, the 63,000 input bound, 512 output tokens and
+4.5-second server deadline. All twenty unique validation inputs fit their full
+and retrieved wire bounds, checked by `check-input-bounds.mjs` without a network
+request.
+
+## Allowance and acceptance
+
+Jason approved another $1. The additive cap is $5, carrying all $3.798745 prior
+charges and $0.366876 unknown reservations. Available balance is $1.201255.
+The unchanged maximum reservation is $0.006556 per request and $0.262240 for a
+complete forty-case run. Historical grants, budgets and hashes remain intact.
+Require exact source, workflow run and attempt approval before live calls.
+
+Run the same thirty benchmark requests and ten separate controls. Retain the
+candidate only if it preserves V44's 10/10 per trial, 30/30 accepted six-to-eight
+lists and clean reliability while improving the questioned supporting picks.
+Review every replacement; absence of earlier flags alone does not approve a
+video. Preserve every failed result and charge. Disable test calls, remove keys
+and temporary approval afterward. Production LLM calls and logging stay off.

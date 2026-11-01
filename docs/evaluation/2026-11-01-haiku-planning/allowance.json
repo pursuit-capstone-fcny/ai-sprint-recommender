@@ -1,0 +1,11 @@
+{
+  "kind": "evaluation-allowance-increase",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "previousAllowanceMicrodollars": 4000000,
+  "additionalAllowanceMicrodollars": 1000000,
+  "totalAllowanceMicrodollars": 5000000,
+  "priorCeilingMicrodollars": 3798745,
+  "unresolvedReservationsMicrodollars": 366876,
+  "scope": "User approved another $1 to try a different approach to weak Haiku supporting picks without losing breadth or reliability and rerun #19. Preserve benchmark labels, task-diversity gate and all historical charges. Production LLM calls and logging remain disabled. Exact-source and exact-attempt test approval is still required."
+}

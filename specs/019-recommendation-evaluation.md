@@ -7,6 +7,13 @@
 
 ## Acceptance criteria
 
+- Given a test response with a work plan before its eight ranks, when selections
+  exist, then require a nonempty plan, validate all IDs, and discard the plan and
+  auxiliary notes before returning IDs. Do not change the task-diversity gate.
+- Given the additional $1 planning allowance, when validating a test run, then
+  carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the
+  additive $5 cap. Preserve exact-source and exact-attempt approval checks.
+
 - Given the bounded Haiku test, when an input exceeds the enforced 63,000-token
   bound, then stop before provider dispatch. Retain the 512-token output cap,
   cumulative charges and exact-attempt approval for all forty validation cases.

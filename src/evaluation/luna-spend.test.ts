@@ -21,6 +21,22 @@ import {
 afterEach(() => vi.unstubAllEnvs());
 
 describe('shared evaluation allowance evidence', () => {
+  it('adds the planning grant without resetting the four-dollar ledger', () => {
+    const record = {
+      kind: 'deployed-model-budget',
+      allowanceMicrodollars: 5_000_000,
+      priorSpendMicrodollars: 3_798_745,
+      spentMicrodollars: 3_798_845,
+      additionalMicrodollars: 100,
+      remainingMicrodollars: 1_201_155,
+    };
+    expect(deployedLunaSpend(record, 3_798_745, LUNA_TOTAL_ALLOWANCE)).toBe(
+      100,
+    );
+    expect(() => deployedLunaSpend(record, 0, LUNA_TOTAL_ALLOWANCE)).toThrow();
+    expect(() => deployedLunaSpend(record, 3_798_745, 4_000_000)).toThrow();
+    expect(readLunaPriorSpend()).toBeGreaterThanOrEqual(3_798_745);
+  });
   it('carries the October 31 grant forward while retaining historical three-dollar budgets', () => {
     const old = {
       kind: 'deployed-model-budget',
@@ -39,9 +55,7 @@ describe('shared evaluation allowance evidence', () => {
       additionalMicrodollars: 100,
       remainingMicrodollars: 1_189_208,
     };
-    expect(deployedLunaSpend(current, 2_810_692, LUNA_TOTAL_ALLOWANCE)).toBe(
-      100,
-    );
+    expect(deployedLunaSpend(current, 2_810_692, 4_000_000)).toBe(100);
     expect(() =>
       deployedLunaSpend(
         { ...current, priorSpendMicrodollars: 0 },

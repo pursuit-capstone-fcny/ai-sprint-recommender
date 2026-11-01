@@ -34,7 +34,7 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
     : `${system} ${HAIKU_BROWSING_INSTRUCTION}`;
   return {
     ...body,
-    selectionEvidence: true,
+    selectionEvidence: 'planned',
     request: {
       ...body.request,
       system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,

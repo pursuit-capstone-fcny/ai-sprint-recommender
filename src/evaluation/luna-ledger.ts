@@ -325,3 +325,9 @@ export const HAIKU_QUALITY_ALLOWANCE_GRANT = [
   'docs/evaluation/2026-10-31-haiku-transfer/allowance.json',
   '3ceb88e842e1d3e16fb60813bd65dc5444de0bd485848d55fa0a6c8e9696e48a',
 ] as const;
+
+// Additive grant for the new Haiku approach; no charge or reservation is reset.
+export const HAIKU_PLANNING_ALLOWANCE_GRANT = [
+  'docs/evaluation/2026-11-01-haiku-planning/allowance.json',
+  'c7f3008dbb380274052d864af59b8abbf0ecf350dc7bb56ba95b40b1f8e737f3',
+] as const;

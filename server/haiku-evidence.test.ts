@@ -17,6 +17,8 @@ const body = haikuDeployedBody(
     readLimits(environment)!,
   ),
 );
+// Preserve coverage of the historical V44 format.
+body.selectionEvidence = true;
 const slots = () =>
   Object.fromEntries(
     Array.from({ length: 8 }, (_, i) => [

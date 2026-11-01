@@ -85,8 +85,9 @@ describe('Haiku candidate retrieval', () => {
           content: [
             {
               type: 'text',
-              text: JSON.stringify(
-                Object.fromEntries(
+              text: JSON.stringify({
+                workSteps: 'Organize inventory records',
+                ranks: Object.fromEntries(
                   Array.from({ length: 8 }, (_, i) => [
                     `rank${i + 1}`,
                     {
@@ -95,7 +96,7 @@ describe('Haiku candidate retrieval', () => {
                     },
                   ]),
                 ),
-              ),
+              }),
             },
           ],
         }),

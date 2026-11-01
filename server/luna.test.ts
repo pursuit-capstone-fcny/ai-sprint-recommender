@@ -243,13 +243,13 @@ describe('deployed Luna low candidate', () => {
     expect(
       readLimits({
         ...env,
-        LLM_ALLOWANCE_MICRODOLLARS: '4000000',
-        LLM_DAILY_MICRODOLLARS: '4000000',
-        LLM_MONTHLY_MICRODOLLARS: '4000000',
+        LLM_ALLOWANCE_MICRODOLLARS: '5000000',
+        LLM_DAILY_MICRODOLLARS: '5000000',
+        LLM_MONTHLY_MICRODOLLARS: '5000000',
       }),
     ).not.toBeNull();
     expect(
-      readLimits({ ...env, LLM_ALLOWANCE_MICRODOLLARS: '4000001' }),
+      readLimits({ ...env, LLM_ALLOWANCE_MICRODOLLARS: '5000001' }),
     ).toBeNull();
   });
   it.each([
@@ -621,8 +621,9 @@ describe('deployed Luna low candidate', () => {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify(
-                  Object.fromEntries(
+                text: JSON.stringify({
+                  workSteps: 'Organize source records',
+                  ranks: Object.fromEntries(
                     Array.from({ length: 8 }, (_, i) => [
                       'rank' + (i + 1),
                       {
@@ -631,7 +632,7 @@ describe('deployed Luna low candidate', () => {
                       },
                     ]),
                   ),
-                ),
+                }),
               },
             ],
           }),
@@ -645,7 +646,7 @@ describe('deployed Luna low candidate', () => {
     expect(namespace.idFromName).toHaveBeenCalledWith('test:gpt-6-luna');
     expect((await storage.get<Ledger>('ledger'))?.total).toBe(priorTotal + 150);
     const saved = (await storage.get<Ledger>('ledger'))!;
-    saved.total = 3_999_999;
+    saved.total = 4_999_999;
     await storage.put('ledger', saved);
     fetcher.mockClear();
     const blocked = await recommend(
@@ -662,8 +663,8 @@ describe('deployed Luna low candidate', () => {
       { ...haikuEnv, LLM_ENABLED: 'false', RECOMMENDATION_BUDGET: namespace },
     );
     expect(await summary.json()).toEqual({
-      allowanceMicrodollars: 4000000,
-      spentMicrodollars: 3999999,
+      allowanceMicrodollars: 5000000,
+      spentMicrodollars: 4999999,
     });
   });
   it('restricts budget readback to the test runner and exposes only cumulative amounts', async () => {
@@ -695,7 +696,7 @@ describe('deployed Luna low candidate', () => {
       RECOMMENDATION_BUDGET: namespace,
     });
     expect(await response.json()).toEqual({
-      allowanceMicrodollars: 4000000,
+      allowanceMicrodollars: 5000000,
       spentMicrodollars: LUNA_PRIOR_SPEND,
     });
     expect(response.headers.get('cache-control')).toBe('no-store');
