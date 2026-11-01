@@ -543,7 +543,9 @@ describe('deployed Luna low candidate', () => {
       });
       expect((await response.json()).outcome).toBe('success');
       const sent = provider.mock.calls.at(-1)![0];
-      expect(sent.catalogIds).toHaveLength(48);
+      expect(sent.catalogIds).toEqual(
+        benchmark.catalog.items.map((item) => item.youtubeId),
+      );
       const known = new Set(
         [...profile.ideal, ...profile.good].map((item) => item.youtubeId),
       );
