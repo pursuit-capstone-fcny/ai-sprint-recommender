@@ -103,7 +103,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'supervision-notes',
     [
-      ['supervision'],
+      ['supervision', 'supervisor', 'administrative session'],
       ['record', 'recording', 'session'],
       ['summary', 'editable', 'note', 'computer'],
     ],
@@ -313,7 +313,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'grounded-case-note',
     [
-      ['case record', 'case note', 'case-record'],
+      ['case record', 'case note', 'case-record', 'case entry'],
       ['bullet', 'visit', 'heading'],
     ],
     ['Case notes', 'Document review'],
@@ -357,8 +357,8 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'grant-conversation',
     [
-      ['program officer', 'grantmaker', 'funding decision'],
-      ['practice', 'practise', 'conversation', 'exchange'],
+      ['program officer', 'grantmaker', 'funding decision', 'foundation'],
+      ['practice', 'practise', 'conversation', 'exchange', 'rehearsal'],
       ['nonprofit', 'funding', 'grant'],
     ],
     ['Role play', 'Grantmaker communications'],
@@ -369,7 +369,13 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'negotiation-preparation',
     [
-      ['counteroffer', 'counter offer', 'low offer', 'lump sum'],
+      [
+        'counteroffer',
+        'counter offer',
+        'counterproposal',
+        'low offer',
+        'lump sum',
+      ],
       [
         'condition',
         'used',
@@ -396,6 +402,7 @@ export const taskOperations: readonly OperationRule[] = [
         'guest',
         'interview subject',
         'campaigner',
+        'campaign organiser',
         'interview the',
         'public figure',
         'public conversation',
@@ -441,6 +448,7 @@ export const taskOperations: readonly OperationRule[] = [
         'applying for a job',
         'job application',
         'application letter',
+        'job advert',
       ],
       ['resume', 'cv', 'experience', 'role'],
     ],
@@ -528,7 +536,15 @@ export const taskOperations: readonly OperationRule[] = [
     'organizational-writing-helper',
     [
       ['helper', 'assistant', 'reusable'],
-      ['voice', 'tone', 'mission', 'naming rule', 'rule for name'],
+      [
+        'voice',
+        'tone',
+        'mission',
+        'naming rule',
+        'rule for name',
+        'approved wording',
+        'program name',
+      ],
       ['writing', 'write', 'draft', 'announcement'],
     ],
     ['Custom assistants', 'Brand voice'],
@@ -540,7 +556,13 @@ export const taskOperations: readonly OperationRule[] = [
         teaching: ['naming rule', 'clarification question'],
       }),
       ...voice,
+      c(['Prompting'], 75, {
+        teaching: ['writing sample'],
+        minimumStrength: 0.5,
+        whenAll: [['example', 'sample'], ['reference']],
+      }),
     ],
+    { supersedes: ['program-naming'] },
   ),
   r(
     'speech-repurposing',

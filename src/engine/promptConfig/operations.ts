@@ -180,13 +180,14 @@ export const operationRules: readonly OperationRule[] = [
     'terminology-replacement',
     [
       ['replacement', 'approved'],
-      ['name', 'language', 'term'],
+      ['name', 'language', 'term', 'label'],
       ['workbook', 'spreadsheet', 'throughout'],
     ],
     ['Terminology updates'],
     'spreadsheet',
     ['spreadsheet'],
     [candidate(['Terminology updates']), candidate(['Data cleaning'], 80)],
+    { supersedes: ['record-action-lookup'] },
   ),
   rule(
     'data-cleaning',
@@ -324,7 +325,14 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'document-comparison',
     [
-      ['agreement', 'policy', 'disclosure', 'document'],
+      [
+        'agreement',
+        'policy',
+        'disclosure',
+        'document',
+        'banking',
+        'bank terms',
+      ],
       ['compare', 'version', 'changed', 'fee change', 'replacement agreement'],
     ],
     ['Document comparison'],
@@ -334,7 +342,14 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document comparison']),
       candidate(['Grant due diligence'], 80),
       citedDocuments,
+      candidate(['Editing proofreading'], 75, {
+        whenAll: [
+          ['message', 'letter', 'communication'],
+          ['claim', 'check', 'review'],
+        ],
+      }),
     ],
+    { supersedes: ['document-review'] },
   ),
   rule(
     'rfp-review',
@@ -447,7 +462,7 @@ export const operationRules: readonly OperationRule[] = [
     'technical-plain-language',
     [
       ['technical', 'security', 'jargon', 'risk assessment', 'it consultant'],
-      ['trustee', 'board', 'nontechnical'],
+      ['trustee', 'board', 'nontechnical', 'chair', 'treasurer'],
       [
         'explain',
         'explanation',
@@ -583,7 +598,7 @@ export const operationRules: readonly OperationRule[] = [
     'policy-helper',
     [
       ['helper', 'assistant', 'bot', 'help desk', 'answer service'],
-      ['policy', 'manual', 'leave', 'reimbursement', 'handbook'],
+      ['policy', 'manual', 'leave', 'reimbursement', 'handbook', 'hr'],
       ['answer', 'question', 'cite', 'admit'],
     ],
     ['Knowledge management', 'Custom assistants'],
@@ -816,7 +831,7 @@ export const operationRules: readonly OperationRule[] = [
     'course-syllabus',
     [
       ['paper', 'course'],
-      ['week', 'session', 'syllabus'],
+      ['week', 'session', 'syllabus', 'term'],
       ['reading', 'objective', 'assignment', 'assessment'],
     ],
     ['Curriculum design', 'Lesson planning'],
@@ -866,7 +881,10 @@ export const operationRules: readonly OperationRule[] = [
   ),
   rule(
     'photo-editing',
-    [['photo'], ['brighter', 'dark', 'exposure', 'lightroom', 'edit']],
+    [
+      ['photo', 'portrait'],
+      ['brighter', 'dark', 'exposure', 'lightroom', 'edit'],
+    ],
     ['Photo editing'],
     'image',
     ['image'],

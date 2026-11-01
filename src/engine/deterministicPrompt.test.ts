@@ -54,6 +54,185 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.17 prioritizes approved spreadsheet replacements over incidental record lookup', () => {
+    const terms = lesson(
+      1,
+      ['Terminology updates'],
+      'Apply replacement labels.',
+    );
+    const record = lesson(2, ['Document Q&A'], 'Query a notebook of records.');
+    const { run } = fixture([record, terms]);
+    const result = run(
+      'Apply approved label replacements throughout this workbook, preserving an original record of agreed actions.',
+    );
+    expect(result.interpretation.tasks).toEqual(['Terminology updates']);
+    expect(result.interpretation.sourceMaterials).toEqual(['spreadsheet']);
+    expect(ids(result)).toEqual([terms.youtubeId]);
+    const lookup = run('Find agreed actions in the original board record.');
+    expect(lookup.interpretation.tasks).toEqual(['Document Q&A']);
+    expect(ids(lookup)).toEqual([record.youtubeId]);
+  });
+  it('AC-12.17 prioritizes comparing versions and retains an explicitly requested claim-review component', () => {
+    const compare = lesson(
+      1,
+      ['Document comparison'],
+      'Compare policy versions.',
+    );
+    const review = lesson(
+      2,
+      ['Editing proofreading', 'Document review'],
+      'Check wording and claims.',
+    );
+    const { run } = fixture([review, compare]);
+    const result = run(
+      'Compare the old and new policy document, then check claims in our letter.',
+    );
+    expect(result.interpretation.tasks).toEqual(['Document comparison']);
+    expect(ids(result)).toEqual([compare.youtubeId, review.youtubeId]);
+    expect(ids(run('Compare the old and new policy document.'))).toEqual([
+      compare.youtubeId,
+    ]);
+    const proofreading = run(
+      'Check claims in this policy document and letter.',
+    );
+    expect(proofreading.interpretation.tasks).toEqual([
+      'Editing proofreading',
+      'Document review',
+    ]);
+    expect(ids(proofreading)).toEqual([review.youtubeId]);
+    const rejected = run(
+      'Do not compare policy versions; check claims in this letter.',
+    );
+    expect(rejected.interpretation.tasks).toEqual([
+      'Editing proofreading',
+      'Document review',
+    ]);
+    expect(ids(rejected)).toEqual([review.youtubeId]);
+  });
+  it('AC-12.17 distinguishes a reusable writing helper from naming a program', () => {
+    const helper = lesson(
+      1,
+      ['Brand voice', 'Custom assistants', 'Document drafting'],
+      'Configure naming rules and clarification questions.',
+    );
+    const naming = lesson(
+      2,
+      ['Brand naming', 'Brainstorming'],
+      'Find a program name.',
+    );
+    const reference = lesson(3, ['Prompting'], 'Supply a writing sample.');
+    const { run } = fixture([naming, reference, helper]);
+    const result = run(
+      'Build a reusable writing helper with approved program names; ask a question when facts are missing. Keep examples as reference.',
+    );
+    expect(result.interpretation.tasks).toEqual([
+      'Custom assistants',
+      'Brand voice',
+    ]);
+    expect(ids(result)).toEqual([helper.youtubeId, reference.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Build a reusable writing helper with approved program names; ask a question when facts are missing.',
+        ),
+      ),
+    ).toEqual([helper.youtubeId]);
+    const brainstorm = run(
+      'Ask one question at a time to find a welcoming program name.',
+    );
+    expect(brainstorm.interpretation.tasks).toEqual([
+      'Brand naming',
+      'Brainstorming',
+    ]);
+    expect(ids(brainstorm)).toEqual([naming.youtubeId]);
+  });
+  it.each([
+    {
+      prompt:
+        'Assess whether a bid fits this commissioning pack and its spending rules.',
+      task: 'RFP review',
+      description: 'Assess requirements and funder guidance.',
+    },
+    {
+      prompt:
+        'Rehearsal for a funding conversation with a foundation about our nonprofit.',
+      task: 'Role play',
+      description: 'Practice a funding conversation.',
+    },
+    {
+      prompt: 'Use my CV and a job advert to prepare an application.',
+      task: 'Cover letter writing',
+      description: 'Draft a job application.',
+    },
+    {
+      prompt: 'Explain this technical issue to our treasurer.',
+      task: 'Plain language',
+      description: 'Explain technical risks.',
+    },
+    {
+      prompt: 'Use a supervisor session recording to prepare an editable note.',
+      task: 'Supervision documentation',
+      description: 'Create supervision documentation.',
+    },
+    {
+      prompt: 'Edit the exposure of a dark portrait in Lightroom.',
+      task: 'Photo editing',
+      description: 'Adjust portrait exposure.',
+    },
+    {
+      prompt:
+        'Prepare a counterproposal for a used laptop based on its condition.',
+      task: 'Negotiation preparation',
+      description: 'Prepare a counteroffer.',
+    },
+    {
+      prompt:
+        'Research public statements by a campaign organiser for an interview briefing.',
+      task: 'Research',
+      description: 'Research a public interview guest.',
+      extra: ['Interview preparation'],
+    },
+    {
+      prompt:
+        'Our site misses AI search results; challenge its answers about our service pages.',
+      task: 'AI search visibility',
+      description: 'Audit AI search visibility.',
+    },
+    {
+      prompt: 'Turn these visit bullets into a case entry.',
+      task: 'Case notes',
+      description: 'Draft a case note.',
+    },
+    {
+      prompt:
+        'Build an HR assistant that can answer a question using citations.',
+      task: 'Knowledge management',
+      description: 'Configure a knowledge assistant.',
+      extra: ['Custom assistants'],
+    },
+    {
+      prompt:
+        'Use this paper for a term of teaching with assignments and readings.',
+      task: 'Curriculum design',
+      description: 'Create a syllabus.',
+      extra: ['Lesson planning'],
+    },
+  ])(
+    'AC-12.17 recognizes source/action wording: $task',
+    ({ prompt, task, description, extra = [] }) => {
+      const direct = lesson(1, [task, ...extra], description);
+      const unrelated = lesson(
+        2,
+        ['Music generation'],
+        'Generate a soundtrack.',
+      );
+      const { run } = fixture([unrelated, direct]);
+      const result = run(prompt);
+      expect(result.interpretation.tasks).toContain(task);
+      expect(ids(result)).toEqual([direct.youtubeId]);
+    },
+  );
+
   it('AC-12.16 admits saved-writing components for recurring example-based work', () => {
     const direct = lesson(
       1,

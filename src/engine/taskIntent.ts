@@ -36,6 +36,8 @@ export interface OperationRule {
   candidates: CandidateRequirement[];
   explanatory?: boolean;
   precedence?: number;
+  /** Suppress a more generic operation only when this complete rule also matches. */
+  supersedes?: string[];
   clearSource?: boolean;
   outputWhen?: Record<string, string[]>;
 }
@@ -65,16 +67,18 @@ export function interpretOperation(
     word === '\u0000' ? word : languageTokens(word).join(' '),
   );
   const has = (phrase: string) => containsPhrase(positive, phrase);
-  const recognized = [...operationRules]
+  const matched = operationRules.filter(
+    (rule) =>
+      rule.when.every((group) => group.some(has)) && !rule.unless?.some(has),
+  );
+  const superseded = new Set(matched.flatMap((rule) => rule.supersedes ?? []));
+  const recognized = matched
+    .filter((rule) => !superseded.has(rule.id))
     .sort(
       (a, b) =>
         b.when.length - a.when.length ||
         (b.precedence ?? 0) - (a.precedence ?? 0),
-    )
-    .find(
-      (rule) =>
-        rule.when.every((group) => group.some(has)) && !rule.unless?.some(has),
-    );
+    )[0];
   const toolWords = promptWords(normalized);
   const toolPolarity = promptPolarity(toolWords);
   const exclusions = new Set(toolPolarity.excluded);

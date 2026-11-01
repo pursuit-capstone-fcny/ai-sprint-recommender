@@ -6,10 +6,17 @@ export const taskDiscovery: readonly OperationRule[] = [
   r(
     'funding-application-fit',
     [
-      ['funding call', 'funding notice', 'rfp', 'funding opportunity'],
+      [
+        'funding call',
+        'funding notice',
+        'rfp',
+        'funding opportunity',
+        'commissioning pack',
+      ],
       ['eligibility', 'eligible', 'fit', 'spending rule', 'qualify'],
       [
         'application',
+        'bid',
         'project',
         'program',
         'lay out',
@@ -114,7 +121,7 @@ export const taskDiscovery: readonly OperationRule[] = [
     'organization-visibility-audit',
     [
       ['ai', 'assistant', 'copilot'],
-      ['website', 'online'],
+      ['website', 'online', 'site', 'page'],
       [
         'audit',
         'inaccurate',
@@ -122,6 +129,8 @@ export const taskDiscovery: readonly OperationRule[] = [
         'missing',
         'old event',
         'incomplete answer',
+        'miss',
+        'challenge',
       ],
     ],
     ['AI search visibility'],

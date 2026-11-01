@@ -103,6 +103,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When selecting partial methods
   - Then every declared cue group must match the positive request, direct instruction ranks above eligible components, and component expansion retains shared compatibility and platform checks. Recurring example-based writing, identifier cleanup and teaching-resource setup may admit their scoped partials; extraction, initial drafting and accessible-course work do not imply unrelated cleanup, proofreading or generic workspace setup.
 
+- AC-12.17 Primary operation selection
+  - Given ordinary source/action wording or a complete specific operation alongside a generic task cue
+  - When recognizing and selecting the primary operation
+  - Then registered source/action paraphrases can recognize the task; approved spreadsheet terminology replacement takes priority over incidental record lookup, document version comparison over general proofreading, and reusable organizational writing helpers over program naming. Suppression requires every positive condition of the specific operation, respects negation and preserves scoped useful components under the shared compatibility checks.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.
