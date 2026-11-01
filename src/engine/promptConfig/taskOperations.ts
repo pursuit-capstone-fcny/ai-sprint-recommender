@@ -97,7 +97,7 @@ export const taskOperations: readonly OperationRule[] = [
     'supervision-notes',
     [
       ['supervision'],
-      ['record', 'session'],
+      ['record', 'recording', 'session'],
       ['summary', 'editable', 'note', 'computer'],
     ],
     ['Supervision documentation', 'Meeting notes'],

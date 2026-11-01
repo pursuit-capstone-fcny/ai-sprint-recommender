@@ -204,6 +204,27 @@ describe('deterministic free-text recommendations', () => {
       local.youtubeId,
     ]);
   });
+  it('AC-12.15 treats supervision recordings as input and notes as output under an offline requirement', () => {
+    const local = lesson(
+      1,
+      ['Supervision documentation'],
+      'Turn recordings into structured notes offline.',
+      ['Local Notes'],
+    );
+    const cloud = lesson(
+      2,
+      ['Supervision documentation'],
+      'Turn recordings into structured notes using a hosted service.',
+      ['Hosted Notes'],
+    );
+    const { run } = fixture([cloud, local]);
+    const result = run(
+      'I need a video showing offline-only transcription of supervision recordings into structured notes. Hosted assistants are not options.',
+    );
+    expect(ids(result)).toEqual([local.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['recording']);
+    expect(result.interpretation.desiredOutputs).toEqual(['summary', 'notes']);
+  });
   it('AC-12.15 requires bulk field-binding evidence alongside a native platform', () => {
     const single = lesson(
       1,
