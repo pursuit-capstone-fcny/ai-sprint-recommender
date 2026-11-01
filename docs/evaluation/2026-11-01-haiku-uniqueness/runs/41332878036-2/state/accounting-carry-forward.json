@@ -1,0 +1,8 @@
+{
+  "historicalUnknownReservationsMicrodollars": 386544,
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 386544,
+  "cumulativeCeilingMicrodollars": 4503394,
+  "remainingAllowanceMicrodollars": 496606,
+  "note": "The separate audit carries actual historical reservations including V55 timeout. The older default in the original audit stdout changes neither costs nor scores."
+}

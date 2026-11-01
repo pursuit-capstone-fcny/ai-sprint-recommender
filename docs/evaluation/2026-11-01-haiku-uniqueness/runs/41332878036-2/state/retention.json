@@ -1,0 +1,7 @@
+{
+  "retained": true,
+  "reason": "V56 passes unchanged full validation: 10/10 each, 28/30 broad lists, all controls, forty final measured calls and no observed duplicate/invalid/timeout/transport failure. Two shorter lists and expanded semantic review remain open. This is forty-case evidence, not a guarantee for every future model response.",
+  "labelsChanged": false,
+  "taskDiversityGateChanged": false,
+  "all89CandidatesRetained": true
+}

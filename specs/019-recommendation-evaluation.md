@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V55 rejected; V56 forward-only validation pending. All 89 videos retained.
+- **Status:** V56 retained: no observed duplicates in forty calls; expanded review remains open.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -116,6 +116,18 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [full-catalog uniqueness rerun](../docs/evaluation/2026-11-01-haiku-uniqueness/results.md)
+retains V56: 10/10 each, 28/30 six-to-eight lists, all controls and forty measured
+calls without duplicate, invalid, timeout or transport failures. It selects
+positions before notes and uses a forward-only uniqueness check. All 89 videos
+remain in context. Two five-card lists and expanded semantic review remain open.
+V55's duplicate and timeout are preserved. The two runs record $0.180602,
+including one $0.006556 unknown reservation, leaving $0.496606. All $0.386544
+cumulative unknown reservations remain charged. Labels and the gate are unchanged.
+Test calls are disabled and keys removed; production LLM calls and logging stay off.
+
+Earlier results and balances below are historical.
 
 The [full-catalog Haiku run](../docs/evaluation/2026-11-01-haiku-full-catalog/results.md)
 retains the requested scope: user input and all 89 videos, with no rules-based

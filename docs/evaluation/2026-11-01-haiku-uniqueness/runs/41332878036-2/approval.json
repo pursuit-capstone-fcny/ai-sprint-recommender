@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "3346ff75dd12e2beef5b475c62dda20f10932937",
+  "approvedWorkflowRunId": "41332878036",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T18:28:30Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v56",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V56 retains position-first output and replaces only the backward uniqueness paragraph in the final wire request with forward-only position consumption: settle on distinct ordered positions, consume each once, check previous fields before writing, never emit a repeat to repair later. No new output field or repair logic. All 89 frozen videos remain in context without prefiltering. Preserve strict rejection, labels, gate, original intake and metadata. Same Haiku low, thinking disabled, 63000 input bound, 512 output tokens, 4.5-second server and five-second client deadlines. Thirty benchmark cases and ten controls once each, no paid retries or replacement cases. Preserve all failures and charges. Retention also requires at least 28 benchmark passes in total, preserving V54 aggregate quality.",
+  "privacyDecision": "Synthetic user inputs and existing public catalog only. No expected-answer labels or conversation sent to model. Production and test usage logging remain off.",
+  "budgetDecision": "Use the existing remaining $0.584891 under the unchanged additive $5 cap. Carry $4.415109 including all $0.386544 unknown reservations. V55 cost $0.092317 includes its full $0.006556 timeout reservation. Maximum request $0.006556 and forty-case reserve $0.262240. No new grant, reset, refund or repricing. Production LLM calls and logging remain disabled.",
+  "allowanceMicrodollars": 584891,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 4415109,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}
