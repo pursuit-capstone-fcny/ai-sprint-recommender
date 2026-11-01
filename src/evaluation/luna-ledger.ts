@@ -254,6 +254,11 @@ export const LUNA_DEPLOYED_BUDGETS: [string, string, number?][] = [
     '5ed115fa6c69c0a6b3ec06270f273a37f7551bfcbd6defa678aac32642538e4d',
     4_000_000,
   ],
+  [
+    'docs/evaluation/2026-11-01-haiku-evidence/runs/41258570330-2/state/comparison-budget.json',
+    '39421b4cc19149d0cb52873ec51a382a1b1000d4de0080d111e8e31054e1ddb9',
+    4_000_000,
+  ],
 ];
 export const LUNA_SPEND_CAPTURES = [
   [

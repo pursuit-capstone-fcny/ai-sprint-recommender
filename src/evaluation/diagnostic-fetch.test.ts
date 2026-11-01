@@ -1,6 +1,7 @@
 // @vitest-environment node
 import { expect, it, vi } from 'vitest';
 import {
+  fetchReadinessProbe,
   evaluationFetch,
   mergeDiagnostic,
   assertProviderAcceptedRequest,
@@ -108,3 +109,72 @@ it('keeps transient failures on the existing no-retry cooldown path', () => {
       assertProviderAcceptedRequest({ ...row, providerHttpStatus }),
     ).not.toThrow();
 });
+
+it('allows only an unpaid blank readiness request to wait for a missing header', async () => {
+  const failures = vi.fn();
+  const raw = vi
+    .fn<typeof fetch>()
+    .mockResolvedValueOnce(
+      Response.json({ outcome: 'fallback', reason: 'disabled' }),
+    )
+    .mockResolvedValueOnce(
+      response({
+        ...row,
+        outcome: 'not-requested',
+        providerDispatched: false,
+        inputTokens: 0,
+        outputTokens: 0,
+        costMicrodollars: 0,
+      }),
+    );
+  const wrapped = evaluationFetch(endpoint, key, () => {}, raw, failures);
+  const version = `sha256:${'a'.repeat(64)}`;
+  expect(
+    await fetchReadinessProbe(
+      endpoint,
+      version,
+      wrapped,
+      new AbortController().signal,
+    ),
+  ).toBeNull();
+  expect(
+    await fetchReadinessProbe(
+      endpoint,
+      version,
+      wrapped,
+      new AbortController().signal,
+    ),
+  ).toBeInstanceOf(Response);
+  expect(raw).toHaveBeenCalledTimes(2);
+  for (const [, init] of raw.mock.calls)
+    expect(JSON.parse(String(init?.body))).toEqual({
+      functionArea: null,
+      goal: '',
+      tools: [],
+      catalogVersion: version,
+    });
+  expect(failures).toHaveBeenCalledExactlyOnceWith(
+    expect.objectContaining({ kind: 'missing-header', status: 200 }),
+  );
+});
+
+it.each(['invalid-header', 'server-error', 'network'])(
+  'does not retry or hide readiness %s',
+  async (kind) => {
+    const raw = vi.fn<typeof fetch>(async () => {
+      if (kind === 'network') throw new Error('private details');
+      return kind === 'server-error'
+        ? new Response(null, { status: 500 })
+        : response({ invalid: true });
+    });
+    await expect(
+      fetchReadinessProbe(
+        endpoint,
+        `sha256:${'a'.repeat(64)}`,
+        evaluationFetch(endpoint, key, () => {}, raw),
+        new AbortController().signal,
+      ),
+    ).rejects.toThrow();
+    expect(raw).toHaveBeenCalledTimes(1);
+  },
+);

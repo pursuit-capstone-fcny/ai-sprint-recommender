@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "848d22702ece177cba6762e942f9a6fcd169438c",
+  "approvedWorkflowRunId": "41258570330",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T01:36:45Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v43",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V43 uses one Haiku call with eight required objects, each a brief catalog-grounded usefulness statement followed by its position. Strictly validate then discard statements and return trusted IDs only. Keep V36 retrieval, candidate order and metadata. Preserve injection/blank browsing rules, frozen benchmark labels and task-diversity gate. Same 30 benchmark requests plus ten probes, 4.5s deadline, 65000 input bound, 512 output cap and 6756 microdollar reservation. No retries, second pass, automatic padding, paid warm-up or replacement cases.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry $3.547947 under the approved shared $4 cap, including all $0.360120 unknown reservations. Remaining $0.452053; 40-request maximum reservation $0.270240. No reset, refunds or repricing. Production calls and logging remain disabled.",
+  "allowanceMicrodollars": 452053,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3547947,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

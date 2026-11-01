@@ -1,0 +1,9 @@
+[
+  {
+    "requestId": "26b84780-b4ae-4339-93c0-12e547838952",
+    "phase": "diagnostic",
+    "kind": "missing-header",
+    "status": 200,
+    "latencyMs": 90
+  }
+]

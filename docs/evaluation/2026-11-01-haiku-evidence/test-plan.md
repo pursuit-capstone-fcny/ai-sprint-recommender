@@ -41,3 +41,18 @@ Haiku 5.5 low, disabled thinking, the 4.5-second deadline, 65,000 input bound,
 exact source/run/attempt. Disable calls and remove keys afterward. Production
 LLM calls and logging, benchmark labels, task-diversity gate and historical
 results remain unchanged.
+
+## Unpaid startup correction
+
+Run 41258570330 attempt two stops on an HTTP 200 readiness response without
+the diagnostic header. Its fixed blank intake cannot call the provider. No
+benchmark case is submitted and durable spend remains $3.547947. Preserve that
+failed attempt, independent shutdown confirmation and zero-charge budget record.
+
+The readiness loop may wait within its existing 30-second deadline when this
+specific missing-header response occurs. It only ever resubmits the fixed blank
+intake, never a benchmark goal. Invalid diagnostics, HTTP errors and network
+errors still stop the run. Save all startup failures separately in readiness.json;
+the existing paid-case transport and reliability audit remains unchanged.
+Adapter, ranking, model, limits and remaining allowance are unchanged. The next
+workflow run gets its own exact-source and attempt approval.

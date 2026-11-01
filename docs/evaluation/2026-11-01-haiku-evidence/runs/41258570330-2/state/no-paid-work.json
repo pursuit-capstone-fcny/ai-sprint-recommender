@@ -1,0 +1,5 @@
+{
+  "paidRequests": 0,
+  "additionalMicrodollars": 0,
+  "reason": "Unpaid all-blank readiness request received HTTP 200 without an evaluation diagnostic header. No benchmark case or paid probe was submitted. Durable budget unchanged; shutdown and key removal verified."
+}

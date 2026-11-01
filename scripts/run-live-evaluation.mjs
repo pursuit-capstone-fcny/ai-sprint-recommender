@@ -52,7 +52,7 @@ export async function main(args = process.argv.slice(2)) {
       contents: `
     export { injectionProbes } from './src/evaluation/injection-probes';
     export { afterEvaluationCall } from './src/evaluation/cooldown';
-    export { evaluationFetch, mergeDiagnostic, EvaluationRequestError, assertProviderAcceptedRequest } from './src/evaluation/diagnostic-fetch';
+    export { evaluationFetch, mergeDiagnostic, EvaluationRequestError, assertProviderAcceptedRequest, fetchReadinessProbe } from './src/evaluation/diagnostic-fetch';
     export { DiagnosticSchema } from './src/contracts/evaluationDiagnostic';
     export { parseBenchmark, benchmarkFingerprint } from './src/evaluation/benchmark';
     export { LiveApprovalSchema, warmCatalog, hasCompleteWarmupEvidence } from './src/evaluation/live';
@@ -165,6 +165,7 @@ export async function main(args = process.argv.slice(2)) {
   const observed = new Map();
   const directDiagnostics = new Map();
   const transportFailures = [];
+  const readinessFailures = [];
   let rateKey;
   if (!checkDiagnostics) {
     const candidate = approval.modelVersion === 'gpt-6-luna' ? 'luna' : 'haiku';
@@ -188,6 +189,18 @@ export async function main(args = process.argv.slice(2)) {
         },
         fetch,
         (entry) => transportFailures.push(entry),
+      )
+    : fetch;
+  const captureReadinessFetch = rateKey
+    ? contracts.evaluationFetch(
+        approval.endpoint,
+        rateKey,
+        (entry) => {
+          contracts.mergeDiagnostic(observed, entry);
+          contracts.mergeDiagnostic(directDiagnostics, entry);
+        },
+        fetch,
+        (entry) => readinessFailures.push(entry),
       )
     : fetch;
   const probeIds = new Set();
@@ -429,20 +442,16 @@ export async function main(args = process.argv.slice(2)) {
       checkRunning();
       ready = hasReadyDiagnostic(observed, probeIds, expectedOutcome);
       if (ready) break;
-      const response = await captureFetch(endpoint, {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        credentials: 'omit',
-        redirect: 'error',
-        cache: 'no-store',
-        body: JSON.stringify({
-          functionArea: null,
-          goal: '',
-          tools: [],
-          catalogVersion: benchmark.catalog.catalogVersion,
-        }),
-        signal: AbortSignal.any([abort.signal, AbortSignal.timeout(5_000)]),
-      });
+      const response = await contracts.fetchReadinessProbe(
+        approval.endpoint,
+        benchmark.catalog.catalogVersion,
+        captureReadinessFetch,
+        AbortSignal.any([abort.signal, AbortSignal.timeout(5_000)]),
+      );
+      if (!response) {
+        await pause(1_000);
+        continue;
+      }
       const requestId = z
         .uuid()
         .parse(response.headers.get('x-recommendation-request-id'));
@@ -747,7 +756,7 @@ export async function main(args = process.argv.slice(2)) {
     );
     await writeFile(
       `${liveDirectory}/readiness.json`,
-      `${JSON.stringify({ expectedOutcome, confirmed: readinessConfirmed, paidCalls: 0, probes: readinessProbes }, null, 2)}\n`,
+      `${JSON.stringify({ expectedOutcome, confirmed: readinessConfirmed, paidCalls: 0, probes: readinessProbes, failures: readinessFailures }, null, 2)}\n`,
     );
     stopping = true;
     clearTimeout(overallTimer);

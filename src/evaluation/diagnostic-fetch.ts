@@ -153,3 +153,37 @@ export function assertProviderAcceptedRequest(
       'Provider rejected the request configuration; stop before further paid calls.',
     );
 }
+
+// Only this fixed all-blank intake can wait for deployment propagation. It
+// returns before catalog reads, budget reservation and provider dispatch.
+export async function fetchReadinessProbe(
+  endpoint: string,
+  catalogVersion: string,
+  fetcher: typeof fetch,
+  signal: AbortSignal,
+): Promise<Response | null> {
+  try {
+    return await fetcher(endpoint, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      credentials: 'omit',
+      redirect: 'error',
+      cache: 'no-store',
+      body: JSON.stringify({
+        functionArea: null,
+        goal: '',
+        tools: [],
+        catalogVersion,
+      }),
+      signal,
+    });
+  } catch (error) {
+    if (
+      error instanceof EvaluationRequestError &&
+      error.diagnostic.kind === 'missing-header' &&
+      error.diagnostic.status === 200
+    )
+      return null;
+    throw error;
+  }
+}
