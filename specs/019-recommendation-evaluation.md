@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V44 retained; V51–V53 rejected. Weak supporting picks remain unresolved.
+- **Status:** Full-catalog Haiku validation pending. Weak supporting picks remain unresolved.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
@@ -27,10 +27,11 @@
   case and sanitized HTTP status, then stop before another paid case. Retain
   uncertain charges and missing evidence; never record the raw error or retry.
 
-- Given test-only candidate retrieval, when selecting a smaller provider context,
-  then preserve selected-area coverage and fill remaining slots with cross-area
-  relevance matches. Keep metadata, numeric schema/ID mapping, labels and the
-  final task-diversity gate consistent. Check paraphrase coverage separately.
+- Given the user input and the active video library, when Haiku ranks videos,
+  then send all 89 frozen catalog items in source order without rules-based
+  prefiltering. Preserve the input fields, metadata, trusted position mapping,
+  benchmark labels and final task-diversity gate. Report failures without
+  restoring a shortlist to improve scores.
 
 - Given a transport or diagnostic-header failure, when a test request fails,
   then preserve its correlation ID, stage, status and allowlisted error code.

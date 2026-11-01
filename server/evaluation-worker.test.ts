@@ -46,7 +46,7 @@ describe('frozen test catalog isolation', () => {
                           'rank' + (i + 1),
                           {
                             use: i < 2 ? 'Prepare an AI policy' : '',
-                            position: i < 2 ? i : null,
+                            position: i === 0 ? 0 : i === 1 ? 88 : null,
                           },
                         ]),
                       ),
@@ -66,7 +66,7 @@ describe('frozen test catalog isolation', () => {
                     content: [
                       {
                         type: 'output_text',
-                        text: JSON.stringify({ positions: [0, 1] }),
+                        text: JSON.stringify({ positions: [0, 88] }),
                       },
                     ],
                   },
@@ -98,7 +98,7 @@ describe('frozen test catalog isolation', () => {
       expect(await result.json()).toMatchObject({
         outcome: 'success',
         catalogVersion: snapshot.catalogVersion,
-        youtubeIds: snapshot.items.slice(0, 2).map((item) => item.youtubeId),
+        youtubeIds: [snapshot.items[0].youtubeId, snapshot.items[88].youtubeId],
       });
       expect(fetcher).toHaveBeenCalledTimes(1);
       expect(fetcher.mock.calls[0][0]).toBe(
@@ -107,11 +107,32 @@ describe('frozen test catalog isolation', () => {
           : 'https://api.openai.com/v1/responses',
       );
       const payload = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
+      const data = JSON.parse(
+        isHaiku ? payload.messages[0].content : payload.input[1].content,
+      );
+      expect(data.catalog).toHaveLength(89);
       expect(
-        JSON.parse(
-          isHaiku ? payload.messages[0].content : payload.input[1].content,
-        ).catalog,
-      ).toHaveLength(isHaiku ? 48 : 89);
+        data.catalog.map((row: unknown[]) =>
+          Object.fromEntries(
+            data.catalogFields.map((field: string, index: number) => [
+              field,
+              row[index],
+            ]),
+          ),
+        ),
+      ).toEqual(
+        snapshot.items.map((item, position) => ({
+          position,
+          title: item.title.slice(0, 200),
+          description: item.description.slice(0, 500),
+          functionAreas: item.functionAreas,
+          tasks: item.tasks,
+          tools: item.tools,
+        })),
+      );
+      expect(data.goal).toBe('Prepare an AI policy');
+      expect(data.functionArea).toBe('Leadership');
+      expect(data.tools).toEqual([]);
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');

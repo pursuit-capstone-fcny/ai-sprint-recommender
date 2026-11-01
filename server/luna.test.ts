@@ -543,13 +543,12 @@ describe('deployed Luna low candidate', () => {
       });
       expect((await response.json()).outcome).toBe('success');
       const sent = provider.mock.calls.at(-1)![0];
-      expect(sent.catalogIds).toHaveLength(48);
-      const known = new Set(
-        [...profile.ideal, ...profile.good].map((item) => item.youtubeId),
+      expect(sent.catalogIds).toEqual(
+        benchmark.catalog.items.map((item) => item.youtubeId),
       );
-      expect(
-        sent.catalogIds.filter((id) => known.has(id)).length,
-      ).toBeGreaterThanOrEqual(2);
+      expect(sent.data.goal).toBe(profile.input.goal);
+      expect(sent.data.functionArea).toBe(profile.input.functionArea);
+      expect(sent.data.tools).toEqual(profile.input.tools);
       for (const [position, id] of sent.catalogIds.entries()) {
         const source = benchmark.catalog.items.find(
           (item) => item.youtubeId === id,

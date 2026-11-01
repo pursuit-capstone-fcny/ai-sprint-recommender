@@ -1,0 +1,18 @@
+{
+  "testsPassed": 654,
+  "testsFailed": 0,
+  "removedObsoleteShortlistTests": 8,
+  "workerScopeRegression": "Previously rejected position 88; now verifies all 89 wire records and accepts positions 0 and 88.",
+  "benchmarkCoverage": "All ten benchmark profiles and two wording controls send the complete catalog through the actual handler.",
+  "typecheck": "passed",
+  "lint": "passed",
+  "build": "passed",
+  "haikuRuntime": "passed",
+  "lunaRuntime": "passed",
+  "externalRuntimeCalls": 0,
+  "inputCap": 63000,
+  "largestFullWireBound": 61353,
+  "outputCap": 512,
+  "fortyCaseReservationMicrodollars": 262240,
+  "remainingBeforeRunMicrodollars": 765733
+}
