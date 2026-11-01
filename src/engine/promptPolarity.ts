@@ -82,6 +82,13 @@ export function promptPolarity(words: string[]) {
         following.some((part) =>
           ['experience', 'knowledge', 'training'].includes(part),
         )) ||
+      // Missing source answers and refused-access examples describe test cases,
+      // rather than rejecting the following referral or citation instruction.
+      (word === 'not' &&
+        prefix.some((part) => ['question', 'questions'].includes(part)) &&
+        ((following[0] === 'answered' &&
+          prefix.some((part) => ['are', 'is', 'were', 'was'].includes(part))) ||
+          (following[0] === 'see' && prefix.includes('refuse')))) ||
       // A lack of time to read a source does not reject its application or subject.
       (word === 'not' &&
         following[0] === 'have' &&

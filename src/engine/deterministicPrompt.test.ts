@@ -56,6 +56,256 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
 describe('deterministic free-text recommendations', () => {
   it.each([
     {
+      name: 'traceable financial figures',
+      main: ['Financial analysis'],
+      part: ['Document Q&A'],
+      teaching: 'Ask a targeted document question.',
+      prompt:
+        'Review four years of public accounts and trace the ratios to source references.',
+      control: 'Review four years of public accounts and explain the ratios.',
+    },
+    {
+      name: 'funding-criteria review',
+      main: ['Grant drafting'],
+      part: ['RFP review', 'Work planning'],
+      prompt: 'Write foundation answers about future plans using the criteria.',
+      control: 'Write foundation answers about future plans.',
+    },
+    {
+      name: 'briefing-source drafting',
+      main: ['Webinar planning'],
+      part: ['Document summary', 'Document drafting', 'Document Q&A'],
+      prompt: 'Use a report for a donor event with posts and presenter notes.',
+      control: 'Use a report for a donor event with posts.',
+    },
+    {
+      name: 'briefing-source summarization',
+      main: ['Webinar planning'],
+      part: ['Document summary'],
+      teaching: 'Summarize a panel speaker.',
+      prompt: 'Use a report for a donor event with posts and presenter notes.',
+      control: 'Use a report for a donor event with posts.',
+    },
+    {
+      name: 'handover intake records',
+      main: ['Process documentation'],
+      part: ['Client intake', 'App building'],
+      prompt:
+        'Follow-ups get lost at reception. Document a handover checklist covering what is recorded.',
+      control:
+        'Document a handover checklist of responsibilities at reception.',
+    },
+    {
+      name: 'handover follow-up records',
+      main: ['Process documentation'],
+      part: ['Student interventions', 'App building'],
+      prompt:
+        'Follow-ups get lost at reception. Document a handover checklist covering what is recorded.',
+      control:
+        'Document a handover checklist of responsibilities at reception.',
+    },
+    {
+      name: 'reimbursement fact elicitation',
+      main: ['Reimbursement documentation'],
+      part: ['Client correspondence'],
+      prompt:
+        'Draft a reimbursement letter about treatment and ask what is missing.',
+      control: 'Draft a reimbursement letter about treatment.',
+    },
+    {
+      name: 'checked reimbursement claims',
+      main: ['Reimbursement documentation'],
+      part: ['Editing proofreading'],
+      prompt:
+        'Draft a reimbursement letter about treatment and get it checked.',
+      control: 'Draft a reimbursement letter about treatment.',
+    },
+    {
+      name: 'spoken grant simulation transfer',
+      main: ['Difficult conversations'],
+      part: ['Role play', 'Grantmaker communications'],
+      prompt:
+        'A manager wants to practice a conversation aloud and get feedback.',
+      control: 'A manager wants to practice a conversation and get feedback.',
+    },
+    {
+      name: 'spoken staff simulation transfer',
+      main: ['Difficult conversations'],
+      part: ['Role play', 'Staff training'],
+      prompt:
+        'A manager wants to practice a conversation aloud and get feedback.',
+      control: 'A manager wants to practice a conversation and get feedback.',
+    },
+    {
+      name: 'recurring peer facilitation',
+      main: ['Peer learning'],
+      part: ['Retreat planning'],
+      prompt:
+        'Organize a mixed group with protected practice time and monthly sessions.',
+      control: 'Organize a mixed group with protected practice time.',
+    },
+    {
+      name: 'budget formula coaching',
+      main: ['Budget consolidation', 'Spreadsheet automation'],
+      part: ['Spreadsheet formulas'],
+      prompt:
+        'Pull budget files from a folder into a summary and explain how to run the code.',
+      control: 'Pull budget files from a folder into a summary.',
+    },
+    {
+      name: 'intake data structuring',
+      main: ['Client intake', 'App building'],
+      part: ['Data structuring'],
+      prompt:
+        'Capture structured fields on a phone at an outreach table and copy them into an existing system.',
+      control: 'Capture fields on a phone at an outreach table.',
+    },
+    {
+      name: 'intake team handoff',
+      main: ['Client intake', 'App building'],
+      part: ['Process documentation', 'Client intake'],
+      prompt:
+        'Capture fields on a phone at an outreach table for the follow-up team.',
+      control: 'Capture fields on a phone at an outreach table.',
+    },
+    {
+      name: 'comparison source-boundary testing',
+      main: ['Document comparison'],
+      part: ['Custom assistants', 'Knowledge management', 'Responsible AI'],
+      teaching: 'Test answers against a policy PDF.',
+      prompt:
+        'Compare agreement versions and find the exact passage for a specific question.',
+      control: 'Compare agreement versions.',
+    },
+    {
+      name: 'comparison cited-source lookup',
+      main: ['Document comparison'],
+      part: ['Document Q&A', 'App building'],
+      teaching: 'Retrieve a cited source.',
+      prompt:
+        'Compare agreement versions and find the exact passage for a specific question.',
+      control: 'Compare agreement versions.',
+    },
+    {
+      name: 'comparison note review',
+      main: ['Document comparison'],
+      part: ['Editing proofreading'],
+      prompt: 'Compare policy versions and review a customer note for claims.',
+      control: 'Compare policy versions.',
+    },
+    {
+      name: 'retested handbook lookup',
+      main: ['Custom assistants', 'Knowledge management'],
+      part: ['Document Q&A', 'Document drafting', 'Document summary'],
+      prompt:
+        'Build a policy helper to answer handbook questions, change the instructions and try the same questions again.',
+      control: 'Build a policy helper to answer handbook questions.',
+    },
+    {
+      name: 'training-media source drafting',
+      main: ['Audio generation'],
+      part: ['Document summary', 'Document drafting', 'Document Q&A'],
+      prompt:
+        'Use a training document for a podcast and video overview with a description and learning objectives.',
+      control: 'Use a training document for a podcast and video overview.',
+    },
+    {
+      name: 'training-media source summarization',
+      main: ['Audio generation'],
+      part: ['Document summary'],
+      teaching: 'Summarize a panel speaker.',
+      prompt:
+        'Use a training document for a podcast and video overview with a description and learning objectives.',
+      control: 'Use a training document for a podcast and video overview.',
+    },
+    {
+      name: 'training-media scripting',
+      main: ['Audio generation'],
+      part: ['Scriptwriting', 'Video creation'],
+      prompt:
+        'Use a training document for a podcast and video overview with a description and learning objectives.',
+      control: 'Use a training document for a podcast and video overview.',
+    },
+  ])(
+    'AC-12.20 scopes $name',
+    ({
+      main,
+      part,
+      prompt,
+      control,
+      teaching = 'Teach a transferable component.',
+    }) => {
+      const direct = lesson(
+        1,
+        main,
+        'Teach the primary method with supervisor context.',
+      );
+      const component = lesson(2, part, teaching);
+      const { run } = fixture([component, direct]);
+      expect(ids(run(prompt))).toEqual([direct.youtubeId, component.youtubeId]);
+      expect(ids(run(control))).toEqual([direct.youtubeId]);
+    },
+  );
+  it('AC-12.20 separates concrete peer-group boundaries from risk and adoption discussion', () => {
+    const group = lesson(1, ['Peer learning'], 'Organize peer practice.');
+    const policy = lesson(2, ['AI policy'], 'Set interim boundaries.');
+    const risks = lesson(
+      3,
+      ['Responsible AI'],
+      'Explain concerns and adoption barriers.',
+    );
+    const { run } = fixture([risks, policy, group]);
+    expect(
+      ids(
+        run(
+          'Organize a mixed group with protected practice time and safe boundaries.',
+        ),
+      ),
+    ).toEqual([group.youtubeId, policy.youtubeId]);
+    expect(
+      ids(
+        run(
+          'A mixed group has stopped experimenting. Plan protected practice time.',
+        ),
+      ),
+    ).toContain(risks.youtubeId);
+  });
+  it('AC-12.20 keeps referral and citation instructions outside relative question limitations', () => {
+    const helper = lesson(
+      1,
+      ['Custom assistants', 'Knowledge management'],
+      'Configure a handbook helper.',
+    );
+    const project = lesson(
+      2,
+      ['Knowledge management', 'Process documentation'],
+      'Organize handbook context.',
+    );
+    const cite = lesson(
+      3,
+      ['Document Q&A', 'App building'],
+      'Retrieve a cited source.',
+    );
+    const { run } = fixture([cite, project, helper]);
+    const referral = run(
+      'Build a policy assistant to answer handbook questions. Try questions that are not answered there and make it refer those to a person.',
+    );
+    expect(ids(referral)).toContain(project.youtubeId);
+    expect(ids(referral)[0]).toBe(helper.youtubeId);
+    const citation = run(
+      'Build a policy assistant to refuse questions it should not see and show a source.',
+    );
+    expect(ids(citation)).toContain(cite.youtubeId);
+    const excluded = run(
+      'Build a policy assistant to answer handbook questions. Do not use Document Q&A.',
+    );
+    expect(excluded.interpretation.excludedTasks).toContain('Document Q&A');
+    expect(ids(excluded)).not.toContain(cite.youtubeId);
+    expect(ids(excluded)).toContain(helper.youtubeId);
+  });
+
+  it.each([
+    {
       task: 'Grant drafting',
       prompt:
         'Help us write short foundation answers about future plans from our instructions.',

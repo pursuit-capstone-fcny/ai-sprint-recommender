@@ -118,6 +118,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When recognizing operations and parsing the request
   - Then complete visibility audits take priority over incidental leave-policy words, attendance prioritization over data checks, conditional totals over generic formula generation, and reusable writing setup over speech repurposing. Registered grant, handover, rehearsal, review, intake, feedback-question and attachment phrases can select their methods. A statement that staff do not read supplied text preserves the document as a source; story creation can retain visual and translation outputs; quotation components do not imply a complete attributed-transcription method. Detected source material is retained where declared, ordinary numbers do not imply Apple Numbers, and a transfer cannot depend on an explicitly rejected method.
 
+- AC-12.20 Requested partial-method coverage
+  - Given a recognized goal and a requested source-checking, handover, rehearsal, facilitation, formula, citation, review or training-planning component
+  - When selecting transferable instruction
+  - Then admit only the declared component's positive conditions and teaching evidence, keep the primary method first and apply shared compatibility checks. Questions described as unanswered or refused-access test cases do not negate a following referral or citation instruction; explicit method exclusions remain active. Concrete peer-group safety boundaries can use policy instruction without automatically adding a general risk discussion.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

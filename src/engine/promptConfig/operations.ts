@@ -354,7 +354,19 @@ export const operationRules: readonly OperationRule[] = [
     ['Financial analysis'],
     'document',
     ['analysis'],
-    [candidate(['Financial analysis']), candidate(['Grant due diligence'], 80)],
+    [
+      candidate(['Financial analysis']),
+      candidate(['Grant due diligence'], 80),
+      candidate(['Document Q&A'], 75, {
+        teaching: [
+          'source reference',
+          'targeted document',
+          'collection of source documents',
+        ],
+        excludeTasks: ['App building'],
+        when: ['trace', 'verify', 'citation', 'source reference'],
+      }),
+    ],
   ),
   rule(
     'grantee-comparison',
@@ -404,9 +416,18 @@ export const operationRules: readonly OperationRule[] = [
       citedDocuments,
       candidate(['Editing proofreading'], 75, {
         whenAll: [
-          ['message', 'letter', 'communication'],
+          ['message', 'letter', 'communication', 'note'],
           ['claim', 'check', 'review'],
         ],
+      }),
+      candidate(['Custom assistants'], 70, {
+        allTasks: ['Knowledge management', 'Responsible AI'],
+        teaching: ['policy pdf'],
+        whenAll: [['exact passage'], ['specific question']],
+      }),
+      candidate(['Document Q&A'], 70, {
+        teaching: ['cited source'],
+        whenAll: [['exact passage'], ['specific question']],
       }),
     ],
     { supersedes: ['document-review'] },
@@ -453,6 +474,10 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Editing proofreading'], 75, {
         when: ['review', 'edit', 'check', 'proofread', 'catch', 'overclaim'],
       }),
+      candidate(['RFP review'], 75, {
+        allTasks: ['Work planning'],
+        when: ['criteria', 'eligibility', 'spending rule'],
+      }),
     ],
     { preferDetectedSource: true },
   ),
@@ -489,6 +514,28 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Presentation creation'], 75, {
         teaching: ['presentation outline'],
         when: ['webinar', 'outline', 'slide', 'presentation'],
+      }),
+      candidate(['Document summary'], 70, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: [
+          'running order',
+          'presenter',
+          'speaking note',
+          'condense',
+          'distill',
+          'summarize',
+        ],
+      }),
+      candidate(['Document summary'], 70, {
+        teaching: ['speaker', 'panel'],
+        when: [
+          'running order',
+          'presenter',
+          'speaking note',
+          'condense',
+          'distill',
+          'summarize',
+        ],
       }),
     ],
   ),
@@ -741,6 +788,14 @@ export const operationRules: readonly OperationRule[] = [
         minimumStrength: 0.5,
         whenAll: [['handbook'], ['hand off', 'human', 'person', 'exception']],
       }),
+      candidate(['Document Q&A'], 70, {
+        allTasks: ['Document drafting', 'Document summary'],
+        whenAll: [
+          ['handbook'],
+          ['again', 'same question', 'retest'],
+          ['instruction', 'change'],
+        ],
+      }),
     ],
     { precedence: 1 },
   ),
@@ -823,6 +878,15 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Process documentation']),
       candidate(['Process documentation'], 80, { minimumStrength: 0.5 }),
+      candidate(['Student interventions', 'Client intake'], 70, {
+        allTasks: ['App building'],
+        unlessExcludedTasks: ['App building'],
+        whenAll: [
+          ['follow up', 'follow ups'],
+          ['record', 'recorded', 'capture', 'field'],
+          ['handover', 'handoff', 'passed on', 'reception'],
+        ],
+      }),
     ],
   ),
   rule(
@@ -843,7 +907,7 @@ export const operationRules: readonly OperationRule[] = [
     [],
     [
       candidate(['Peer learning']),
-      candidate(['AI policy', 'Responsible AI'], 80, {
+      candidate(['AI policy'], 80, {
         excludeTasks: ['Document drafting', 'Custom assistants'],
         when: [
           'policy',
@@ -858,6 +922,24 @@ export const operationRules: readonly OperationRule[] = [
           'barrier',
           'concern',
         ],
+      }),
+      candidate(['Responsible AI'], 80, {
+        excludeTasks: ['Document drafting', 'Custom assistants'],
+        when: [
+          'policy',
+          'privacy',
+          'responsible',
+          'guideline',
+          'risk',
+          'sensitive',
+          'stopped',
+          'adoption',
+          'barrier',
+          'concern',
+        ],
+      }),
+      candidate(['Retreat planning'], 75, {
+        when: ['each month', 'monthly', 'term', 'agenda', 'facilitation'],
       }),
     ],
     { explanatory: true },
@@ -890,7 +972,25 @@ export const operationRules: readonly OperationRule[] = [
     ['Audio generation', 'Video creation'],
     'document',
     ['audio', 'video'],
-    [candidate(['Audio generation']), candidate(['Audio review'], 80)],
+    [
+      candidate(['Audio generation']),
+      candidate(['Audio review'], 80),
+      candidate(['Document summary'], 75, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: ['description', 'learning objective'],
+      }),
+      candidate(['Document summary'], 75, {
+        teaching: ['speaker', 'panel'],
+        when: ['description', 'learning objective'],
+      }),
+      candidate(['Scriptwriting'], 75, {
+        allTasks: ['Video creation'],
+        whenAll: [
+          ['video', 'explainer'],
+          ['description', 'learning objective', 'reinforcement'],
+        ],
+      }),
+    ],
     { outputWhen: { video: ['video', 'explainer'] } },
   ),
   rule(

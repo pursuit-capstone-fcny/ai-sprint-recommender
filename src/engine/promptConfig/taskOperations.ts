@@ -156,6 +156,8 @@ export const taskOperations: readonly OperationRule[] = [
           'landlord',
           'correspondence',
           'question',
+          'ask',
+          'missing',
           'clarify',
           'fact',
           'confirm',
@@ -261,7 +263,16 @@ export const taskOperations: readonly OperationRule[] = [
     ['Budget consolidation', 'Spreadsheet automation'],
     'spreadsheet',
     ['spreadsheet'],
-    [c(['Budget consolidation', 'Spreadsheet automation'])],
+    [
+      c(['Budget consolidation', 'Spreadsheet automation']),
+      c(['Spreadsheet formulas'], 75, {
+        excludeTasks: ['List comparison'],
+        whenAll: [
+          ['summary', 'total'],
+          ['explain', 'where the code', 'how to run'],
+        ],
+      }),
+    ],
   ),
   r(
     'strategic-actions',
@@ -315,7 +326,20 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Process documentation'], 75, {
         allTasks: ['Client intake'],
         excludeTasks: ['Custom assistants'],
-        when: ['office', 'handoff', 'process', 'responsibility'],
+        when: [
+          'office',
+          'handoff',
+          'process',
+          'responsibility',
+          'follow up team',
+        ],
+      }),
+      c(['Data structuring'], 70, {
+        excludeTasks: ['App building'],
+        whenAll: [
+          ['structured', 'column', 'tab separated'],
+          ['copy', 'existing'],
+        ],
       }),
     ],
   ),
@@ -369,6 +393,20 @@ export const taskOperations: readonly OperationRule[] = [
           'Language learning',
           'Grantmaker communications',
           'Staff training',
+        ],
+      }),
+      c(['Role play'], 75, {
+        allTasks: ['Grantmaker communications'],
+        whenAll: [
+          ['aloud', 'spoken', 'voice'],
+          ['feedback', 'stop', 'pause', 'respond'],
+        ],
+      }),
+      c(['Role play'], 75, {
+        allTasks: ['Staff training'],
+        whenAll: [
+          ['aloud', 'spoken', 'voice'],
+          ['feedback', 'stop', 'pause', 'respond'],
         ],
       }),
     ],
