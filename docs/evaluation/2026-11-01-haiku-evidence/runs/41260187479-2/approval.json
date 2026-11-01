@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "1604045b5220f7f87a724503a697b61a35cc9887",
+  "approvedWorkflowRunId": "41260187479",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T01:54:44Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v44",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V44 retains the V43 single-call evidence-before-position format and V36 candidate retrieval, but auxiliary usefulness statements use a five-word instruction and the existing whole-response bound instead of an 80-character rejection threshold. Strict eight-object shape, selected/unused statement association, position range, uniqueness, task-diversity and labels stay unchanged. Save sanitized schema/statement counts and stop after a saved structural schema rejection; no retries or replacement paid cases. Same 30 benchmark requests and ten controls; 4.5s deadline, 65000 input bound, 512 output cap, 6756 microdollar reservation. Readiness can wait only on the fixed unpaid blank intake.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Carry $3.615230 under the same $4 cap, including all $0.366876 unknown reservations. Remaining $0.384770; maximum 40-case reservation $0.270240. No resets, refunds or repricing. Production LLM calls and logging disabled.",
+  "allowanceMicrodollars": 384770,
+  "maxRequestMicrodollars": 6756,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3615230,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

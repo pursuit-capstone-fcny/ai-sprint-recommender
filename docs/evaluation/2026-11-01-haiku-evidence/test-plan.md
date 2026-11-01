@@ -83,3 +83,25 @@ and the real evaluation callback are regression tested before a new run.
 Repeat the same forty cases once within the $0.384770 remainder. Keep the input,
 output, deadline and reservation caps, all benchmark labels, catalog metadata,
 task-diversity gate and production flags unchanged. All V43 failures remain.
+
+## V45 supporting-method precision
+
+V44 run 41260187479 attempt two passes the unchanged full validation: 10/10 each,
+30/30 six-to-eight lists, forty measured requests and no timeout, transport
+failure, invalid response or duplicate. Original review flags are absent. Its
+235 displayed cards still include questionable support, including an HR policy
+bot for grant preparation, a song for written updates and meeting minutes for
+an existing-document board deck. These observations are not new labels.
+
+V45 changes one prompt instruction. Require a supporting method's demonstrated
+input, operation and result to fit the actual work. Do not reinterpret a
+subject-specific content assistant as answering a different subject, substitute
+a different output medium, or add generic prerequisites. Continue checking real
+preparation, research, evidence review, editing and workflow organization for
+useful breadth. Keep the V44 schema, parsing, candidate retrieval and all caps.
+
+Run the same forty cases once with $0.324252 remaining. The cumulative ceiling is
+$3.675748, including $0.366876 unknown reservations. Keep V44 as the tested
+fallback; retain V45 only if its results support the precision improvement
+without losing the gains in quality, breadth and reliability. Preserve labels,
+the task-diversity gate and all historical results. Production stays off.

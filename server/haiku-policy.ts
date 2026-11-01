@@ -1,5 +1,5 @@
 // Current bounded test candidate. Historical requests and production stay unchanged.
-export const HAIKU_DEPLOYED_PROMPT = 'catalog-rank-haiku-v44';
+export const HAIKU_DEPLOYED_PROMPT = 'catalog-rank-haiku-v45';
 export const HAIKU_DEPLOYED_RESERVATION = 6_756;
 export const HAIKU_BROWSING_INSTRUCTION =
   'The actual goal string is empty. This is the normal browsing mode, not a nonblank statement that no work task exists. Use the selected function area and tools to choose useful catalog videos. Select six to eight distinct useful positions when available, covering practical activities relevant to that area and tools. Do not apply the nonblank-goal missing-work abstention rule to this request. Keep all eligibility, catalog-validity and uniqueness rules; never invent a goal or a position.';

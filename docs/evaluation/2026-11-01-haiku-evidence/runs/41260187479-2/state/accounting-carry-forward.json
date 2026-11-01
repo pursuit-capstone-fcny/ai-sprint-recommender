@@ -1,0 +1,6 @@
+{
+  "historicalUnknownReservationsMicrodollars": 366876,
+  "newUnknownReservationsMicrodollars": 0,
+  "cumulativeUnknownReservationsMicrodollars": 366876,
+  "note": "Carries all historical unknown reservations forward; no charge or score changed."
+}
