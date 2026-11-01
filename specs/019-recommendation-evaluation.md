@@ -1,11 +1,15 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V54 full catalog retained; duplicate failures and expanded review remain open.
+- **Status:** V55 duplicate-response validation pending; all 89 videos retained.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given full-catalog Haiku selection, when emitting each rank, then choose an
+  unused position before its short usefulness note. Preserve strict duplicate
+  rejection, measured usage, all 89 candidates and the final task-diversity gate.
 
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the

@@ -1,0 +1,19 @@
+{
+  "testsPassed": 654,
+  "testsFailed": 0,
+  "typecheck": "passed",
+  "lint": "passed",
+  "formatting": "passed",
+  "build": "passed",
+  "haikuRuntime": "passed",
+  "lunaRuntime": "passed",
+  "externalRuntimeCalls": 0,
+  "outboundOrderRegression": "Failed with use before position, passes with position before use. Strict duplicate rejection and measured usage remain covered.",
+  "largestFullWireBound": 61372,
+  "inputCap": 63000,
+  "outputCap": 512,
+  "fortyCaseReservationMicrodollars": 262240,
+  "remainingBeforeRunMicrodollars": 677208,
+  "candidateCount": 89,
+  "prefiltering": false
+}

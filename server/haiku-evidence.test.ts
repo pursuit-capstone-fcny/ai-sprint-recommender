@@ -35,7 +35,7 @@ const response = (value: unknown, stop_reason = 'end_turn') =>
   });
 
 describe('single-pass Haiku selection evidence', () => {
-  it('requests use before position, counts the wire schema, and exposes only trusted IDs', async () => {
+  it('requests position before use, counts the wire schema, and exposes only trusted IDs', async () => {
     let sent = '';
     const fetcher = vi.fn<typeof fetch>(async (_url, init) => {
       sent = String(init?.body);
@@ -50,11 +50,16 @@ describe('single-pass Haiku selection evidence', () => {
       inputTokens: 1800,
       outputTokens: 220,
     });
-    const schema = JSON.parse(sent).output_config.format.schema;
-    expect(schema.properties.rank1.required).toEqual(['use', 'position']);
+    const wire = JSON.parse(sent);
+    expect(wire.system).toContain('position followed by use');
+    expect(wire.system).toContain(
+      'First copy a useful integer position that is absent from all earlier ranks.',
+    );
+    const schema = wire.output_config.format.schema;
+    expect(schema.properties.rank1.required).toEqual(['position', 'use']);
     expect(Object.keys(schema.properties.rank1.properties)).toEqual([
-      'use',
       'position',
+      'use',
     ]);
     expect(schema.properties.rank1.properties.position).toEqual(
       body.request.output_config.format.schema.properties.rank1,
