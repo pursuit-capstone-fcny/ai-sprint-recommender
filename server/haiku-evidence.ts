@@ -12,34 +12,6 @@ export function anthropicRequest(body: ProviderBody) {
   return {
     ...body.request,
     system: `${body.request.system} ${EVIDENCE_INSTRUCTION}`,
-    messages: body.request.messages.map((message) => {
-      const data = JSON.parse(message.content);
-      const catalogFields = [
-        'position',
-        'description',
-        'tasks',
-        'title',
-        'functionAreas',
-        'tools',
-      ];
-      const indices = catalogFields.map((field) =>
-        data.catalogFields.indexOf(field),
-      );
-      const catalog = data.catalog.map((row: unknown[]) =>
-        indices.map((index) => row[index]),
-      );
-      // Preserve every value, source row and numeric position. Present the
-      // demonstrated method before its title; keep one candidate per line.
-      const content = JSON.stringify({
-        ...data,
-        catalogFields,
-        catalog,
-      }).replace(
-        JSON.stringify(catalog),
-        `[\n${catalog.map((row: unknown[]) => JSON.stringify(row)).join(',\n')}\n]`,
-      );
-      return { ...message, content };
-    }),
     output_config: {
       ...body.request.output_config,
       format: {

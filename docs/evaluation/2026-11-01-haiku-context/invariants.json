@@ -1,0 +1,37 @@
+{
+  "comparedWith": "b129512d9b5d36ce28bc67e0f55288d7d6f98e10",
+  "frozenFiles": [
+    {
+      "path": "docs/evaluation/2026-10-28-task-tags/benchmark.json",
+      "unchanged": true,
+      "sha256": "ea05004ea2be226d56ddbc07ffcf6002856d7fb517f710e35e4bf59c870a4f97"
+    },
+    {
+      "path": "docs/evaluation/2026-10-30-luna-ranking/catalog.json",
+      "unchanged": true,
+      "sha256": "765818523e53de0dac74d97847aad1bc9183d3266d17ac5997d25b367bcacd3c"
+    },
+    {
+      "path": "src/engine/dedupe.ts",
+      "unchanged": true,
+      "sha256": "d924b398619808a5918d9e59fe995ec49c4ca637e5b1a37c9edd1f8f2ed70761"
+    },
+    {
+      "path": "src/recommendations/selectRecommendations.ts",
+      "unchanged": true,
+      "sha256": "8ac76bcc0020fd9381a1f21d09ebf4ec05e5fe0a82b3361b6244237af677716d"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "unchanged": true,
+      "sha256": "c0681f82196b95385a72e8d2f733b1cef743b14f19988b1a32d2036ede196931"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "unchanged": true,
+      "sha256": "a1fb9f422eeecfff23893264581ebaf788a98f075f0dcd723c7c0fe3c9f9581a"
+    }
+  ],
+  "runtimeRestored": true,
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09"
+}

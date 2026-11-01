@@ -1,0 +1,1583 @@
+{
+  "schemaVersion": 1,
+  "benchmarkId": "fcny-89-task-tags-2026-10-28",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+  "sourceRevision": "d36abda5f679aec4c2955f8f11530a6ff07b3681",
+  "evaluationSourceRevision": "d36abda5f679aec4c2955f8f11530a6ff07b3681",
+  "evidence": {
+    "kind": "fresh",
+    "sourceRevision": "d36abda5f679aec4c2955f8f11530a6ff07b3681",
+    "runId": "41326132545",
+    "runAttempt": 2
+  },
+  "approval": {
+    "status": "approved",
+    "approvedBy": "Jason",
+    "approvedAt": "2026-10-28",
+    "evidence": "Jason requested filling missing catalog task tags and rerunning Luna low within the remaining allowance. Original October 21 profile inputs and ideal/good labels are unchanged; only task metadata and catalog version differ."
+  },
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v53",
+  "trialKind": "live",
+  "rules": {
+    "passedProfiles": 8,
+    "passed": true,
+    "profiles": [
+      {
+        "profileId": "leadership-01",
+        "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "nBAaIIz9QFg"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "6d2bKhdmqqA",
+            "i22v2xwT6k4",
+            "nBAaIIz9QFg",
+            "bxfxzx-_MME",
+            "C7wclvAF0Mc",
+            "3oX_M8AcBXk",
+            "9Np4JDDQvpA",
+            "YACIPFCbGV8"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["6d2bKhdmqqA", "i22v2xwT6k4"],
+          "unreviewedIds": [
+            "nBAaIIz9QFg",
+            "bxfxzx-_MME",
+            "C7wclvAF0Mc",
+            "3oX_M8AcBXk",
+            "9Np4JDDQvpA",
+            "YACIPFCbGV8"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "leadership-02",
+        "displayedIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "3oX_M8AcBXk",
+            "jm9ZaKY1taA",
+            "nBAaIIz9QFg",
+            "6d2bKhdmqqA",
+            "9Np4JDDQvpA",
+            "C7wclvAF0Mc",
+            "YACIPFCbGV8",
+            "bxfxzx-_MME"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+          "unreviewedIds": [
+            "6d2bKhdmqqA",
+            "9Np4JDDQvpA",
+            "C7wclvAF0Mc",
+            "YACIPFCbGV8",
+            "bxfxzx-_MME"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "operations-01",
+        "displayedIds": ["cwCVpchJHB4", "8ahFA8ECM4c", "0qSXFbGrQ90"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "cwCVpchJHB4",
+            "8ahFA8ECM4c",
+            "0qSXFbGrQ90",
+            "4Wo_miqxgmE",
+            "m0mI6_g0V2g",
+            "tIekXJLsm8g",
+            "_pM0ua51qRI",
+            "vzeAxozbV6w"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["cwCVpchJHB4", "0qSXFbGrQ90", "m0mI6_g0V2g"],
+          "unreviewedIds": [
+            "8ahFA8ECM4c",
+            "4Wo_miqxgmE",
+            "tIekXJLsm8g",
+            "_pM0ua51qRI",
+            "vzeAxozbV6w"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "operations-02",
+        "displayedIds": ["AjI2GF1b6zo", "UdWR8KKxVDU", "33a0qYtCMvc"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "AjI2GF1b6zo",
+            "UdWR8KKxVDU",
+            "33a0qYtCMvc",
+            "W-j725bzPJU",
+            "dAqdQGqyNq8",
+            "-zIvVmJ2XFw",
+            "6d2bKhdmqqA",
+            "8ahFA8ECM4c"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["AjI2GF1b6zo", "UdWR8KKxVDU"],
+          "unreviewedIds": [
+            "33a0qYtCMvc",
+            "W-j725bzPJU",
+            "dAqdQGqyNq8",
+            "-zIvVmJ2XFw",
+            "6d2bKhdmqqA",
+            "8ahFA8ECM4c"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "programs-01",
+        "displayedIds": ["fCAYTD-hgU8", "Fz_zl467-QU", "Kv0C743lCUw"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "fCAYTD-hgU8",
+            "Fz_zl467-QU",
+            "Kv0C743lCUw",
+            "rKn6KASMk50",
+            "DNfFMZxAI-0",
+            "JzV9-_irHdI",
+            "dooZWSQCNSs",
+            "c5bL8ah2teE"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": [
+            "fCAYTD-hgU8",
+            "Fz_zl467-QU",
+            "Kv0C743lCUw",
+            "DNfFMZxAI-0"
+          ],
+          "unreviewedIds": [
+            "rKn6KASMk50",
+            "JzV9-_irHdI",
+            "dooZWSQCNSs",
+            "c5bL8ah2teE"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "programs-02",
+        "displayedIds": ["JzV9-_irHdI", "c5bL8ah2teE", "xpbFvf5lM-w"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "JzV9-_irHdI",
+            "c5bL8ah2teE",
+            "xpbFvf5lM-w",
+            "rKn6KASMk50",
+            "LCZZLOrfwXc",
+            "Kv0C743lCUw",
+            "Fz_zl467-QU",
+            "lYzFro10bDM"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["JzV9-_irHdI", "c5bL8ah2teE"],
+          "unreviewedIds": [
+            "xpbFvf5lM-w",
+            "rKn6KASMk50",
+            "LCZZLOrfwXc",
+            "Kv0C743lCUw",
+            "Fz_zl467-QU",
+            "lYzFro10bDM"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "communications-01",
+        "displayedIds": ["Xlvo2_eUBLo", "sLAu2FqUZyE", "wu6DHIkJH7k"],
+        "hits": 1,
+        "misses": 2,
+        "passed": false,
+        "expanded": {
+          "displayedIds": [
+            "Xlvo2_eUBLo",
+            "sLAu2FqUZyE",
+            "wu6DHIkJH7k",
+            "PUACowM_SdU",
+            "ldd8wxVHvCw",
+            "Hkj01weD_Hs",
+            "89GrUhOThk4",
+            "MpkMYlaHU4k"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["sLAu2FqUZyE", "PUACowM_SdU", "ldd8wxVHvCw"],
+          "unreviewedIds": [
+            "Xlvo2_eUBLo",
+            "wu6DHIkJH7k",
+            "Hkj01weD_Hs",
+            "89GrUhOThk4",
+            "MpkMYlaHU4k"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "communications-02",
+        "displayedIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "89GrUhOThk4"],
+        "hits": 2,
+        "misses": 1,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "AMdAwWwdOzY",
+            "33a0qYtCMvc",
+            "89GrUhOThk4",
+            "_wdiyBIC8uc",
+            "Xlvo2_eUBLo",
+            "5vR5cPnqT-Q",
+            "MpkMYlaHU4k",
+            "QblW0rArEME"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "_wdiyBIC8uc"],
+          "unreviewedIds": [
+            "89GrUhOThk4",
+            "Xlvo2_eUBLo",
+            "5vR5cPnqT-Q",
+            "MpkMYlaHU4k",
+            "QblW0rArEME"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "fundraising-01",
+        "displayedIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+        "hits": 3,
+        "misses": 0,
+        "passed": true,
+        "expanded": {
+          "displayedIds": [
+            "VQRVNYS1m3g",
+            "ShikWPoBRac",
+            "rjaMvND2IRU",
+            "6EWc3MgRNFg",
+            "ZlfTvy2PT1w",
+            "_9QqyTbwisc",
+            "ADF07rFbH8M",
+            "MpkMYlaHU4k"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+          "unreviewedIds": [
+            "6EWc3MgRNFg",
+            "ZlfTvy2PT1w",
+            "_9QqyTbwisc",
+            "ADF07rFbH8M",
+            "MpkMYlaHU4k"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      },
+      {
+        "profileId": "fundraising-02",
+        "displayedIds": ["_9QqyTbwisc", "ShikWPoBRac", "6EWc3MgRNFg"],
+        "hits": 0,
+        "misses": 3,
+        "passed": false,
+        "expanded": {
+          "displayedIds": [
+            "_9QqyTbwisc",
+            "ShikWPoBRac",
+            "6EWc3MgRNFg",
+            "S_DQeIX2xz8",
+            "VQRVNYS1m3g",
+            "ADF07rFbH8M",
+            "ZlfTvy2PT1w",
+            "rjaMvND2IRU"
+          ],
+          "count": 8,
+          "withinPreferredRange": true,
+          "knownGoodIds": ["S_DQeIX2xz8", "ADF07rFbH8M"],
+          "unreviewedIds": [
+            "_9QqyTbwisc",
+            "ShikWPoBRac",
+            "6EWc3MgRNFg",
+            "VQRVNYS1m3g",
+            "ZlfTvy2PT1w",
+            "rjaMvND2IRU"
+          ],
+          "qualityApproval": "pending-client-review"
+        }
+      }
+    ]
+  },
+  "llm": [
+    {
+      "trial": 1,
+      "startedAt": "2026-11-01T16:26:01.988Z",
+      "passedProfiles": 6,
+      "passed": false,
+      "fallbackCount": 4,
+      "profiles": [
+        {
+          "profileId": "leadership-01",
+          "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "bxfxzx-_MME"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "6d2bKhdmqqA",
+              "i22v2xwT6k4",
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "3oX_M8AcBXk",
+              "nBAaIIz9QFg",
+              "0qSXFbGrQ90",
+              "9Np4JDDQvpA"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["6d2bKhdmqqA", "i22v2xwT6k4"],
+            "unreviewedIds": [
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "3oX_M8AcBXk",
+              "nBAaIIz9QFg",
+              "0qSXFbGrQ90",
+              "9Np4JDDQvpA"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "36974f24-2b13-45cc-a330-a6c6e999680f",
+          "latencyMs": 2876,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "leadership-02",
+          "displayedIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "3oX_M8AcBXk",
+              "jm9ZaKY1taA",
+              "nBAaIIz9QFg",
+              "6d2bKhdmqqA",
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "YACIPFCbGV8",
+              "bxfxzx-_MME"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+            "unreviewedIds": [
+              "6d2bKhdmqqA",
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "YACIPFCbGV8",
+              "bxfxzx-_MME"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "65fbed48-4fd2-4b66-961b-69bc25ef344b",
+          "latencyMs": 2312,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-01",
+          "displayedIds": ["m0mI6_g0V2g", "0qSXFbGrQ90", "ZMPLTq-ptrE"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "m0mI6_g0V2g",
+              "0qSXFbGrQ90",
+              "ZMPLTq-ptrE",
+              "cwCVpchJHB4",
+              "8ahFA8ECM4c",
+              "4Wo_miqxgmE",
+              "Z8yOypmasGg",
+              "tIekXJLsm8g"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["m0mI6_g0V2g", "0qSXFbGrQ90", "cwCVpchJHB4"],
+            "unreviewedIds": [
+              "ZMPLTq-ptrE",
+              "8ahFA8ECM4c",
+              "4Wo_miqxgmE",
+              "Z8yOypmasGg",
+              "tIekXJLsm8g"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "eecec906-b684-4735-90ea-be0128bcabcb",
+          "latencyMs": 2204,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-02",
+          "displayedIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "_9QqyTbwisc"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "_9QqyTbwisc",
+              "wxJVc1q_nnY",
+              "4LMIC-v5xZ0",
+              "33a0qYtCMvc",
+              "Z8yOypmasGg",
+              "6d2bKhdmqqA"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "_9QqyTbwisc"],
+            "unreviewedIds": [
+              "wxJVc1q_nnY",
+              "4LMIC-v5xZ0",
+              "33a0qYtCMvc",
+              "Z8yOypmasGg",
+              "6d2bKhdmqqA"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "0178ad40-7074-42f2-9a34-ac8bbcc225dd",
+          "latencyMs": 2147,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-01",
+          "displayedIds": ["fCAYTD-hgU8", "Fz_zl467-QU", "Kv0C743lCUw"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "Kv0C743lCUw",
+              "rKn6KASMk50",
+              "DNfFMZxAI-0",
+              "JzV9-_irHdI",
+              "dooZWSQCNSs",
+              "c5bL8ah2teE"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": [
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "Kv0C743lCUw",
+              "DNfFMZxAI-0"
+            ],
+            "unreviewedIds": [
+              "rKn6KASMk50",
+              "JzV9-_irHdI",
+              "dooZWSQCNSs",
+              "c5bL8ah2teE"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "16e6feaa-f868-472a-be40-91bbfb1a97ca",
+          "latencyMs": 2120,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-02",
+          "displayedIds": ["c5bL8ah2teE", "JzV9-_irHdI", "_pM0ua51qRI"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "_pM0ua51qRI",
+              "maR3ZerQIJU",
+              "rtBkm7m6JCg",
+              "ZMPLTq-ptrE",
+              "Z8yOypmasGg",
+              "NPl_WDdrKMU"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["c5bL8ah2teE", "JzV9-_irHdI"],
+            "unreviewedIds": [
+              "_pM0ua51qRI",
+              "maR3ZerQIJU",
+              "rtBkm7m6JCg",
+              "ZMPLTq-ptrE",
+              "Z8yOypmasGg",
+              "NPl_WDdrKMU"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "492baba9-960b-47c6-ada3-a6c4934934f4",
+          "latencyMs": 2203,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-01",
+          "displayedIds": ["PUACowM_SdU", "ldd8wxVHvCw", "sLAu2FqUZyE"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "PUACowM_SdU",
+              "ldd8wxVHvCw",
+              "sLAu2FqUZyE",
+              "_9QqyTbwisc",
+              "6VQWti4-pLE",
+              "t1yNb7iV6g4",
+              "MpkMYlaHU4k",
+              "wu6DHIkJH7k"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["PUACowM_SdU", "ldd8wxVHvCw", "sLAu2FqUZyE"],
+            "unreviewedIds": [
+              "_9QqyTbwisc",
+              "6VQWti4-pLE",
+              "t1yNb7iV6g4",
+              "MpkMYlaHU4k",
+              "wu6DHIkJH7k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "d46cae68-6082-4a15-8449-2e0163bf5417",
+          "latencyMs": 2472,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-02",
+          "displayedIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "89GrUhOThk4"],
+          "hits": 2,
+          "misses": 1,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "AMdAwWwdOzY",
+              "33a0qYtCMvc",
+              "89GrUhOThk4",
+              "_wdiyBIC8uc",
+              "Xlvo2_eUBLo",
+              "5vR5cPnqT-Q",
+              "MpkMYlaHU4k",
+              "QblW0rArEME"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "_wdiyBIC8uc"],
+            "unreviewedIds": [
+              "89GrUhOThk4",
+              "Xlvo2_eUBLo",
+              "5vR5cPnqT-Q",
+              "MpkMYlaHU4k",
+              "QblW0rArEME"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "5f478ba6-7f4d-4162-a2f8-de8c1ad2af7e",
+          "latencyMs": 2530,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-01",
+          "displayedIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "VQRVNYS1m3g",
+              "ShikWPoBRac",
+              "rjaMvND2IRU",
+              "6EWc3MgRNFg",
+              "ZlfTvy2PT1w",
+              "_9QqyTbwisc",
+              "ADF07rFbH8M",
+              "MpkMYlaHU4k"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+            "unreviewedIds": [
+              "6EWc3MgRNFg",
+              "ZlfTvy2PT1w",
+              "_9QqyTbwisc",
+              "ADF07rFbH8M",
+              "MpkMYlaHU4k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "6e152c30-2596-464f-85cd-87d5d9db2e45",
+          "latencyMs": 3337,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-02",
+          "displayedIds": ["S_DQeIX2xz8", "3oX_M8AcBXk", "ADF07rFbH8M"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "S_DQeIX2xz8",
+              "3oX_M8AcBXk",
+              "ADF07rFbH8M",
+              "jm9ZaKY1taA",
+              "7IYj3W4PdPE",
+              "rjaMvND2IRU",
+              "ShikWPoBRac",
+              "Q0Vr4PnGoe4"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["S_DQeIX2xz8", "ADF07rFbH8M"],
+            "unreviewedIds": [
+              "3oX_M8AcBXk",
+              "jm9ZaKY1taA",
+              "7IYj3W4PdPE",
+              "rjaMvND2IRU",
+              "ShikWPoBRac",
+              "Q0Vr4PnGoe4"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "276c1800-3aa2-4dd4-a09b-70dddbdb5873",
+          "latencyMs": 2277,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        }
+      ]
+    },
+    {
+      "trial": 2,
+      "startedAt": "2026-11-01T16:26:26.637Z",
+      "passedProfiles": 9,
+      "passed": true,
+      "fallbackCount": 1,
+      "profiles": [
+        {
+          "profileId": "leadership-01",
+          "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "bxfxzx-_MME"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "6d2bKhdmqqA",
+              "i22v2xwT6k4",
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "xpbFvf5lM-w",
+              "cwCVpchJHB4",
+              "LCZZLOrfwXc",
+              "wxJVc1q_nnY"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["6d2bKhdmqqA", "i22v2xwT6k4"],
+            "unreviewedIds": [
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "xpbFvf5lM-w",
+              "cwCVpchJHB4",
+              "LCZZLOrfwXc",
+              "wxJVc1q_nnY"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "2941ea65-fdaa-4979-9d21-1202e1737d27",
+          "latencyMs": 1936,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "leadership-02",
+          "displayedIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "jm9ZaKY1taA",
+              "3oX_M8AcBXk",
+              "nBAaIIz9QFg",
+              "FMQJH3c5cLc",
+              "YACIPFCbGV8",
+              "C7wclvAF0Mc",
+              "S_DQeIX2xz8",
+              "t1yNb7iV6g4"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["jm9ZaKY1taA", "3oX_M8AcBXk", "nBAaIIz9QFg"],
+            "unreviewedIds": [
+              "FMQJH3c5cLc",
+              "YACIPFCbGV8",
+              "C7wclvAF0Mc",
+              "S_DQeIX2xz8",
+              "t1yNb7iV6g4"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "d895a03f-c8a1-4b89-8471-01e43af4953b",
+          "latencyMs": 2005,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-01",
+          "displayedIds": ["cwCVpchJHB4", "m0mI6_g0V2g", "8ahFA8ECM4c"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "cwCVpchJHB4",
+              "m0mI6_g0V2g",
+              "8ahFA8ECM4c",
+              "0qSXFbGrQ90",
+              "4Wo_miqxgmE",
+              "ZMPLTq-ptrE",
+              "5vR5cPnqT-Q"
+            ],
+            "count": 7,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["cwCVpchJHB4", "m0mI6_g0V2g", "0qSXFbGrQ90"],
+            "unreviewedIds": [
+              "8ahFA8ECM4c",
+              "4Wo_miqxgmE",
+              "ZMPLTq-ptrE",
+              "5vR5cPnqT-Q"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "3e730a97-1301-4325-ab46-29c757f8685d",
+          "latencyMs": 1904,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-02",
+          "displayedIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "_9QqyTbwisc"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "_9QqyTbwisc",
+              "4LMIC-v5xZ0",
+              "Z8yOypmasGg",
+              "33a0qYtCMvc",
+              "wxJVc1q_nnY",
+              "nBAaIIz9QFg"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "_9QqyTbwisc"],
+            "unreviewedIds": [
+              "4LMIC-v5xZ0",
+              "Z8yOypmasGg",
+              "33a0qYtCMvc",
+              "wxJVc1q_nnY",
+              "nBAaIIz9QFg"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "a36c21ff-546b-4101-824e-276f79da4227",
+          "latencyMs": 2064,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-01",
+          "displayedIds": ["fCAYTD-hgU8", "Fz_zl467-QU", "Kv0C743lCUw"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "Kv0C743lCUw",
+              "rKn6KASMk50",
+              "DNfFMZxAI-0",
+              "JzV9-_irHdI",
+              "dooZWSQCNSs",
+              "c5bL8ah2teE"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": [
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "Kv0C743lCUw",
+              "DNfFMZxAI-0"
+            ],
+            "unreviewedIds": [
+              "rKn6KASMk50",
+              "JzV9-_irHdI",
+              "dooZWSQCNSs",
+              "c5bL8ah2teE"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "3b123fd6-e4b6-4e43-af2a-a7fa09575fa7",
+          "latencyMs": 1881,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-02",
+          "displayedIds": ["c5bL8ah2teE", "JzV9-_irHdI", "rtBkm7m6JCg"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "rtBkm7m6JCg",
+              "Z8yOypmasGg",
+              "maR3ZerQIJU",
+              "_pM0ua51qRI",
+              "LCZZLOrfwXc",
+              "-zIvVmJ2XFw"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["c5bL8ah2teE", "JzV9-_irHdI"],
+            "unreviewedIds": [
+              "rtBkm7m6JCg",
+              "Z8yOypmasGg",
+              "maR3ZerQIJU",
+              "_pM0ua51qRI",
+              "LCZZLOrfwXc",
+              "-zIvVmJ2XFw"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "f00110cd-6b9c-48e3-9ea8-8cc4fac48832",
+          "latencyMs": 2022,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-01",
+          "displayedIds": ["PUACowM_SdU", "ldd8wxVHvCw", "sLAu2FqUZyE"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "PUACowM_SdU",
+              "ldd8wxVHvCw",
+              "sLAu2FqUZyE",
+              "6VQWti4-pLE",
+              "kONzk7f2M5o",
+              "MpkMYlaHU4k",
+              "wu6DHIkJH7k"
+            ],
+            "count": 7,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["PUACowM_SdU", "ldd8wxVHvCw", "sLAu2FqUZyE"],
+            "unreviewedIds": [
+              "6VQWti4-pLE",
+              "kONzk7f2M5o",
+              "MpkMYlaHU4k",
+              "wu6DHIkJH7k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "f02647ca-77f7-4071-ad0f-92eabb387d18",
+          "latencyMs": 2177,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-02",
+          "displayedIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "9Np4JDDQvpA"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "AMdAwWwdOzY",
+              "33a0qYtCMvc",
+              "9Np4JDDQvpA",
+              "_wdiyBIC8uc",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o",
+              "Xlvo2_eUBLo"
+            ],
+            "count": 7,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["AMdAwWwdOzY", "33a0qYtCMvc", "_wdiyBIC8uc"],
+            "unreviewedIds": [
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o",
+              "Xlvo2_eUBLo"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "dd30c81a-e294-46d6-bb5a-6c3de12675ac",
+          "latencyMs": 2130,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-01",
+          "displayedIds": ["rjaMvND2IRU", "ShikWPoBRac", "VQRVNYS1m3g"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "rjaMvND2IRU",
+              "ShikWPoBRac",
+              "VQRVNYS1m3g",
+              "7IYj3W4PdPE",
+              "ADF07rFbH8M",
+              "6EWc3MgRNFg"
+            ],
+            "count": 6,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["rjaMvND2IRU", "ShikWPoBRac", "VQRVNYS1m3g"],
+            "unreviewedIds": ["7IYj3W4PdPE", "ADF07rFbH8M", "6EWc3MgRNFg"],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "985a5de4-76d2-409b-8b82-c33d09b93bca",
+          "latencyMs": 1875,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-02",
+          "displayedIds": ["S_DQeIX2xz8", "ADF07rFbH8M", "3oX_M8AcBXk"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "S_DQeIX2xz8",
+              "ADF07rFbH8M",
+              "3oX_M8AcBXk",
+              "7IYj3W4PdPE",
+              "jm9ZaKY1taA",
+              "rjaMvND2IRU",
+              "FMQJH3c5cLc",
+              "Q0Vr4PnGoe4"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["S_DQeIX2xz8", "ADF07rFbH8M"],
+            "unreviewedIds": [
+              "3oX_M8AcBXk",
+              "7IYj3W4PdPE",
+              "jm9ZaKY1taA",
+              "rjaMvND2IRU",
+              "FMQJH3c5cLc",
+              "Q0Vr4PnGoe4"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "41c3ba10-f036-4ed2-8cb3-331c955ffe7d",
+          "latencyMs": 2220,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        }
+      ]
+    },
+    {
+      "trial": 3,
+      "startedAt": "2026-11-01T16:26:47.064Z",
+      "passedProfiles": 8,
+      "passed": true,
+      "fallbackCount": 2,
+      "profiles": [
+        {
+          "profileId": "leadership-01",
+          "displayedIds": ["6d2bKhdmqqA", "i22v2xwT6k4", "rFhgVTsItlU"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "6d2bKhdmqqA",
+              "i22v2xwT6k4",
+              "rFhgVTsItlU",
+              "bxfxzx-_MME",
+              "C7wclvAF0Mc",
+              "3oX_M8AcBXk",
+              "9Np4JDDQvpA"
+            ],
+            "count": 7,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["6d2bKhdmqqA", "i22v2xwT6k4"],
+            "unreviewedIds": [
+              "rFhgVTsItlU",
+              "bxfxzx-_MME",
+              "C7wclvAF0Mc",
+              "3oX_M8AcBXk",
+              "9Np4JDDQvpA"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "a2a15803-9a9b-4207-a77a-401d78c9b5a5",
+          "latencyMs": 1980,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "leadership-02",
+          "displayedIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "3oX_M8AcBXk",
+              "jm9ZaKY1taA",
+              "nBAaIIz9QFg",
+              "6d2bKhdmqqA",
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "YACIPFCbGV8",
+              "bxfxzx-_MME"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["3oX_M8AcBXk", "jm9ZaKY1taA", "nBAaIIz9QFg"],
+            "unreviewedIds": [
+              "6d2bKhdmqqA",
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "YACIPFCbGV8",
+              "bxfxzx-_MME"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "c3f21f3c-4c2b-4b3c-a7dc-44eac60f5bfa",
+          "latencyMs": 2109,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-01",
+          "displayedIds": ["cwCVpchJHB4", "m0mI6_g0V2g", "ZMPLTq-ptrE"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "cwCVpchJHB4",
+              "m0mI6_g0V2g",
+              "ZMPLTq-ptrE",
+              "0qSXFbGrQ90",
+              "4Wo_miqxgmE",
+              "8ahFA8ECM4c",
+              "tIekXJLsm8g",
+              "BEGWkv3nrk0"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["cwCVpchJHB4", "m0mI6_g0V2g", "0qSXFbGrQ90"],
+            "unreviewedIds": [
+              "ZMPLTq-ptrE",
+              "4Wo_miqxgmE",
+              "8ahFA8ECM4c",
+              "tIekXJLsm8g",
+              "BEGWkv3nrk0"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "801f2573-eb6d-434e-9622-8232f30e4f13",
+          "latencyMs": 2087,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "operations-02",
+          "displayedIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "4LMIC-v5xZ0"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "4LMIC-v5xZ0",
+              "_9QqyTbwisc",
+              "wxJVc1q_nnY",
+              "6d2bKhdmqqA",
+              "Z8yOypmasGg",
+              "33a0qYtCMvc"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["UdWR8KKxVDU", "AjI2GF1b6zo", "_9QqyTbwisc"],
+            "unreviewedIds": [
+              "4LMIC-v5xZ0",
+              "wxJVc1q_nnY",
+              "6d2bKhdmqqA",
+              "Z8yOypmasGg",
+              "33a0qYtCMvc"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "1bd95c6a-ecb7-4dae-aeee-a698c4a057f4",
+          "latencyMs": 2384,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-01",
+          "displayedIds": ["Kv0C743lCUw", "dooZWSQCNSs", "fCAYTD-hgU8"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "Kv0C743lCUw",
+              "dooZWSQCNSs",
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "wu6DHIkJH7k",
+              "DNfFMZxAI-0",
+              "smSNnphsmiw"
+            ],
+            "count": 7,
+            "withinPreferredRange": true,
+            "knownGoodIds": [
+              "Kv0C743lCUw",
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "DNfFMZxAI-0"
+            ],
+            "unreviewedIds": ["dooZWSQCNSs", "wu6DHIkJH7k", "smSNnphsmiw"],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "dbfc266e-29d3-451f-8309-70559a3ee6bf",
+          "latencyMs": 2015,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "programs-02",
+          "displayedIds": ["c5bL8ah2teE", "JzV9-_irHdI", "rtBkm7m6JCg"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "rtBkm7m6JCg",
+              "_pM0ua51qRI",
+              "ZMPLTq-ptrE",
+              "9Np4JDDQvpA",
+              "maR3ZerQIJU",
+              "LCZZLOrfwXc"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["c5bL8ah2teE", "JzV9-_irHdI"],
+            "unreviewedIds": [
+              "rtBkm7m6JCg",
+              "_pM0ua51qRI",
+              "ZMPLTq-ptrE",
+              "9Np4JDDQvpA",
+              "maR3ZerQIJU",
+              "LCZZLOrfwXc"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "e341beb6-a9c4-4d42-938a-2bb7d1fd52b5",
+          "latencyMs": 2117,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-01",
+          "displayedIds": ["ldd8wxVHvCw", "PUACowM_SdU", "sLAu2FqUZyE"],
+          "hits": 3,
+          "misses": 0,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "ldd8wxVHvCw",
+              "PUACowM_SdU",
+              "sLAu2FqUZyE",
+              "t1yNb7iV6g4",
+              "MpkMYlaHU4k",
+              "6VQWti4-pLE",
+              "kONzk7f2M5o",
+              "wu6DHIkJH7k"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["ldd8wxVHvCw", "PUACowM_SdU", "sLAu2FqUZyE"],
+            "unreviewedIds": [
+              "t1yNb7iV6g4",
+              "MpkMYlaHU4k",
+              "6VQWti4-pLE",
+              "kONzk7f2M5o",
+              "wu6DHIkJH7k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "ce892f9b-a0e7-45cb-8548-95b10287376f",
+          "latencyMs": 2214,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "communications-02",
+          "displayedIds": ["AMdAwWwdOzY", "_wdiyBIC8uc", "9Np4JDDQvpA"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "AMdAwWwdOzY",
+              "_wdiyBIC8uc",
+              "9Np4JDDQvpA",
+              "33a0qYtCMvc",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o",
+              "Z8yOypmasGg",
+              "MpkMYlaHU4k"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["AMdAwWwdOzY", "_wdiyBIC8uc", "33a0qYtCMvc"],
+            "unreviewedIds": [
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o",
+              "Z8yOypmasGg",
+              "MpkMYlaHU4k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "cdbf6fb9-61fb-4f59-8bee-a565bb7f0b0b",
+          "latencyMs": 2795,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-01",
+          "displayedIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+          "hits": 3,
+          "misses": 0,
+          "passed": false,
+          "expanded": {
+            "displayedIds": [
+              "VQRVNYS1m3g",
+              "ShikWPoBRac",
+              "rjaMvND2IRU",
+              "6EWc3MgRNFg",
+              "ZlfTvy2PT1w",
+              "_9QqyTbwisc",
+              "ADF07rFbH8M",
+              "MpkMYlaHU4k"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["VQRVNYS1m3g", "ShikWPoBRac", "rjaMvND2IRU"],
+            "unreviewedIds": [
+              "6EWc3MgRNFg",
+              "ZlfTvy2PT1w",
+              "_9QqyTbwisc",
+              "ADF07rFbH8M",
+              "MpkMYlaHU4k"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "rules",
+          "fallbackReason": "invalid-response",
+          "requestId": "92fccd05-a83b-499e-99b3-f5d0d2c973a3",
+          "latencyMs": 1998,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        },
+        {
+          "profileId": "fundraising-02",
+          "displayedIds": ["S_DQeIX2xz8", "ADF07rFbH8M", "3oX_M8AcBXk"],
+          "hits": 2,
+          "misses": 1,
+          "passed": true,
+          "expanded": {
+            "displayedIds": [
+              "S_DQeIX2xz8",
+              "ADF07rFbH8M",
+              "3oX_M8AcBXk",
+              "7IYj3W4PdPE",
+              "jm9ZaKY1taA",
+              "rjaMvND2IRU",
+              "ShikWPoBRac",
+              "FMQJH3c5cLc"
+            ],
+            "count": 8,
+            "withinPreferredRange": true,
+            "knownGoodIds": ["S_DQeIX2xz8", "ADF07rFbH8M"],
+            "unreviewedIds": [
+              "3oX_M8AcBXk",
+              "7IYj3W4PdPE",
+              "jm9ZaKY1taA",
+              "rjaMvND2IRU",
+              "ShikWPoBRac",
+              "FMQJH3c5cLc"
+            ],
+            "qualityApproval": "pending-client-review"
+          },
+          "engine": "llm",
+          "fallbackReason": "none",
+          "requestId": "1a4ea0a8-4ae2-45f0-b04a-38eae733b2f9",
+          "latencyMs": 1993,
+          "inputTokens": null,
+          "outputTokens": null,
+          "costMicrodollars": null,
+          "reservedMicrodollars": null,
+          "metricsComplete": false
+        }
+      ]
+    }
+  ],
+  "variation": [
+    {
+      "profileId": "leadership-01",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "leadership-02",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "operations-01",
+      "distinctResults": 3
+    },
+    {
+      "profileId": "operations-02",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "programs-01",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "programs-02",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "communications-01",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "communications-02",
+      "distinctResults": 3
+    },
+    {
+      "profileId": "fundraising-01",
+      "distinctResults": 2
+    },
+    {
+      "profileId": "fundraising-02",
+      "distinctResults": 2
+    }
+  ],
+  "warnings": [
+    "At least one LLM trial missed the 8/10 target.",
+    "Measured usage or cost evidence is incomplete."
+  ],
+  "relevanceEvidenceComplete": false,
+  "productionEnablement": "pending-owner-review"
+}

@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "d36abda5f679aec4c2955f8f11530a6ff07b3681",
+  "approvedWorkflowRunId": "41326132545",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T17:09:24Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v53",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V53 restores V44 shortlist and changes only transmitted field order to position, description, tasks, title, functionAreas, tools. Every value, source row and trusted ID mapping is unchanged. Same V44 selection instruction, eight use/position objects, strict parser, low effort, thinking disabled, 63000 input bound, 512 output tokens and 4.5-second deadline. Thirty benchmark cases and ten controls; no retries, repairs, padding or replacement cases. Preserve all failures and diagnostics.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Use existing remaining $0.826091 within additive $5 cap. Carry $4.173909 including all $0.379988 unknown reservations. Maximum request $0.006556; forty-case reserve $0.262240. Preserve V51 cost $0.088380 and V52 cost $0.061861. No new grant, reset or refund. Production calls and logging remain disabled.",
+  "allowanceMicrodollars": 826091,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 4173909,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

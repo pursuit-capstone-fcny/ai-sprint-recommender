@@ -1,0 +1,18 @@
+{
+  "checkedAt": "2026-11-01T16:33:59.017029+00:00",
+  "tests": {
+    "passed": 662,
+    "failed": 0
+  },
+  "typecheck": "passed",
+  "lint": "passed",
+  "build": "passed",
+  "runtime": {
+    "haiku": "passed",
+    "luna": "passed",
+    "externalRequests": 0
+  },
+  "restoredRuntimeReference": "b129512d9b5d36ce28bc67e0f55288d7d6f98e10",
+  "paidV44Rerun": false,
+  "note": "Source changes are limited to restoring V44 and carrying forward archived costs; evidence files do not establish expanded-set approval."
+}

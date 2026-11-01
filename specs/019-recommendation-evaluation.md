@@ -1,16 +1,11 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V44 retained; V47–V50 rejected. Weak supporting picks remain unresolved.
+- **Status:** V44 retained; V51–V53 rejected. Weak supporting picks remain unresolved.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
-
-- Given the bounded Haiku context test, when serializing candidate metadata,
-  then present descriptions and task tags before titles without changing values,
-  source order, trusted positions or the original shortlist. Preserve the input
-  bound, benchmark labels and task-diversity gate.
 
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the
@@ -116,6 +111,17 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [candidate-context trials](../docs/evaluation/2026-11-01-haiku-context/results.md)
+reject V51–V53. Full-catalog access, related-method expansion and description-first
+ordering all regress quality or reliability. V44 ranking, retrieval and parser
+are restored exactly; weak supporting picks remain unresolved. All 120 requests
+have measured usage. This round costs $0.210599, leaving $0.765733, with all
+$0.379988 historical unknown reservations retained. No fresh V44 paid result is
+claimed. Labels and the gate stay fixed. Test calls are disabled and keys removed;
+production LLM calls and logging remain off.
+
+Earlier results and balances below are historical.
 
 The [planning and full-candidate-rating trials](../docs/evaluation/2026-11-01-haiku-planning/results.md)
 reject V47–V50. No candidate preserves V44's quality, breadth and reliability

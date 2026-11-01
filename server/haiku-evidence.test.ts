@@ -50,28 +50,7 @@ describe('single-pass Haiku selection evidence', () => {
       inputTokens: 1800,
       outputTokens: 220,
     });
-    const wire = JSON.parse(sent);
-    const data = JSON.parse(wire.messages[0].content);
-    expect(data.catalogFields).toEqual([
-      'position',
-      'description',
-      'tasks',
-      'title',
-      'functionAreas',
-      'tools',
-    ]);
-    expect(
-      data.catalog.map((row: unknown[]) =>
-        Object.fromEntries(
-          data.catalogFields.map((field: string, index: number) => [
-            field,
-            row[index],
-          ]),
-        ),
-      ),
-    ).toEqual(body.data.catalog);
-    expect(data.goal).toBe(body.data.goal);
-    const schema = wire.output_config.format.schema;
+    const schema = JSON.parse(sent).output_config.format.schema;
     expect(schema.properties.rank1.required).toEqual(['use', 'position']);
     expect(Object.keys(schema.properties.rank1.properties)).toEqual([
       'use',
