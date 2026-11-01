@@ -89,7 +89,10 @@ describe('Haiku candidate retrieval', () => {
                 Object.fromEntries(
                   Array.from({ length: 8 }, (_, i) => [
                     `rank${i + 1}`,
-                    i === 0 ? position : null,
+                    {
+                      use: i === 0 ? 'Organize inventory records' : '',
+                      position: i === 0 ? position : null,
+                    },
                   ]),
                 ),
               ),

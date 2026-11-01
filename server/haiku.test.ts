@@ -182,7 +182,11 @@ describe('optimized Haiku low request', () => {
       expect(inputTokenBound(haiku)).toBeLessThanOrEqual(
         limits.LLM_MAX_INPUT_TOKENS,
       );
-      expect(inputTokenBound(haiku)).toBeLessThan(inputTokenBound(original));
+      // Historical compaction stays smaller; V43 additionally reserves its
+      // evidence instructions and schema, within the unchanged limit above.
+      expect(
+        inputTokenBound({ ...haiku, selectionEvidence: undefined }),
+      ).toBeLessThan(inputTokenBound(original));
       const normalized = v11System
         .replace(
           'use null in all eight ranks',

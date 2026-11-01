@@ -6,6 +6,7 @@ import {
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { Limits } from './config';
 import { boundedJson } from './bounded-json';
+import { anthropicRequest, evidenceSlotsSchema } from './haiku-evidence';
 
 const rankKeys = Array.from(
   { length: MAX_RECOMMENDATIONS },
@@ -84,7 +85,9 @@ export function providerBody(
     data,
   };
 }
-export type ProviderBody = ReturnType<typeof providerBody>;
+export type ProviderBody = ReturnType<typeof providerBody> & {
+  selectionEvidence?: true;
+};
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([
@@ -126,7 +129,10 @@ export type Provider = (
 // UTF-8 bytes conservatively bound visible text tokens. Reserve extra room for
 // message/schema framing; approved model limits must include that overhead.
 export function inputTokenBound(body: ProviderBody): number {
-  return new TextEncoder().encode(JSON.stringify(body.request)).length + 4_096;
+  return (
+    new TextEncoder().encode(JSON.stringify(anthropicRequest(body))).length +
+    4_096
+  );
 }
 
 const slotsSchema = z.strictObject(
@@ -163,7 +169,7 @@ export function anthropicProvider(
         'anthropic-version': '2023-06-01',
         'x-api-key': key,
       },
-      body: JSON.stringify(body.request),
+      body: JSON.stringify(anthropicRequest(body)),
     });
     if (!response.ok) {
       timing?.({ providerHttpStatus: response.status });
@@ -193,7 +199,9 @@ export function anthropicProvider(
     } else {
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
-        const output = slotsSchema.safeParse(decoded);
+        const output = (
+          body.selectionEvidence ? evidenceSlotsSchema : slotsSchema
+        ).safeParse(decoded);
         if (!output.success) {
           const positions =
             decoded && typeof decoded === 'object' && !Array.isArray(decoded)
