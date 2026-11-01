@@ -28,7 +28,16 @@ export function anthropicRequest(body: ProviderBody) {
     ...body.request,
     system:
       body.selectionEvidence === 'planned'
-        ? HAIKU_PLANNING_INSTRUCTION
+        ? `${body.request.system} ${EVIDENCE_INSTRUCTION}`
+            .replaceAll(
+              'Return exactly the eight named fields rank1 through rank8, best match first.',
+              'Within ranks, return exactly the eight named fields rank1 through rank8, best match first.',
+            )
+            .replace('Emit only the eight required rank fields.', '')
+            .replace(
+              'emit only these eight rank objects.',
+              'put these eight rank objects under ranks.',
+            ) + ` ${HAIKU_PLANNING_INSTRUCTION}`
         : `${body.request.system} ${EVIDENCE_INSTRUCTION}`,
     output_config: {
       ...body.request.output_config,

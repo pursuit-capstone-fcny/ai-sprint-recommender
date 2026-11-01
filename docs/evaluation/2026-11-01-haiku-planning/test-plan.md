@@ -50,3 +50,19 @@ enablement because the new unpaid bounds script omitted explicit Node imports.
 Import `process`, `Buffer` and `console` without changing lint rules or the model
 request. Preserve the zero-cost failure and both skipped paid steps. Recheck lint
 and the bounds before pinning a new source and workflow attempt.
+
+## V48: isolate planning from instruction consolidation
+
+V47 completed all forty requests with measured accounting but regressed to
+7/10, 5/10 and 8/10, with eight duplicate responses, an instruction-only failure,
+two Fundraising-02 top-three misses and only 21/30 accepted broad lists. Its
+$0.055709 charge is retained, leaving $1.145546. No timeout, transport failure or
+new unknown reservation occurred. The full failed evidence remains archived.
+
+Restore V44's tested eligibility, mixed-goal, target-audience, breadth and
+uniqueness instructions. Retain only the new plan-before-selection structure,
+with minimal changes to refer to the `ranks` envelope. This isolates planning
+from V47's wholesale instruction consolidation. Keep the format/parser, retrieval,
+limits, labels, gates, forty cases and no-retry policy unchanged. Recheck wire
+bounds and all local checks before another exact-attempt test. Production stays
+off; V47 is disabled and its keys and temporary approval have been removed.

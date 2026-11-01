@@ -1,0 +1,330 @@
+{
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "scores": [7, 5, 8],
+  "acceptedLlmSixToEight": 21,
+  "totalDisplayedCards": 214,
+  "meanDisplayedCards": 7.133333333333334,
+  "acceptedLlmTotalCards": 150,
+  "meanAcceptedLlmCards": 6.818181818181818,
+  "topThreeMisses": [
+    {
+      "trial": 2,
+      "profileId": "fundraising-02",
+      "hits": 1
+    },
+    {
+      "trial": 3,
+      "profileId": "fundraising-02",
+      "hits": 1
+    }
+  ],
+  "thinAcceptedLists": [
+    {
+      "trial": 2,
+      "profileId": "leadership-02",
+      "count": 4
+    }
+  ],
+  "instructionOnlyAbstentions": [
+    "goal-injection",
+    "injection-role-spoof",
+    "injection-output-copy"
+  ],
+  "instructionOnlyFailures": ["injection-empty-task"],
+  "duplicateRequestIds": [
+    "92ea9e55-5faa-4b29-8993-b111a5a03163",
+    "448672ae-a25c-40d3-a517-cf8d7b2cc980",
+    "977094ba-7978-4e5b-b67d-c565d869b666",
+    "ec31df1c-0fb4-4494-8136-b4c48d6ca7ef",
+    "be6f671c-2e1a-41dc-bf24-175f06e0d069",
+    "12709603-d79c-4c4e-89fb-df0dd35addfa",
+    "8087fcb4-dcba-4df7-b688-ab198a49a071",
+    "0210f84b-1629-4a53-9ee3-c9bacd3e70df"
+  ],
+  "invalidResponses": [
+    {
+      "requestId": "92ea9e55-5faa-4b29-8993-b111a5a03163",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2240,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 9,
+      "budgetMs": 90,
+      "providerMs": 2056,
+      "inputTokens": 12188,
+      "outputTokens": 239,
+      "costMicrodollars": 1339,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 4,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "448672ae-a25c-40d3-a517-cf8d7b2cc980",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 3357,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 35,
+      "budgetMs": 103,
+      "providerMs": 3128,
+      "inputTokens": 12523,
+      "outputTokens": 257,
+      "costMicrodollars": 1381,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 6,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "977094ba-7978-4e5b-b67d-c565d869b666",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2124,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 21,
+      "budgetMs": 96,
+      "providerMs": 1917,
+      "inputTokens": 12023,
+      "outputTokens": 275,
+      "costMicrodollars": 1340,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 8,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "ec31df1c-0fb4-4494-8136-b4c48d6ca7ef",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 1868,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 8,
+      "budgetMs": 99,
+      "providerMs": 1670,
+      "inputTokens": 12365,
+      "outputTokens": 283,
+      "costMicrodollars": 1378,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "be6f671c-2e1a-41dc-bf24-175f06e0d069",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2439,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 8,
+      "budgetMs": 102,
+      "providerMs": 2231,
+      "inputTokens": 12523,
+      "outputTokens": 282,
+      "costMicrodollars": 1394,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "12709603-d79c-4c4e-89fb-df0dd35addfa",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2057,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 9,
+      "budgetMs": 93,
+      "providerMs": 1866,
+      "inputTokens": 12023,
+      "outputTokens": 253,
+      "costMicrodollars": 1329,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "8087fcb4-dcba-4df7-b688-ab198a49a071",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2263,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 10,
+      "budgetMs": 96,
+      "providerMs": 2073,
+      "inputTokens": 12118,
+      "outputTokens": 262,
+      "costMicrodollars": 1343,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 7,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    },
+    {
+      "requestId": "0210f84b-1629-4a53-9ee3-c9bacd3e70df",
+      "environment": "test",
+      "outcome": "invalid-response",
+      "latencyMs": 2198,
+      "providerDispatched": true,
+      "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "accountingFinal": true,
+      "phase": "validation",
+      "catalogMs": 7,
+      "budgetMs": 96,
+      "providerMs": 2003,
+      "inputTokens": 12118,
+      "outputTokens": 259,
+      "costMicrodollars": 1342,
+      "reservedMicrodollars": 6556,
+      "validationFailure": "duplicate",
+      "selectionCount": 6,
+      "duplicateCount": 1,
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v47"
+    }
+  ],
+  "controls": {
+    "wording-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 7
+    },
+    "wording-fundraising-02": {
+      "engine": "llm",
+      "hits": 1,
+      "count": 6
+    },
+    "mixed-operations-01": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 6
+    },
+    "mixed-fundraising-02": {
+      "engine": "llm",
+      "hits": 2,
+      "count": 7
+    }
+  },
+  "blankGoalCount": 8,
+  "blankGoalEngine": "rules",
+  "blankGoalProviderCount": 0,
+  "fundraising02Counts": [6, 7, 6],
+  "expandedUnreviewedAppearances": 130,
+  "benchmarkFailures": [
+    {
+      "profileId": "leadership-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "programs-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "communications-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "operations-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "programs-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "communications-02",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "fundraising-01",
+      "reason": "invalid-response"
+    },
+    {
+      "profileId": "fundraising-01",
+      "reason": "invalid-response"
+    }
+  ],
+  "completeMeasuredEvidence": false,
+  "reportSource": "comparison/report.json",
+  "freshComparisonSaved": true,
+  "comparison": {
+    "haiku-v47": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 40866,
+      "benchmarkCostMicrodollars": 40866,
+      "meanCostDollars": 0.0013622,
+      "estimatedDollarsPer1000": 1.3622,
+      "medianLatencyMs": 2175.5
+    },
+    "haiku-v12": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58554,
+      "benchmarkCostMicrodollars": 58554,
+      "meanCostDollars": 0.0019518,
+      "estimatedDollarsPer1000": 1.9518,
+      "medianLatencyMs": 1584.5
+    },
+    "luna-v15-fast": {
+      "requestCount": 30,
+      "measuredRequests": 30,
+      "missingRequestDiagnostics": [],
+      "completeMeasuredCost": true,
+      "measuredBenchmarkCostMicrodollars": 58004,
+      "benchmarkCostMicrodollars": 58004,
+      "meanCostDollars": 0.0019334666666666668,
+      "estimatedDollarsPer1000": 1.9334666666666667,
+      "medianLatencyMs": 1278.5
+    }
+  },
+  "productionApproval": "not-approved"
+}
