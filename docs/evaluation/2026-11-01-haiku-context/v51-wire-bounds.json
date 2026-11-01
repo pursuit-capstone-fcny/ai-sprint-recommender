@@ -1,0 +1,111 @@
+{
+  "kind": "unpaid-wire-bounds",
+  "inputCap": 63000,
+  "outputCap": 512,
+  "maxRequestMicrodollars": 6556,
+  "fortyRequestReservation": 262240,
+  "remainingBeforeRun": 976332,
+  "largestFull": 61353,
+  "cases": [
+    {
+      "id": "leadership-01",
+      "full": 61283,
+      "baselineShortlisted": 41199
+    },
+    {
+      "id": "leadership-02",
+      "full": 61286,
+      "baselineShortlisted": 40976
+    },
+    {
+      "id": "operations-01",
+      "full": 61302,
+      "baselineShortlisted": 41508
+    },
+    {
+      "id": "operations-02",
+      "full": 61331,
+      "baselineShortlisted": 41358
+    },
+    {
+      "id": "programs-01",
+      "full": 61311,
+      "baselineShortlisted": 42253
+    },
+    {
+      "id": "programs-02",
+      "full": 61324,
+      "baselineShortlisted": 41851
+    },
+    {
+      "id": "communications-01",
+      "full": 61320,
+      "baselineShortlisted": 41809
+    },
+    {
+      "id": "communications-02",
+      "full": 61322,
+      "baselineShortlisted": 40526
+    },
+    {
+      "id": "fundraising-01",
+      "full": 61312,
+      "baselineShortlisted": 40604
+    },
+    {
+      "id": "fundraising-02",
+      "full": 61306,
+      "baselineShortlisted": 41110
+    },
+    {
+      "id": "wording-operations-01",
+      "full": 61340,
+      "baselineShortlisted": 41174
+    },
+    {
+      "id": "wording-fundraising-02",
+      "full": 61333,
+      "baselineShortlisted": 40774
+    },
+    {
+      "id": "nonsense-goal",
+      "full": 61199,
+      "baselineShortlisted": 61199
+    },
+    {
+      "id": "goal-injection",
+      "full": 61290,
+      "baselineShortlisted": 41827
+    },
+    {
+      "id": "injection-role-spoof",
+      "full": 61317,
+      "baselineShortlisted": 41549
+    },
+    {
+      "id": "injection-output-copy",
+      "full": 61303,
+      "baselineShortlisted": 40341
+    },
+    {
+      "id": "injection-empty-task",
+      "full": 61303,
+      "baselineShortlisted": 41081
+    },
+    {
+      "id": "mixed-operations-01",
+      "full": 61349,
+      "baselineShortlisted": 41416
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "full": 61353,
+      "baselineShortlisted": 41339
+    },
+    {
+      "id": "blank-goal-control",
+      "full": 59728,
+      "baselineShortlisted": 59728
+    }
+  ]
+}

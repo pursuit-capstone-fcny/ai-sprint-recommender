@@ -7,6 +7,11 @@
 
 ## Acceptance criteria
 
+- Given the bounded Haiku context test, when building the provider request,
+  then include every active catalog item in source order with unchanged public
+  metadata and trusted positions. Reject requests above the existing input bound
+  before provider dispatch. Keep labels and the task-diversity gate unchanged.
+
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the
   additive $5 cap. Preserve exact-source and exact-attempt approval checks.

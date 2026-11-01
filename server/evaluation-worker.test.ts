@@ -111,8 +111,18 @@ describe('frozen test catalog isolation', () => {
         JSON.parse(
           isHaiku ? payload.messages[0].content : payload.input[1].content,
         ).catalog,
-      ).toHaveLength(isHaiku ? 48 : 89);
+      ).toHaveLength(89);
       if (isHaiku) {
+        const rows = JSON.parse(payload.messages[0].content).catalog;
+        expect(rows.map((row: unknown[]) => row[0])).toEqual(
+          snapshot.items.map((_, index) => index),
+        );
+        expect(rows.map((row: unknown[]) => row[1])).toEqual(
+          snapshot.items.map((item) => item.title.slice(0, 200)),
+        );
+        expect(rows.map((row: unknown[]) => row[4])).toEqual(
+          snapshot.items.map((item) => item.tasks),
+        );
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
         expect(payload.system).toContain('use null in all eight ranks');

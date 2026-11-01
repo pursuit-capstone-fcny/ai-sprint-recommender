@@ -1,0 +1,2374 @@
+[
+  {
+    "profileId": "leadership-01",
+    "goal": "Help our staff try AI responsibly and share what they learn without waiting for a finished policy.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "DNfFMZxAI-0",
+        "title": "Build Your Own Lesson Planning Tool",
+        "tasks": [
+          "lesson planning",
+          "curriculum development",
+          "instructional design",
+          "custom GPT setup",
+          "teacher support"
+        ]
+      },
+      {
+        "id": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ]
+      },
+      {
+        "id": "Z8yOypmasGg",
+        "title": "Turn a Repeated Task into a Reusable Claude Skill",
+        "tasks": ["workflow automation", "prompt instructions"]
+      },
+      {
+        "id": "_pM0ua51qRI",
+        "title": "Quickly Find Unique Values in Spreadsheets with CHatGPT",
+        "tasks": ["data cleaning", "participation tracking"]
+      },
+      {
+        "id": "5vR5cPnqT-Q",
+        "title": "Generate Meeting Minutes with ChatGPT",
+        "tasks": ["meeting minutes", "action planning"]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "tasks": ["case tracking", "spreadsheet automation"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "jWdB3uOYoug",
+        "title": "Financial Document Analysis",
+        "tasks": ["financial analysis", "chart creation"]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "VQRVNYS1m3g",
+        "title": "Government Grant Application",
+        "tasks": ["grant application drafting", "grant opportunity review"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "tasks": ["participation tracking", "action planning"]
+      },
+      {
+        "id": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "tasks": ["client letter drafting", "document review"]
+      },
+      {
+        "id": "89GrUhOThk4",
+        "title": "Can it write it a SOAP note?!",
+        "tasks": ["case note drafting"]
+      },
+      {
+        "id": "JzV9-_irHdI",
+        "title": "Build a Web App to Track Student Interventions",
+        "tasks": ["case tracking", "form creation", "workflow automation"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "tAhSI5nok0s",
+        "title": "Job Applications",
+        "tasks": ["job application drafting", "interview practice"]
+      },
+      {
+        "id": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "tasks": ["copy editing", "change tracking"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "tasks": ["presentation creation", "document querying"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "tasks": ["brainstorming"]
+      },
+      {
+        "id": "MpkMYlaHU4k",
+        "title": "Fundraising Webinar and Social Media",
+        "tasks": [
+          "communications planning",
+          "social media drafting",
+          "event planning"
+        ]
+      }
+    ]
+  },
+  {
+    "profileId": "leadership-02",
+    "goal": "Prepare for a difficult conversation with an employee and rehearse constructive responses.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "tasks": ["flier design"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "tasks": ["flier design", "accessibility adaptation"]
+      },
+      {
+        "id": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "tasks": ["procedure drafting", "staff checklists"]
+      },
+      {
+        "id": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "tasks": ["participation tracking", "action planning"]
+      },
+      {
+        "id": "BiOpGsijKl8",
+        "title": "Plan the Perfect Team Retreat with AI",
+        "tasks": ["event planning"]
+      },
+      {
+        "id": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "tasks": ["client letter drafting", "document review"]
+      },
+      {
+        "id": "-zIvVmJ2XFw",
+        "title": "The 30-Second Front Door — Capturing Quick Client Contacts with AI",
+        "tasks": ["client intake", "form creation"]
+      },
+      {
+        "id": "lYzFro10bDM",
+        "title": "Build a Career Progression Framework with Claude",
+        "tasks": ["career framework design", "job description drafting"]
+      },
+      {
+        "id": "89GrUhOThk4",
+        "title": "Can it write it a SOAP note?!",
+        "tasks": ["case note drafting"]
+      },
+      {
+        "id": "JzV9-_irHdI",
+        "title": "Build a Web App to Track Student Interventions",
+        "tasks": ["case tracking", "form creation", "workflow automation"]
+      },
+      {
+        "id": "W-j725bzPJU",
+        "title": "Using Perplexity AI in Human Services",
+        "tasks": ["policy research"]
+      },
+      {
+        "id": "dooZWSQCNSs",
+        "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+        "tasks": ["lesson planning", "instructional design"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "7VjxCHhyAJE",
+        "title": "Document Supervision Sessions Automatically with AI",
+        "tasks": ["meeting minutes", "case note drafting"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "tAhSI5nok0s",
+        "title": "Job Applications",
+        "tasks": ["job application drafting", "interview practice"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "wu6DHIkJH7k",
+        "title": "Build a Weekly Newsletter in Minutes",
+        "tasks": ["newsletter drafting", "accessibility adaptation"]
+      },
+      {
+        "id": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "tasks": ["copy editing", "change tracking"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "tasks": ["report drafting", "chart creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "tasks": ["copy editing"]
+      },
+      {
+        "id": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "tasks": ["presentation creation", "document querying"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      },
+      {
+        "id": "MpkMYlaHU4k",
+        "title": "Fundraising Webinar and Social Media",
+        "tasks": [
+          "communications planning",
+          "social media drafting",
+          "event planning"
+        ]
+      }
+    ]
+  },
+  {
+    "profileId": "operations-01",
+    "goal": "Turn scattered participant comments and survey answers into clear themes and a report our director can use.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "DNfFMZxAI-0",
+        "title": "Build Your Own Lesson Planning Tool",
+        "tasks": [
+          "lesson planning",
+          "curriculum development",
+          "instructional design",
+          "custom GPT setup",
+          "teacher support"
+        ]
+      },
+      {
+        "id": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ]
+      },
+      {
+        "id": "_9QqyTbwisc",
+        "title": "Build a Fundraising Assistant with Custom GPT",
+        "tasks": [
+          "fundraising copy",
+          "fundraising support",
+          "internal guide Q&A",
+          "custom GPT setup",
+          "document querying"
+        ]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "tasks": ["flier design"]
+      },
+      {
+        "id": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "tasks": ["grant opportunity review", "cost estimation"]
+      },
+      {
+        "id": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "tasks": ["grant application drafting", "fundraising copy"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "VQRVNYS1m3g",
+        "title": "Government Grant Application",
+        "tasks": ["grant application drafting", "grant opportunity review"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "3oX_M8AcBXk",
+        "title": "Role Play Difficult Staff Conversations",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "tasks": ["procedure drafting", "staff checklists"]
+      },
+      {
+        "id": "BiOpGsijKl8",
+        "title": "Plan the Perfect Team Retreat with AI",
+        "tasks": ["event planning"]
+      },
+      {
+        "id": "Kv0C743lCUw",
+        "title": "Design a Class Syllabus in Minutes with AI",
+        "tasks": ["curriculum development", "lesson planning"]
+      },
+      {
+        "id": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "tasks": ["client letter drafting", "document review"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "tAhSI5nok0s",
+        "title": "Job Applications",
+        "tasks": ["job application drafting", "interview practice"]
+      },
+      {
+        "id": "NPl_WDdrKMU",
+        "title": "Draft a Client Letter to a Landlord with AI",
+        "tasks": ["client letter drafting"]
+      },
+      {
+        "id": "wu6DHIkJH7k",
+        "title": "Build a Weekly Newsletter in Minutes",
+        "tasks": ["newsletter drafting", "accessibility adaptation"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "tasks": ["copy editing"]
+      },
+      {
+        "id": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      },
+      {
+        "id": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "tasks": ["brainstorming"]
+      }
+    ]
+  },
+  {
+    "profileId": "operations-02",
+    "goal": "Give colleagues quick, reliable answers from our internal guides and policies so they do not have to ask the same questions repeatedly.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "tasks": ["flier design"]
+      },
+      {
+        "id": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "tasks": ["grant opportunity review", "cost estimation"]
+      },
+      {
+        "id": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "tasks": ["grant application drafting", "fundraising copy"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "VQRVNYS1m3g",
+        "title": "Government Grant Application",
+        "tasks": ["grant application drafting", "grant opportunity review"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "9Np4JDDQvpA",
+        "title": "Track Your Strategic Plan Progress with AI",
+        "tasks": [
+          "strategic planning",
+          "action planning",
+          "presentation creation"
+        ]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "3oX_M8AcBXk",
+        "title": "Role Play Difficult Staff Conversations",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "tasks": ["flier design", "accessibility adaptation"]
+      },
+      {
+        "id": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "tasks": ["procedure drafting", "staff checklists"]
+      },
+      {
+        "id": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "tasks": ["participation tracking", "action planning"]
+      },
+      {
+        "id": "Kv0C743lCUw",
+        "title": "Design a Class Syllabus in Minutes with AI",
+        "tasks": ["curriculum development", "lesson planning"]
+      },
+      {
+        "id": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "tasks": ["client letter drafting", "document review"]
+      },
+      {
+        "id": "89GrUhOThk4",
+        "title": "Can it write it a SOAP note?!",
+        "tasks": ["case note drafting"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "tAhSI5nok0s",
+        "title": "Job Applications",
+        "tasks": ["job application drafting", "interview practice"]
+      },
+      {
+        "id": "NPl_WDdrKMU",
+        "title": "Draft a Client Letter to a Landlord with AI",
+        "tasks": ["client letter drafting"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "wu6DHIkJH7k",
+        "title": "Build a Weekly Newsletter in Minutes",
+        "tasks": ["newsletter drafting", "accessibility adaptation"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "tasks": ["copy editing"]
+      },
+      {
+        "id": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      },
+      {
+        "id": "MpkMYlaHU4k",
+        "title": "Fundraising Webinar and Social Media",
+        "tasks": [
+          "communications planning",
+          "social media drafting",
+          "event planning"
+        ]
+      }
+    ]
+  },
+  {
+    "profileId": "programs-01",
+    "goal": "Build a course outline and turn it into practical lessons and engaging activities for our students.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "6d2bKhdmqqA",
+        "title": "Placeholder AI Guidelines",
+        "tasks": [
+          "AI policy drafting",
+          "policy implementation",
+          "workplace guidance",
+          "staff AI adoption",
+          "governance"
+        ]
+      },
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "UdWR8KKxVDU",
+        "title": "Creating a Custom GPT for FAQ",
+        "tasks": [
+          "internal FAQ",
+          "knowledge management",
+          "custom GPT setup",
+          "information retrieval",
+          "staff questions"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "tasks": ["code debugging"]
+      },
+      {
+        "id": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "tasks": ["case tracking", "spreadsheet automation"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "dAqdQGqyNq8",
+        "title": "Improve How AI Describes Your Organization (GEO)",
+        "tasks": ["AI search visibility"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "7IYj3W4PdPE",
+        "title": "Research Any Interview Subject with AI Deep Research",
+        "tasks": ["background research", "interview preparation"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "jWdB3uOYoug",
+        "title": "Financial Document Analysis",
+        "tasks": ["financial analysis", "chart creation"]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "tasks": ["flier design"]
+      },
+      {
+        "id": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "tasks": ["grant opportunity review", "cost estimation"]
+      },
+      {
+        "id": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "tasks": ["grant application drafting", "fundraising copy"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "tasks": ["copy editing", "change tracking"]
+      },
+      {
+        "id": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "tasks": ["report drafting", "chart creation"]
+      },
+      {
+        "id": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "tasks": ["presentation creation", "document querying"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      },
+      {
+        "id": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "tasks": ["brainstorming"]
+      }
+    ]
+  },
+  {
+    "profileId": "programs-02",
+    "goal": "Use attendance and intervention records to decide which students need follow-up and help the team keep track of next steps.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "ldd8wxVHvCw",
+        "title": "Custom GPT for Organizational Voice",
+        "tasks": [
+          "brand voice",
+          "content creation",
+          "printed handout drafting",
+          "custom GPT setup",
+          "messaging consistency"
+        ]
+      },
+      {
+        "id": "UdWR8KKxVDU",
+        "title": "Creating a Custom GPT for FAQ",
+        "tasks": [
+          "internal FAQ",
+          "knowledge management",
+          "custom GPT setup",
+          "information retrieval",
+          "staff questions"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "PUACowM_SdU",
+        "title": "Build a Social Media Assistant with Custom GPT",
+        "tasks": [
+          "social media drafting",
+          "blog writing",
+          "brand consistency",
+          "content generation",
+          "prompt refinement"
+        ]
+      },
+      {
+        "id": "nBAaIIz9QFg",
+        "title": "Build a Custom AI Assistant for Staff Training",
+        "tasks": [
+          "staff training",
+          "interview practice",
+          "roleplay simulation",
+          "voice mode",
+          "performance feedback"
+        ]
+      },
+      {
+        "id": "_9QqyTbwisc",
+        "title": "Build a Fundraising Assistant with Custom GPT",
+        "tasks": [
+          "fundraising copy",
+          "fundraising support",
+          "internal guide Q&A",
+          "custom GPT setup",
+          "document querying"
+        ]
+      },
+      {
+        "id": "zTcrktnmv48",
+        "title": "Build Evaluation Forms Automatically with AI",
+        "tasks": ["form creation", "program evaluation"]
+      },
+      {
+        "id": "1yBNcKEISP0",
+        "title": "Using AI to Build & Understand Spreadsheet Formulas",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "5vR5cPnqT-Q",
+        "title": "Generate Meeting Minutes with ChatGPT",
+        "tasks": ["meeting minutes", "action planning"]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "AjI2GF1b6zo",
+        "title": "Build an HR Policy Bot with Perplexity",
+        "tasks": ["internal FAQ", "document querying"]
+      },
+      {
+        "id": "cwCVpchJHB4",
+        "title": "Turn Program Feedback into a Director-Ready Report with AI",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "7IYj3W4PdPE",
+        "title": "Research Any Interview Subject with AI Deep Research",
+        "tasks": ["background research", "interview preparation"]
+      },
+      {
+        "id": "4Wo_miqxgmE",
+        "title": "Turn Survey Data into Real Insights",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "jWdB3uOYoug",
+        "title": "Financial Document Analysis",
+        "tasks": ["financial analysis", "chart creation"]
+      },
+      {
+        "id": "ZlfTvy2PT1w",
+        "title": "Design a Polished Grant Flier with AI",
+        "tasks": ["flier design"]
+      },
+      {
+        "id": "6EWc3MgRNFg",
+        "title": "Grant Letter of Inquiry",
+        "tasks": ["grant application drafting", "fundraising copy"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "VQRVNYS1m3g",
+        "title": "Government Grant Application",
+        "tasks": ["grant application drafting", "grant opportunity review"]
+      },
+      {
+        "id": "DP0rtrJVOvM",
+        "title": "Write and Edit Faster with MS Word Copilot",
+        "tasks": ["copy drafting", "document querying"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "tasks": ["report drafting", "chart creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "tasks": ["presentation creation", "document querying"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "tasks": ["brainstorming"]
+      }
+    ]
+  },
+  {
+    "profileId": "communications-01",
+    "goal": "Draft social posts and short public updates that sound like our organization, even when different colleagues write them.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "6d2bKhdmqqA",
+        "title": "Placeholder AI Guidelines",
+        "tasks": [
+          "AI policy drafting",
+          "policy implementation",
+          "workplace guidance",
+          "staff AI adoption",
+          "governance"
+        ]
+      },
+      {
+        "id": "rKn6KASMk50",
+        "title": "Build an AI Agent for Accessible Course Content",
+        "tasks": ["curriculum development", "accessibility adaptation"]
+      },
+      {
+        "id": "zTcrktnmv48",
+        "title": "Build Evaluation Forms Automatically with AI",
+        "tasks": ["form creation", "program evaluation"]
+      },
+      {
+        "id": "1yBNcKEISP0",
+        "title": "Using AI to Build & Understand Spreadsheet Formulas",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "tasks": ["code debugging"]
+      },
+      {
+        "id": "AjI2GF1b6zo",
+        "title": "Build an HR Policy Bot with Perplexity",
+        "tasks": ["internal FAQ", "document querying"]
+      },
+      {
+        "id": "cwCVpchJHB4",
+        "title": "Turn Program Feedback into a Director-Ready Report with AI",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "0qSXFbGrQ90",
+        "title": "Using CoPilot to Analyze Feedback",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "4Wo_miqxgmE",
+        "title": "Turn Survey Data into Real Insights",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "tasks": ["grant opportunity review", "cost estimation"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "3oX_M8AcBXk",
+        "title": "Role Play Difficult Staff Conversations",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "tasks": ["flier design", "accessibility adaptation"]
+      },
+      {
+        "id": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "tasks": ["procedure drafting", "staff checklists"]
+      },
+      {
+        "id": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "tasks": ["participation tracking", "action planning"]
+      },
+      {
+        "id": "BiOpGsijKl8",
+        "title": "Plan the Perfect Team Retreat with AI",
+        "tasks": ["event planning"]
+      },
+      {
+        "id": "Kv0C743lCUw",
+        "title": "Design a Class Syllabus in Minutes with AI",
+        "tasks": ["curriculum development", "lesson planning"]
+      },
+      {
+        "id": "-zIvVmJ2XFw",
+        "title": "The 30-Second Front Door — Capturing Quick Client Contacts with AI",
+        "tasks": ["client intake", "form creation"]
+      },
+      {
+        "id": "W-j725bzPJU",
+        "title": "Using Perplexity AI in Human Services",
+        "tasks": ["policy research"]
+      },
+      {
+        "id": "dooZWSQCNSs",
+        "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+        "tasks": ["lesson planning", "instructional design"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "7VjxCHhyAJE",
+        "title": "Document Supervision Sessions Automatically with AI",
+        "tasks": ["meeting minutes", "case note drafting"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      }
+    ]
+  },
+  {
+    "profileId": "communications-02",
+    "goal": "Turn our existing strategy documents into a clear presentation for the board instead of starting a slide deck from scratch.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "i22v2xwT6k4",
+        "title": "AI Peer Learning Groups",
+        "tasks": [
+          "team learning",
+          "peer learning",
+          "internal training",
+          "staff engagement",
+          "capacity building"
+        ]
+      },
+      {
+        "id": "UdWR8KKxVDU",
+        "title": "Creating a Custom GPT for FAQ",
+        "tasks": [
+          "internal FAQ",
+          "knowledge management",
+          "custom GPT setup",
+          "information retrieval",
+          "staff questions"
+        ]
+      },
+      {
+        "id": "DNfFMZxAI-0",
+        "title": "Build Your Own Lesson Planning Tool",
+        "tasks": [
+          "lesson planning",
+          "curriculum development",
+          "instructional design",
+          "custom GPT setup",
+          "teacher support"
+        ]
+      },
+      {
+        "id": "nBAaIIz9QFg",
+        "title": "Build a Custom AI Assistant for Staff Training",
+        "tasks": [
+          "staff training",
+          "interview practice",
+          "roleplay simulation",
+          "voice mode",
+          "performance feedback"
+        ]
+      },
+      {
+        "id": "rKn6KASMk50",
+        "title": "Build an AI Agent for Accessible Course Content",
+        "tasks": ["curriculum development", "accessibility adaptation"]
+      },
+      {
+        "id": "Fz_zl467-QU",
+        "title": "Build an Activity Idea Generator for Lesson Planning (with Playlab)",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "zTcrktnmv48",
+        "title": "Build Evaluation Forms Automatically with AI",
+        "tasks": ["form creation", "program evaluation"]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "tasks": ["code debugging"]
+      },
+      {
+        "id": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "tasks": ["case tracking", "spreadsheet automation"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "dAqdQGqyNq8",
+        "title": "Improve How AI Describes Your Organization (GEO)",
+        "tasks": ["AI search visibility"]
+      },
+      {
+        "id": "0qSXFbGrQ90",
+        "title": "Using CoPilot to Analyze Feedback",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "7IYj3W4PdPE",
+        "title": "Research Any Interview Subject with AI Deep Research",
+        "tasks": ["background research", "interview preparation"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "rjaMvND2IRU",
+        "title": "Breaking down an RFP with ChatGPT",
+        "tasks": ["grant opportunity review", "grant application drafting"]
+      },
+      {
+        "id": "ShikWPoBRac",
+        "title": "Prepare a Winning RFP Response with AI",
+        "tasks": ["grant opportunity review", "cost estimation"]
+      },
+      {
+        "id": "S_DQeIX2xz8",
+        "title": "Grantmaker-Donor Role Play",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "ADF07rFbH8M",
+        "title": "Grantmaker Review Grantee",
+        "tasks": ["grantee assessment", "chart creation"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "Q0Vr4PnGoe4",
+        "title": "Prompt Nudges for AI",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "3oX_M8AcBXk",
+        "title": "Role Play Difficult Staff Conversations",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "BiOpGsijKl8",
+        "title": "Plan the Perfect Team Retreat with AI",
+        "tasks": ["event planning"]
+      },
+      {
+        "id": "lYzFro10bDM",
+        "title": "Build a Career Progression Framework with Claude",
+        "tasks": ["career framework design", "job description drafting"]
+      },
+      {
+        "id": "JzV9-_irHdI",
+        "title": "Build a Web App to Track Student Interventions",
+        "tasks": ["case tracking", "form creation", "workflow automation"]
+      },
+      {
+        "id": "dooZWSQCNSs",
+        "title": "Literacy Academy Collective's Vocabulary Lesson Builder",
+        "tasks": ["lesson planning", "instructional design"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "fCAYTD-hgU8",
+        "title": "Using AI to create engaging programming",
+        "tasks": ["lesson planning", "curriculum development"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      }
+    ]
+  },
+  {
+    "profileId": "fundraising-01",
+    "goal": "Work out whether a funding opportunity fits our nonprofit and organize what we need before writing the application.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "4LMIC-v5xZ0",
+        "title": "How to Build a Project Folder in ChatGPT",
+        "tasks": [
+          "workspace setup",
+          "document organization",
+          "staff checklists",
+          "quality management",
+          "prompt instructions"
+        ]
+      },
+      {
+        "id": "sLAu2FqUZyE",
+        "title": "Training GPTS to Write Press Releases and One-Pagers",
+        "tasks": [
+          "press releases",
+          "op-eds",
+          "copy drafting",
+          "brand language",
+          "public-facing content"
+        ]
+      },
+      {
+        "id": "nBAaIIz9QFg",
+        "title": "Build a Custom AI Assistant for Staff Training",
+        "tasks": [
+          "staff training",
+          "interview practice",
+          "roleplay simulation",
+          "voice mode",
+          "performance feedback"
+        ]
+      },
+      {
+        "id": "zTcrktnmv48",
+        "title": "Build Evaluation Forms Automatically with AI",
+        "tasks": ["form creation", "program evaluation"]
+      },
+      {
+        "id": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "tasks": ["code debugging"]
+      },
+      {
+        "id": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "tasks": ["case tracking", "spreadsheet automation"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "4Wo_miqxgmE",
+        "title": "Turn Survey Data into Real Insights",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "m0mI6_g0V2g",
+        "title": "Uncover Patterns in Survey Data with AI",
+        "tasks": ["survey analysis"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "FMQJH3c5cLc",
+        "title": "How to Prompt with aiSPIRE",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "jm9ZaKY1taA",
+        "title": "Preparing for Tough Conversations with ChatGPT",
+        "tasks": ["roleplay simulation", "performance feedback"]
+      },
+      {
+        "id": "9Np4JDDQvpA",
+        "title": "Track Your Strategic Plan Progress with AI",
+        "tasks": [
+          "strategic planning",
+          "action planning",
+          "presentation creation"
+        ]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "QblW0rArEME",
+        "title": "Letter of Medical Necessity",
+        "tasks": ["client letter drafting", "document review"]
+      },
+      {
+        "id": "-zIvVmJ2XFw",
+        "title": "The 30-Second Front Door — Capturing Quick Client Contacts with AI",
+        "tasks": ["client intake", "form creation"]
+      },
+      {
+        "id": "W-j725bzPJU",
+        "title": "Using Perplexity AI in Human Services",
+        "tasks": ["policy research"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "7VjxCHhyAJE",
+        "title": "Document Supervision Sessions Automatically with AI",
+        "tasks": ["meeting minutes", "case note drafting"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "NPl_WDdrKMU",
+        "title": "Draft a Client Letter to a Landlord with AI",
+        "tasks": ["client letter drafting"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "wu6DHIkJH7k",
+        "title": "Build a Weekly Newsletter in Minutes",
+        "tasks": ["newsletter drafting", "accessibility adaptation"]
+      },
+      {
+        "id": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "tasks": ["copy editing", "change tracking"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "tasks": ["report drafting", "chart creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "tasks": ["copy editing"]
+      },
+      {
+        "id": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "33a0qYtCMvc",
+        "title": "Develop a Slide Deck with Notebook LM",
+        "tasks": ["presentation creation", "document querying"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      },
+      {
+        "id": "t1yNb7iV6g4",
+        "title": "Unlock Better Ideas with AI Brainstorming",
+        "tasks": ["brainstorming"]
+      }
+    ]
+  },
+  {
+    "profileId": "fundraising-02",
+    "goal": "Prepare for a conversation with a potential funder by anticipating their questions and rehearsing my answers.",
+    "selectedCount": 48,
+    "excluded": [
+      {
+        "id": "5vR5cPnqT-Q",
+        "title": "Generate Meeting Minutes with ChatGPT",
+        "tasks": ["meeting minutes", "action planning"]
+      },
+      {
+        "id": "M-MqULy0DqM",
+        "title": "ChatGPT to Support and Optimize Data Collection",
+        "tasks": [
+          "spreadsheet formulas",
+          "participation tracking",
+          "data cleaning"
+        ]
+      },
+      {
+        "id": "R3JQqOh4tUQ",
+        "title": "Debugging website code using ChatGPT",
+        "tasks": ["code debugging"]
+      },
+      {
+        "id": "cwCVpchJHB4",
+        "title": "Turn Program Feedback into a Director-Ready Report with AI",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "rtBkm7m6JCg",
+        "title": "Using Claude to Create an Employee Tracker",
+        "tasks": ["case tracking", "spreadsheet automation"]
+      },
+      {
+        "id": "ZMPLTq-ptrE",
+        "title": "Data Quality Reviewer Artifact in Claude",
+        "tasks": ["data cleaning", "quality management"]
+      },
+      {
+        "id": "0qSXFbGrQ90",
+        "title": "Using CoPilot to Analyze Feedback",
+        "tasks": ["survey analysis", "report drafting"]
+      },
+      {
+        "id": "tIekXJLsm8g",
+        "title": "Simple Charts with Gemini",
+        "tasks": ["chart creation", "survey analysis"]
+      },
+      {
+        "id": "tHf5uDqVvzo",
+        "title": "Understanding new bank terms and conditions",
+        "tasks": ["document review", "document comparison"]
+      },
+      {
+        "id": "BEGWkv3nrk0",
+        "title": "Pull Excel Data Automatically with AI-Written VBA",
+        "tasks": ["spreadsheet automation", "chart creation"]
+      },
+      {
+        "id": "gzxiw5xdPPI",
+        "title": "Write Excel Formulas Instantly with AI",
+        "tasks": ["spreadsheet formulas"]
+      },
+      {
+        "id": "8ahFA8ECM4c",
+        "title": "Quick Charts from Survey",
+        "tasks": ["chart creation", "survey analysis", "report drafting"]
+      },
+      {
+        "id": "Uz6W_hJloK8",
+        "title": "Organizing Messy Data",
+        "tasks": ["data cleaning"]
+      },
+      {
+        "id": "YYxm3GCAK-0",
+        "title": "Supercharge Your Inbox with MS Outlook Copilot",
+        "tasks": ["email drafting", "email summarization", "meeting scheduling"]
+      },
+      {
+        "id": "bxfxzx-_MME",
+        "title": "Top 7 Concerns With AI",
+        "tasks": ["staff AI adoption"]
+      },
+      {
+        "id": "UJZx6o69c-g",
+        "title": "Meta-Prompting",
+        "tasks": ["prompt refinement"]
+      },
+      {
+        "id": "rFhgVTsItlU",
+        "title": "Starter Skills: Reading, Writing, Chatting",
+        "tasks": ["AI basics", "copy drafting"]
+      },
+      {
+        "id": "3sui0H77srg",
+        "title": "Basic AI Vocabulary",
+        "tasks": ["AI basics"]
+      },
+      {
+        "id": "YACIPFCbGV8",
+        "title": "Using AI in Negotiations",
+        "tasks": ["market research", "negotiation preparation"]
+      },
+      {
+        "id": "9Np4JDDQvpA",
+        "title": "Track Your Strategic Plan Progress with AI",
+        "tasks": [
+          "strategic planning",
+          "action planning",
+          "presentation creation"
+        ]
+      },
+      {
+        "id": "C7wclvAF0Mc",
+        "title": "Using AI to Translate Technical Risks into Executive Action",
+        "tasks": ["executive communication", "risk communication"]
+      },
+      {
+        "id": "xpbFvf5lM-w",
+        "title": "Creating Resources to Share with Students and Parents with ChatGPT",
+        "tasks": ["flier design", "accessibility adaptation"]
+      },
+      {
+        "id": "LCZZLOrfwXc",
+        "title": "Design a Staff Process and Checklist with AI",
+        "tasks": ["procedure drafting", "staff checklists"]
+      },
+      {
+        "id": "c5bL8ah2teE",
+        "title": "Turn Attendance Data into an Action plan",
+        "tasks": ["participation tracking", "action planning"]
+      },
+      {
+        "id": "-zIvVmJ2XFw",
+        "title": "The 30-Second Front Door — Capturing Quick Client Contacts with AI",
+        "tasks": ["client intake", "form creation"]
+      },
+      {
+        "id": "lYzFro10bDM",
+        "title": "Build a Career Progression Framework with Claude",
+        "tasks": ["career framework design", "job description drafting"]
+      },
+      {
+        "id": "89GrUhOThk4",
+        "title": "Can it write it a SOAP note?!",
+        "tasks": ["case note drafting"]
+      },
+      {
+        "id": "JzV9-_irHdI",
+        "title": "Build a Web App to Track Student Interventions",
+        "tasks": ["case tracking", "form creation", "workflow automation"]
+      },
+      {
+        "id": "VTycx1bgdPk",
+        "title": "Onboard Volunteers Faster with AI",
+        "tasks": ["volunteer onboarding", "video scripting"]
+      },
+      {
+        "id": "7VjxCHhyAJE",
+        "title": "Document Supervision Sessions Automatically with AI",
+        "tasks": ["meeting minutes", "case note drafting"]
+      },
+      {
+        "id": "AmVG-vTsBOc",
+        "title": "Spanish Tutor",
+        "tasks": ["language practice", "roleplay simulation"]
+      },
+      {
+        "id": "0kMuHMGvhBE",
+        "title": "Amplify your impact with a song",
+        "tasks": ["song creation", "lyric drafting"]
+      },
+      {
+        "id": "6VQWti4-pLE",
+        "title": "Track Changing Language with ChatGPT + Co-Pilot",
+        "tasks": ["copy editing", "change tracking"]
+      },
+      {
+        "id": "smSNnphsmiw",
+        "title": "Classroom Storytelling with ChatGPT",
+        "tasks": ["educational storytelling", "image creation"]
+      },
+      {
+        "id": "vzeAxozbV6w",
+        "title": "Data Journalism",
+        "tasks": ["report drafting", "chart creation"]
+      },
+      {
+        "id": "_wdiyBIC8uc",
+        "title": "Build a Slide Presentation with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "kONzk7f2M5o",
+        "title": "Proofreading External Communications with Claude in Word",
+        "tasks": ["copy editing"]
+      },
+      {
+        "id": "AMdAwWwdOzY",
+        "title": "Turning Source Materials into a Board-Ready Deck with AI",
+        "tasks": ["presentation creation"]
+      },
+      {
+        "id": "Xlvo2_eUBLo",
+        "title": "Transforming Print to Podcast",
+        "tasks": ["training content creation", "audio creation"]
+      },
+      {
+        "id": "Hkj01weD_Hs",
+        "title": "Edit Photos Like a Pro with AI Coaching",
+        "tasks": ["photo editing"]
+      },
+      {
+        "id": "WtEV-VSDLFg",
+        "title": "AI as Your Graphic Design Partner",
+        "tasks": [
+          "graphic design",
+          "image creation",
+          "accessibility adaptation"
+        ]
+      }
+    ]
+  }
+]
