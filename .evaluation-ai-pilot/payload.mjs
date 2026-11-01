@@ -11,6 +11,7 @@ const publicControl = JSON.parse(
 if (process.argv[2] === 'check-approval') {
   const approval = JSON.parse(process.env.AI_PILOT_APPROVAL ?? '{}');
   assert.equal(process.env.GITHUB_RUN_ATTEMPT, '1');
+  assert.equal(process.env.GITHUB_RUN_NUMBER, '1');
   assert.equal(String(approval.runNumber), process.env.GITHUB_RUN_NUMBER);
   assert.equal(approval.sourceSha, process.env.PILOT_SOURCE_SHA);
   assert.equal(approval.controlSha256, publicControl.controlSha256);

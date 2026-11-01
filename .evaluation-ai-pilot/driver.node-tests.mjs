@@ -71,15 +71,16 @@ test('display parse latency excludes later accounting and raw archival', async (
   assert.deepEqual(result.record, { cards: [] });
   assert(performance.now() - start - result.latencyMs >= 200);
 });
-test('a child failure is preserved even if it produced a partial display', async () => {
+test('an accounting failure preserves already displayed cards and its failure', async () => {
   const result = await launch(
     [
       '--input-type=module',
       '-e',
-      `console.log(JSON.stringify({kind:'display',cards:[]})); process.exit(2);`,
+      `console.log(JSON.stringify({kind:'display',selection:{cards:[{youtubeId:'abcdefghijk'}],actualEngine:'llm'}})); process.exit(2);`,
     ],
     process.env,
   );
   assert.equal(result.record, undefined);
+  assert.deepEqual(result.display.cards, [{ youtubeId: 'abcdefghijk' }]);
   assert(Number.isFinite(result.latencyMs));
 });

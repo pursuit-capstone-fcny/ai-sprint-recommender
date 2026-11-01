@@ -157,7 +157,15 @@ async function child(root, out, job) {
       warnings: ranked.warnings,
     });
     process.stdout.write(
-      JSON.stringify({ kind: 'display', cards: result.cards }) + '\n',
+      JSON.stringify({
+        kind: 'display',
+        selection: {
+          cards: result.cards,
+          modelOnlyCards: result.modelOnlyCards,
+          actualEngine: result.actualEngine,
+          upstreamCards: result.upstreamCards,
+        },
+      }) + '\n',
     );
   } else {
     assert(process.env.ANTHROPIC_API_KEY, 'Missing provider secret');
@@ -260,13 +268,14 @@ async function child(root, out, job) {
         body: JSON.stringify(built.request),
       });
       const fallback = { outcome: 'fallback', reason: 'timeout' };
+      const workerTask = worker
+        .fetch(request, env, { waitUntil: (task) => pending.push(task) })
+        .then(async (r) => {
+          result.httpStatus = r.status;
+          return JSON.parse(await r.text());
+        });
       const response = await Promise.race([
-        worker
-          .fetch(request, env, { waitUntil: (task) => pending.push(task) })
-          .then(async (r) => {
-            result.httpStatus = r.status;
-            return JSON.parse(await r.text());
-          }),
+        workerTask,
         new Promise((resolve) => {
           timer = setTimeout(() => resolve(fallback), 5000);
         }),
@@ -276,9 +285,27 @@ async function child(root, out, job) {
       result.coreLatencyMs = performance.now() - started;
       result.workerResponse = response;
       process.stdout.write(
-        JSON.stringify({ kind: 'display', cards: result.cards }) + '\n',
+        JSON.stringify({
+          kind: 'display',
+          selection: {
+            cards: result.cards,
+            modelOnlyCards: result.modelOnlyCards,
+            actualEngine: result.actualEngine,
+            upstreamCards: result.upstreamCards,
+            fallbackReason: result.fallbackReason,
+          },
+        }) + '\n',
       );
-      await Promise.allSettled(pending);
+      // Keep transport interception and pessimistic accounting active even if
+      // the outer browser deadline wins. The parent kills the child at 15s,
+      // retaining displayed cards and a full unknown-usage reservation.
+      await Promise.allSettled([workerTask]);
+      let drained = 0;
+      while (drained < pending.length) {
+        const tasks = pending.slice(drained);
+        drained = pending.length;
+        await Promise.allSettled(tasks);
+      }
       const diagnostic = diagnostics.at(-1) ?? null;
       result.diagnostics = diagnostics;
       result.usage = {
@@ -338,6 +365,7 @@ async function child(root, out, job) {
 export function launch(args, env) {
   return new Promise((resolveResult) => {
     const started = performance.now();
+    let display;
     let buffer = '',
       bytes = 0,
       record,
@@ -362,8 +390,10 @@ export function launch(args, env) {
         buffer = buffer.slice(index + 1);
         try {
           const message = JSON.parse(line);
-          if (message.kind === 'display' && latencyMs === undefined)
+          if (message.kind === 'display' && latencyMs === undefined) {
             latencyMs = performance.now() - started;
+            display = message.selection;
+          }
           if (message.kind === 'accounted') record = message.result;
         } catch {
           overflow = true;
@@ -379,6 +409,7 @@ export function launch(args, env) {
       clearTimeout(timer);
       resolveResult({
         record: code === 0 && !overflow ? record : undefined,
+        display,
         latencyMs: latencyMs ?? performance.now() - started,
         error: signal ?? 'driver-or-child-error',
       });
@@ -388,8 +419,14 @@ export function launch(args, env) {
 
 async function execute(root, out) {
   const { control, bank } = verify(root);
+  assert(
+    process.env.ANTHROPIC_API_KEY,
+    'Missing provider secret; no run authorized',
+  );
+  assert.equal(process.version, 'v24.22.1');
   const approval = JSON.parse(process.env.AI_PILOT_APPROVAL ?? '{}');
   assert.equal(process.env.GITHUB_RUN_ATTEMPT, '1');
+  assert.equal(process.env.GITHUB_RUN_NUMBER, '1');
   assert.equal(String(approval.runNumber), process.env.GITHUB_RUN_NUMBER);
   assert.equal(approval.sourceSha, process.env.GITHUB_SHA);
   assert.equal(
@@ -458,6 +495,7 @@ async function execute(root, out) {
         modelOnlyCards: [],
         upstreamCards: [],
         actualEngine: 'none',
+        ...processResult.display,
         costMicrodollars: job.candidate === 'llm' ? RESERVATION : 0,
         costKnown: job.candidate !== 'llm',
         unknownReservedMicrodollars: job.candidate === 'llm' ? RESERVATION : 0,
