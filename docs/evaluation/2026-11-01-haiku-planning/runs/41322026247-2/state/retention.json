@@ -1,0 +1,6 @@
+{
+  "retained": false,
+  "reason": "Scores 9/8/8, only 4/30 broad accepted lists, one timeout and a provider HTTP 400 caused stop after 33 requests. Seven controls unrun. Full validation fails. Restore V44, not a fresh V44 run.",
+  "labelsChanged": false,
+  "taskDiversityGateChanged": false
+}

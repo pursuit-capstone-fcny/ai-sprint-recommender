@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { ratedSlotsSchema } from './haiku-ratings';
 import {
   MAX_RECOMMENDATIONS,
   type RecommendationRequest,
@@ -7,12 +6,7 @@ import {
 import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { Limits } from './config';
 import { boundedJson } from './bounded-json';
-import {
-  anthropicRequest,
-  evidenceSlotsSchema,
-  plannedEvidenceSlotsSchema,
-  withWorkPlan,
-} from './haiku-evidence';
+import { anthropicRequest, evidenceSlotsSchema } from './haiku-evidence';
 
 const rankKeys = Array.from(
   { length: MAX_RECOMMENDATIONS },
@@ -92,7 +86,7 @@ export function providerBody(
   };
 }
 export type ProviderBody = ReturnType<typeof providerBody> & {
-  selectionEvidence?: true | 'planned' | 'planned-numeric' | 'rated';
+  selectionEvidence?: true;
 };
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
@@ -148,7 +142,6 @@ const slotsSchema = z.strictObject(
     rankKeys.map((key) => [key, z.number().int().nonnegative().nullable()]),
   ),
 );
-const plannedNumericSlotsSchema = withWorkPlan(slotsSchema);
 
 const responseSchema = z.object({
   stop_reason: z.string(),
@@ -209,36 +202,14 @@ export function anthropicProvider(
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
         const output = (
-          body.selectionEvidence === 'rated'
-            ? ratedSlotsSchema(body.catalogIds.length)
-            : body.selectionEvidence === 'planned-numeric'
-              ? plannedNumericSlotsSchema
-              : body.selectionEvidence === 'planned'
-                ? plannedEvidenceSlotsSchema
-                : body.selectionEvidence
-                  ? evidenceSlotsSchema
-                  : slotsSchema
+          body.selectionEvidence ? evidenceSlotsSchema : slotsSchema
         ).safeParse(decoded);
         if (!output.success) {
-          const selections =
-            body.selectionEvidence === 'rated' &&
-            decoded &&
-            typeof decoded === 'object' &&
-            'scores' in decoded
-              ? decoded.scores
-              : typeof body.selectionEvidence === 'string' &&
-                  decoded &&
-                  typeof decoded === 'object' &&
-                  'ranks' in decoded
-                ? decoded.ranks
-                : decoded;
           const positions =
-            selections &&
-            typeof selections === 'object' &&
-            !Array.isArray(selections)
-              ? 'positions' in selections && Array.isArray(selections.positions)
-                ? selections.positions
-                : Object.values(selections)
+            decoded && typeof decoded === 'object' && !Array.isArray(decoded)
+              ? 'positions' in decoded && Array.isArray(decoded.positions)
+                ? decoded.positions
+                : Object.values(decoded)
                     .map((value) =>
                       body.selectionEvidence &&
                       value &&
@@ -269,9 +240,7 @@ export function anthropicProvider(
                   invalidSelectionCount: Math.min(
                     positions.filter(
                       (position) =>
-                        !Number.isSafeInteger(position) ||
-                        position < 0 ||
-                        (body.selectionEvidence === 'rated' && position > 100),
+                        !Number.isSafeInteger(position) || position < 0,
                     ).length,
                     100,
                   ),

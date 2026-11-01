@@ -1,15 +1,12 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V44 retained; V46 rejected for duplicate and breadth regressions. Supporting picks still need review.
+- **Status:** V44 retained; V47–V50 rejected. Weak supporting picks remain unresolved.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
 
-- Given a test response with a work plan before its eight ranks, when selections
-  exist, then require a nonempty plan, validate all IDs, and discard the plan and
-  auxiliary notes before returning IDs. Do not change the task-diversity gate.
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the
   additive $5 cap. Preserve exact-source and exact-attempt approval checks.
@@ -114,6 +111,18 @@
   gate unchanged. Record description evidence for each added tag.
 
 ## Remaining evidence
+
+The [planning and full-candidate-rating trials](../docs/evaluation/2026-11-01-haiku-planning/results.md)
+reject V47–V50. No candidate preserves V44's quality, breadth and reliability
+while resolving weak supporting picks. Restore V44 ranking exactly, retaining
+the 63,000 input bound and additive $5 budget. The four experiments record
+$0.224923, leaving $0.976332. All $0.379988 unknown reservations remain charged.
+V50 stopped after 33 requests on a provider rejection; seven controls remain
+unrun and the full audit fails. Its preceding timeout also retains its complete
+reservation. No fresh V44 paid run or expanded-set approval is claimed.
+Production calls and logging are off. Test calls are disabled and keys removed.
+
+Earlier results and balances below are historical.
 
 The [selection-evidence trials](../docs/evaluation/2026-11-01-haiku-evidence/results.md)
 retain V44: 10/10 in each trial, 30/30 six-to-eight lists and forty measured

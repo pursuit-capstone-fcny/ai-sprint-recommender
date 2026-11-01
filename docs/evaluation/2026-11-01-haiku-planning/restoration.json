@@ -1,0 +1,68 @@
+{
+  "baselineSource": "bd5601bd7059b5ec5cbf1d1d73ab0021087000b9",
+  "allMatch": true,
+  "files": [
+    {
+      "path": "scripts/test-luna-runtime.mjs",
+      "sha256": "b31f47ff4d03a8f5ac9c56c5c01812060622d2d59b3364fe5132dbbc862e5150"
+    },
+    {
+      "path": "server/anthropic.ts",
+      "sha256": "3dea6d6e86ff6ec912db9c442c49c75f2e381a90ecc4bf583a8d33b01aa6bb08"
+    },
+    {
+      "path": "server/evaluation-worker.test.ts",
+      "sha256": "89b79d48fcb53b2a3d03d048e2cce250df40d74bf3cd00592bbcf138c4320822"
+    },
+    {
+      "path": "server/haiku-candidates.test.ts",
+      "sha256": "1d2347bd9da4db781671d7c78afcde6a2a534dbed180469527ee23cced9dbefc"
+    },
+    {
+      "path": "server/haiku-evidence.test.ts",
+      "sha256": "9a5fd3854716a45ee5e1cb48d824f6cd775851c9c41929ed24b37edb6179b8d6"
+    },
+    {
+      "path": "server/haiku-evidence.ts",
+      "sha256": "1965ec65c793d0dfc6ab3232925e28f62080e4dc71a7a267228fc5c2ef3ad2b3"
+    },
+    {
+      "path": "server/haiku-policy.ts",
+      "sha256": "0649a1104f0ef2058da1912daf4438341f08e353a2985922ca5e061160debccc"
+    },
+    {
+      "path": "server/haiku.ts",
+      "sha256": "9b4fbcb979ff601d330c36031a6e0e4e4780aac77838584533e57a043e5738ba"
+    },
+    {
+      "path": "docs/evaluation/2026-10-28-task-tags/benchmark.json",
+      "sha256": "ea05004ea2be226d56ddbc07ffcf6002856d7fb517f710e35e4bf59c870a4f97"
+    },
+    {
+      "path": "docs/evaluation/2026-10-30-luna-ranking/catalog.json",
+      "sha256": "765818523e53de0dac74d97847aad1bc9183d3266d17ac5997d25b367bcacd3c"
+    },
+    {
+      "path": "src/engine/dedupe.ts",
+      "sha256": "d924b398619808a5918d9e59fe995ec49c4ca637e5b1a37c9edd1f8f2ed70761"
+    },
+    {
+      "path": "src/recommendations/selectRecommendations.ts",
+      "sha256": "8ac76bcc0020fd9381a1f21d09ebf4ec05e5fe0a82b3361b6244237af677716d"
+    },
+    {
+      "path": "server/haiku-candidates.ts",
+      "sha256": "3bfb9bd3f735c63a21c346ef25e1d7b882f8e672c59bbe19a66067f896d8dd69"
+    },
+    {
+      "path": "wrangler.jsonc",
+      "sha256": "c0681f82196b95385a72e8d2f733b1cef743b14f19988b1a32d2036ede196931"
+    },
+    {
+      "path": ".github/workflows/deploy.yml",
+      "sha256": "a1fb9f422eeecfff23893264581ebaf788a98f075f0dcd723c7c0fe3c9f9581a"
+    }
+  ],
+  "freshPaidV44Run": false,
+  "budgetTestNote": "The restored provider response fixture is unchanged; active allowance assertions retain the new $5 grant."
+}

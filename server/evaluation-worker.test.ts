@@ -40,15 +40,17 @@ describe('frozen test catalog isolation', () => {
                 content: [
                   {
                     type: 'text',
-                    text: JSON.stringify({
-                      workSteps: 'Prepare an AI policy',
-                      scores: Object.fromEntries(
-                        Array.from({ length: 48 }, (_, i) => [
-                          String(i),
-                          i < 2 ? 95 - i : 0,
+                    text: JSON.stringify(
+                      Object.fromEntries(
+                        Array.from({ length: 8 }, (_, i) => [
+                          'rank' + (i + 1),
+                          {
+                            use: i < 2 ? 'Prepare an AI policy' : '',
+                            position: i < 2 ? i : null,
+                          },
                         ]),
                       ),
-                    }),
+                    ),
                   },
                 ],
               }
@@ -113,10 +115,7 @@ describe('frozen test catalog isolation', () => {
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
-        expect(payload.output_config.format.schema.required).toEqual([
-          'workSteps',
-          'scores',
-        ]);
+        expect(payload.system).toContain('use null in all eight ranks');
       }
     },
   );

@@ -1,0 +1,34 @@
+{
+  "kind": "partial-evaluation-accounting",
+  "completeFortyCaseValidation": false,
+  "submittedRequests": 33,
+  "unrunControls": 7,
+  "finalMeasuredRequests": 31,
+  "totalMeasuredMicrodollars": 36340,
+  "newUnknownReservationsMicrodollars": 13112,
+  "historicalUnknownReservationsMicrodollars": 366876,
+  "cumulativeUnknownReservationsMicrodollars": 379988,
+  "unknownRequests": [
+    {
+      "requestId": "0f745e9e-15c7-45c2-a19b-bab3d308d5d0",
+      "outcome": "timeout",
+      "reservedMicrodollars": 6556
+    },
+    {
+      "requestId": "987b3311-5117-444b-adcd-5f8191722fda",
+      "outcome": "provider-error",
+      "reservedMicrodollars": 6556
+    }
+  ],
+  "recordedChargeMicrodollars": 49452,
+  "cumulativeCeilingMicrodollars": 4023668,
+  "remainingMicrodollars": 976332,
+  "conservativeAccountingReconciled": true,
+  "scores": [9, 8, 8],
+  "sixToEightLists": 4,
+  "benchmarkFallbacks": 5,
+  "medianClientLatencyMs": 2173,
+  "p95ClientLatencyMs": 3766,
+  "maxClientLatencyMs": 4717,
+  "note": "The fixed full audit fails on incomplete evidence. This partial reconciliation does not replace it. HTTP 400 cause is not recorded; no raw provider error or response body is retained. Both unknown requests keep full reservations."
+}

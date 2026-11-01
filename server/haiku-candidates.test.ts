@@ -85,15 +85,17 @@ describe('Haiku candidate retrieval', () => {
           content: [
             {
               type: 'text',
-              text: JSON.stringify({
-                workSteps: 'Organize inventory records',
-                scores: Object.fromEntries(
-                  Array.from({ length: Math.max(48, position + 1) }, (_, i) => [
-                    String(i),
-                    i === position ? 95 : 0,
+              text: JSON.stringify(
+                Object.fromEntries(
+                  Array.from({ length: 8 }, (_, i) => [
+                    `rank${i + 1}`,
+                    {
+                      use: i === 0 ? 'Organize inventory records' : '',
+                      position: i === 0 ? position : null,
+                    },
                   ]),
                 ),
-              }),
+              ),
             },
           ],
         }),
@@ -103,7 +105,7 @@ describe('Haiku candidate retrieval', () => {
     });
     expect(await response(48)).toMatchObject({
       value: null,
-      validationFailure: 'schema',
+      validationFailure: 'out-of-range',
       inputTokens: 1000,
       outputTokens: 60,
     });

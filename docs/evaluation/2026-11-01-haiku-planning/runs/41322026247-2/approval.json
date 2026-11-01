@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "c55fdeaf10fdeaaf3479cd8aec3b6fbb338ad9b1",
+  "approvedWorkflowRunId": "41322026247",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T16:21:38Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v50",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V50 independently rates every retrieved candidate against a short work plan, in one call. Required integer score per catalog position; server validates exact keys and 0\u2013100 bounds, sorts by score then catalog order, selects at most eight scores >=60, then unchanged validation and browser diversity gate. No repairs, padding, retries or replacement cases. Same frozen data, retrieval, low effort, thinking disabled, input/output bounds and deadline. Run thirty benchmark cases and ten controls.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Continue within approved additive $5 cap. Carry $3.974216, including all $0.366876 unknown reservations. Remaining $1.025784. Maximum request reservation $0.006556 and forty-case maximum $0.262240. Preserve prior failures and charges, no reset, refund or repricing. Production calls and logging disabled.",
+  "allowanceMicrodollars": 1025784,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3974216,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

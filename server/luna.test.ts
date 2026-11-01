@@ -621,15 +621,17 @@ describe('deployed Luna low candidate', () => {
             content: [
               {
                 type: 'text',
-                text: JSON.stringify({
-                  workSteps: 'Organize source records',
-                  scores: Object.fromEntries(
-                    Array.from({ length: catalog.items.length }, (_, i) => [
-                      String(i),
-                      i < 3 ? 95 - i : 0,
+                text: JSON.stringify(
+                  Object.fromEntries(
+                    Array.from({ length: 8 }, (_, i) => [
+                      'rank' + (i + 1),
+                      {
+                        use: i < 3 ? 'Organize source records' : '',
+                        position: i < 3 ? i : null,
+                      },
                     ]),
                   ),
-                }),
+                ),
               },
             ],
           }),
