@@ -144,7 +144,7 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'conditional-totals',
     [
-      ['total', 'amount owed', 'sum', 'add up', 'adds up'],
+      ['total', 'amount owed', 'sum', 'add up', 'adds up', 'add'],
       ['each', 'per', 'only where', 'one volunteer', 'one person'],
       ['hour', 'employee', 'person', 'volunteer', 'claim'],
     ],
@@ -256,6 +256,8 @@ export const operationRules: readonly OperationRule[] = [
     [
       [
         'directory',
+        'stuck onto',
+        'exhibitor',
         'copied text',
         'unstructured',
         'jumble',
@@ -279,14 +281,24 @@ export const operationRules: readonly OperationRule[] = [
     'attendance-triage',
     [
       ['attendance', 'attended', 'barely coming'],
-      ['contact', 'follow up', 'outreach', 'drifting', 'prioritize'],
+      [
+        'contact',
+        'follow up',
+        'outreach',
+        'drifting',
+        'prioritize',
+        'call first',
+        'call',
+      ],
     ],
     ['Attendance analysis', 'Student outreach'],
     'spreadsheet',
     ['analysis'],
     [
       candidate(['Attendance analysis']),
-      candidate(['Student interventions'], 80),
+      candidate(['Student interventions'], 80, {
+        unlessExcludedTasks: ['App building'],
+      }),
       candidate(['Case management'], 75, {
         allTasks: ['Spreadsheet generation'],
         whenAll: [
@@ -294,7 +306,29 @@ export const operationRules: readonly OperationRule[] = [
           ['record', 'next date', 'tracker'],
         ],
       }),
+      candidate(['Data cleaning'], 75, {
+        when: [
+          'missing value',
+          'strange value',
+          'data quality',
+          'invalid record',
+        ],
+      }),
+      candidate(['Exploratory analysis'], 75, {
+        allTasks: ['Report generation', 'Chart creation'],
+        when: [
+          'missing value',
+          'strange value',
+          'data quality',
+          'invalid record',
+        ],
+      }),
+      candidate(['Survey analysis'], 70, {
+        allTasks: ['Translation'],
+        whenAll: [['attendance band'], ['missing', 'strange', 'quality']],
+      }),
     ],
+    { supersedes: ['data-cleaning'] },
   ),
   rule(
     'financial-review',
@@ -408,7 +442,7 @@ export const operationRules: readonly OperationRule[] = [
     'grant-inquiry',
     [
       ['foundation', 'funder', 'inquiry'],
-      ['response', 'answer', 'draft'],
+      ['response', 'answer', 'draft', 'write'],
       ['instruction', 'overview', 'future', 'launch', 'guidance'],
     ],
     ['Grant drafting'],
@@ -420,12 +454,19 @@ export const operationRules: readonly OperationRule[] = [
         when: ['review', 'edit', 'check', 'proofread', 'catch', 'overclaim'],
       }),
     ],
+    { preferDetectedSource: true },
   ),
   rule(
     'donor-repurposing',
     [
       ['report', 'research'],
-      ['donor', 'briefing event', 'online event'],
+      [
+        'donor',
+        'supporter',
+        'briefing event',
+        'online event',
+        'online briefing',
+      ],
       ['post', 'opening remark', 'webinar', 'event'],
     ],
     ['Content repurposing', 'Webinar planning', 'Social media writing'],
@@ -436,7 +477,14 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Social media writing'], 80),
       candidate(['Content repurposing'], 75, {
         allTasks: ['Custom assistants'],
-        when: ['voice', 'opening remark', 'briefing event', 'online event'],
+        when: [
+          'voice',
+          'style',
+          'opening remark',
+          'briefing event',
+          'online event',
+          'online briefing',
+        ],
       }),
       candidate(['Presentation creation'], 75, {
         teaching: ['presentation outline'],
@@ -466,7 +514,15 @@ export const operationRules: readonly OperationRule[] = [
     'document-review',
     [
       ['review', 'check', 'proofread', 'edit', 'comment'],
-      ['grammar', 'claim', 'tracked change', 'accept or reject'],
+      [
+        'grammar',
+        'claim',
+        'tracked change',
+        'tracked edit',
+        'unsupported',
+        'accept or reject',
+        'accept each',
+      ],
       ['draft', 'letter', 'document', 'word'],
     ],
     ['Editing proofreading', 'Document review'],
@@ -693,7 +749,7 @@ export const operationRules: readonly OperationRule[] = [
     [
       ['minute', 'document', 'source'],
       ['board', 'historical', 'years'],
-      ['citation', 'find what', 'original', 'when'],
+      ['citation', 'find what', 'original', 'when', 'which year', 'evidence'],
     ],
     ['Document Q&A'],
     'document',
@@ -748,7 +804,17 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'staff-process',
     [
-      ['process', 'procedure', 'handoff', 'step', 'hand over'],
+      [
+        'process',
+        'procedure',
+        'handoff',
+        'step',
+        'hand over',
+        'handover',
+        'passed on',
+        'who does what',
+        'way of working',
+      ],
       ['checklist', 'responsibility', 'responsibilities', 'requirement'],
     ],
     ['Process documentation'],

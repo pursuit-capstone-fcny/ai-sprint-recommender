@@ -11,6 +11,8 @@ export interface CandidateRequirement {
   allTasks?: string[];
   teaching?: string[];
   excludeTasks?: string[];
+  /** A component may depend on a method the visitor explicitly rejected. */
+  unlessExcludedTasks?: string[];
   excludeTeaching?: string[];
   when?: string[];
   /** Every cue group must match; phrases inside a group are alternatives. */
@@ -39,6 +41,8 @@ export interface OperationRule {
   /** Suppress a more generic operation only when this complete rule also matches. */
   supersedes?: string[];
   clearSource?: boolean;
+  /** Keep detected supplied material; source remains the fallback for an implicit input. */
+  preferDetectedSource?: boolean;
   outputWhen?: Record<string, string[]>;
 }
 export function containsPhrase(words: readonly string[], phrase: string) {
@@ -165,6 +169,10 @@ export function interpretOperation(
               ),
           ),
         )) &&
+      (tool !== 'Apple Numbers' ||
+        /\bApple Numbers\b/i.test(prompt) ||
+        /\b(?:in|with|using) Numbers\b/.test(prompt) ||
+        /\bNumbers (?:app|spreadsheet|workbook)\b/.test(prompt)) &&
       (tool !== 'Microsoft Word' ||
         /\b(?:Microsoft Word|(?:in|with|using) Word|Word (?:record|document|file|minutes))\b/.test(
           prompt,
@@ -218,9 +226,11 @@ export function interpretOperation(
         tasks: operation.tasks.filter((task) => catalog.tasks.includes(task)),
         sourceMaterials: operation.clearSource
           ? []
-          : operation.source
-            ? [operation.source]
-            : current.sourceMaterials,
+          : operation.preferDetectedSource && current.sourceMaterials.length
+            ? current.sourceMaterials
+            : operation.source
+              ? [operation.source]
+              : current.sourceMaterials,
         desiredOutputs: operation.outputs.filter(
           (output) =>
             !operation.outputWhen?.[output] ||

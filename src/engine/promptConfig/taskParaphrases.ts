@@ -4,6 +4,91 @@ import type { OperationRule } from '../taskIntent';
 /** Action/source combinations for work described without canonical task names. */
 export const taskParaphrases: readonly OperationRule[] = [
   r(
+    'attributed-quotation-parts',
+    [
+      ['recording', 'audio', 'panel'],
+      ['quote', 'quotation'],
+      ['speaker'],
+      ['wording', 'check', 'source', 'locate'],
+    ],
+    ['Document summary', 'Transcription', 'Document Q&A'],
+    'recording',
+    ['document', 'answer'],
+    [
+      c(['Document summary'], 85, { teaching: ['speaker', 'panel'] }),
+      c(['Transcription'], 80, { allTasks: ['Meeting notes'] }),
+      c(['Document Q&A'], 75, {
+        allTasks: ['Document drafting', 'Document summary'],
+      }),
+    ],
+  ),
+
+  r(
+    'feedback-analysis-questions',
+    [
+      ['comment', 'feedback', 'response'],
+      ['question', 'ask'],
+      ['analysis', 'executive brief'],
+    ],
+    ['Qualitative analysis', 'Survey analysis', 'Report generation'],
+    'survey',
+    ['analysis', 'briefing'],
+    [
+      c(['Qualitative analysis'], 110, {
+        allTasks: ['Report generation'],
+        teaching: ['analysis question', 'manually assemble'],
+      }),
+      c(['Survey analysis'], 80, {
+        teaching: ['theme', 'summary', 'summarize'],
+      }),
+    ],
+  ),
+  r(
+    'attachment-review-parts',
+    [
+      ['email', 'inbox'],
+      ['attachment'],
+      ['scan', 'invoice'],
+      ['store', 'folder', 'log'],
+      ['review', 'person', 'uncertain'],
+    ],
+    ['Email automation', 'Document inventory'],
+    'email',
+    ['spreadsheet'],
+    [
+      c(['Email automation'], 85),
+      c(['Data structuring'], 75, { excludeTasks: ['App building'] }),
+      c(['Document Q&A'], 75, {
+        allTasks: ['Document drafting', 'Document summary'],
+      }),
+      c(['Data cleaning'], 70, { when: ['uncertain', 'review', 'check'] }),
+      c(['Survey analysis'], 70, { teaching: ['scanned feedback form'] }),
+    ],
+  ),
+  r(
+    'classroom-story-resources',
+    [
+      ['character', 'fox', 'owl', 'mascot'],
+      ['story', 'chapter'],
+      ['class', 'classroom', 'family'],
+      ['picture', 'illustration', 'door note'],
+      ['help with', 'plan', 'draft', 'create', 'make'],
+    ],
+    ['Storytelling', 'Image generation', 'Translation'],
+    'context',
+    ['document', 'image', 'translation'],
+    [
+      c(['Storytelling'], 110, { allTasks: ['Image generation'] }),
+      c(['Design feedback'], 75, { teaching: ['icon', 'character'] }),
+      c(['Accessible content'], 75, {
+        allTasks: ['Educational materials'],
+        when: ['family', 'parent'],
+      }),
+    ],
+    { outputWhen: { translation: ['spanish', 'translate', 'translation'] } },
+  ),
+
+  r(
     'conversational-prompting',
     [
       ['ai'],

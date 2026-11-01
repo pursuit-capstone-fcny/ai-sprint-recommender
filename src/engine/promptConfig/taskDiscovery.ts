@@ -142,5 +142,6 @@ export const taskDiscovery: readonly OperationRule[] = [
     'website',
     ['analysis'],
     [c(['AI search visibility'], 100, { minimumStrength: 0.5 })],
+    { supersedes: ['policy-helper'] },
   ),
 ];

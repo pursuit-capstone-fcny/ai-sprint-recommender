@@ -52,7 +52,25 @@ export function promptPolarity(words: string[]) {
     if (
       (word === 'not' && following[0] === 'only') ||
       // "People will not read the guide" describes the audience, not rejected input.
-      (word === 'not' && prefix.at(-1) === 'will' && following[0] === 'read') ||
+      (word === 'not' &&
+        (prefix.at(-1) === 'will' ||
+          (['do', 'does'].includes(prefix.at(-1) ?? '') &&
+            prefix
+              .slice(0, -1)
+              .some((part) =>
+                [
+                  'i',
+                  'we',
+                  'they',
+                  'people',
+                  'staff',
+                  'team',
+                  'volunteer',
+                  'learner',
+                  'reader',
+                ].includes(part),
+              ))) &&
+        ['read', 'reading'].includes(following[0])) ||
       // A topic such as "explain what we should and should not upload" is
       // discussing a rule, not excluding the topic from recommendations.
       (word === 'not' &&

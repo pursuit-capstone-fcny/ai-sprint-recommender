@@ -88,6 +88,8 @@ const VERB_FORMS: Record<string, string> = {
   scanned: 'scan',
   scanning: 'scan',
   misses: 'miss',
+  added: 'add',
+  adding: 'add',
   creating: 'create',
   created: 'create',
   asking: 'ask',

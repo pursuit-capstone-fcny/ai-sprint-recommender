@@ -56,6 +56,383 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
 describe('deterministic free-text recommendations', () => {
   it.each([
     {
+      task: 'Grant drafting',
+      prompt:
+        'Help us write short foundation answers about future plans from our instructions.',
+    },
+    {
+      task: 'Webinar planning',
+      prompt:
+        'Use a research report for an online briefing for supporters with invitation posts.',
+    },
+    {
+      task: 'Data structuring',
+      prompt:
+        'The exhibitor titles are stuck onto names. Put them in separate columns.',
+    },
+    {
+      task: 'Process documentation',
+      prompt: 'Document our way of working as a handover checklist.',
+    },
+    {
+      task: 'Difficult conversations',
+      prompt:
+        'An operations lead needs to practice a difficult conversation with feedback.',
+      teaching: 'Practice a supervisor conversation.',
+    },
+    {
+      task: 'AI policy',
+      prompt:
+        'People need an interim note about safe AI experiments and when to ask a manager.',
+    },
+    {
+      task: 'Editing proofreading',
+      prompt:
+        'Check this Word file with tracked edits and comments on unsupported claims.',
+    },
+    {
+      task: 'Document Q&A',
+      prompt:
+        'Which year did the board approve this in the minutes? Show the evidence.',
+      teaching: 'Inspect a citation to the source minutes.',
+    },
+    {
+      task: 'Client intake',
+      extra: ['App building'],
+      prompt: 'Capture fields on a phone at an outreach table for follow-up.',
+    },
+    {
+      task: 'AI literacy',
+      prompt: 'Explain how machine learning and generative AI differ.',
+    },
+    {
+      task: 'Grantmaker communications',
+      prompt: 'Practice a grant award conversation with a nonprofit leader.',
+    },
+    {
+      task: 'Qualitative analysis',
+      extra: ['Report generation'],
+      prompt:
+        'Propose analysis questions for comments and assemble an executive brief.',
+      teaching: 'Select analysis questions and manually assemble a summary.',
+    },
+    {
+      task: 'Email automation',
+      prompt:
+        'Store scanned invoice email attachments in a folder and send uncertain readings to a person.',
+    },
+  ])(
+    'AC-12.19 recognizes ordinary source/action wording: $task',
+    ({ task, extra = [], prompt, teaching = 'Teach the primary method.' }) => {
+      const main = lesson(1, [task, ...extra], teaching);
+      const unrelated = lesson(2, ['Music generation'], 'Create a soundtrack.');
+      const result = fixture([unrelated, main]).run(prompt);
+      expect(result.interpretation.tasks).toContain(task);
+      expect(ids(result)).toEqual([main.youtubeId]);
+    },
+  );
+  it('AC-12.19 selects a complete visibility audit over incidental leave-policy wording', () => {
+    const audit = lesson(
+      1,
+      ['AI search visibility'],
+      'Audit answers about event pages.',
+    );
+    const helper = lesson(
+      2,
+      ['Custom assistants', 'Knowledge management'],
+      'Configure a handbook helper.',
+    );
+    const { run } = fixture([helper, audit]);
+    const result = run(
+      'An AI assistant leaves out events from our website. Challenge its answers against the page.',
+    );
+    expect(result.interpretation.tasks).toEqual(['AI search visibility']);
+    expect(ids(result)).toEqual([audit.youtubeId]);
+    expect(
+      ids(
+        run(
+          'Build an assistant to answer annual leave questions from a policy manual.',
+        ),
+      ),
+    ).toEqual([helper.youtubeId]);
+  });
+  it('AC-12.19 keeps attendance as the goal and respects a rejected app method', () => {
+    const attendance = lesson(
+      1,
+      ['Attendance analysis'],
+      'Prioritize attendance follow-up.',
+    );
+    const clean = lesson(2, ['Data cleaning'], 'Inspect missing values.');
+    const app = lesson(
+      3,
+      ['Student interventions', 'App building'],
+      'Track student interventions in an app.',
+    );
+    const { catalog, options } = fixture([app, clean, attendance]);
+    const run = (prompt: string) =>
+      recommendVideos(
+        {
+          ...catalog,
+          synonyms: [
+            { alias: 'build an app', category: 'task', target: 'App building' },
+          ],
+        },
+        { prompt },
+        options,
+      );
+    const result = run(
+      'Group attendance bands and call people first. Flag missing or strange values. Do not build an app.',
+    );
+    expect(result.interpretation.tasks).toContain('Attendance analysis');
+    expect(result.interpretation.excludedTasks).toContain('App building');
+    expect(ids(result)).toEqual([attendance.youtubeId, clean.youtubeId]);
+    expect(
+      ids(run('Group attendance bands and contact people for follow-up.')),
+    ).toContain(app.youtubeId);
+  });
+  it('AC-12.19 recognizes conditional hours added for one person before generic formula methods', () => {
+    const total = lesson(
+      1,
+      ['Data aggregation', 'Spreadsheet formulas'],
+      'Total durations for matching names.',
+    );
+    const formula = lesson(
+      2,
+      ['Spreadsheet formulas'],
+      'Generate and explain a formula.',
+    );
+    const result = fixture([formula, total]).run(
+      'In Sheets, add hours for one person with matching rows and explain the formula.',
+    );
+    expect(result.interpretation.tasks).toContain('Data aggregation');
+    expect(ids(result)).toEqual([total.youtubeId, formula.youtubeId]);
+  });
+  it('AC-12.19 treats an unread document as supplied material while preserving imperative exclusions', () => {
+    const media = lesson(
+      1,
+      ['Audio generation', 'Video creation'],
+      'Generate training overviews from a document.',
+    );
+    const music = lesson(2, ['Music generation'], 'Create a song.');
+    const { run } = fixture([music, media]);
+    const result = run(
+      'Staff do not read this training document. We want a podcast and video overview from it.',
+    );
+    expect(ids(result)).toEqual([media.youtubeId]);
+    expect(result.interpretation.sourceMaterials).toEqual(['document']);
+    expect(result.interpretation.desiredOutputs).toEqual(['audio', 'video']);
+    expect(
+      ids(
+        run(
+          'Do not read this document or create a podcast. Generate a song with lyrics.',
+        ),
+      ),
+    ).toEqual([music.youtubeId]);
+  });
+  it('AC-12.19 requires the named editor when its controls are requested', () => {
+    const native = lesson(
+      1,
+      ['Photo editing'],
+      'Fix a dark photo and crop it.',
+      ['Adobe Lightroom'],
+    );
+    const other = lesson(
+      2,
+      ['Photo editing'],
+      'Fix a dark photo and crop it.',
+      ['Canva'],
+    );
+    const critique = lesson(
+      3,
+      ['Design feedback'],
+      'Diagnose a screenshot and background.',
+    );
+    const { run } = fixture([critique, other, native]);
+    expect(
+      ids(
+        run(
+          'I use Adobe Lightroom and need guidance through its exposure, masking and crop controls for a dark photo.',
+        ),
+      ),
+    ).toEqual([native.youtubeId]);
+    expect(
+      ids(
+        run(
+          'A dark photo needs crop and background advice; Lightroom could help.',
+        ),
+      ),
+    ).toContain(critique.youtubeId);
+    expect(
+      ids(
+        run(
+          'I do not use Adobe Lightroom or its controls. Make a dark photo brighter in Canva.',
+        ),
+      ),
+    ).toEqual([other.youtubeId]);
+  });
+  it('AC-12.19 distinguishes ordinary numbers from the Numbers application', () => {
+    const table = lesson(
+      1,
+      ['Data structuring'],
+      'Separate an unstructured list into columns.',
+      ['Apple Numbers'],
+    );
+    const { run } = fixture([table]);
+    expect(
+      run('Put the invoice number into columns from an unstructured list.')
+        .interpretation.tools,
+    ).not.toContain('Apple Numbers');
+    expect(
+      run('Put an unstructured list into columns in Apple Numbers.')
+        .interpretation.tools,
+    ).toContain('Apple Numbers');
+    expect(
+      run('Put an unstructured list into columns using Numbers.').interpretation
+        .tools,
+    ).toContain('Apple Numbers');
+  });
+  it('AC-12.19 preserves supplied slides when the requested output is a written grant answer', () => {
+    const draft = lesson(
+      1,
+      ['Grant drafting'],
+      'Draft an answer from foundation guidance.',
+    );
+    const { catalog, options } = fixture([draft]);
+    const result = recommendVideos(
+      catalog,
+      {
+        prompt:
+          'I have slides about our service. Help write foundation answers about future plans.',
+      },
+      {
+        ...options,
+        workflows: {
+          artifacts: [
+            {
+              id: 'presentation',
+              label: 'Slides',
+              aliases: ['slides'],
+              tasks: [],
+            },
+          ],
+          workflows: [],
+        },
+      },
+    );
+    expect(result.interpretation.sourceMaterials).toEqual(['presentation']);
+    expect(result.interpretation.desiredOutputs).toEqual(['document']);
+    expect(ids(result)).toEqual([draft.youtubeId]);
+  });
+  it('AC-12.19 preserves creation and translation outputs in a classroom story request', () => {
+    const story = lesson(
+      1,
+      ['Storytelling', 'Image generation', 'Translation'],
+      'Create chapter illustrations and translate a classroom story.',
+    );
+    const design = lesson(2, ['Design feedback'], 'Refine an icon.');
+    const parents = lesson(
+      3,
+      ['Accessible content', 'Educational materials'],
+      'Adapt visuals for parents.',
+    );
+    const { run } = fixture([parents, design, story]);
+    const result = run(
+      'Plan a classroom fox story with chapter pictures and a Spanish translation for families.',
+    );
+    expect(result.interpretation.sourceMaterials).toEqual(['context']);
+    expect(result.interpretation.desiredOutputs).toEqual([
+      'document',
+      'image',
+      'translation',
+    ]);
+    expect(ids(result)[0]).toEqual(story.youtubeId);
+    expect(ids(result)).toEqual(
+      expect.arrayContaining([
+        story.youtubeId,
+        design.youtubeId,
+        parents.youtubeId,
+      ]),
+    );
+    const existing = run(
+      'Translate existing English story chapters into Spanish.',
+    );
+    expect(existing.interpretation.sourceMaterials).toEqual(['document']);
+    expect(existing.interpretation.desiredOutputs).toEqual(['translation']);
+    expect(ids(existing)).toEqual([story.youtubeId]);
+  });
+  it('AC-12.19 retains useful audio-quotation components without substituting an overview', () => {
+    const speaker = lesson(
+      1,
+      ['Document summary'],
+      'Summarize a panel speaker.',
+    );
+    const transcript = lesson(
+      2,
+      ['Transcription', 'Meeting notes'],
+      'Export a recording transcript.',
+    );
+    const check = lesson(
+      3,
+      ['Document Q&A', 'Document drafting', 'Document summary'],
+      'Check wording against source text.',
+    );
+    const overview = lesson(
+      4,
+      ['Document Q&A'],
+      'Ask a collection of source documents and preview an overview.',
+    );
+    const { run } = fixture([overview, check, transcript, speaker]);
+    const result = run(
+      'From this panel audio, check which speaker used these quotations and locate the wording.',
+    );
+    expect(ids(result)).toEqual([
+      speaker.youtubeId,
+      transcript.youtubeId,
+      check.youtubeId,
+    ]);
+    expect(result.interpretation.sourceMaterials).toEqual(['recording']);
+    expect(result.interpretation.desiredOutputs).not.toContain('summary');
+    expect(
+      result.recommendations.every((x) =>
+        x.reason.includes('transferable component'),
+      ),
+    ).toBe(true);
+    expect(ids(run('Summarize this panel recording in an outline.'))).toContain(
+      overview.youtubeId,
+    );
+  });
+  it('AC-12.19 keeps reusable writing-helper setup ahead of incidental speech repurposing', () => {
+    const configure = lesson(
+      1,
+      [
+        'Content repurposing',
+        'Custom assistants',
+        'Brand voice',
+        'Document drafting',
+      ],
+      'Configure writing conventions and turn a speech into an op-ed.',
+    );
+    const broadcast = lesson(
+      2,
+      ['Content repurposing', 'Speechwriting'],
+      'Turn a report into a webinar and opening remarks.',
+    );
+    const result = fixture([broadcast, configure]).run(
+      'Create a writing helper with a writing guide to turn our speech into an op-ed; keep reference files for later work.',
+    );
+    expect(result.interpretation.tasks).toEqual([
+      'Custom assistants',
+      'Brand voice',
+    ]);
+    expect(result.interpretation.desiredOutputs).toEqual([
+      'assistant',
+      'document',
+    ]);
+    expect(ids(result)).toEqual([configure.youtubeId]);
+  });
+
+  it.each([
+    {
       name: 'feasibility source checks',
       direct: ['RFP review', 'Grant drafting'],
       partial: ['Document drafting', 'Document Q&A', 'Document summary'],

@@ -13,6 +13,12 @@ export function requiredPlatform(prompt: string) {
       ),
     ),
     ...prompt.matchAll(new RegExp(`\\b${name}['’]s own\\b`, 'g')),
+    ...prompt.matchAll(
+      new RegExp(
+        `\\b(?:use|using|work in)\\s+${name}\\b[^.!?]{0,100}\\bits\\s+[^.!?]{0,100}\\b(?:controls?|interface|screens?)\\b`,
+        'g',
+      ),
+    ),
   ];
   const app = /\b(?:built[ -]in\s+)?([A-Z][a-zA-Z]+)\s+app\b/.exec(prompt);
   if (

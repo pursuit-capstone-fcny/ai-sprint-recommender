@@ -27,6 +27,12 @@ function requirement(
 ) {
   const teaching = languageTokens(`${item.title} ${item.description}`);
   if (
+    rule.unlessExcludedTasks?.some((task) =>
+      intent.interpretation.excludedTasks.includes(task),
+    )
+  )
+    return null;
+  if (
     rule.when?.length &&
     !rule.when.some((phrase) => containsPhrase(intent.positive, phrase))
   )
@@ -206,7 +212,8 @@ export function compatibleCandidates(
           instructions.get(JSON.stringify([item.youtubeId, task])) ===
           'explained',
       );
-    const sourceMatch = flow?.source === operation.source;
+    const sourceMatch =
+      !!flow && intent.interpretation.sourceMaterials.includes(flow.source);
     const toolScore = intent.interpretation.tools.filter((tool) =>
       item.tools.includes(tool),
     ).length;

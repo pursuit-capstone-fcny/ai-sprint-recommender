@@ -298,6 +298,7 @@ export const taskOperations: readonly OperationRule[] = [
         'desk',
         'reception',
         'outreach worker',
+        'outreach table',
         'client intake',
         'outreach session',
         'contact detail',
@@ -342,7 +343,7 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'employee-conversation',
     [
-      ['supervisor', 'employee', 'manager'],
+      ['supervisor', 'employee', 'manager', 'operations lead', 'team lead'],
       ['play', 'practice', 'practise', 'rehearse'],
       [
         'conversation',
@@ -375,7 +376,14 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'grant-conversation',
     [
-      ['program officer', 'grantmaker', 'funding decision', 'foundation'],
+      [
+        'program officer',
+        'grantmaker',
+        'funding decision',
+        'foundation',
+        'grant award',
+        'grant announcement',
+      ],
       ['practice', 'practise', 'conversation', 'exchange', 'rehearsal'],
       ['nonprofit', 'funding', 'grant'],
     ],
@@ -585,6 +593,10 @@ export const taskOperations: readonly OperationRule[] = [
         'naming rule',
         'rule for name',
         'approved wording',
+        'writing guide',
+        'language guideline',
+        'writing convention',
+        'cliche',
         'program name',
       ],
       ['writing', 'write', 'draft', 'announcement'],
@@ -610,10 +622,14 @@ export const taskOperations: readonly OperationRule[] = [
       }),
       c(['Workflow automation'], 70, {
         allTasks: ['Custom assistants'],
-        when: ['again', 'every time', 'routine'],
+        when: ['again', 'every time', 'routine', 'later work'],
+      }),
+      c(['Content repurposing'], 115, {
+        allTasks: ['Custom assistants'],
+        when: ['op ed', 'speech', 'carousel'],
       }),
     ],
-    { supersedes: ['program-naming'] },
+    { supersedes: ['program-naming'], preferDetectedSource: true },
   ),
   r(
     'speech-repurposing',
@@ -629,7 +645,10 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Brand voice'], 80, {
         allTasks: ['Custom assistants', 'Social media writing'],
       }),
-      c(['Content repurposing'], 75, { allTasks: ['Speechwriting'] }),
+      c(['Content repurposing'], 75, {
+        allTasks: ['Speechwriting'],
+        when: ['voice', 'mission', 'tone'],
+      }),
     ],
   ),
   r(
@@ -730,7 +749,14 @@ export const taskOperations: readonly OperationRule[] = [
     'ai-vocabulary',
     [
       ['ai', 'machine learning', 'generative ai'],
-      ['difference', 'introduction', 'vocabulary', 'mean the same'],
+      [
+        'difference',
+        'distinction',
+        'differ',
+        'introduction',
+        'vocabulary',
+        'mean the same',
+      ],
     ],
     ['AI literacy'],
     undefined,
@@ -744,9 +770,18 @@ export const taskOperations: readonly OperationRule[] = [
   r(
     'interim-ai-policy',
     [
-      ['policy', 'guideline'],
+      ['policy', 'guideline', 'interim note', 'interim rule'],
       ['interim', 'pending', 'experiment', 'sensitive', 'responsible'],
-      ['staff', 'organization', 'trying', 'guidance'],
+      [
+        'staff',
+        'organization',
+        'trying',
+        'guidance',
+        'people',
+        'team',
+        'board',
+        'manager',
+      ],
     ],
     ['AI policy', 'Responsible AI'],
     undefined,

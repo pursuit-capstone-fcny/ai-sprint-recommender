@@ -113,6 +113,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When expanding recommendations
   - Then require the component's declared positive cue groups and instructional evidence, retain shared compatibility checks, and rank the primary method before components. Printable output alone does not imply activity-helper setup, conversation preparation alone does not imply role-play practice, and generic files alone do not imply a project-organization method. Document comparison, source review and helper setup can retain their eligible partials without admitting unrelated fallback methods.
 
+- AC-12.19 Source/action recognition and primary goals
+  - Given ordinary action wording, supplied source material, a secondary requested component or a named application's controls
+  - When recognizing operations and parsing the request
+  - Then complete visibility audits take priority over incidental leave-policy words, attendance prioritization over data checks, conditional totals over generic formula generation, and reusable writing setup over speech repurposing. Registered grant, handover, rehearsal, review, intake, feedback-question and attachment phrases can select their methods. A statement that staff do not read supplied text preserves the document as a source; story creation can retain visual and translation outputs; quotation components do not imply a complete attributed-transcription method. Detected source material is retained where declared, ordinary numbers do not imply Apple Numbers, and a transfer cannot depend on an explicitly rejected method.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.
