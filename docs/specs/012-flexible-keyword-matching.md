@@ -108,6 +108,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When recognizing and selecting the primary operation
   - Then registered source/action paraphrases can recognize the task; approved spreadsheet terminology replacement takes priority over incidental record lookup, document version comparison over general proofreading, and reusable organizational writing helpers over program naming. Suppression requires every positive condition of the specific operation, respects negation and preserves scoped useful components under the shared compatibility checks.
 
+- AC-12.18 Scoped workflow components
+  - Given a recognized primary task and a requested component such as source verification, numeric checking, iterative activity planning, reference organization, explicit rehearsal, debugging or distinct counting
+  - When expanding recommendations
+  - Then require the component's declared positive cue groups and instructional evidence, retain shared compatibility checks, and rank the primary method before components. Printable output alone does not imply activity-helper setup, conversation preparation alone does not imply role-play practice, and generic files alone do not imply a project-organization method. Document comparison, source review and helper setup can retain their eligible partials without admitting unrelated fallback methods.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

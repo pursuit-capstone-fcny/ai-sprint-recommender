@@ -97,7 +97,23 @@ export const operationRules: readonly OperationRule[] = [
     ['Survey analysis', 'Qualitative analysis', 'Report generation'],
     'form',
     ['analysis', 'document'],
-    survey,
+    [
+      ...survey,
+      candidate(['Chart creation'], 75, {
+        allTasks: ['Exploratory analysis'],
+        whenAll: [
+          ['rating', 'score', 'chart', 'quantitative'],
+          ['correct', 'error', 'mistaken', 'verify'],
+        ],
+      }),
+      candidate(['Chart creation'], 75, {
+        allTasks: ['Survey analysis'],
+        whenAll: [
+          ['rating', 'score', 'chart', 'quantitative'],
+          ['correct', 'error', 'mistaken', 'verify'],
+        ],
+      }),
+    ],
   ),
   rule(
     'numeric-survey-chart',
@@ -172,7 +188,10 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Data cleaning'], 75),
       candidate(['Spreadsheet formulas'], 70, {
         excludeTasks: ['List comparison', 'Data aggregation'],
-        whenAll: [['count'], ['row', 'formula', 'calculation']],
+        whenAll: [
+          ['count'],
+          ['row', 'formula', 'calculation', 'unique', 'distinct', 'once'],
+        ],
       }),
     ],
   ),
@@ -268,6 +287,13 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Attendance analysis']),
       candidate(['Student interventions'], 80),
+      candidate(['Case management'], 75, {
+        allTasks: ['Spreadsheet generation'],
+        whenAll: [
+          ['follow up', 'contact'],
+          ['record', 'next date', 'tracker'],
+        ],
+      }),
     ],
   ),
   rule(
@@ -456,6 +482,15 @@ export const operationRules: readonly OperationRule[] = [
         allTasks: ['Custom assistants', 'Document drafting'],
         when: ['voice', 'style'],
       }),
+      candidate(['Brand voice'], 70, {
+        allTasks: ['Custom assistants', 'Document drafting'],
+        teaching: ['writing convention', 'op ed'],
+        whenAll: [['tracked change'], ['comment', 'grammar', 'verify']],
+      }),
+      candidate(['Document drafting'], 70, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        whenAll: [['tracked change'], ['comment', 'grammar', 'verify']],
+      }),
     ],
   ),
   rule(
@@ -539,7 +574,15 @@ export const operationRules: readonly OperationRule[] = [
     ['Design feedback'],
     'image',
     ['image'],
-    [candidate(['Design feedback'])],
+    [
+      candidate(['Design feedback'], 100, {
+        excludeTasks: ['Outreach materials'],
+      }),
+      candidate(['Design feedback'], 80, {
+        allTasks: ['Outreach materials'],
+        when: ['poster', 'flier', 'flyer', 'handout', 'print'],
+      }),
+    ],
   ),
   rule(
     'attachment-flow',
@@ -620,7 +663,6 @@ export const operationRules: readonly OperationRule[] = [
           'project',
           'source document',
           'knowledge file',
-          'file',
         ],
       }),
       candidate(['Document Q&A'], 75, {
@@ -637,6 +679,11 @@ export const operationRules: readonly OperationRule[] = [
           'look up',
           'retrieve',
         ],
+      }),
+      candidate(['Knowledge management'], 75, {
+        allTasks: ['Process documentation'],
+        minimumStrength: 0.5,
+        whenAll: [['handbook'], ['hand off', 'human', 'person', 'exception']],
       }),
     ],
     { precedence: 1 },
@@ -858,6 +905,12 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Process documentation'], 75, {
         allTasks: ['Client intake'],
         when: ['intake', 'handoff', 'procedure', 'accommodation'],
+      }),
+      candidate(['Code debugging'], 70, {
+        whenAll: [
+          ['script', 'code'],
+          ['error', 'debug', 'correct'],
+        ],
       }),
     ],
   ),

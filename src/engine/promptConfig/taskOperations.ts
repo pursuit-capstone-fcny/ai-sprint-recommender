@@ -1,8 +1,5 @@
 import type { OperationRule } from '../taskIntent';
 import { candidate as c, rule as r } from './operationRules';
-const practice = [
-  c(['Role play'], 80, { excludeTasks: ['Language learning'] }),
-];
 const voice = [c(['Brand voice'], 80, { allTasks: ['Custom assistants'] })];
 const prompting = [
   c(['Prompting'], 80, {
@@ -117,6 +114,13 @@ export const taskOperations: readonly OperationRule[] = [
         allTasks: ['Document Q&A', 'Document summary'],
         when: ['summary', 'word', 'export', 'document'],
       }),
+      c(['Document summary'], 70, {
+        teaching: ['speaker', 'panel'],
+        whenAll: [
+          ['audio', 'recording'],
+          ['document', 'word', 'outline', 'detailed'],
+        ],
+      }),
     ],
   ),
   r(
@@ -217,6 +221,10 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Survey analysis'], 110, { allTasks: ['Translation'] }),
       c(['Chart creation'], 85, { allTasks: ['Survey analysis'] }),
       c(['Chart creation'], 80, { allTasks: ['Exploratory analysis'] }),
+      c(['Survey analysis'], 80, {
+        allTasks: ['Qualitative analysis'],
+        when: ['account', 'summary', 'comment', 'theme'],
+      }),
     ],
   ),
   r(
@@ -319,7 +327,17 @@ export const taskOperations: readonly OperationRule[] = [
     ['Case notes', 'Document review'],
     'context',
     ['notes'],
-    [c(['Case notes'], 80), c(['Editing proofreading'], 75)],
+    [
+      c(['Case notes'], 80),
+      c(['Editing proofreading'], 75),
+      c(['Document drafting'], 70, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        whenAll: [
+          ['anonymized', 'anonymised'],
+          ['check', 'verify', 'against', 'source'],
+        ],
+      }),
+    ],
   ),
   r(
     'employee-conversation',
@@ -364,7 +382,23 @@ export const taskOperations: readonly OperationRule[] = [
     ['Role play', 'Grantmaker communications'],
     'context',
     ['role-play'],
-    [c(['Grantmaker communications']), ...practice],
+    [
+      c(['Grantmaker communications']),
+      c(['Role play'], 80, {
+        excludeTasks: ['Language learning', 'Staff training'],
+      }),
+      c(['Role play'], 75, {
+        allTasks: ['Staff training'],
+        when: [
+          'exchange',
+          'back and forth',
+          'voice',
+          'spoken',
+          'simulation',
+          'training',
+        ],
+      }),
+    ],
   ),
   r(
     'negotiation-preparation',
@@ -392,6 +426,10 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Negotiation preparation'], 110, { minimumStrength: 0.5 }),
       c(['Role play'], 75, {
         teaching: ['grant conversation', 'performance conversation'],
+      }),
+      c(['Role play'], 70, {
+        excludeTasks: ['Language learning', 'Staff training'],
+        when: ['practice', 'practise', 'role play', 'rehearsal'],
       }),
     ],
   ),
@@ -460,6 +498,10 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Document drafting'], 80, { teaching: ['bio', 'resume'] }),
       c(['Editing proofreading'], 75, {
         when: ['interview', 'review', 'edit', 'proofread', 'check', 'revise'],
+      }),
+      c(['Document drafting'], 70, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['check', 'verify', 'catch'],
       }),
     ],
   ),
@@ -561,6 +603,15 @@ export const taskOperations: readonly OperationRule[] = [
         minimumStrength: 0.5,
         whenAll: [['example', 'sample'], ['reference']],
       }),
+      c(['Knowledge management'], 70, {
+        allTasks: ['Process documentation'],
+        minimumStrength: 0.5,
+        when: ['reference', 'file', 'document'],
+      }),
+      c(['Workflow automation'], 70, {
+        allTasks: ['Custom assistants'],
+        when: ['again', 'every time', 'routine'],
+      }),
     ],
     { supersedes: ['program-naming'] },
   ),
@@ -639,6 +690,13 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Presentation creation'], 110, { allTasks: ['Research'] }),
       c(['Presentation creation'], 80, {
         excludeTasks: ['Survey analysis', 'Document Q&A'],
+      }),
+      c(['Brand voice'], 70, {
+        allTasks: ['Custom assistants', 'Document drafting'],
+        whenAll: [
+          ['writing guide', 'language guideline', 'brand voice'],
+          ['draft', 'review', 'resource'],
+        ],
       }),
     ],
   ),
@@ -747,6 +805,12 @@ export const taskOperations: readonly OperationRule[] = [
     [
       c(['Retreat planning']),
       c(['Lesson planning'], 75, { allTasks: ['Brainstorming'] }),
+      c(['Lesson planning'], 70, {
+        allTasks: ['Custom assistants'],
+        excludeTasks: ['Curriculum design', 'Language learning'],
+        excludeTeaching: ['vocabulary'],
+        when: ['work up', 'refine', 'properly'],
+      }),
     ],
   ),
   r(
@@ -787,6 +851,10 @@ export const taskOperations: readonly OperationRule[] = [
         allTasks: ['Process documentation'],
         minimumStrength: 0.5,
       }),
+      c(['Custom assistants'], 70, {
+        allTasks: ['Knowledge management', 'Brand voice'],
+        when: ['reference', 'material', 'source', 'instruction'],
+      }),
     ],
   ),
   r(
@@ -819,6 +887,12 @@ export const taskOperations: readonly OperationRule[] = [
     ['Design feedback'],
     'image',
     ['image'],
-    [c(['Design feedback'])],
+    [
+      c(['Design feedback'], 100, { excludeTasks: ['Outreach materials'] }),
+      c(['Design feedback'], 80, {
+        allTasks: ['Outreach materials'],
+        when: ['poster', 'flier', 'flyer', 'handout', 'print', 'printed'],
+      }),
+    ],
   ),
 ];

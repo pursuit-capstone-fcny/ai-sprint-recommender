@@ -71,6 +71,10 @@ export const taskParaphrases: readonly OperationRule[] = [
       c(['Exploratory analysis'], 110, {
         allTasks: ['Report generation', 'Chart creation'],
       }),
+      c(['Chart creation'], 80, { allTasks: ['Survey analysis'] }),
+      c(['Data cleaning'], 75, {
+        when: ['gap', 'missing', 'odd', 'quality', 'check'],
+      }),
     ],
   ),
   r(
@@ -144,6 +148,15 @@ export const taskParaphrases: readonly OperationRule[] = [
         allTasks: ['Lesson planning'],
         teaching: ['activity', 'reference curriculum'],
         excludeTasks: ['Language learning'],
+      }),
+      c(['Lesson planning'], 80, {
+        allTasks: ['Custom assistants', 'Educational materials'],
+        excludeTasks: ['Curriculum design', 'Language learning'],
+        when: ['refine', 'suggestion', 'topic', 'age group'],
+      }),
+      c(['Lesson planning'], 75, {
+        allTasks: ['Brainstorming'],
+        when: ['refine', 'suggestion', 'topic', 'age group'],
       }),
     ],
   ),

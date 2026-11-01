@@ -32,6 +32,11 @@ export const taskDiscovery: readonly OperationRule[] = [
       c(['RFP review'], 85),
       c(['Grant drafting'], 80, {
         teaching: ['funder guidance', 'funder requirement'],
+        when: ['application', 'attachment', 'program summary', 'write'],
+      }),
+      c(['Document drafting'], 75, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['fact', 'verify', 'check', 'source'],
       }),
     ],
   ),

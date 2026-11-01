@@ -54,6 +54,243 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it.each([
+    {
+      name: 'feasibility source checks',
+      direct: ['RFP review', 'Grant drafting'],
+      partial: ['Document drafting', 'Document Q&A', 'Document summary'],
+      teaching: 'Check source facts while drafting.',
+      prompt:
+        'Check which facts we must supply for a bid under this commissioning pack and its eligibility rules.',
+      control:
+        'Assess eligibility and equipment needs for a bid under this commissioning pack.',
+    },
+    {
+      name: 'survey narrative components',
+      direct: ['Survey analysis', 'Translation'],
+      partial: ['Survey analysis', 'Qualitative analysis'],
+      teaching: 'Analyze feedback themes.',
+      prompt:
+        'Analyze this semicolon questionnaire into graphs and a short account of what people liked.',
+      control: 'Analyze this semicolon questionnaire into graphs.',
+    },
+    {
+      name: 'attendance follow-up tracking',
+      direct: ['Attendance analysis'],
+      partial: ['Case management', 'Spreadsheet generation'],
+      teaching: 'Track milestones and next dates.',
+      prompt:
+        'Use poor attendance groups to contact participants and record follow-up dates.',
+      control: 'Use poor attendance groups to contact participants.',
+    },
+    {
+      name: 'source-grounded application review',
+      direct: ['Cover letter writing'],
+      partial: ['Document drafting', 'Document Q&A', 'Document summary'],
+      teaching: 'Check source references in draft documents.',
+      prompt:
+        'Use my CV and job advert for a letter and catch unsupported claims.',
+      control:
+        'Use my CV and job advert for a letter, leaving placeholders for unknown facts.',
+    },
+    {
+      name: 'iterative staff activities',
+      direct: ['Retreat planning'],
+      partial: ['Lesson planning', 'Custom assistants'],
+      teaching: 'Refine a lesson-planning GPT activity.',
+      prompt:
+        'For a timed staff day activity with finance, help me work up and refine one exercise.',
+      control:
+        'For a timed staff day activity with finance, provide a printable facilitator sheet.',
+    },
+    {
+      name: 'recording-to-document summary components',
+      direct: ['Supervision documentation'],
+      partial: ['Document summary'],
+      teaching: 'Summarize a panel speaker.',
+      prompt:
+        'Turn a supervisor session audio recording into an editable Word note.',
+      control:
+        'We record supervision sessions and need an editable summary on a computer.',
+    },
+    {
+      name: 'reference organization for writing helpers',
+      direct: ['Brand voice', 'Custom assistants', 'Document drafting'],
+      partial: ['Knowledge management', 'Process documentation'],
+      teaching: 'Organize chats and reference files.',
+      prompt: 'Build a writing helper with naming rules and reference files.',
+      control: 'Build a writing helper with naming rules.',
+    },
+    {
+      name: 'repeated writing workflows',
+      direct: ['Brand voice', 'Custom assistants', 'Document drafting'],
+      partial: ['Workflow automation', 'Custom assistants'],
+      teaching: 'Invoke a saved repeated workflow.',
+      prompt:
+        'Build a writing helper with naming rules that we can invoke again.',
+      control: 'Build a reusable writing helper with naming rules.',
+    },
+    {
+      name: 'tracked review and factual source checks',
+      direct: ['Editing proofreading', 'Document review'],
+      partial: ['Document drafting', 'Document Q&A', 'Document summary'],
+      teaching: 'Check draft claims against source references.',
+      prompt:
+        'Check grammar in this Word letter with tracked changes and comments.',
+      control:
+        'Check grammar in this Word letter with comments that we can accept or reject.',
+    },
+    {
+      name: 'tracked review and writing conventions',
+      direct: ['Editing proofreading', 'Document review'],
+      partial: ['Brand voice', 'Custom assistants', 'Document drafting'],
+      teaching: 'Set unwanted writing conventions.',
+      prompt:
+        'Check grammar in this Word letter with tracked changes and comments.',
+      control:
+        'Check grammar in this Word letter with comments that we can accept or reject.',
+    },
+    {
+      name: 'numeric checks in scanned reports',
+      direct: ['Survey analysis', 'Qualitative analysis', 'Report generation'],
+      partial: ['Chart creation', 'Survey analysis'],
+      teaching: 'Plot scores and check the raw data.',
+      prompt:
+        'Make a report from scanned feedback ratings and correct analysis errors.',
+      control:
+        'Make a report from scanned feedback ratings using the previous layout.',
+    },
+    {
+      name: 'debugging generated forms',
+      direct: ['Form generation', 'Evaluation design'],
+      partial: ['Code debugging'],
+      teaching: 'Debug code with its error message.',
+      prompt:
+        'Generate a Google Form from a rubric and debug the script error.',
+      control: 'Generate a Google Form from a rubric.',
+    },
+    {
+      name: 'explicit negotiation rehearsal',
+      direct: ['Negotiation preparation'],
+      partial: ['Role play'],
+      teaching: 'Practice a manager conversation with feedback.',
+      prompt:
+        'Prepare a counterproposal for used equipment and practice the buyer conversation.',
+      control:
+        'Prepare a counterproposal for used equipment before the buyer conversation.',
+    },
+    {
+      name: 'reference-backed saved routines',
+      direct: ['Workflow automation', 'Custom assistants'],
+      partial: ['Custom assistants', 'Knowledge management', 'Brand voice'],
+      teaching: 'Configure an internal reference guidebook assistant.',
+      prompt:
+        'Package a monthly Claude routine to invoke using reference material.',
+      control: 'Package a monthly Claude routine to invoke.',
+    },
+    {
+      name: 'refining curriculum activities',
+      direct: ['Custom assistants', 'Lesson planning'],
+      partial: [
+        'Lesson planning',
+        'Custom assistants',
+        'Educational materials',
+      ],
+      teaching: 'Configure lesson checkpoints and learning goals.',
+      prompt:
+        'Build a Playlab curriculum activity assistant and refine suggestions for an age group.',
+      control: 'Build a Playlab curriculum activity assistant.',
+    },
+    {
+      name: 'anonymized case source checks',
+      direct: ['Case notes'],
+      partial: ['Document drafting', 'Document Q&A', 'Document summary'],
+      teaching: 'Verify a draft against its source.',
+      prompt:
+        'Turn anonymised visit bullets into a case entry and check every sentence against the source.',
+      control:
+        'Turn visit bullets into a case entry and check every sentence against the source.',
+    },
+    {
+      name: 'counting distinct participants',
+      direct: ['List comparison'],
+      partial: ['Spreadsheet formulas'],
+      teaching: 'Generate a formula from a plain-language requirement.',
+      prompt:
+        'Find new organizations across event files and count those who came only once.',
+      control: 'Find new organizations across event files.',
+    },
+    {
+      name: 'writing guides during branded presentations',
+      direct: ['Presentation creation', 'Research'],
+      partial: ['Brand voice', 'Custom assistants', 'Document drafting'],
+      teaching: 'Configure writing guidelines.',
+      prompt:
+        'Use public history for an organization PowerPoint draft with our writing guide.',
+      control: 'Use public history for an organization PowerPoint draft.',
+    },
+    {
+      name: 'data quality in a reporting workflow',
+      direct: ['Exploratory analysis', 'Report generation', 'Chart creation'],
+      partial: ['Data cleaning'],
+      teaching: 'Inspect missing and implausible values.',
+      prompt:
+        'Explore patterns in a dataset, check gaps, create charts and write an article.',
+      control:
+        'Explore patterns in a dataset, create charts and write an article.',
+    },
+    {
+      name: 'grant drafting requires a drafting component',
+      direct: ['RFP review', 'Grant drafting'],
+      partial: ['Grant drafting'],
+      teaching: 'Use funder guidance to draft an LOI.',
+      prompt:
+        'Assess eligibility under this commissioning pack for an application and write the required sections.',
+      control: 'Assess eligibility under this commissioning pack for a bid.',
+    },
+    {
+      name: 'spoken staff-simulation transfers',
+      direct: ['Grantmaker communications'],
+      partial: ['Role play', 'Staff training'],
+      teaching: 'Run a spoken employer simulation.',
+      prompt:
+        'Practice a nonprofit funding conversation as a foundation with a back-and-forth spoken exchange.',
+      control:
+        'Practice a nonprofit funding conversation as a foundation, pausing the scene when stuck.',
+    },
+    {
+      name: 'outreach design transfers require a relevant asset',
+      direct: ['Design feedback'],
+      partial: ['Design feedback', 'Outreach materials'],
+      teaching: 'Refine flier spacing and sign-up wording.',
+      prompt: 'Critique spacing in this screenshot of a poster.',
+      control: 'Critique shapes and spacing in this screenshot of an icon.',
+    },
+    {
+      name: 'handbook context and escalation',
+      direct: ['Custom assistants', 'Knowledge management'],
+      partial: ['Knowledge management', 'Process documentation'],
+      teaching: 'Organize related reference files.',
+      prompt:
+        'Build an HR assistant to answer from our handbook and hand off exceptions to a person.',
+      control:
+        'Build an HR assistant to answer from approved files and test boundaries.',
+    },
+  ])(
+    'AC-12.18 scopes $name',
+    ({ direct, partial, teaching, prompt, control }) => {
+      const main = lesson(
+        1,
+        direct,
+        'Teach the primary activity, summarize themes, set naming rules and clarification questions.',
+      );
+      const component = lesson(2, partial, teaching);
+      const { run } = fixture([component, main]);
+      expect(ids(run(prompt))).toEqual([main.youtubeId, component.youtubeId]);
+      expect(ids(run(control))).toEqual([main.youtubeId]);
+    },
+  );
+
   it('AC-12.17 prioritizes approved spreadsheet replacements over incidental record lookup', () => {
     const terms = lesson(
       1,
@@ -342,8 +579,15 @@ describe('deterministic free-text recommendations', () => {
     );
     const { run } = fixture([project, faq]);
     expect(
-      ids(run('Build a helper to answer handbook questions from our files.')),
+      ids(
+        run(
+          'Build a helper to answer handbook questions from reference files.',
+        ),
+      ),
     ).toEqual([faq.youtubeId, project.youtubeId]);
+    expect(
+      ids(run('Build a helper to answer handbook questions from our files.')),
+    ).toEqual([faq.youtubeId]);
     expect(ids(run('Build a helper to answer handbook questions.'))).toEqual([
       faq.youtubeId,
     ]);
