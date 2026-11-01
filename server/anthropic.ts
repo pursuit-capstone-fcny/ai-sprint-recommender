@@ -105,6 +105,8 @@ export const ProviderValidationSchema = z.object({
   contentBlockCount: count,
   selectionCount: count,
   invalidSelectionCount: count,
+  schemaIssueCount: count,
+  evidenceStatementFailures: count,
   duplicateCount: count,
   outOfRangeCount: count,
 });
@@ -207,10 +209,31 @@ export function anthropicProvider(
             decoded && typeof decoded === 'object' && !Array.isArray(decoded)
               ? 'positions' in decoded && Array.isArray(decoded.positions)
                 ? decoded.positions
-                : Object.values(decoded).filter((value) => value !== null)
+                : Object.values(decoded)
+                    .map((value) =>
+                      body.selectionEvidence &&
+                      value &&
+                      typeof value === 'object' &&
+                      'position' in value
+                        ? value.position
+                        : value,
+                    )
+                    .filter((value) => value !== null)
               : undefined;
           validation = {
             validationFailure: 'schema',
+            ...(body.selectionEvidence
+              ? {
+                  schemaIssueCount: Math.min(output.error.issues.length, 100),
+                  evidenceStatementFailures: Math.min(
+                    output.error.issues.filter(
+                      (issue) =>
+                        issue.path.at(-1) === 'use' || issue.code === 'custom',
+                    ).length,
+                    100,
+                  ),
+                }
+              : {}),
             ...(positions
               ? {
                   selectionCount: Math.min(positions.length, 100),

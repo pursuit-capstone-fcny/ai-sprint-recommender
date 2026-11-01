@@ -67,6 +67,8 @@ export const DiagnosticSchema = z.strictObject({
   contentBlockCount: z.number().int().min(0).max(100).optional(),
   selectionCount: z.number().int().min(0).max(100).optional(),
   invalidSelectionCount: z.number().int().min(0).max(100).optional(),
+  schemaIssueCount: z.number().int().min(0).max(100).optional(),
+  evidenceStatementFailures: z.number().int().min(0).max(100).optional(),
   duplicateCount: z.number().int().min(0).max(100).optional(),
   outOfRangeCount: z.number().int().min(0).max(100).optional(),
   catalogVersion: z

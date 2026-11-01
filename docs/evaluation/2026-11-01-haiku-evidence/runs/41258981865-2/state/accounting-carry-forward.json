@@ -1,0 +1,6 @@
+{
+  "historicalUnknownReservationsMicrodollars": 360120,
+  "newUnknownReservationsMicrodollars": 6756,
+  "cumulativeUnknownReservationsMicrodollars": 366876,
+  "note": "The unchanged audit helper default is historical. This accounting readback carries every prior reservation forward; no charge or quality score is changed."
+}

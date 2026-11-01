@@ -56,3 +56,30 @@ errors still stop the run. Save all startup failures separately in readiness.jso
 the existing paid-case transport and reliability audit remains unchanged.
 Adapter, ranking, model, limits and remaining allowance are unchanged. The next
 workflow run gets its own exact-source and attempt approval.
+
+## V44 statement parsing and shorter output
+
+V43 run 41258981865 attempt two submits all forty cases. One times out; 34 fail
+schema validation and five all-null abstentions parse successfully. Every
+nonempty selection fails, so its 0/10 scores are rules fallbacks, not evidence
+about the new selection quality. All 39 completed calls have measured accounting.
+Record $0.067283, including the timeout's full $0.006756 reservation. The remaining
+allowance is $0.384770 and cumulative unknown reservations are $0.366876.
+
+A local test reproduces an avoidable parser rejection: one otherwise valid
+selection statement over 80 characters rejects the entire list. V43's existing
+diagnostics do not identify which statement constraint caused its live failures,
+so the specific live cause is not established. V44 removes the auxiliary prose
+length limit, preserving the existing 2,048-character whole-response bound,
+strict eight-object shape, nonempty selected statements, empty unused statements
+and all numeric-ID checks. Request at most five words per statement to reduce
+output latency. Add sanitized statement/schema issue counts, without text.
+
+Stop after saving any structural response-schema rejection instead of submitting
+more paid profiles with a bad format. Unsubmitted cases remain missing and the
+run fails validation. This does not retry or replace a failed case. The adapter
+and the real evaluation callback are regression tested before a new run.
+
+Repeat the same forty cases once within the $0.384770 remainder. Keep the input,
+output, deadline and reservation caps, all benchmark labels, catalog metadata,
+task-diversity gate and production flags unchanged. All V43 failures remain.

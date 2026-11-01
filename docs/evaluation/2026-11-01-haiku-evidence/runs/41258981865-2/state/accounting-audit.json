@@ -1,0 +1,149 @@
+{
+  "kind": "deployed-model-accounting-audit",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v43",
+  "reasoningEffort": "low",
+  "runId": "41258981865",
+  "runAttempt": 2,
+  "submittedRequests": 40,
+  "finalMeasuredRequests": 39,
+  "totalMeasuredMicrodollars": 60527,
+  "durableAdditionalMicrodollars": 67283,
+  "unreconciledMicrodollars": 6756,
+  "reconciled": false,
+  "historicalUnknownReservationsMicrodollars": 360120,
+  "cumulativeCeilingMicrodollars": 3615230,
+  "remainingAllowanceMicrodollars": 384770,
+  "inputTokens": 542294,
+  "outputTokens": 12563,
+  "medianClientLatencyMs": 2577.5,
+  "p95ClientLatencyMs": 3368,
+  "maxClientLatencyMs": 4651,
+  "topThreeScores": [0, 0, 0],
+  "fallbacks": 30,
+  "sixToEightCount": 30,
+  "acceptedLlmSixToEightCount": 0,
+  "acceptedLlmThinCount": 0,
+  "expandedCounts": [
+    8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
+    8, 8, 8, 8, 8
+  ],
+  "reusedWording": {
+    "wording-operations-01": {
+      "topThreeHits": 0,
+      "expandedHits": 0,
+      "count": 8
+    },
+    "wording-fundraising-02": {
+      "topThreeHits": 1,
+      "expandedHits": 1,
+      "count": 8
+    }
+  },
+  "missingUnpaidWarmupDiagnostics": [],
+  "freshComparisonSaved": false,
+  "topThreeRelevanceEvidenceComplete": false,
+  "expandedSetQualityApproval": "pending-client-review",
+  "finalMeasuredPaidRequests": 39,
+  "zeroCostDiagnosticRequests": 0,
+  "missingRequestDiagnostics": [],
+  "newUnknownReservationRequests": ["10da7210-972a-4296-8152-c8d5a16b464d"],
+  "newUnknownReservationsMicrodollars": 6756,
+  "cumulativeUnknownReservationsMicrodollars": 366876,
+  "conservativeAccountingReconciled": true,
+  "timedOutBenchmarkRequests": 1,
+  "rateLimitedBenchmarkRequests": 0,
+  "probes": [
+    {
+      "id": "wording-operations-01",
+      "engine": "rules",
+      "fallbackReason": "invalid-response"
+    },
+    {
+      "id": "wording-fundraising-02",
+      "engine": "rules",
+      "fallbackReason": "invalid-response"
+    },
+    {
+      "id": "nonsense-goal",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "goal-injection",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-role-spoof",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-output-copy",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "injection-empty-task",
+      "engine": "rules",
+      "fallbackReason": "insufficient-results"
+    },
+    {
+      "id": "mixed-operations-01",
+      "engine": "rules",
+      "fallbackReason": "invalid-response"
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "engine": "rules",
+      "fallbackReason": "invalid-response"
+    },
+    {
+      "id": "blank-goal-control",
+      "engine": "rules",
+      "fallbackReason": "invalid-response"
+    }
+  ],
+  "responseHeaderRequestCount": 40,
+  "responseHeaderWarmupCount": 4,
+  "cooldowns": [
+    {
+      "requestId": "10da7210-972a-4296-8152-c8d5a16b464d",
+      "reason": "timeout",
+      "delayMs": 61000
+    }
+  ],
+  "probeCooldowns": [],
+  "recoveryCacheChecks": 1,
+  "missingRecoveryDiagnostics": [],
+  "timeoutDetails": [
+    {
+      "profileId": "leadership-01",
+      "diagnostic": {
+        "requestId": "10da7210-972a-4296-8152-c8d5a16b464d",
+        "environment": "test",
+        "outcome": "timeout",
+        "latencyMs": 4500,
+        "providerDispatched": true,
+        "requestedCatalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "accountingFinal": false,
+        "phase": "provider",
+        "catalogMs": 13,
+        "budgetMs": 304,
+        "reservedMicrodollars": 6756,
+        "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-rank-haiku-v43"
+      }
+    }
+  ],
+  "actualServiceTiers": {
+    "fast": 0,
+    "priority": 0,
+    "default": 0
+  },
+  "requestedServiceTier": null,
+  "allRequestsHaveFinalAccounting": false,
+  "accountingNote": "Durable spend includes unknown reservations. Matching the known subtotal does not fill a missing request diagnostic or make the evidence gate pass."
+}

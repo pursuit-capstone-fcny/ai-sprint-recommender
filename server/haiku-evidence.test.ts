@@ -68,7 +68,6 @@ describe('single-pass Haiku selection evidence', () => {
     'missing-use',
     'empty-use',
     'unused-with-use',
-    'long-use',
     'duplicate',
     'range',
     'extra',
@@ -80,8 +79,6 @@ describe('single-pass Haiku selection evidence', () => {
       if (mode === 'empty-use') value.rank1 = { use: '', position: 0 };
       if (mode === 'unused-with-use')
         value.rank2 = { use: 'Unselected', position: null };
-      if (mode === 'long-use')
-        value.rank1 = { use: 'x'.repeat(81), position: 0 };
       if (mode === 'duplicate') value.rank2 = value.rank1;
       if (mode === 'range')
         value.rank1 = {
@@ -106,8 +103,27 @@ describe('single-pass Haiku selection evidence', () => {
               : 'schema',
       });
       expect(fetcher).toHaveBeenCalledTimes(1);
+      if (mode === 'missing-use')
+        expect(result).toMatchObject({
+          schemaIssueCount: 1,
+          evidenceStatementFailures: 1,
+          invalidSelectionCount: 0,
+        });
     },
   );
+  it('keeps valid selections when an auxiliary statement exceeds the requested length', async () => {
+    const value = slots();
+    value.rank1.use =
+      'Organize and cross-reference source documents before preparing the requested material for review.';
+    expect(
+      (
+        await anthropicProvider('fixture-only', async () => response(value))(
+          body,
+          new AbortController().signal,
+        )
+      ).value,
+    ).toEqual({ youtubeIds: [catalog.items[0].youtubeId] });
+  });
   it('accepts all-null abstention and retains measured usage on truncation', async () => {
     const value = Object.fromEntries(
       Object.keys(slots()).map((key) => [key, { use: '', position: null }]),

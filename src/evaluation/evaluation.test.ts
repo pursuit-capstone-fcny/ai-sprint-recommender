@@ -941,77 +941,85 @@ describe('AC-19.5–6 manual live checks are opt-in', () => {
   });
 });
 
-it('saves a permanently rejected case and stops before the next paid profile', async () => {
-  const value = approved();
-  const auth = approval(value);
-  const captured = new Map<string, EvaluationDiagnostic>();
-  let paidCalls = 0;
-  const fetcher: typeof fetch = async (_url, init) => {
-    if (init?.method !== 'POST') return Response.json(value.catalog);
-    const cacheCheck =
-      JSON.parse(String(init.body)).functionArea ===
-      '__evaluation_invalid_area__';
-    if (!cacheCheck) paidCalls++;
-    const requestId = new Headers(init.headers).get('x-evaluation-request-id')!;
-    return Response.json(
-      {
-        outcome: 'fallback',
-        reason: cacheCheck ? 'unavailable' : 'provider-error',
-        catalogVersion: value.catalog.catalogVersion,
-        modelVersion: auth.modelVersion,
-        promptVersion: auth.promptVersion,
-      },
-      {
-        status: cacheCheck ? 400 : 200,
-        headers: {
-          'x-recommendation-request-id': requestId,
-          'x-evaluation-diagnostic': JSON.stringify({
-            requestId,
-            environment: 'test',
-            outcome: cacheCheck ? 'unavailable' : 'provider-error',
-            latencyMs: 1,
-            accountingFinal: true,
-            providerDispatched: !cacheCheck,
-            ...(!cacheCheck
-              ? { providerHttpStatus: 400 }
-              : { inputTokens: 0, outputTokens: 0, costMicrodollars: 0 }),
-          }),
+it.each([
+  { reason: 'provider-error', providerHttpStatus: 400 },
+  { reason: 'invalid-response', validationFailure: 'schema' },
+])(
+  'saves a rejected $reason case and stops before the next paid profile',
+  async ({ reason, ...failure }) => {
+    const value = approved();
+    const auth = approval(value);
+    const captured = new Map<string, EvaluationDiagnostic>();
+    let paidCalls = 0;
+    const fetcher: typeof fetch = async (_url, init) => {
+      if (init?.method !== 'POST') return Response.json(value.catalog);
+      const cacheCheck =
+        JSON.parse(String(init.body)).functionArea ===
+        '__evaluation_invalid_area__';
+      if (!cacheCheck) paidCalls++;
+      const requestId = new Headers(init.headers).get(
+        'x-evaluation-request-id',
+      )!;
+      return Response.json(
+        {
+          outcome: 'fallback',
+          reason: cacheCheck ? 'unavailable' : reason,
+          catalogVersion: value.catalog.catalogVersion,
+          modelVersion: auth.modelVersion,
+          promptVersion: auth.promptVersion,
         },
-      },
-    );
-  };
-  const save = vi.fn(async () => {});
-  await expect(
-    runLiveTrials(
-      value,
-      auth,
-      true,
-      evaluationFetch(
-        auth.endpoint,
-        'a'.repeat(64),
-        (entry) => mergeDiagnostic(captured, entry),
-        fetcher,
-      ),
-      save,
-      async () => {},
-      { sourceRevision: 'a'.repeat(40), dirty: false },
-      async (_response, requestId) =>
-        assertProviderAcceptedRequest(captured.get(requestId!)),
-    ),
-  ).rejects.toThrow('stop before further paid calls');
-  expect(paidCalls).toBe(1);
-  expect(save).toHaveBeenCalledExactlyOnceWith(
-    expect.objectContaining({
-      trials: [
-        expect.objectContaining({
-          calls: [
-            expect.objectContaining({
-              profileId: value.profiles[0].id,
-              response: expect.objectContaining({ reason: 'provider-error' }),
+        {
+          status: cacheCheck ? 400 : 200,
+          headers: {
+            'x-recommendation-request-id': requestId,
+            'x-evaluation-diagnostic': JSON.stringify({
+              requestId,
+              environment: 'test',
+              outcome: cacheCheck ? 'unavailable' : reason,
+              latencyMs: 1,
+              accountingFinal: true,
+              providerDispatched: !cacheCheck,
+              ...(!cacheCheck
+                ? failure
+                : { inputTokens: 0, outputTokens: 0, costMicrodollars: 0 }),
             }),
-          ],
-        }),
-      ],
-    }),
-  );
-});
+          },
+        },
+      );
+    };
+    const save = vi.fn(async () => {});
+    await expect(
+      runLiveTrials(
+        value,
+        auth,
+        true,
+        evaluationFetch(
+          auth.endpoint,
+          'a'.repeat(64),
+          (entry) => mergeDiagnostic(captured, entry),
+          fetcher,
+        ),
+        save,
+        async () => {},
+        { sourceRevision: 'a'.repeat(40), dirty: false },
+        async (_response, requestId) =>
+          assertProviderAcceptedRequest(captured.get(requestId!)),
+      ),
+    ).rejects.toThrow('stop before further paid calls');
+    expect(paidCalls).toBe(1);
+    expect(save).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({
+        trials: [
+          expect.objectContaining({
+            calls: [
+              expect.objectContaining({
+                profileId: value.profiles[0].id,
+                response: expect.objectContaining({ reason }),
+              }),
+            ],
+          }),
+        ],
+      }),
+    );
+  },
+);

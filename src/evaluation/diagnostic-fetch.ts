@@ -148,6 +148,10 @@ export function evaluationFetch(
 export function assertProviderAcceptedRequest(
   diagnostic?: EvaluationDiagnostic,
 ) {
+  if (diagnostic?.validationFailure === 'schema')
+    throw new Error(
+      'Provider response schema was rejected; stop before further paid calls.',
+    );
   if ([400, 401, 403, 404, 422].includes(diagnostic?.providerHttpStatus ?? 0))
     throw new Error(
       'Provider rejected the request configuration; stop before further paid calls.',

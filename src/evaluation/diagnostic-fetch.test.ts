@@ -110,6 +110,16 @@ it('keeps transient failures on the existing no-retry cooldown path', () => {
     ).not.toThrow();
 });
 
+it('stops on a structural response failure instead of paying for more malformed cases', () => {
+  expect(() =>
+    assertProviderAcceptedRequest({
+      ...row,
+      outcome: 'invalid-response',
+      validationFailure: 'schema',
+    }),
+  ).toThrow('stop before further paid calls');
+});
+
 it('allows only an unpaid blank readiness request to wait for a missing header', async () => {
   const failures = vi.fn();
   const raw = vi
