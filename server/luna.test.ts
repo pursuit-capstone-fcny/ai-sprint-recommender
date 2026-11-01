@@ -623,10 +623,10 @@ describe('deployed Luna low candidate', () => {
                 type: 'text',
                 text: JSON.stringify({
                   workSteps: 'Organize source records',
-                  ranks: Object.fromEntries(
-                    Array.from({ length: 8 }, (_, i) => [
-                      'rank' + (i + 1),
-                      i < 3 ? i : null,
+                  scores: Object.fromEntries(
+                    Array.from({ length: catalog.items.length }, (_, i) => [
+                      String(i),
+                      i < 3 ? 95 - i : 0,
                     ]),
                   ),
                 }),

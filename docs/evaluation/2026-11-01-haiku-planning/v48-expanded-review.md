@@ -8,6 +8,8 @@ Help our staff try AI responsibly and share what they learn without waiting for 
 
 Counts: 6, 7, 7. Labeled top-three hits: 2, 2, 2.
 
+Engines: llm, llm, llm.
+
 | Video                                                                                                      | Existing label | Trial:rank    |
 | ---------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
 | [Placeholder AI Guidelines](https://www.youtube.com/watch?v=6d2bKhdmqqA)                                   | ideal          | 1:1, 2:1, 3:1 |
@@ -26,6 +28,8 @@ Counts: 6, 7, 7. Labeled top-three hits: 2, 2, 2.
 Prepare for a difficult conversation with an employee and rehearse constructive responses.
 
 Counts: 8, 6, 6. Labeled top-three hits: 3, 3, 3.
+
+Engines: llm, llm, llm.
 
 | Video                                                                                                      | Existing label | Trial:rank    |
 | ---------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
@@ -46,6 +50,8 @@ Turn scattered participant comments and survey answers into clear themes and a r
 
 Counts: 7, 7, 8. Labeled top-three hits: 2, 2, 2.
 
+Engines: llm, llm, llm.
+
 | Video                                                                                                     | Existing label | Trial:rank    |
 | --------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
 | [Uncover Patterns in Survey Data with AI](https://www.youtube.com/watch?v=m0mI6_g0V2g)                    | good           | 1:1, 2:2, 3:1 |
@@ -64,6 +70,8 @@ Counts: 7, 7, 8. Labeled top-three hits: 2, 2, 2.
 Give colleagues quick, reliable answers from our internal guides and policies so they do not have to ask the same questions repeatedly.
 
 Counts: 8, 8, 8. Labeled top-three hits: 2, 2, 2.
+
+Engines: llm, llm, llm.
 
 | Video                                                                                                             | Existing label | Trial:rank    |
 | ----------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
@@ -87,6 +95,8 @@ Build a course outline and turn it into practical lessons and engaging activitie
 
 Counts: 6, 7, 8. Labeled top-three hits: 3, 3, 3.
 
+Engines: llm, llm, llm.
+
 | Video                                                                                                              | Existing label | Trial:rank    |
 | ------------------------------------------------------------------------------------------------------------------ | -------------- | ------------- |
 | [Design a Class Syllabus in Minutes with AI](https://www.youtube.com/watch?v=Kv0C743lCUw)                          | good           | 1:1, 2:1, 3:1 |
@@ -104,6 +114,8 @@ Counts: 6, 7, 8. Labeled top-three hits: 3, 3, 3.
 Use attendance and intervention records to decide which students need follow-up and help the team keep track of next steps.
 
 Counts: 8, 8, 8. Labeled top-three hits: 2, 2, 2.
+
+Engines: llm, llm, llm.
 
 | Video                                                                                                             | Existing label | Trial:rank    |
 | ----------------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
@@ -126,6 +138,8 @@ Counts: 8, 8, 8. Labeled top-three hits: 2, 2, 2.
 Draft social posts and short public updates that sound like our organization, even when different colleagues write them.
 
 Counts: 7, 8, 8. Labeled top-three hits: 3, 1, 3.
+
+Engines: llm, rules (invalid-response), llm.
 
 | Video                                                                                                   | Existing label | Trial:rank    |
 | ------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
@@ -150,6 +164,8 @@ Turn our existing strategy documents into a clear presentation for the board ins
 
 Counts: 7, 8, 8. Labeled top-three hits: 2, 2, 2.
 
+Engines: llm, llm, llm.
+
 | Video                                                                                                      | Existing label | Trial:rank    |
 | ---------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
 | [Turning Source Materials into a Board-Ready Deck with AI](https://www.youtube.com/watch?v=AMdAwWwdOzY)    | ideal          | 1:1, 2:1, 3:1 |
@@ -169,6 +185,8 @@ Work out whether a funding opportunity fits our nonprofit and organize what we n
 
 Counts: 8, 7, 8. Labeled top-three hits: 3, 3, 3.
 
+Engines: llm, llm, llm.
+
 | Video                                                                                                     | Existing label | Trial:rank    |
 | --------------------------------------------------------------------------------------------------------- | -------------- | ------------- |
 | [Breaking down an RFP with ChatGPT](https://www.youtube.com/watch?v=rjaMvND2IRU)                          | ideal          | 1:1, 2:1, 3:1 |
@@ -186,6 +204,8 @@ Counts: 8, 7, 8. Labeled top-three hits: 3, 3, 3.
 Prepare for a conversation with a potential funder by anticipating their questions and rehearsing my answers.
 
 Counts: 8, 6, 8. Labeled top-three hits: 2, 2, 2.
+
+Engines: llm, llm, llm.
 
 | Video                                                                                               | Existing label | Trial:rank    |
 | --------------------------------------------------------------------------------------------------- | -------------- | ------------- |

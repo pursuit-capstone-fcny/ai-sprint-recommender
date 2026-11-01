@@ -88,3 +88,33 @@ Use the same provider, low effort, one call, limits, frozen data and forty-case
 validation. Recheck every wire bound. Retain all prior failures, charges and
 unknown reservations under the existing $5 cap. Test calls and production
 logging remain disabled outside the exact-attempt run.
+
+## V50: rate the full candidate set
+
+V49 scores 10/10 in every trial, without duplicates or transport failures, but
+only 28/30 lists contain six to eight videos. Blank browsing abstains and weak
+supporting picks remain. Preserve its $0.055768 charge, leaving $1.025784.
+
+V50 changes the decision from filling eight ranks to independently rating every
+retrieved candidate against a short work plan in one call. Three hypotheses are
+separable in the evidence: full-set evaluation may prevent early stopping;
+explicit usefulness bands may distinguish concrete supporting methods from
+shared topics; one required field per catalog position prevents repeated
+selections. No claim follows from schema tests about semantic quality.
+
+Use scores from 0 to 100, with 90+ direct matches, 75+ direct supporting steps,
+60+ concrete transferable methods, and below 60 excluded. Sort by score then
+catalog order, return at most eight, and keep the existing browser diversity
+gate. Never inflate scores, pad short lists, or retry. The provider must return
+exactly one score per candidate. Reject missing/extra keys, noninteger or
+out-of-range scores and missing plans. Preserve measured usage on rejection.
+
+Numeric bounds are validated locally because Anthropic's structured-output
+schema supports only a subset of JSON Schema. See the
+[official structured-output documentation](https://platform.claude.com/docs/en/build-with-claude/structured-outputs).
+The wire schema uses required integer fields, with no unsupported bounds. A real
+adapter test failed before implementation and passes afterward. Keep all legacy
+format tests, frozen labels, retrieval, public metadata and task-diversity rules.
+Use the same 512 output tokens, 4.5-second deadline and forty-case validation.
+The candidate must meet the original V44 retention conditions, including
+reviewing all replacement picks. Production stays disabled.

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ratedRequest } from './haiku-ratings';
 import type { ProviderBody } from './anthropic';
 import { HAIKU_PLANNING_INSTRUCTION } from './haiku-planning';
 
@@ -9,6 +10,7 @@ const EVIDENCE_INSTRUCTION =
 // The original numeric schema remains the authority for allowable positions.
 export function anthropicRequest(body: ProviderBody) {
   if (!body.selectionEvidence) return body.request;
+  if (body.selectionEvidence === 'rated') return ratedRequest(body);
   const planned = typeof body.selectionEvidence === 'string';
   const numeric = body.selectionEvidence === 'planned-numeric';
   // Retain the selection criteria without the per-rank prose-format directions.

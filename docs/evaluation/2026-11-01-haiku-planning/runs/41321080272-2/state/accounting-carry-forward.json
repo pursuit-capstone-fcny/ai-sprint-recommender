@@ -1,0 +1,6 @@
+{
+  "historicalUnknownReservationsMicrodollars": 366876,
+  "cumulativeCeilingMicrodollars": 3974216,
+  "remainingAllowanceMicrodollars": 1025784,
+  "note": "Original combined audit uses its historical 225000 carry. Re-ran accounting with actual retained 366876, without changing charges or scores."
+}

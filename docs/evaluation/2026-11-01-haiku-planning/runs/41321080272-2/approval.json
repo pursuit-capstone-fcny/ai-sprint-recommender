@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "bd5955239f33d6a6e4a1a43aacab049769121fc8",
+  "approvedWorkflowRunId": "41321080272",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T16:11:01Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v49",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-11-01",
+  "runtimeDecision": "V49 retains a short work plan before selection and V44/V48 selection criteria, then returns eight numeric/null ranks rather than eight per-rank prose objects. Strict plan/shape/ID/duplicate checks remain; no output repair, deduplication, padding or gate changes. Same single call, frozen data, retrieval, 63000 input bound, 512 output tokens and 4.5-second deadline. Same thirty benchmark cases and ten controls with no paid warmup, retries or replacements. Preserve all failures and sanitized diagnostics.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "Continue within the approved additive $5 cap. Carry $3.918448 including all $0.366876 unknown reservations. Remaining $1.081552. Maximum request reservation $0.006556 and forty-case maximum $0.262240. Prior V47 and V48 charges remain recorded. No reset, refund, repricing or new grant. Production LLM calls and usage logging remain disabled.",
+  "allowanceMicrodollars": 1081552,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3918448,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

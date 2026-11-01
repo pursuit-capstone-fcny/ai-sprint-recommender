@@ -42,10 +42,10 @@ describe('frozen test catalog isolation', () => {
                     type: 'text',
                     text: JSON.stringify({
                       workSteps: 'Prepare an AI policy',
-                      ranks: Object.fromEntries(
-                        Array.from({ length: 8 }, (_, i) => [
-                          'rank' + (i + 1),
-                          i < 2 ? i : null,
+                      scores: Object.fromEntries(
+                        Array.from({ length: 48 }, (_, i) => [
+                          String(i),
+                          i < 2 ? 95 - i : 0,
                         ]),
                       ),
                     }),
@@ -115,7 +115,7 @@ describe('frozen test catalog isolation', () => {
         expect(payload.output_config.effort).toBe('low');
         expect(payload.output_config.format.schema.required).toEqual([
           'workSteps',
-          'ranks',
+          'scores',
         ]);
       }
     },

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ratedSlotsSchema } from './haiku-ratings';
 import {
   MAX_RECOMMENDATIONS,
   type RecommendationRequest,
@@ -91,7 +92,7 @@ export function providerBody(
   };
 }
 export type ProviderBody = ReturnType<typeof providerBody> & {
-  selectionEvidence?: true | 'planned' | 'planned-numeric';
+  selectionEvidence?: true | 'planned' | 'planned-numeric' | 'rated';
 };
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
@@ -208,22 +209,29 @@ export function anthropicProvider(
       try {
         const decoded: unknown = JSON.parse(content.data[0].text);
         const output = (
-          body.selectionEvidence === 'planned-numeric'
-            ? plannedNumericSlotsSchema
-            : body.selectionEvidence === 'planned'
-              ? plannedEvidenceSlotsSchema
-              : body.selectionEvidence
-                ? evidenceSlotsSchema
-                : slotsSchema
+          body.selectionEvidence === 'rated'
+            ? ratedSlotsSchema(body.catalogIds.length)
+            : body.selectionEvidence === 'planned-numeric'
+              ? plannedNumericSlotsSchema
+              : body.selectionEvidence === 'planned'
+                ? plannedEvidenceSlotsSchema
+                : body.selectionEvidence
+                  ? evidenceSlotsSchema
+                  : slotsSchema
         ).safeParse(decoded);
         if (!output.success) {
           const selections =
-            typeof body.selectionEvidence === 'string' &&
+            body.selectionEvidence === 'rated' &&
             decoded &&
             typeof decoded === 'object' &&
-            'ranks' in decoded
-              ? decoded.ranks
-              : decoded;
+            'scores' in decoded
+              ? decoded.scores
+              : typeof body.selectionEvidence === 'string' &&
+                  decoded &&
+                  typeof decoded === 'object' &&
+                  'ranks' in decoded
+                ? decoded.ranks
+                : decoded;
           const positions =
             selections &&
             typeof selections === 'object' &&
@@ -261,7 +269,9 @@ export function anthropicProvider(
                   invalidSelectionCount: Math.min(
                     positions.filter(
                       (position) =>
-                        !Number.isSafeInteger(position) || position < 0,
+                        !Number.isSafeInteger(position) ||
+                        position < 0 ||
+                        (body.selectionEvidence === 'rated' && position > 100),
                     ).length,
                     100,
                   ),
