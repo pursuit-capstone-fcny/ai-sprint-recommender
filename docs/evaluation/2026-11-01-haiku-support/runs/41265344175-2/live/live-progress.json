@@ -1,0 +1,558 @@
+{
+  "kind": "live",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v46",
+  "trials": [
+    {
+      "startedAt": "2026-11-01T02:30:57.750Z",
+      "calls": [
+        {
+          "profileId": "leadership-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "i22v2xwT6k4",
+              "6d2bKhdmqqA",
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "nBAaIIz9QFg",
+              "UdWR8KKxVDU",
+              "wxJVc1q_nnY",
+              "8ahFA8ECM4c"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "50598823-8b7a-4d9f-9ae2-af100b3907b4",
+          "latencyMs": 2792
+        },
+        {
+          "profileId": "leadership-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "jm9ZaKY1taA",
+              "3oX_M8AcBXk",
+              "nBAaIIz9QFg",
+              "6d2bKhdmqqA"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "ce62c99d-96c2-4f19-9d72-a830ec42d775",
+          "latencyMs": 1711
+        },
+        {
+          "profileId": "operations-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "cwCVpchJHB4",
+              "0qSXFbGrQ90",
+              "m0mI6_g0V2g",
+              "tIekXJLsm8g",
+              "8ahFA8ECM4c",
+              "Uz6W_hJloK8",
+              "4Wo_miqxgmE",
+              "vzeAxozbV6w"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "32297dd8-a9c9-4ebb-8c17-bef5dbcc48ea",
+          "latencyMs": 2175
+        },
+        {
+          "profileId": "operations-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "4LMIC-v5xZ0",
+              "33a0qYtCMvc",
+              "wxJVc1q_nnY",
+              "_9QqyTbwisc",
+              "W-j725bzPJU",
+              "Q0Vr4PnGoe4"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "a7824a08-d1f8-4396-8328-fed9ceebc2b4",
+          "latencyMs": 2603
+        },
+        {
+          "profileId": "programs-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "Kv0C743lCUw",
+              "fCAYTD-hgU8",
+              "Fz_zl467-QU",
+              "dooZWSQCNSs",
+              "DNfFMZxAI-0",
+              "rKn6KASMk50",
+              "PUACowM_SdU"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "5a91b669-fd29-474d-8f75-7686a1fa035c",
+          "latencyMs": 2420
+        },
+        {
+          "profileId": "programs-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "rtBkm7m6JCg",
+              "_pM0ua51qRI",
+              "LCZZLOrfwXc",
+              "9Np4JDDQvpA",
+              "ZMPLTq-ptrE"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "5ec0d587-006d-4c40-8da6-d71a95e30c0c",
+          "latencyMs": 1977
+        },
+        {
+          "profileId": "communications-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "ldd8wxVHvCw",
+              "PUACowM_SdU",
+              "sLAu2FqUZyE",
+              "_9QqyTbwisc",
+              "6VQWti4-pLE",
+              "wu6DHIkJH7k",
+              "MpkMYlaHU4k",
+              "kONzk7f2M5o"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "8d309b83-ee23-4d6c-aa7d-10db4d2c38bb",
+          "latencyMs": 2182
+        },
+        {
+          "profileId": "communications-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "AMdAwWwdOzY",
+              "_wdiyBIC8uc",
+              "33a0qYtCMvc",
+              "LCZZLOrfwXc",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o",
+              "MpkMYlaHU4k"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "6ea25c90-cdf3-4589-89c6-12d3a3062e40",
+          "latencyMs": 2149
+        },
+        {
+          "profileId": "fundraising-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "a410815e-36fd-43c6-b952-54710b03d7a7",
+          "latencyMs": 2103
+        },
+        {
+          "profileId": "fundraising-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "ADF07rFbH8M",
+              "S_DQeIX2xz8",
+              "3oX_M8AcBXk",
+              "7IYj3W4PdPE",
+              "jm9ZaKY1taA",
+              "VQRVNYS1m3g",
+              "nBAaIIz9QFg"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "95c95a0f-37b7-46db-a97a-23f2c4694e2e",
+          "latencyMs": 2015
+        }
+      ]
+    },
+    {
+      "startedAt": "2026-11-01T02:31:20.261Z",
+      "calls": [
+        {
+          "profileId": "leadership-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "6d2bKhdmqqA",
+              "i22v2xwT6k4",
+              "nBAaIIz9QFg",
+              "3oX_M8AcBXk",
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "bxfxzx-_MME",
+              "rFhgVTsItlU"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "148ea4d4-3c1c-49fb-95b3-af2beaabe193",
+          "latencyMs": 2198
+        },
+        {
+          "profileId": "leadership-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "3oX_M8AcBXk",
+              "jm9ZaKY1taA",
+              "nBAaIIz9QFg",
+              "bxfxzx-_MME",
+              "YACIPFCbGV8",
+              "C7wclvAF0Mc"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "9d86670a-68cf-4eb5-a06b-8736a32b45e5",
+          "latencyMs": 1951
+        },
+        {
+          "profileId": "operations-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "2a773b08-babb-4ca4-8114-484dc35d736b",
+          "latencyMs": 1956
+        },
+        {
+          "profileId": "operations-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "33a0qYtCMvc",
+              "_9QqyTbwisc",
+              "wxJVc1q_nnY",
+              "4LMIC-v5xZ0",
+              "vzeAxozbV6w"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "95532a4b-f884-4629-92b6-7990583418c6",
+          "latencyMs": 1934
+        },
+        {
+          "profileId": "programs-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "91d88b69-d0e9-48e0-92d7-73cde5a2fd91",
+          "latencyMs": 2554
+        },
+        {
+          "profileId": "programs-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "-zIvVmJ2XFw",
+              "maR3ZerQIJU",
+              "rtBkm7m6JCg",
+              "_pM0ua51qRI",
+              "9Np4JDDQvpA",
+              "7VjxCHhyAJE"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "eb4e7743-e9f8-41e0-86ef-af093d92ae3c",
+          "latencyMs": 2233
+        },
+        {
+          "profileId": "communications-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "ldd8wxVHvCw",
+              "PUACowM_SdU",
+              "sLAu2FqUZyE",
+              "_9QqyTbwisc",
+              "6VQWti4-pLE",
+              "wu6DHIkJH7k",
+              "MpkMYlaHU4k",
+              "4LMIC-v5xZ0"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "1f7d55a6-6aa3-40b6-a32a-02b88799e561",
+          "latencyMs": 1918
+        },
+        {
+          "profileId": "communications-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "AMdAwWwdOzY",
+              "_wdiyBIC8uc",
+              "MpkMYlaHU4k",
+              "33a0qYtCMvc",
+              "9Np4JDDQvpA",
+              "C7wclvAF0Mc",
+              "kONzk7f2M5o"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "d8852cc4-a62e-4d73-a13d-81f395e910a9",
+          "latencyMs": 2134
+        },
+        {
+          "profileId": "fundraising-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "c29931cb-b3d4-4a2b-8dc6-54ea56dc32a6",
+          "latencyMs": 1935
+        },
+        {
+          "profileId": "fundraising-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "d270f89e-5be1-443a-a491-c7fd53c73c7a",
+          "latencyMs": 1902
+        }
+      ]
+    },
+    {
+      "startedAt": "2026-11-01T02:31:41.152Z",
+      "calls": [
+        {
+          "profileId": "leadership-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "6d2bKhdmqqA",
+              "i22v2xwT6k4",
+              "bxfxzx-_MME",
+              "rFhgVTsItlU",
+              "wxJVc1q_nnY",
+              "0qSXFbGrQ90",
+              "AjI2GF1b6zo",
+              "C7wclvAF0Mc"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "a4d5470a-3887-4288-b20c-85a924bde9e1",
+          "latencyMs": 2614
+        },
+        {
+          "profileId": "leadership-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "3oX_M8AcBXk",
+              "jm9ZaKY1taA",
+              "nBAaIIz9QFg",
+              "bxfxzx-_MME",
+              "YACIPFCbGV8",
+              "C7wclvAF0Mc",
+              "S_DQeIX2xz8",
+              "FMQJH3c5cLc"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "3b2a8afc-87a2-456e-85dd-dabfccda8b1e",
+          "latencyMs": 2141
+        },
+        {
+          "profileId": "operations-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "63eb3c92-d2d4-4e31-8014-3813e87c9287",
+          "latencyMs": 1826
+        },
+        {
+          "profileId": "operations-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "UdWR8KKxVDU",
+              "AjI2GF1b6zo",
+              "_9QqyTbwisc",
+              "Z8yOypmasGg",
+              "33a0qYtCMvc",
+              "Q0Vr4PnGoe4",
+              "wxJVc1q_nnY",
+              "FMQJH3c5cLc"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "484ad7ff-4ae3-42ab-b193-0962898a3b59",
+          "latencyMs": 1919
+        },
+        {
+          "profileId": "programs-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "1ba0d848-895b-4c76-9a63-2198648ac045",
+          "latencyMs": 2122
+        },
+        {
+          "profileId": "programs-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "c5bL8ah2teE",
+              "JzV9-_irHdI",
+              "-zIvVmJ2XFw",
+              "rtBkm7m6JCg",
+              "ZMPLTq-ptrE",
+              "_pM0ua51qRI",
+              "maR3ZerQIJU"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "dbcc9be0-6e44-4a96-a42c-b09a68120771",
+          "latencyMs": 2033
+        },
+        {
+          "profileId": "communications-01",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "ldd8wxVHvCw",
+              "sLAu2FqUZyE",
+              "PUACowM_SdU",
+              "_9QqyTbwisc",
+              "wu6DHIkJH7k",
+              "6VQWti4-pLE",
+              "kONzk7f2M5o",
+              "MpkMYlaHU4k"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "9e285c0f-6997-4359-bfe9-671a696b34fd",
+          "latencyMs": 2091
+        },
+        {
+          "profileId": "communications-02",
+          "response": {
+            "outcome": "success",
+            "youtubeIds": [
+              "AMdAwWwdOzY",
+              "_wdiyBIC8uc",
+              "33a0qYtCMvc",
+              "C7wclvAF0Mc",
+              "DP0rtrJVOvM",
+              "9Np4JDDQvpA",
+              "kONzk7f2M5o"
+            ],
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "081db452-7538-4659-8617-1d66ec4c3115",
+          "latencyMs": 2041
+        },
+        {
+          "profileId": "fundraising-01",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "8a789848-044d-4e16-8377-831cff4e4fcd",
+          "latencyMs": 1907
+        },
+        {
+          "profileId": "fundraising-02",
+          "response": {
+            "outcome": "fallback",
+            "reason": "invalid-response",
+            "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+            "modelVersion": "claude-haiku-5-5",
+            "promptVersion": "catalog-rank-haiku-v46"
+          },
+          "requestId": "848b8603-a450-4361-bd19-c988761e8da0",
+          "latencyMs": 2127
+        }
+      ]
+    }
+  ]
+}

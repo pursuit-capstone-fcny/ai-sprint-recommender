@@ -28,7 +28,7 @@ for trial, data in enumerate(report['llm'], 1):
         for rank, item in enumerate(ids, 1):
             if item in concerns.get(row['profileId'], []):
                 observed.append({'trial': trial, 'profileId': row['profileId'],
-                                 'rank': rank, 'youtubeId': item})
+                                 'rank': rank, 'youtubeId': item, 'engine': row['engine']})
 print(json.dumps({
     'kind': 'unscored-prior-review-observations',
     'benchmarkFingerprint': report['benchmarkFingerprint'],

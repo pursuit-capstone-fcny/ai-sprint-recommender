@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "6ccd60d5b5751660749168f28f8a829211d61cad",
+  "approvedWorkflowRunId": "41265344175",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T03:13:58Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v46",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V46 uses the existing auxiliary use field for a taught-operation => needed-work-step mapping, guided by the request and schema. Preserve one call, eight rank objects, strict IDs and duplicates, unchanged frozen labels/catalog/retrieval and task-diversity gate. Same thirty benchmark cases and ten controls, 4.5-second server deadline, 512 output tokens, no paid warmup, retries or replacement cases. Preserve structural-failure stop and sanitized diagnostics. Enforced input cap is reduced to 63000; all twenty unique benchmark and control requests fit including full-catalog framing bounds.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "User requests rerun within the remaining allowance. Carry $3.737164 under the unchanged $4 cumulative cap, including all $0.366876 unknown reservations. Remaining $0.262836. Enforce lower 63000 input cap before any provider call, with unchanged output cap and prices, bounding each request at $0.006556 and forty requests at $0.262240. No reset, extension, refund or repricing. Keep production calls and logging disabled.",
+  "allowanceMicrodollars": 262836,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3737164,
+  "totalAllowanceMicrodollars": 4000000,
+  "thinking": "disabled"
+}

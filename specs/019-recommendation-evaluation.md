@@ -1,11 +1,15 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V44 retained: 10/10 each, 30/30 broad lists and clean reliability; expanded supporting picks still need review
+- **Status:** V44 retained; V46 rejected for duplicate and breadth regressions. Supporting picks still need review.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given the bounded Haiku test, when an input exceeds the enforced 63,000-token
+  bound, then stop before provider dispatch. Retain the 512-token output cap,
+  cumulative charges and exact-attempt approval for all forty validation cases.
 
 - Given auxiliary selection statements, when parsing a test response, then
   validate its complete shape and numeric IDs, discard the statements before
