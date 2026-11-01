@@ -1,0 +1,22 @@
+{
+  "approvedSourceRevision": "3cb5cab71ffe7fb86b7a0de623c492ec2493ad45",
+  "approvedWorkflowRunId": "41269214068",
+  "approvedWorkflowRunAttempt": 2,
+  "expiresAt": "2026-11-01T04:12:45Z",
+  "benchmarkFingerprint": "298ffdb6199c3a8bdb9ef48063ccfc4e16ca5efda14267a240c93d42d20b6d09",
+  "environment": "test",
+  "endpoint": "https://ai-sprint-recommender-llm-test.jason-zeng151.workers.dev/api/recommendations",
+  "modelVersion": "claude-haiku-5-5",
+  "promptVersion": "catalog-rank-haiku-v47",
+  "approvedBy": "Jason",
+  "approvedAt": "2026-10-31",
+  "runtimeDecision": "V47 first writes a short goal-derived work plan, then selects against those operations in the same provider call. A concise procedure replaces accumulated ranking instructions. Parse a required workSteps string and eight existing rank objects, validate IDs and uniqueness, and discard all auxiliary text before returning IDs. Preserve retrieval, frozen labels/catalog and task-diversity gate. Same thirty benchmark cases and ten controls, 4.5-second server deadline, 63000 input bound and 512 output tokens. No paid warmup, retries, second provider pass or replacement cases. Preserve failure stops and sanitized diagnostics.",
+  "privacyDecision": "Synthetic goals and public catalog only; no usage logging.",
+  "budgetDecision": "User explicitly approved another $1 for this different Haiku approach. Add it to the existing $4 cap for $5 total. Carry $3.798745, including all $0.366876 unknown reservations; available balance $1.201255. Maximum request reservation $0.006556, forty-case maximum $0.262240. No historical reset, refund or repricing. Production calls and logging disabled.",
+  "allowanceMicrodollars": 1201255,
+  "maxRequestMicrodollars": 6556,
+  "reasoningEffort": "low",
+  "priorSpendMicrodollars": 3798745,
+  "totalAllowanceMicrodollars": 5000000,
+  "thinking": "disabled"
+}

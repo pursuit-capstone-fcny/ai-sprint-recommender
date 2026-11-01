@@ -44,3 +44,9 @@ lists and clean reliability while improving the questioned supporting picks.
 Review every replacement; absence of earlier flags alone does not approve a
 video. Preserve every failed result and charge. Disable test calls, remove keys
 and temporary approval afterward. Production LLM calls and logging stay off.
+
+The first V47 workflow, 41269214068 attempt two, stopped before provider
+enablement because the new unpaid bounds script omitted explicit Node imports.
+Import `process`, `Buffer` and `console` without changing lint rules or the model
+request. Preserve the zero-cost failure and both skipped paid steps. Recheck lint
+and the bounds before pinning a new source and workflow attempt.

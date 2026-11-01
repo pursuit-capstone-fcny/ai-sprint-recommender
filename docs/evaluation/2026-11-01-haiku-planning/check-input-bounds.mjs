@@ -1,5 +1,8 @@
 // Unpaid inspection of the actual wire request for every unique validation input.
 import assert from 'node:assert/strict';
+import process from 'node:process';
+import { Buffer } from 'node:buffer';
+import console from 'node:console';
 import { readFileSync } from 'node:fs';
 import { build } from 'esbuild';
 const result = await build({

@@ -1,0 +1,5 @@
+{
+  "additionalMicrodollars": 0,
+  "paidCalls": 0,
+  "reason": "Unpaid lint failed on missing explicit Node imports in the new bounds inspection script. Provider enablement and all paid cases were skipped. No budget reset or retry of a paid case."
+}
