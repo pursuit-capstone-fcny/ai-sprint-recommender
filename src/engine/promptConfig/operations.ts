@@ -167,7 +167,14 @@ export const operationRules: readonly OperationRule[] = [
     ['List comparison'],
     'spreadsheet',
     ['comparison'],
-    [candidate(['List comparison']), candidate(['Data cleaning'], 75)],
+    [
+      candidate(['List comparison']),
+      candidate(['Data cleaning'], 75),
+      candidate(['Spreadsheet formulas'], 70, {
+        excludeTasks: ['List comparison', 'Data aggregation'],
+        whenAll: [['count'], ['row', 'formula', 'calculation']],
+      }),
+    ],
   ),
   rule(
     'terminology-replacement',
@@ -204,6 +211,12 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Data cleaning']),
       candidate(['Exploratory analysis'], 80, { teaching: ['data cleaning'] }),
+      candidate(['List comparison'], 75, {
+        whenAll: [
+          ['duplicate', 'repeat', 'repeated'],
+          ['name', 'label', 'organization', 'program'],
+        ],
+      }),
       candidate(['Terminology updates'], 75, {
         when: [
           'term',
@@ -213,6 +226,7 @@ export const operationRules: readonly OperationRule[] = [
           'standardize',
           'corrected',
           'change log',
+          'spelling',
         ],
       }),
     ],
@@ -236,7 +250,9 @@ export const operationRules: readonly OperationRule[] = [
     ['spreadsheet'],
     [
       candidate(['Data structuring'], 100, { excludeTasks: ['App building'] }),
-      candidate(['Data cleaning'], 75),
+      candidate(['Data cleaning'], 75, {
+        when: ['mess', 'tidy', 'clean', 'check', 'excel', 'one cell'],
+      }),
     ],
   ),
   rule(
@@ -357,7 +373,12 @@ export const operationRules: readonly OperationRule[] = [
     ['Grant drafting'],
     'document',
     ['document'],
-    [candidate(['Grant drafting']), candidate(['Editing proofreading'], 75)],
+    [
+      candidate(['Grant drafting']),
+      candidate(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'check', 'proofread', 'catch', 'overclaim'],
+      }),
+    ],
   ),
   rule(
     'donor-repurposing',
@@ -543,8 +564,18 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Meeting minutes']),
       candidate(['Transcription'], 80),
       candidate(['Document summary'], 75, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: ['word record', 'summary', 'outline'],
+      }),
+      candidate(['Document summary'], 75, {
         teaching: ['panel', 'speaker'],
-        when: ['outline', 'word file', 'download', 'detailed summary'],
+        when: [
+          'outline',
+          'word file',
+          'word record',
+          'download',
+          'detailed summary',
+        ],
       }),
     ],
   ),
@@ -574,6 +605,7 @@ export const operationRules: readonly OperationRule[] = [
           'project',
           'source document',
           'knowledge file',
+          'file',
         ],
       }),
       candidate(['Document Q&A'], 75, {

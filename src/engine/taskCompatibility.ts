@@ -32,6 +32,13 @@ function requirement(
   )
     return null;
   if (
+    rule.whenAll?.some(
+      (group) =>
+        !group.some((phrase) => containsPhrase(intent.positive, phrase)),
+    )
+  )
+    return null;
+  if (
     rule.allTasks?.some((task) => !item.tasks.includes(task)) ||
     rule.excludeTasks?.some((task) => item.tasks.includes(task)) ||
     rule.excludeTeaching?.some((phrase) => containsPhrase(teaching, phrase)) ||

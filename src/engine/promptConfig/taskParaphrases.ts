@@ -46,6 +46,10 @@ export const taskParaphrases: readonly OperationRule[] = [
     [
       c(['Outreach materials'], 110, { allTasks: ['Document summary'] }),
       c(['Design feedback'], 80),
+      c(['Document summary'], 75, {
+        allTasks: ['Document Q&A', 'Document drafting'],
+        when: ['summarize', 'key condition', 'dense'],
+      }),
       c(['Accessible content'], 75, {
         allTasks: ['Outreach materials'],
         when: ['family', 'parent', 'student'],
@@ -115,7 +119,15 @@ export const taskParaphrases: readonly OperationRule[] = [
     ['Student interventions', 'App building'],
     'context',
     ['app', 'spreadsheet'],
-    [c(['Student interventions'], 110, { allTasks: ['App building'] })],
+    [
+      c(['Student interventions'], 110, { allTasks: ['App building'] }),
+      c(['Case management'], 80),
+      c(['Client intake'], 75, { allTasks: ['App building'] }),
+      c(['Process documentation'], 75, {
+        allTasks: ['Client intake'],
+        excludeTasks: ['Custom assistants'],
+      }),
+    ],
   ),
   r(
     'curriculum-activity-assistant',
@@ -324,10 +336,21 @@ export const taskParaphrases: readonly OperationRule[] = [
         minimumStrength: 0.5,
       }),
       c(['Lesson planning'], 80, { teaching: ['lesson planning gpt'] }),
+      c(['Lesson planning'], 75, {
+        allTasks: ['Custom assistants'],
+        teaching: ['reference curriculum', 'activity idea'],
+        when: ['test', 'learner', 'course', 'material'],
+      }),
+      c(['Accessible content'], 75, {
+        allTasks: ['Educational materials'],
+        excludeTasks: ['Custom assistants'],
+        when: ['course', 'learner', 'material', 'audience'],
+      }),
       c(['Knowledge management'], 75, {
         teaching: ['project', 'curate supporting'],
         minimumStrength: 0.5,
         excludeTasks: ['Workflow automation'],
+        when: ['setting', 'understand', 'introductory'],
       }),
     ],
     { explanatory: true, clearSource: true },

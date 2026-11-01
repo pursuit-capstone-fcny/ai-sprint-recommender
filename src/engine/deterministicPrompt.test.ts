@@ -54,6 +54,328 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.16 admits saved-writing components for recurring example-based work', () => {
+    const direct = lesson(
+      1,
+      ['Social media writing', 'Custom assistants', 'Brand voice'],
+      'Configure a social writing assistant.',
+    );
+    const bank = lesson(
+      2,
+      ['Brand voice', 'Custom assistants'],
+      'Use a language bank.',
+    );
+    const sample = lesson(3, ['Prompting'], 'Provide a writing sample.');
+    const skill = lesson(
+      4,
+      ['Workflow automation', 'Custom assistants'],
+      'Reuse a saved workflow.',
+    );
+    const { run } = fixture([skill, sample, bank, direct]);
+    const recurring = run(
+      'Every time we announce a partner on LinkedIn, keep examples in mind for reusable mission wording.',
+    );
+    expect(ids(recurring)[0]).toBe(direct.youtubeId);
+    expect(ids(recurring)).toEqual(
+      expect.arrayContaining([
+        bank.youtubeId,
+        sample.youtubeId,
+        skill.youtubeId,
+      ]),
+    );
+    const oneOff = run(
+      'Announce a new partner on LinkedIn with mission wording and a previous example.',
+    );
+    expect(ids(oneOff)).toEqual([direct.youtubeId]);
+  });
+  it('AC-12.16 requires both duplicate and identifier cues for list-based cleanup components', () => {
+    const clean = lesson(1, ['Data cleaning'], 'Clean spreadsheet values.');
+    const compare = lesson(
+      2,
+      ['List comparison'],
+      'Compare names across lists.',
+    );
+    const formula = lesson(
+      3,
+      ['List comparison', 'Spreadsheet formulas'],
+      'List repeated names.',
+    );
+    const terms = lesson(
+      4,
+      ['Terminology updates'],
+      'Revise approved category labels.',
+    );
+    const { run } = fixture([terms, formula, compare, clean]);
+    expect(
+      ids(
+        run(
+          'Check empty fields, repeated rows and two spellings of a program name in these dates and rows.',
+        ),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        clean.youtubeId,
+        compare.youtubeId,
+        formula.youtubeId,
+        terms.youtubeId,
+      ]),
+    );
+    expect(
+      ids(run('Check duplicate rows and impossible ages in a date export.')),
+    ).toEqual([clean.youtubeId]);
+    expect(ids(run('Check missing names and dates in a row export.'))).toEqual([
+      clean.youtubeId,
+    ]);
+  });
+  it('AC-12.16 distinguishes row-count formulas from set comparison alone', () => {
+    const lists = lesson(
+      1,
+      ['List comparison'],
+      'Compare event participation.',
+    );
+    const formula = lesson(2, ['Spreadsheet formulas'], 'Generate a formula.');
+    const total = lesson(
+      3,
+      ['Spreadsheet formulas', 'Data aggregation'],
+      'Sum amounts.',
+    );
+    const { run } = fixture([total, formula, lists]);
+    const counted = run(
+      'Count different organizations across event spreadsheets; counting the rows is wrong.',
+    );
+    expect(ids(counted)).toEqual([lists.youtubeId, formula.youtubeId]);
+    expect(
+      ids(
+        run('Compare partner lists across events to find new organizations.'),
+      ),
+    ).toEqual([lists.youtubeId]);
+  });
+  it('AC-12.16 makes reference-file organization a conditional FAQ component', () => {
+    const faq = lesson(
+      1,
+      ['Custom assistants', 'Knowledge management'],
+      'Configure an internal FAQ.',
+    );
+    const project = lesson(
+      2,
+      ['Knowledge management', 'Process documentation'],
+      'Organize reference files.',
+    );
+    const { run } = fixture([project, faq]);
+    expect(
+      ids(run('Build a helper to answer handbook questions from our files.')),
+    ).toEqual([faq.youtubeId, project.youtubeId]);
+    expect(ids(run('Build a helper to answer handbook questions.'))).toEqual([
+      faq.youtubeId,
+    ]);
+  });
+  it('AC-12.16 recovers supplied-fact drafting without adding unsolicited proofreading', () => {
+    const letter = lesson(
+      1,
+      ['Reimbursement documentation'],
+      'Draft an insurer letter.',
+    );
+    const draft = lesson(
+      2,
+      ['Document drafting', 'Document Q&A', 'Document summary'],
+      'Draft using source context.',
+    );
+    const review = lesson(
+      3,
+      ['Editing proofreading'],
+      'Review an existing draft.',
+    );
+    const grant = lesson(4, ['Grant drafting'], 'Draft funder responses.');
+    const { run } = fixture([draft, letter, review, grant]);
+    expect(
+      ids(
+        run(
+          'Draft a letter to an insurer from treatment details and ask for missing facts.',
+        ),
+      ),
+    ).toContain(draft.youtubeId);
+    expect(
+      ids(
+        run(
+          'Draft a foundation response about a future service launch from an overview.',
+        ),
+      ),
+    ).not.toContain(review.youtubeId);
+    expect(
+      ids(
+        run(
+          'Draft a foundation response about a future service launch and check the draft.',
+        ),
+      ),
+    ).toContain(review.youtubeId);
+  });
+  it('AC-12.16 includes document summarization for source-based visual and written records', () => {
+    const flier = lesson(
+      1,
+      ['Outreach materials', 'Document summary'],
+      'Create a recruitment flier.',
+    );
+    const summary = lesson(
+      2,
+      ['Document summary', 'Document Q&A', 'Document drafting'],
+      'Summarize and draft from sources.',
+    );
+    const minutes = lesson(3, ['Meeting minutes'], 'Generate formal minutes.');
+    const panel = lesson(4, ['Document summary'], 'Summarize a panel speaker.');
+    const { run } = fixture([panel, minutes, summary, flier]);
+    expect(
+      ids(
+        run(
+          'Use a dense PDF with key conditions to create a visual recruitment flier.',
+        ),
+      ),
+    ).toContain(summary.youtubeId);
+    expect(
+      ids(
+        run(
+          'Turn the text of our steering-group call into a Word record of decisions.',
+        ),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        minutes.youtubeId,
+        summary.youtubeId,
+        panel.youtubeId,
+      ]),
+    );
+    expect(
+      ids(
+        run('Use a transcript for formal committee minutes and a Word file.'),
+      ),
+    ).not.toContain(summary.youtubeId);
+  });
+  it('AC-12.16 separates directory extraction from requested cleanup checks', () => {
+    const structure = lesson(
+      1,
+      ['Data structuring'],
+      'Structure pasted names.',
+    );
+    const clean = lesson(2, ['Data cleaning'], 'Clean spreadsheet rows.');
+    const { run } = fixture([clean, structure]);
+    expect(
+      ids(
+        run(
+          'Put this emailed directory into columns and a downloadable table.',
+        ),
+      ),
+    ).toEqual([structure.youtubeId]);
+    expect(
+      ids(run('Put this messy pasted directory into a table I can check.')),
+    ).toContain(clean.youtubeId);
+  });
+  it('AC-12.16 selects teaching components for accessible-course work and preserves introduction-only helpers', () => {
+    const intro = lesson(
+      1,
+      ['Custom assistants'],
+      'Explain an accessible personalized agent.',
+    );
+    const activity = lesson(
+      2,
+      ['Lesson planning', 'Custom assistants'],
+      'Use reference curriculum for an activity idea generator.',
+    );
+    const resource = lesson(
+      3,
+      ['Accessible content', 'Educational materials'],
+      'Adapt learning resources.',
+    );
+    const workspace = lesson(
+      4,
+      ['Knowledge management'],
+      'Curate supporting project documents.',
+    );
+    const { run } = fixture([workspace, resource, activity, intro]);
+    const course = run(
+      'Build an accessible course assistant for learners, with reference material and a real test beyond an introduction.',
+    );
+    expect(ids(course)).toEqual(
+      expect.arrayContaining([
+        intro.youtubeId,
+        activity.youtubeId,
+        resource.youtubeId,
+      ]),
+    );
+    expect(ids(course)).not.toContain(workspace.youtubeId);
+    const settings = run(
+      'I want to understand the introduction and settings of an accessible agent.',
+    );
+    expect(ids(settings)).toContain(workspace.youtubeId);
+    expect(ids(settings)).not.toContain(activity.youtubeId);
+    expect(ids(settings)).not.toContain(resource.youtubeId);
+  });
+  it('AC-12.16 recovers tracking and handoff components without treating all capture as process design', () => {
+    const track = lesson(
+      1,
+      ['Student interventions', 'App building'],
+      'Track student interventions.',
+    );
+    const milestone = lesson(
+      2,
+      ['Case management'],
+      'Track milestones and dates.',
+    );
+    const capture = lesson(
+      3,
+      ['Client intake', 'App building'],
+      'Capture quick contacts.',
+    );
+    const process = lesson(
+      4,
+      ['Process documentation', 'Client intake'],
+      'Design a reviewed handoff procedure.',
+    );
+    const { run } = fixture([process, capture, milestone, track]);
+    expect(
+      ids(
+        run(
+          'Build a student follow-up app and record responsible staff and dates.',
+        ),
+      ),
+    ).toEqual(
+      expect.arrayContaining([
+        track.youtubeId,
+        milestone.youtubeId,
+        capture.youtubeId,
+        process.youtubeId,
+      ]),
+    );
+    expect(
+      ids(
+        run(
+          'Capture phone contact details at reception for follow-up by the office.',
+        ),
+      ),
+    ).toContain(process.youtubeId);
+    expect(
+      ids(run('Capture phone contact details at reception for follow-up.')),
+    ).not.toContain(process.youtubeId);
+  });
+  it('AC-12.16 admits learner adaptation as a partial newsletter method', () => {
+    const newsletter = lesson(
+      1,
+      ['Newsletter writing'],
+      'Write a learner newsletter item.',
+    );
+    const resource = lesson(
+      2,
+      ['Accessible content', 'Educational materials'],
+      'Adapt student and family resources.',
+    );
+    const { run } = fixture([resource, newsletter]);
+    expect(
+      ids(
+        run(
+          'Write an adult-learning newsletter item in everyday English for learners.',
+        ),
+      ),
+    ).toEqual([newsletter.youtubeId, resource.youtubeId]);
+  });
+
   it.each([
     {
       name: 'email chain',

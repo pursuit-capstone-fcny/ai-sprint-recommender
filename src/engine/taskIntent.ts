@@ -13,6 +13,8 @@ export interface CandidateRequirement {
   excludeTasks?: string[];
   excludeTeaching?: string[];
   when?: string[];
+  /** Every cue group must match; phrases inside a group are alternatives. */
+  whenAll?: string[][];
   minimumStrength?: number;
   priority: number;
   requireSourceMatch?: boolean;

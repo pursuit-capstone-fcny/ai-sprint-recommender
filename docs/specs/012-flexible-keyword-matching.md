@@ -98,6 +98,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When free-text interpretation and candidate compatibility run
   - Then the matcher distinguishes a rejected role assumption from rejected rehearsal, preserves declared source/output goals, treats answer sheets and durations as content rather than application/material names, and requires native-platform and offline/bulk-operation teaching evidence before ranking. Named tools remain preferences unless the user requires their own controls or explicitly constrains the environment.
 
+- AC-12.16 Conditional component recovery
+  - Given a registered task and instruction for a substantial component such as source drafting, reference-file organization, row-count formulas, learner adaptation or handoff design
+  - When selecting partial methods
+  - Then every declared cue group must match the positive request, direct instruction ranks above eligible components, and component expansion retains shared compatibility and platform checks. Recurring example-based writing, identifier cleanup and teaching-resource setup may admit their scoped partials; extraction, initial drafting and accessible-course work do not imply unrelated cleanup, proofreading or generic workspace setup.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

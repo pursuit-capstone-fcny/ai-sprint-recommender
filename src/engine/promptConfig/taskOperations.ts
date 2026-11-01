@@ -49,7 +49,14 @@ export const taskOperations: readonly OperationRule[] = [
       c(['Accessible content'], 75, {
         allTasks: ['Educational materials'],
         excludeTasks: ['Custom assistants'],
-        when: ['visual', 'icon', 'parent', 'student right', 'version'],
+        when: [
+          'visual',
+          'icon',
+          'parent',
+          'student right',
+          'version',
+          'learner',
+        ],
       }),
     ],
   ),
@@ -156,7 +163,15 @@ export const taskOperations: readonly OperationRule[] = [
       }),
       c(['Document drafting'], 75, {
         allTasks: ['Document Q&A', 'Document summary'],
-        when: ['word', 'copilot', 'overview', 'summary', 'outline'],
+        when: [
+          'word',
+          'copilot',
+          'overview',
+          'summary',
+          'outline',
+          'ask',
+          'missing',
+        ],
       }),
     ],
   ),
@@ -288,6 +303,11 @@ export const taskOperations: readonly OperationRule[] = [
     [
       c(['Client intake'], 110, { allTasks: ['App building'] }),
       c(['Case management'], 80),
+      c(['Process documentation'], 75, {
+        allTasks: ['Client intake'],
+        excludeTasks: ['Custom assistants'],
+        when: ['office', 'handoff', 'process', 'responsibility'],
+      }),
     ],
   ),
   r(
@@ -556,6 +576,29 @@ export const taskOperations: readonly OperationRule[] = [
       }),
       c(['Brand voice'], 80, {
         allTasks: ['Custom assistants', 'Document drafting'],
+      }),
+      c(['Brand voice'], 75, {
+        allTasks: ['Custom assistants'],
+        minimumStrength: 0.5,
+        whenAll: [
+          ['every time', 'keep', 'recurring', 'routine'],
+          ['example', 'sample', 'reference'],
+        ],
+      }),
+      c(['Prompting'], 75, {
+        teaching: ['writing sample'],
+        minimumStrength: 0.5,
+        whenAll: [
+          ['every time', 'keep', 'recurring', 'routine'],
+          ['example', 'sample', 'reference'],
+        ],
+      }),
+      c(['Workflow automation'], 70, {
+        allTasks: ['Custom assistants'],
+        whenAll: [
+          ['every time', 'keep', 'recurring', 'routine'],
+          ['example', 'sample', 'reference'],
+        ],
       }),
     ],
     { precedence: 1 },
