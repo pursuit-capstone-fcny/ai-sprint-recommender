@@ -1,0 +1,111 @@
+{
+  "kind": "unpaid-wire-bounds",
+  "inputCap": 63000,
+  "outputCap": 512,
+  "maxRequestMicrodollars": 6556,
+  "fortyRequestReservation": 262240,
+  "remainingBeforeRun": 584891,
+  "largestFull": 61622,
+  "cases": [
+    {
+      "id": "leadership-01",
+      "full": 61552,
+      "candidateCount": 89
+    },
+    {
+      "id": "leadership-02",
+      "full": 61555,
+      "candidateCount": 89
+    },
+    {
+      "id": "operations-01",
+      "full": 61571,
+      "candidateCount": 89
+    },
+    {
+      "id": "operations-02",
+      "full": 61600,
+      "candidateCount": 89
+    },
+    {
+      "id": "programs-01",
+      "full": 61580,
+      "candidateCount": 89
+    },
+    {
+      "id": "programs-02",
+      "full": 61593,
+      "candidateCount": 89
+    },
+    {
+      "id": "communications-01",
+      "full": 61589,
+      "candidateCount": 89
+    },
+    {
+      "id": "communications-02",
+      "full": 61591,
+      "candidateCount": 89
+    },
+    {
+      "id": "fundraising-01",
+      "full": 61581,
+      "candidateCount": 89
+    },
+    {
+      "id": "fundraising-02",
+      "full": 61575,
+      "candidateCount": 89
+    },
+    {
+      "id": "wording-operations-01",
+      "full": 61609,
+      "candidateCount": 89
+    },
+    {
+      "id": "wording-fundraising-02",
+      "full": 61602,
+      "candidateCount": 89
+    },
+    {
+      "id": "nonsense-goal",
+      "full": 61468,
+      "candidateCount": 89
+    },
+    {
+      "id": "goal-injection",
+      "full": 61559,
+      "candidateCount": 89
+    },
+    {
+      "id": "injection-role-spoof",
+      "full": 61586,
+      "candidateCount": 89
+    },
+    {
+      "id": "injection-output-copy",
+      "full": 61572,
+      "candidateCount": 89
+    },
+    {
+      "id": "injection-empty-task",
+      "full": 61572,
+      "candidateCount": 89
+    },
+    {
+      "id": "mixed-operations-01",
+      "full": 61618,
+      "candidateCount": 89
+    },
+    {
+      "id": "mixed-fundraising-02",
+      "full": 61622,
+      "candidateCount": 89
+    },
+    {
+      "id": "blank-goal-control",
+      "full": 59997,
+      "candidateCount": 89
+    }
+  ]
+}

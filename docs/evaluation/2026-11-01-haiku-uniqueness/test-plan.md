@@ -64,3 +64,31 @@ cases. No new allowance, refund, reset or repricing. Bind approval to the exact
 source, workflow and attempt. Preserve failed runs and every charge. Disable
 test calls afterward, save the durable budget, remove provider/rate keys and
 temporary authorization. Production LLM calls and logging stay disabled.
+
+## V55 finding and V56 forward-only procedure
+
+V55 scores 9/10, 9/10 and 10/10 with 28/30 accepted broad lists. It reduces
+observed duplicates from three to one, in Programs-02 trial two, but
+Leadership-01 trial one times out. All ten controls pass. Thirty-nine calls
+have measured usage; the timeout retains its complete $0.006556 reservation.
+Full evidence and validation fail. The forty submitted cases cost $0.092317,
+including that unknown reservation, leaving $0.584891. Historical unknowns
+increase to $0.386544. V55 is not retained as the completed fix.
+
+V56 tests hypothesis two while retaining position-first output. Replace only
+the backward uniqueness paragraph in the final wire request with a forward
+procedure: choose the distinct ordered positions before rank1, consume one per
+rank, and compare with earlier fields before writing the next position. Do not
+emit a repeat with an instruction to repair it later. No plan or extra field is
+returned, and no response is repaired. Preserve every eligibility, breadth,
+mixed-input, catalog and output-validation rule. The same function computes the
+actual wire request for input reservation and dispatch. Historical pre-adapter
+request reconstruction remains intact.
+
+The real adapter regression first fails on the old backward-check text, then
+passes with the forward procedure. Recheck all full-catalog wire bounds and
+local requirements before pinning a new source and exact workflow attempt.
+Use the same forty cases and retention criteria. Carry the $4.415109 ceiling,
+including all $0.386544 unknown reservations, under the unchanged $5 cap. The
+forty-case maximum reservation remains $0.262240. No new grant, paid retry,
+replacement case, label, gate change, prefilter, padding or extra model call.

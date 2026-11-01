@@ -1,0 +1,8 @@
+{
+  "historicalUnknownReservationsMicrodollars": 379988,
+  "newUnknownReservationsMicrodollars": 6556,
+  "cumulativeUnknownReservationsMicrodollars": 386544,
+  "cumulativeCeilingMicrodollars": 4415109,
+  "remainingAllowanceMicrodollars": 584891,
+  "note": "The original audit stdout carries an older default unknown subtotal. This separate audit preserves actual historical and new reservations; no charge or score changed."
+}

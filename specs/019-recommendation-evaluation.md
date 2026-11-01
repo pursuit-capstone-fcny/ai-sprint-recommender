@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V55 duplicate-response validation pending; all 89 videos retained.
+- **Status:** V55 rejected; V56 forward-only validation pending. All 89 videos retained.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 

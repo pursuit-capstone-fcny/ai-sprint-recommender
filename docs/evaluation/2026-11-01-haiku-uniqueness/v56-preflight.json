@@ -1,0 +1,19 @@
+{
+  "testsPassed": 654,
+  "testsFailed": 0,
+  "typecheck": "passed",
+  "lint": "passed",
+  "formatting": "passed",
+  "build": "passed",
+  "haikuRuntime": "passed",
+  "lunaRuntime": "passed",
+  "externalRuntimeCalls": 0,
+  "outboundOrderRegression": "Actual wire request contains the forward-only procedure, excludes backward correction, retains position before use, strict duplicate rejection and measured usage.",
+  "largestFullWireBound": 61622,
+  "inputCap": 63000,
+  "outputCap": 512,
+  "fortyCaseReservationMicrodollars": 262240,
+  "remainingBeforeRunMicrodollars": 584891,
+  "candidateCount": 89,
+  "prefiltering": false
+}

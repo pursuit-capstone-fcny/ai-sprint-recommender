@@ -91,7 +91,7 @@ describe('paid evaluation approval preflight', () => {
     const haiku = {
       ...approval,
       modelVersion: 'claude-haiku-5-5',
-      promptVersion: 'catalog-rank-haiku-v55',
+      promptVersion: 'catalog-rank-haiku-v56',
       reasoningEffort: 'low',
       thinking: 'disabled',
       priorSpendMicrodollars: LUNA_PRIOR_SPEND,

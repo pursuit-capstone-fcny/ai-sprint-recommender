@@ -55,6 +55,12 @@ describe('single-pass Haiku selection evidence', () => {
     expect(wire.system).toContain(
       'First copy a useful integer position that is absent from all earlier ranks.',
     );
+    expect(wire.system).toContain(
+      'Never write a repeated position with the intention of correcting it later.',
+    );
+    expect(wire.system).not.toContain(
+      'Check rank8 against rank1 through rank7',
+    );
     const schema = wire.output_config.format.schema;
     expect(schema.properties.rank1.required).toEqual(['position', 'use']);
     expect(Object.keys(schema.properties.rank1.properties)).toEqual([

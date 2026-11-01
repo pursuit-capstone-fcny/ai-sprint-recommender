@@ -1,0 +1,6 @@
+{
+  "retained": false,
+  "reason": "One duplicate benchmark response and one provider timeout. Scores 9/10, 9/10, 10/10 with 28/30 accepted broad lists. Thirty-nine measured calls and one full unknown reservation. Full-catalog scope is retained.",
+  "labelsChanged": false,
+  "taskDiversityGateChanged": false
+}

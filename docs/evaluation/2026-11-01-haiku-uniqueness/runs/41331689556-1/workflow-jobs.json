@@ -1,0 +1,256 @@
+{
+  "total_count": 2,
+  "jobs": [
+    {
+      "id": 124922966069,
+      "run_id": 41331689556,
+      "workflow_name": "Evaluate Anthropic test deployment",
+      "head_branch": "feat/19-recommendation-evaluation",
+      "run_url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41331689556",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU7pt1M8AAAAdFf0wNQ",
+      "head_sha": "a5f65b9c4d2f6cbd1ccb2f8617c3f6adb4b8dd16",
+      "url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/actions/jobs/124922966069",
+      "html_url": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41331689556/job/124922966069",
+      "status": "completed",
+      "conclusion": "cancelled",
+      "created_at": "2026-11-01T17:29:05Z",
+      "started_at": "2026-11-01T17:29:07Z",
+      "completed_at": "2026-11-01T17:30:33Z",
+      "name": "evaluate",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-11-01T17:29:08Z",
+          "completed_at": "2026-11-01T17:29:10Z"
+        },
+        {
+          "name": "Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-11-01T17:29:10Z",
+          "completed_at": "2026-11-01T17:29:12Z"
+        },
+        {
+          "name": "Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-11-01T17:29:12Z",
+          "completed_at": "2026-11-01T17:29:16Z"
+        },
+        {
+          "name": "Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4,
+          "started_at": "2026-11-01T17:29:16Z",
+          "completed_at": "2026-11-01T17:29:20Z"
+        },
+        {
+          "name": "Install and verify",
+          "status": "completed",
+          "conclusion": "cancelled",
+          "number": 5,
+          "started_at": "2026-11-01T17:29:20Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Verify current owner approval before any test network work",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Build test site",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 7,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Deploy test site with provider calls disabled",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Verify disabled endpoint",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Verify sanitized diagnostic capture without paid calls",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 10,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Deploy isolated synthetic failure checks",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Verify deployed failure handling without provider calls",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 12,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Enable approved Haiku 5.5 test candidate",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 13,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Run approved endpoint trials and separate probes",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 14,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Disable test provider calls after evaluation",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 15,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Save durable cumulative comparison allowance after shutdown",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:26Z"
+        },
+        {
+          "name": "Remove remote test provider and rate-key bindings",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 17,
+          "started_at": "2026-11-01T17:30:26Z",
+          "completed_at": "2026-11-01T17:30:27Z"
+        },
+        {
+          "name": "Remove temporary provider secret file",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18,
+          "started_at": "2026-11-01T17:30:27Z",
+          "completed_at": "2026-11-01T17:30:27Z"
+        },
+        {
+          "name": "Remove isolated synthetic failure Worker",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 19,
+          "started_at": "2026-11-01T17:30:27Z",
+          "completed_at": "2026-11-01T17:30:27Z"
+        },
+        {
+          "name": "Save evaluation reports and sanitized diagnostics",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 20,
+          "started_at": "2026-11-01T17:30:27Z",
+          "completed_at": "2026-11-01T17:30:28Z"
+        },
+        {
+          "name": "Summarize test deployment",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 21,
+          "started_at": "2026-11-01T17:30:28Z",
+          "completed_at": "2026-11-01T17:30:28Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 40,
+          "started_at": "2026-11-01T17:30:28Z",
+          "completed_at": "2026-11-01T17:30:28Z"
+        },
+        {
+          "name": "Post Run pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 41,
+          "started_at": "2026-11-01T17:30:28Z",
+          "completed_at": "2026-11-01T17:30:29Z"
+        },
+        {
+          "name": "Post Run actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 42,
+          "started_at": "2026-11-01T17:30:29Z",
+          "completed_at": "2026-11-01T17:30:29Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 43,
+          "started_at": "2026-11-01T17:30:29Z",
+          "completed_at": "2026-11-01T17:30:29Z"
+        }
+      ],
+      "check_run_url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/check-runs/124922966069",
+      "labels": ["ubuntu-latest"],
+      "runner_id": 1000000840,
+      "runner_name": "GitHub Actions 1000000840",
+      "runner_group_id": 0,
+      "runner_group_name": "GitHub Actions"
+    },
+    {
+      "id": 124922967013,
+      "run_id": 41331689556,
+      "workflow_name": "Evaluate Anthropic test deployment",
+      "head_branch": "feat/19-recommendation-evaluation",
+      "run_url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41331689556",
+      "run_attempt": 1,
+      "node_id": "CR_kwDOU7pt1M8AAAAdFf0z5Q",
+      "head_sha": "a5f65b9c4d2f6cbd1ccb2f8617c3f6adb4b8dd16",
+      "url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/actions/jobs/124922967013",
+      "html_url": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41331689556/job/124922967013",
+      "status": "completed",
+      "conclusion": "skipped",
+      "created_at": "2026-11-01T17:29:05Z",
+      "started_at": "2026-11-01T17:29:05Z",
+      "completed_at": "2026-11-01T17:29:05Z",
+      "name": "cleanup",
+      "steps": [],
+      "check_run_url": "https://api.github.com/repos/pursuit-capstone-fcny/ai-sprint-recommender/check-runs/124922967013",
+      "labels": ["ubuntu-latest"],
+      "runner_id": null,
+      "runner_name": null,
+      "runner_group_id": null,
+      "runner_group_name": null
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "trial": 1,
+    "phase": "catalog-load",
+    "attempt": 1,
+    "response": {
+      "outcome": "catalog-loaded",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7"
+    },
+    "requestId": null,
+    "status": 200,
+    "latencyMs": 314
+  },
+  {
+    "trial": 1,
+    "phase": "cache-check",
+    "response": {
+      "outcome": "fallback",
+      "reason": "unavailable",
+      "catalogVersion": "sha256:b3f96d7113308d627eeb6c9667ac51a44155210faf515db2ef5a41fb5e9bfae7",
+      "modelVersion": "claude-haiku-5-5",
+      "promptVersion": "catalog-rank-haiku-v55"
+    },
+    "requestId": "caecdf21-bb65-4bab-b9b6-919213470e44",
+    "status": 400,
+    "latencyMs": 68
+  }
+]
