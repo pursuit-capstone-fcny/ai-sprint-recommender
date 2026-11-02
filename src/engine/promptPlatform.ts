@@ -1,7 +1,7 @@
 import { languageTokens, promptWords } from './promptLanguage';
 import { promptPolarity } from './promptPolarity';
 
-/** A request for an application's own controls requires that platform, even outside the dictionary. */
+/** Native controls or an exclusive named application require that platform, even outside the dictionary. */
 export function requiredPlatform(prompt: string) {
   const name = '([A-Z][A-Za-z0-9-]*(?:\\s+[A-Z][A-Za-z0-9-]*)*)';
   const positive = promptPolarity(promptWords(prompt)).positiveWords.join(' ');
@@ -20,6 +20,22 @@ export function requiredPlatform(prompt: string) {
       ),
     ),
   ];
+  const exclusive = [
+    ...prompt.matchAll(
+      new RegExp(`\\b(?:in|using|with|use)\\s+${name}\\s+only\\b`, 'g'),
+    ),
+    ...prompt.matchAll(
+      new RegExp(`\\b(?:in|using|with|use)\\s+only\\s+${name}\\b`, 'g'),
+    ),
+  ];
+  matches.push(
+    ...exclusive.filter(
+      (match) =>
+        !/^(?:AI|English|Spanish|French|Mandarin|German|Arabic)$/.test(
+          match[1],
+        ),
+    ),
+  );
   const app = /\b(?:built[ -]in\s+)?([A-Z][a-zA-Z]+)\s+app\b/.exec(prompt);
   if (
     app &&

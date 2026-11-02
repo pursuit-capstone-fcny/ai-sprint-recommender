@@ -9,7 +9,7 @@ const catalog = parsePublicCatalog({
   catalogVersion: `sha256:${'b'.repeat(64)}`,
   functionAreas: ['Communications'],
   tasks: ['newsletter drafting'],
-  tools: ['ChatGPT', 'Excel'],
+  tools: ['ChatGPT'],
   synonyms: [],
   adjacentTools: [],
   items: [
@@ -40,6 +40,7 @@ it.each([
   'Draft a newsletter',
   'Draft a newsletter for donors',
   'Write a weekly newsletter',
+  'Draft a newsletter in English only',
 ])(
   'AC-12.21: returns newsletter instruction for a general writing request: %s',
   (goal) => {
@@ -89,6 +90,7 @@ it.each([
   'Do not draft a newsletter. Repair a bicycle tire instead.',
   'Draft a newsletter without using ChatGPT',
   'Draft a newsletter in Excel only',
+  'Draft a newsletter using only Excel',
   'Draft a newsletter using only ChatGPT',
   "Draft a newsletter using Excel's own controls",
   'Draft a newsletter offline only',
