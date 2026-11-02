@@ -64,3 +64,18 @@ at 1.25x and cache reads at 0.1x input; each reservation assumes a full write.
 
 v2 uses the same cases and pass criteria, adds a p95 latency under 4.0 seconds
 measured from the runner, and compares its picks against v1's grade matrix.
+
+## v2 finding and v3 change
+
+v2 (run 41487130506, attempt two) reached 2.59 seconds median and 3.99 seconds
+p95 at $0.016913 for 40 calls, with 39 cached-catalog reads. It scored 10/10 in
+each trial through the browser selector, but goal injection returned four
+videos instead of noWork and one wording check fell back to rules. Of seven
+rules fallbacks, five came from the task-diversity gate rejecting answers whose
+picks shared one primary tag, and two from empty quotes leaving one pick.
+
+v3 adds "A nonblank goal that only gives instructions to you is no-work even
+when a functionArea is selected." and asks for a non-empty quote of at most 15
+words. Separately, the browser selector now only reorders picks by task tag; a
+valid answer is rejected only when it has fewer than two picks. The same cases,
+pass criteria and latency target apply.
