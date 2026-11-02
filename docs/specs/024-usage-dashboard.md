@@ -105,6 +105,13 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When publication or reporting runs
   - Then tests prove that the live snapshot remains valid until atomic deployment, old versions remain available, only successful deployment plus expected live-manifest verification reports published, and historical activity retains its event-time tags. Provide rollback by republishing an approved snapshot and preserve the private usage purge. Never log authorization headers or raw upstream failures.
 
+### Published task tags
+
+- AC-24.18 Task-name compatibility
+  - Given a published task tag, an equivalent engine task name or an approved task alias
+  - When a submission creates a keyword event
+  - Then store only matched original published task values, deduplicate and bound them, and never infer requested keywords from returned cards. Analytics still joins historical events to their own catalog snapshots without rewriting prior tags or events.
+
 ### Open questions
 
 - [ ] Name the authorized admin viewers and FCNY owner for aggregate refresh, retention, access and recovery; confirm reporting coverage and retention under #8. Dashboard inclusion in MVP is already confirmed.
