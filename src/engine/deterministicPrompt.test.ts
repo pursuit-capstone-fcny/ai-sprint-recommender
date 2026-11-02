@@ -55,6 +55,110 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
 
 describe('deterministic free-text recommendations', () => {
   it.each([
+    'Clean duplicate spreadsheet rows, a lecture will not help.',
+    'Clean duplicate spreadsheet rows, a presentation is not our goal.',
+    'Clean duplicate spreadsheet rows, making an illustration is a different job.',
+  ])('keeps a comma-separated rejected alternative scoped: %s', (prompt) => {
+    const cleaning = lesson(
+      1,
+      ['Data cleaning'],
+      'Clean duplicate spreadsheet rows.',
+    );
+    const { run } = fixture([cleaning]);
+    expect(ids(run(prompt))).toEqual([cleaning.youtubeId]);
+  });
+
+  it.each(['I want to use', 'we prefer', 'please use'])(
+    'ends a tool-exclusion list at a positive request: %s',
+    (request) => {
+      const excel = lesson(
+        1,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows.',
+        ['Microsoft Excel'],
+      );
+      const claude = lesson(
+        2,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows.',
+        ['Claude'],
+      );
+      const { run } = fixture([excel, claude]);
+      const result = run(
+        `Clean duplicate spreadsheet rows without using Excel, ${request} Claude.`,
+      );
+      expect(result.interpretation.excludedTools).toEqual(['Microsoft Excel']);
+      expect(ids(result)).toEqual([claude.youtubeId]);
+    },
+  );
+
+  it('still excludes every tool in a comma-separated rejection list', () => {
+    const items = ['Microsoft Excel', 'ChatGPT', 'Claude'].map((tool, i) =>
+      lesson(i + 1, ['Data cleaning'], 'Clean duplicate spreadsheet rows.', [
+        tool,
+      ]),
+    );
+    const { run } = fixture(items);
+    const result = run(
+      'Clean duplicate spreadsheet rows without using Excel, ChatGPT, or Claude.',
+    );
+    expect(result.interpretation.excludedTools).toEqual([
+      'ChatGPT',
+      'Claude',
+      'Microsoft Excel',
+    ]);
+    expect(ids(result)).toEqual([]);
+  });
+
+  it.each(['with no network', 'without a network'])(
+    'requires offline teaching evidence for a negative environment requirement: %s',
+    (environment) => {
+      const cloud = lesson(
+        1,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows.',
+        ['Claude'],
+      );
+      const local = lesson(
+        2,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows offline.',
+        ['Local Lab'],
+      );
+      const { run } = fixture([cloud, local]);
+      expect(
+        ids(run(`Clean duplicate spreadsheet rows ${environment}.`)),
+      ).toEqual([local.youtubeId]);
+      expect(
+        ids(run('Clean duplicate spreadsheet rows, not without a network.')),
+      ).toContain(cloud.youtubeId);
+    },
+  );
+
+  it.each(['Microsoft Excel', 'Claude'])(
+    'preserves canonical-task abstention for an exclusive tool: %s',
+    (tool) => {
+      const excel = lesson(
+        1,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows.',
+        ['Microsoft Excel'],
+      );
+      const claude = lesson(
+        2,
+        ['Data cleaning'],
+        'Clean duplicate spreadsheet rows.',
+        ['Claude'],
+      );
+      const { run } = fixture([excel, claude]);
+      expect(ids(run(`Data cleaning using only ${tool}.`))).toEqual([]);
+      expect(ids(run(`Data cleaning using ${tool}.`))).toContain(
+        claude.youtubeId,
+      );
+    },
+  );
+
+  it.each([
     {
       name: 'traceable financial figures',
       main: ['Financial analysis'],

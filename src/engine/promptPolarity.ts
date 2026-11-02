@@ -1,3 +1,13 @@
+/** A new positive request ends a preceding rejection, even inside one sentence. */
+export function startsPositiveRequest(words: readonly string[], index: number) {
+  return (
+    ['i', 'we', 'please'].includes(words[index]) &&
+    ['need', 'want', 'would', 'prefer', 'use', 'show'].includes(
+      words[index + 1],
+    )
+  );
+}
+
 /** Bounded clause exclusions shared by task, material, format and keyword parsing. */
 export function promptPolarity(words: string[]) {
   const excluded = new Set<number>();
@@ -105,13 +115,7 @@ export function promptPolarity(words: string[]) {
     let end = start + 1;
     while (end < words.length) {
       if (boundaries.has(words[end])) break;
-      if (
-        ['i', 'we', 'please'].includes(words[end]) &&
-        ['need', 'want', 'would', 'prefer', 'use', 'show'].includes(
-          words[end + 1],
-        )
-      )
-        break;
+      if (startsPositiveRequest(words, end)) break;
       if (
         words[end] === 'and' &&
         ['then', 'please', 'instead'].includes(words[end + 1])

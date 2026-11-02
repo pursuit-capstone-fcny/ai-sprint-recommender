@@ -71,6 +71,14 @@ export function recommendVideos(
     catalog,
     options,
   );
+  if (intent.operation?.id === 'catalog-task' && current.unsupportedOnlyTool)
+    return {
+      interpretation: intent.interpretation,
+      warnings: [
+        "Cannot verify tool-only workflows from the catalog's flat tool tags.",
+      ],
+      recommendations: [],
+    };
   const compatible = compatibleCandidates(catalog, intent, options);
   return {
     interpretation: intent.interpretation,

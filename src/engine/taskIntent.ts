@@ -1,7 +1,7 @@
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import type { PromptInterpretation, PromptOptions } from './prompt';
 import { languageTokens, promptWords } from './promptLanguage';
-import { promptPolarity } from './promptPolarity';
+import { promptPolarity, startsPositiveRequest } from './promptPolarity';
 import { operationRules } from './promptConfig/operations';
 import { capabilityConstraints } from './promptConfig/capabilityConstraints';
 import { requiredPlatform } from './promptPlatform';
@@ -61,7 +61,7 @@ export function interpretOperation(
   // Handle a noun phrase rejected after its mention: "a slide deck isn't the goal".
   const normalized = prompt
     .replace(
-      /(?:a |the )?([^.!?;]+?)\s+(?:isn't|is not)\s+(?:the |our )?goal\b/gi,
+      /(?:a |the )?([^.!?;,—]+?)\s+(?:isn't|is not)\s+(?:the |our )?goal\b/gi,
       'not $1',
     )
     .replace(/\brules? out\b/gi, 'not');
@@ -116,6 +116,7 @@ export function interpretOperation(
     for (let end = start; end < toolWords.length; end++) {
       if (['\u0000', 'but', 'however', 'instead'].includes(toolWords[end]))
         break;
+      if (end > start && startsPositiveRequest(toolWords, end)) break;
       exclusions.add(end);
     }
   }
@@ -249,6 +250,25 @@ export function interpretOperation(
           ...new Set([...current.excludedTools, ...excludedTools]),
         ].sort(),
       };
+  // A negative environment requirement is affirmative evidence of a constraint.
+  // Do not restore it when a preceding rejection also masks that requirement.
+  const requirementWords = scoped.map((word) =>
+    word === '\u0000' || word === '\u0001'
+      ? word
+      : languageTokens(word).join(' '),
+  );
+  const hasRequirement = (phrase: string) => {
+    if (has(phrase)) return true;
+    const parts = languageTokens(phrase);
+    if (!['no', 'without'].includes(parts[0])) return false;
+    return requirementWords.some(
+      (_, start) =>
+        parts.every(
+          (part, offset) => requirementWords[start + offset] === part,
+        ) &&
+        (start === 0 || !polarity.excluded.has(start - 1)),
+    );
+  };
   return {
     operation,
     interpretation,
@@ -257,7 +277,7 @@ export function interpretOperation(
     language: operation?.id === 'language-practice' ? language : undefined,
     learningFormats: options.learningFormats,
     constraints: capabilityConstraints.filter((rule) =>
-      rule.when.every((group) => group.some(has)),
+      rule.when.every((group) => group.some(hasRequirement)),
     ),
   };
 }

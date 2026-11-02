@@ -172,14 +172,14 @@ export function promptWords(text: string): string[] {
   const normalized = text
     .replace(/[’']/g, "'")
     .replace(
-      /([^.!?;]+?)\s+(?:won't|will not|wouldn't|would not|doesn't|does not)\s+(?:solve|help|work|meet|address)\b/gi,
+      /([^.!?;,—]+?)\s+(?:won't|will not|wouldn't|would not|doesn't|does not)\s+(?:solve|help|work|meet|address)\b/gi,
       'not $1',
     )
     .replace(
-      /([^.!?;]+?)\s+(?:isn't|is not)\s+(?:what (?:we|I) (?:need|want)|(?:the |our )?goal)\b/gi,
+      /([^.!?;,—]+?)\s+(?:isn't|is not)\s+(?:what (?:we|I) (?:need|want)|(?:the |our )?goal)\b/gi,
       'not $1',
     )
-    .replace(/([^.!?;]+?)\s+is a different job\b/gi, 'not $1');
+    .replace(/([^.!?;,—]+?)\s+is a different job\b/gi, 'not $1');
   // This describes verbatim text, not the Microsoft application.
   return normalized
     .replace(/\bword[ -]+for[ -]+word\b/gi, 'verbatim')
