@@ -3,6 +3,7 @@ import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { deterministicSelection } from './deterministicSelection';
 import { deterministicCatalog } from './deterministicCatalog';
 import { recommendVideos } from '../engine/deterministicPrompt';
+import { requiredPlatform } from '../engine/promptPlatform';
 
 const catalog = parsePublicCatalog({
   schemaVersion: 1,
@@ -35,6 +36,20 @@ const select = (goal: string) =>
     goalWords: goal.split(' '),
     tools: [],
   });
+
+it.each([
+  ['using only mailchimp', 'mailchimp'],
+  ['using only Microsoft Excel for our team', 'Microsoft Excel'],
+  ['in excel only', 'excel'],
+  ['in english only', undefined],
+  ['using only ai', undefined],
+  ['with only a minute to spare', undefined],
+] as const)(
+  'AC-12.21: scopes an exclusive platform independently of the dictionary: %s',
+  (suffix, expected) => {
+    expect(requiredPlatform(`Draft a newsletter ${suffix}`)).toBe(expected);
+  },
+);
 
 it.each([
   'Draft a newsletter',
@@ -104,6 +119,8 @@ it.each([
   'Draft a newsletter without using ChatGPT',
   'Draft a newsletter in Excel only',
   'Draft a newsletter using only Excel',
+  'Draft a newsletter using only mailchimp',
+  'Draft a newsletter in excel only',
   'Draft a newsletter using only ChatGPT',
   "Draft a newsletter using Excel's own controls",
   'Draft a newsletter offline only',

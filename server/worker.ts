@@ -2,6 +2,10 @@ import { RECOMMENDATION_PATH } from '../src/contracts/recommendation';
 import { recommend, type WorkerEnv } from './recommendations';
 import { CATALOG_PATH, serveCatalog } from './catalog-route';
 
+// Keep the registered class available when uploading disabled previews after
+// a budgeted deployment. This adds no binding, migration or enablement.
+export { RecommendationBudget } from './budget-object';
+
 export default {
   async fetch(
     request: Request,

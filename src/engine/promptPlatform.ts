@@ -20,18 +20,29 @@ export function requiredPlatform(prompt: string) {
       ),
     ),
   ];
+  const quantityOrDuration =
+    'a|an|the|one|two|three|four|five|six|seven|eight|nine|ten|few|several|some|minutes?|hours?|days?|weeks?|months?|years?';
+  const connector =
+    'only|for|about|on|from|with|using|in|that|which|and|to|but|please|quickly|today';
+  const exclusiveName = `((?!(?:${quantityOrDuration})\\b)[a-z][a-z0-9-]*(?:\\s+(?!(?:${connector})\\b)[a-z][a-z0-9-]*)*)`;
   const exclusive = [
     ...prompt.matchAll(
-      new RegExp(`\\b(?:in|using|with|use)\\s+${name}\\s+only\\b`, 'g'),
+      new RegExp(
+        `\\b(?:in|using|with|use)\\s+${exclusiveName}\\s+only\\b`,
+        'gi',
+      ),
     ),
     ...prompt.matchAll(
-      new RegExp(`\\b(?:in|using|with|use)\\s+only\\s+${name}\\b`, 'g'),
+      new RegExp(
+        `\\b(?:in|using|with|use)\\s+only\\s+${exclusiveName}\\b`,
+        'gi',
+      ),
     ),
   ];
   matches.push(
     ...exclusive.filter(
       (match) =>
-        !/^(?:AI|English|Spanish|French|Mandarin|German|Arabic)$/.test(
+        !/^(?:AI|English|Spanish|French|Mandarin|German|Arabic)$/i.test(
           match[1],
         ),
     ),
