@@ -67,7 +67,22 @@ describe('catalog pick protocol', () => {
     expect(result.response).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v5',
+      promptVersion: 'catalog-pick-evidence-v6',
+    });
+  });
+
+  it('AC-PROD-5: excludes weak picks from a model-classified discovery response', () => {
+    const result = prepareCatalogScoring(
+      { ...inputFixture(), goal: 'Copilot' },
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'discovery',
+      picks: [pick(0, 1), pick(1, 2), pick(2, 3)],
+    });
+    expect(result.response).toMatchObject({
+      outcome: 'success',
+      youtubeIds: ids([2, 1]),
     });
   });
 
@@ -77,6 +92,7 @@ describe('catalog pick protocol', () => {
       catalogFixture(),
     ).complete({
       noWork: false,
+      goalType: 'task',
       picks: [
         pick(10, 1),
         pick(4, 2),
@@ -98,6 +114,7 @@ describe('catalog pick protocol', () => {
       catalogFixture(),
     ).complete({
       noWork: false,
+      goalType: 'task',
       picks: [
         pick(3, 3, 'fictional operation 5.'),
         pick(6, 3, ''),
@@ -110,13 +127,24 @@ describe('catalog pick protocol', () => {
   });
 
   it.each([
-    ['an out-of-range position', { noWork: false, picks: [pick(89, 3)] }],
+    [
+      'an out-of-range position',
+      { noWork: false, goalType: 'task', picks: [pick(89, 3)] },
+    ],
     [
       'a grade outside 1-3',
-      { noWork: false, picks: [pick(1, 3), { ...pick(2, 3), grade: 0 }] },
+      {
+        noWork: false,
+        goalType: 'task',
+        picks: [pick(1, 3), { ...pick(2, 3), grade: 0 }],
+      },
     ],
     ['an extra field', { ...assessmentFixture(), override: 'approved' }],
     ['a missing noWork decision', { picks: assessmentFixture().picks }],
+    [
+      'a missing goal type',
+      { noWork: false, picks: assessmentFixture().picks },
+    ],
   ])('rejects the whole response for %s', (_, value) => {
     const result = prepareCatalogScoring(
       inputFixture(),

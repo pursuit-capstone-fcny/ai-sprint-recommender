@@ -149,7 +149,7 @@ describe('V1 Haiku provider transport', () => {
     }
   });
   it('preserves an empty pick list without a rules substitute', async () => {
-    const value = { noWork: false, picks: [] };
+    const value = { noWork: false, goalType: 'task', picks: [] };
     const result = await catalogScoringProvider(
       'fixture-only',
       vi.fn(async () => providerResponse(value)),
@@ -225,7 +225,7 @@ describe('V1 endpoint integration', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v5',
+      promptVersion: 'catalog-pick-evidence-v6',
     });
     expect(s.budget.reserve).toHaveBeenCalledWith(
       expect.any(String),

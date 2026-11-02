@@ -137,6 +137,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given a tool-only inquiry such as "Copilot" or a broad role/topic description such as the intake placeholder
   - When no specific task or source/output workflow is recognized
   - Then discover active distinct catalog items through canonical tool tags or meaningful title/task topic anchors, retain instruction and exclusion checks, and explain the result as browsing or a related topic. Never rescue a rejected specific operation, exclusive-tool request or unsupported capability through broad discovery, and never fill a nonempty set with unrelated items.
+  - Recognize broad questions such as "What can I create with Copilot?" and "Tell me more about Copilot" through affirmative inquiry structure. An unknown action such as deleting volunteer records or booking volunteer travel is not evidence of a broad discovery request.
 
 ### Open questions
 

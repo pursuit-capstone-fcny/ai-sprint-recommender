@@ -15,6 +15,9 @@ it.each([
   'copilot',
   'Microsoft Copilot',
   'What can I do with Copilot?',
+  'What can I create with Copilot?',
+  'What can I make with Copilot?',
+  'Tell me more about Copilot',
 ])('AC-12.23: discovers actual catalog tool matches for %s', (goal) => {
   expect(select(goal).results.map((row) => row.item.youtubeId)).toEqual([
     'fictioncp01',
@@ -41,6 +44,9 @@ it.each([
   'Coordinate volunteers without using ChatGPT',
   'Create a slide deck image with Copilot',
   'Unrecognized topic xyzzy',
+  'Delete volunteer records with ChatGPT',
+  'Book volunteer travel',
+  'What can I create with Copilot? Delete volunteer records.',
 ])(
   'AC-12.23: discovery does not bypass constraints or invent task support: %s',
   (goal) => {

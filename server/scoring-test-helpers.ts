@@ -37,6 +37,7 @@ export function inputFixture(): RecommendationRequest {
 export function assessmentFixture(): CatalogAssessment {
   return {
     noWork: false,
+    goalType: 'task',
     picks: [0, 1].map((position) => ({
       position,
       rationale: 'Teaches checking the records before writing.',
