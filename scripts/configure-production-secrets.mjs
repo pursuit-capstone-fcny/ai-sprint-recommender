@@ -25,9 +25,15 @@ try {
       },
     ),
   );
-  const secrets = { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY };
+  const secrets = {};
+  if (!existing.some(({ name }) => name === 'ANTHROPIC_API_KEY'))
+    secrets.ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
   if (!existing.some(({ name }) => name === 'LLM_RATE_KEY'))
     secrets.LLM_RATE_KEY = randomBytes(32).toString('hex');
+  if (Object.keys(secrets).length === 0) {
+    console.log('Existing production provider secrets preserved.');
+    process.exit(0);
+  }
   stage = 'uploading server secrets';
   execFileSync(process.execPath, [...command, 'bulk', ...target], {
     input: JSON.stringify(secrets),

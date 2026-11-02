@@ -4,8 +4,9 @@ on:
   pull_request:
 
 concurrency:
-  group: preview-${{ github.ref }}
-  cancel-in-progress: true
+  # Previews and production update versions of the same Cloudflare Worker.
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   preview:
