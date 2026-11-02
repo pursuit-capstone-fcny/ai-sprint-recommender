@@ -103,7 +103,7 @@ sentences above. The no-match fallback update is unchanged.
 - AC-43.7 Fast catalog picks
   - Given a nonblank Haiku submission
   - When the endpoint asks Haiku
-  - Then `catalog-pick-evidence-v4` returns at most eight quoted picks within a
+  - Then `catalog-pick-evidence-v5` returns at most eight quoted picks within a
     6.5-second server deadline inside a 7-second browser window, and the
     notice says results can take up to 7 seconds. A timeout shows the
     unavailable outcome with fallback videos; there is no paid retry

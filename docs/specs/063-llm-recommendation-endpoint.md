@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v4` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with an exact description quote and a short rationale. A repeated pick keeps its first occurrence, a quote absent from that description drops the pick, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
+  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v5` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with an exact description quote and a short rationale. A repeated pick keeps its first occurrence, a quote absent from that description drops the pick, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response

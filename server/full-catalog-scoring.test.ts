@@ -67,7 +67,7 @@ describe('catalog pick protocol', () => {
     expect(result.response).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v4',
+      promptVersion: 'catalog-pick-evidence-v5',
     });
   });
 
