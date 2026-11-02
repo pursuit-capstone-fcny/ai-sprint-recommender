@@ -11,6 +11,46 @@ const prompting = [
 /** Canonical tasks and registered transfers, selected by the requested operation rather than output nouns. */
 export const taskOperations: readonly OperationRule[] = [
   r(
+    'presentation-creation',
+    [
+      ['create', 'build', 'draft', 'make', 'generate', 'design'].flatMap(
+        (action) =>
+          [
+            'slides',
+            'the slides',
+            'a slide deck',
+            'the slide deck',
+            'a presentation',
+            'the presentation',
+            'a slide presentation',
+            'a slideshow',
+          ].map((object) => `${action} ${object}`),
+      ),
+    ],
+    ['Presentation creation'],
+    undefined,
+    ['presentation'],
+    [c(['Presentation creation'], 100, { requireSourceMatch: true })],
+    {
+      requireToolOnlyProof: true,
+      phraseContinuations: [
+        'for',
+        'about',
+        'on',
+        'from',
+        'with',
+        'using',
+        'in',
+        'that',
+        'which',
+        'and',
+        'to',
+        'please',
+        'quickly',
+      ],
+    },
+  ),
+  r(
     'newsletter-adaptation',
     [
       ['newsletter', 'bulletin', 'article'],
