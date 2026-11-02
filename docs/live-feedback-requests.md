@@ -86,9 +86,10 @@ because the browser override retained its desktop width. Mobile, 200% zoom and
 screen-reader release checks remain follow-ups.
 
 [PR #118](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/pull/118)
-awaits human review before merge. This authorized rollout used its feature
-branch. Merge the workflow changes before a subsequent main-branch deployment,
-or that deployment will again omit the frontend feature flags.
+was merged during verification at 4:29 PM EST, in commit `893c7b0`. The subsequent
+[main-branch production deployment](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41528755204)
+succeeded. The workflow settings are therefore preserved on the normal release
+path. The agent did not merge or approve the PR.
 
 ## Rollback
 
