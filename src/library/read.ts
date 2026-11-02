@@ -91,7 +91,9 @@ export async function readPublishedCatalog(options: {
       credentials: 'omit',
       referrerPolicy: 'no-referrer',
       redirect: 'error',
-      cache: immutable ? 'default' : 'no-store',
+      // Omit the field for immutable snapshots. Workers rejects explicit
+      // `default`; the browser and Worker can both use their normal caching.
+      ...(!immutable ? { cache: 'no-store' as const } : {}),
     });
     if (
       !response.ok ||

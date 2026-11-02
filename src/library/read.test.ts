@@ -10,6 +10,22 @@ const manifest = {
   publishedAt: '2026-10-29T00:00:00Z',
 };
 describe('shared static snapshot reader', () => {
+  it('loads immutable snapshots with the cache modes supported by Workers', async () => {
+    const fetcher = vi.fn<typeof fetch>(async (input, init) => {
+      if (init?.cache && !['no-store', 'no-cache'].includes(init.cache))
+        throw new TypeError(`Unsupported cache mode: ${init.cache}`);
+      return Response.json(
+        String(input).endsWith('/current.json') ? manifest : catalog,
+      );
+    });
+    expect(
+      await readPublishedCatalog({
+        manifestUrl: source,
+        fetcher,
+        signal: new AbortController().signal,
+      }),
+    ).toEqual(catalog);
+  });
   it('revalidates the pointer and then binds to its immutable hash without credentials', async () => {
     const fetcher = vi.fn<typeof fetch>(async (input) =>
       Response.json(

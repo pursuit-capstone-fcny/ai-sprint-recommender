@@ -7,7 +7,9 @@
 Jason requested live production analytics, paid LLM calls, and screenshots of
 sample prompts and outputs for Deterministic and Haiku AI. Jason specified $5
 for LLM spending. This deployment uses a $5 monthly cap and a $1 daily cap.
-Keep the existing collector's one-day retention, hourly purge and write caps.
+Keep the existing collector's one-day retention, hourly purge, 20 events/minute
+and 1,000-row caps. Jason separately approved increasing its daily cap from
+100 to 1,000 events for live collection and sample runs.
 This is the owner's production enablement request; it does not claim additional
 client review or a new relevance evaluation.
 
