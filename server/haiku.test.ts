@@ -13,11 +13,11 @@ import { parseBenchmark } from '../src/evaluation/benchmark';
 import { injectionProbes } from '../src/evaluation/injection-probes';
 import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
-import { haikuDeployedBody, haikuV57Body } from './haiku';
+import { haikuDeployedBody, haikuV58Body } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
-  HAIKU_V57_SYSTEM_PROMPT,
+  HAIKU_V58_SYSTEM_PROMPT,
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
@@ -204,7 +204,7 @@ describe('optimized Haiku low request', () => {
   });
 });
 
-describe('V57 Haiku request', () => {
+describe('V58 Haiku request', () => {
   it('sends one generic prompt, the unchanged catalog rows and the numeric rank schema', () => {
     const benchmark = parseBenchmark(
       JSON.parse(
@@ -224,18 +224,18 @@ describe('V57 Haiku request', () => {
         benchmark.catalog,
         limits,
       );
-      const v57 = haikuV57Body(original);
-      expect(v57.request.system).toBe(HAIKU_V57_SYSTEM_PROMPT);
-      expect(v57.request.messages).toEqual(
+      const v58 = haikuV58Body(original);
+      expect(v58.request.system).toBe(HAIKU_V58_SYSTEM_PROMPT);
+      expect(v58.request.messages).toEqual(
         haikuDeployedBody(original).request.messages,
       );
-      expect(v57.request.output_config).toEqual(original.request.output_config);
-      expect(v57.selectionEvidence).toBeUndefined();
-      expect(v57.catalogIds).toEqual(original.catalogIds);
-      expect(v57.request.max_tokens).toBe(512);
-      expect(v57.request.thinking).toEqual({ type: 'disabled' });
-      expect(v57.request.output_config.effort).toBe('low');
-      expect(inputTokenBound(v57)).toBeLessThanOrEqual(
+      expect(v58.request.output_config).toEqual(original.request.output_config);
+      expect(v58.selectionEvidence).toBeUndefined();
+      expect(v58.catalogIds).toEqual(original.catalogIds);
+      expect(v58.request.max_tokens).toBe(512);
+      expect(v58.request.thinking).toEqual({ type: 'disabled' });
+      expect(v58.request.output_config.effort).toBe('low');
+      expect(inputTokenBound(v58)).toBeLessThanOrEqual(
         limits.LLM_MAX_INPUT_TOKENS,
       );
     }
@@ -246,6 +246,10 @@ describe('V57 Haiku request', () => {
       'survey statistics',
       'counterparty',
     ])
-      expect(HAIKU_V57_SYSTEM_PROMPT).not.toContain(removed);
+      expect(HAIKU_V58_SYSTEM_PROMPT).not.toContain(removed);
+    // V57 browsed by area and tools for instruction-only goals.
+    expect(HAIKU_V58_SYSTEM_PROMPT).toContain(
+      'The function area and tools never supply work for a nonblank goal',
+    );
   });
 });

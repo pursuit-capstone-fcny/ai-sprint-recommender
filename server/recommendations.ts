@@ -24,7 +24,7 @@ import { boundedJson } from './bounded-json';
 import { lunaDeployedBody, lunaProvider } from './luna';
 import { LUNA_DEPLOYED_PROMPT } from './luna-policy';
 import { HAIKU_DEPLOYED_PROMPT } from './haiku-policy';
-import { haikuV57Body } from './haiku';
+import { haikuV58Body } from './haiku';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -250,7 +250,7 @@ export async function recommend(
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
     const originalBody = providerBody(input, catalog, limits);
-    const body = boundedHaiku ? haikuV57Body(originalBody) : originalBody;
+    const body = boundedHaiku ? haikuV58Body(originalBody) : originalBody;
     let bound: number;
     try {
       bound =

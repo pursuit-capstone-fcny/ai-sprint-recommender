@@ -11,7 +11,7 @@ import { CatalogSourceSchema, readLimits } from './config';
 import { EVALUATION_CATALOG_URL } from './evaluation-catalog-policy';
 import { RecommendationBudget } from './budget-object';
 import { TestStorage } from './test-helpers';
-import { HAIKU_V57_SYSTEM_PROMPT } from './haiku-policy';
+import { HAIKU_V58_SYSTEM_PROMPT } from './haiku-policy';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -135,7 +135,7 @@ describe('frozen test catalog isolation', () => {
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
-        expect(payload.system).toBe(HAIKU_V57_SYSTEM_PROMPT);
+        expect(payload.system).toBe(HAIKU_V58_SYSTEM_PROMPT);
         expect(payload.output_config.format.schema.properties.rank1).toEqual({
           anyOf: [
             {

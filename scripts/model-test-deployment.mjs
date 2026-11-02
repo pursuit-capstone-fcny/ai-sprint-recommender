@@ -19,7 +19,7 @@ try {
   const bundle = await build({
     stdin: {
       contents:
-        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaDeployedBody} from './server/luna';export {haikuV57Body} from './server/haiku';export {injectionProbes} from './src/evaluation/injection-probes';",
+        "export {LUNA_PRIOR_SPEND} from './src/evaluation/luna-ledger';export {readLunaPriorSpend} from './src/evaluation/luna-spend';export {parseBenchmark} from './src/evaluation/benchmark';export {validateLiveApproval} from './src/evaluation/approval';export {readLimits} from './server/config';export {providerBody,inputTokenBound} from './server/anthropic';export {lunaDeployedBody} from './server/luna';export {haikuV58Body} from './server/haiku';export {injectionProbes} from './src/evaluation/injection-probes';",
       resolveDir: process.cwd(),
       loader: 'ts',
     },
@@ -149,7 +149,7 @@ try {
         limits,
       );
       const bound = haiku
-        ? contracts.inputTokenBound(contracts.haikuV57Body(body))
+        ? contracts.inputTokenBound(contracts.haikuV58Body(body))
         : new TextEncoder().encode(
             JSON.stringify(contracts.lunaDeployedBody(body)),
           ).length + 1024;

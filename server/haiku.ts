@@ -6,7 +6,7 @@ import {
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
-  HAIKU_V57_SYSTEM_PROMPT,
+  HAIKU_V58_SYSTEM_PROMPT,
 } from './haiku-policy';
 
 // Keep each candidate together on its own line without changing any field,
@@ -48,14 +48,14 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
   };
 }
 
-// V57 sends the same catalog rows and the original numeric rank schema with
+// V58 sends the same catalog rows and the original numeric rank schema with
 // one short system prompt. No usefulness notes are requested.
-export function haikuV57Body(body: ProviderBody): ProviderBody {
+export function haikuV58Body(body: ProviderBody): ProviderBody {
   return {
     ...body,
     request: {
       ...body.request,
-      system: HAIKU_V57_SYSTEM_PROMPT,
+      system: HAIKU_V58_SYSTEM_PROMPT,
       messages: [
         { role: 'user', content: catalogRows(compactRanking(body).content) },
       ],

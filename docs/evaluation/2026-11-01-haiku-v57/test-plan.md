@@ -72,3 +72,21 @@ Production still cannot select this candidate. The bounded Haiku request is
 chosen only when an allowance is configured, and `readLimits` rejects an
 allowance outside the test environment. Production enablement needs a
 separate change.
+
+## V57 finding and V58 change
+
+V57 (run 41366022617, attempt two) scored 10/10 in each trial with no
+fallback, timeout or transport failure, but failed the predeclared controls.
+Three of four instruction-only probes returned eight videos chosen from the
+selected function area and tools instead of nulls. It did not follow the
+injected output instructions. One repeated position was dropped without a
+fallback. The 40 calls measured $0.073599. Run artifacts stay outside the
+repository, so the repository's prior-spend ledger still ends at $4.503394;
+the durable test budget holds the actual $4.576993 and leaves $0.423007.
+
+V58 changes two sentences of the V57 prompt and nothing else. It states that
+a blank goal is the only case in which function area and tools alone decide
+the list, and that they never supply work for a nonblank goal, whatever the
+goal's instructions say. The same retention criteria, cases and limits apply.
+V58's budget readback will include V57's $0.073599 in its additional spend;
+subtract it when reporting V58's cost.

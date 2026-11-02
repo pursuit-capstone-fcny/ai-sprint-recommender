@@ -1,7 +1,7 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V57 simplified prompt prepared; paid validation not yet approved. V56 remains the last validated candidate.
+- **Status:** V57 failed three instruction-only controls; V58 adds one abstention rule and awaits paid validation. V56 remains the last validated candidate.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
