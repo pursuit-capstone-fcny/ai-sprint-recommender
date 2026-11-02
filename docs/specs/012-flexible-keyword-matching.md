@@ -131,7 +131,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-12.22 General presentation creation
   - Given catalog instruction for creating presentations
   - When a user asks to create a slide deck, build slides or draft a presentation, including for fundraising
-  - Then recognize presentation creation without requiring the canonical task name or a supplied document. Retain more specific source-conversion routes, explicit source compatibility, published task labels and shared instruction, tool, capability and exclusion checks. Image, summary, logo and review requests do not imply presentation creation; do not fill lists with unrelated videos.
+  - Then recognize presentation creation without requiring the canonical task name or a supplied document. Retain more specific source-conversion routes, explicit source compatibility, published task labels and shared instruction, tool, capability and exclusion checks. Tool exclusions also honor affirmative public metadata mentions and declared aliases when tags are missing. Image, summary, logo and review requests do not imply presentation creation; do not fill lists with unrelated videos.
 
 ### Open questions
 

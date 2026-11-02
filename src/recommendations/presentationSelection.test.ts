@@ -11,7 +11,9 @@ const catalog = parsePublicCatalog({
   functionAreas: ['Communications', 'Fundraising'],
   tasks: ['presentation creation', 'fundraising copy'],
   tools: ['ChatGPT'],
-  synonyms: [],
+  synonyms: [
+    { alias: 'Fictional Writer', category: 'tool', target: 'ChatGPT' },
+  ],
   adjacentTools: [],
   items: [
     {
@@ -89,6 +91,27 @@ it.each([
   'AC-12.22: preserves presentation scope and explicit constraints: %s',
   (goal) => {
     expect(select(goal).results).toEqual([]);
+  },
+);
+
+it.each([
+  ['Use ChatGPT to outline a presentation and build the slide deck.', 0],
+  [
+    'Use Fictional Writer to outline a presentation and build the slide deck.',
+    0,
+  ],
+  ['Use an assistant to outline a presentation without using ChatGPT.', 1],
+] as const)(
+  'AC-12.22: honors explicit public tool evidence despite missing tags: %s',
+  (description, count) => {
+    const source = {
+      ...catalog,
+      items: [{ ...catalog.items[0], tools: [], description }],
+    };
+    const result = recommendVideos(deterministicCatalog(source), {
+      prompt: 'Create a slide deck without using ChatGPT',
+    });
+    expect(result.recommendations).toHaveLength(count);
   },
 );
 
