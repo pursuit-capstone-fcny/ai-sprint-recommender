@@ -53,6 +53,35 @@ export function disconnectPrivateSheet(): Promise<boolean> {
       .disconnectSheet?.();
   });
 }
+// Apps Script RPC can omit null-valued properties inside nested catalog rows.
+// Restore only the contract's two nullable metadata fields before validation.
+function rpcSnapshot(value: unknown): unknown {
+  if (typeof value !== 'object' || value === null || !('catalog' in value))
+    return value;
+  const catalog = value.catalog;
+  if (
+    typeof catalog !== 'object' ||
+    catalog === null ||
+    !('items' in catalog) ||
+    !Array.isArray(catalog.items)
+  )
+    return value;
+  return {
+    ...value,
+    catalog: {
+      ...catalog,
+      items: catalog.items.map((item: unknown) => {
+        if (typeof item !== 'object' || item === null) return item;
+        return {
+          ...item,
+          addedAt: 'addedAt' in item ? (item.addedAt ?? null) : null,
+          lengthSeconds:
+            'lengthSeconds' in item ? (item.lengthSeconds ?? null) : null,
+        };
+      }),
+    },
+  };
+}
 function request(
   method: 'readDashboard' | 'connectSheet',
   link = '',
@@ -75,7 +104,9 @@ function request(
       .withSuccessHandler((value) => {
         if (typeof value === 'object' && value !== null && 'ok' in value) {
           if (value.ok === true && 'snapshot' in value) {
-            const parsed = DashboardSnapshotSchema.safeParse(value.snapshot);
+            const parsed = DashboardSnapshotSchema.safeParse(
+              rpcSnapshot(value.snapshot),
+            );
             if (parsed.success) {
               const connection =
                 'connection' in value
