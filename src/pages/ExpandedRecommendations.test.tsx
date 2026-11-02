@@ -20,7 +20,7 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-it('counts model picks and fallback fillers together in the displayed set and events', async () => {
+it('shows only the model picks without filling short lists', async () => {
   vi.stubEnv('VITE_LLM_ENABLED', 'true');
   const send = vi.fn(async (event: unknown) => {
     UsageEventSchema.parse(event);
@@ -53,6 +53,10 @@ it('counts model picks and fallback fillers together in the displayed set and ev
       }}
     />,
   );
+  fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
+  fireEvent.change(screen.getByLabelText('What do you want to learn or do?'), {
+    target: { value: 'A fictional request' },
+  });
   send.mockClear();
   fireEvent.click(screen.getByText(/Refine by function area or tool/));
   fireEvent.change(screen.getByLabelText('Function area (optional)'), {
@@ -60,16 +64,17 @@ it('counts model picks and fallback fillers together in the displayed set and ev
   });
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
   await screen.findByText('AI suggestions');
-  expect(screen.getAllByRole('listitem')).toHaveLength(6);
-  expect(screen.getAllByText('Start here')).toHaveLength(4);
-  expect(screen.getByText(/6 videos/).textContent).toContain(
-    '4 fallback suggestions',
+  expect(screen.getAllByRole('listitem')).toHaveLength(2);
+  expect(screen.queryAllByText('Start here')).toHaveLength(0);
+  expect(screen.getByText(/2 videos/).textContent).toContain(
+    '0 fallback suggestions',
   );
+  await waitFor(() => expect(send).toHaveBeenCalledTimes(3));
   const events = send.mock.calls.map((args) => UsageEventSchema.parse(args[0]));
   expect(events[0]).toMatchObject({
     type: 'search',
-    resultCount: 6,
-    fallbackType: 'start-here',
+    resultCount: 2,
+    fallbackType: 'none',
   });
   expect(
     events.filter(
@@ -81,7 +86,7 @@ it('counts model picks and fallback fillers together in the displayed set and ev
       (event) =>
         event.type === 'impression' && event.matchType === 'start-here',
     ),
-  ).toHaveLength(4);
+  ).toHaveLength(0);
   expect(fetch).toHaveBeenCalledTimes(1);
 });
 
@@ -122,6 +127,13 @@ it.each(['rules', 'llm'] as const)(
         />
       </StrictMode>,
     );
+    if (engine === 'llm') {
+      fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
+      fireEvent.change(
+        screen.getByLabelText('What do you want to learn or do?'),
+        { target: { value: 'A fictional request' } },
+      );
+    }
     send.mockClear();
     fireEvent.click(screen.getByText(/Refine by function area or tool/));
     fireEvent.change(screen.getByLabelText('Function area (optional)'), {

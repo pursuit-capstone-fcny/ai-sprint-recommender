@@ -25,6 +25,11 @@ import {
 import { type Budget } from './budget';
 import { durableBudget, type BudgetNamespace } from './budget-object';
 import { callCost, readLimits, type Variables } from './config';
+import {
+  CATALOG_SCORING_MODEL,
+  CATALOG_SCORING_PROMPT,
+} from './full-catalog-scoring';
+import { scoringBody, catalogScoringProvider } from './full-catalog-provider';
 
 export interface WorkerEnv extends Variables {
   ASSETS?: { fetch(request: Request): Promise<Response> };
@@ -58,8 +63,8 @@ const headers = {
   'content-type': 'application/json',
   'x-content-type-options': 'nosniff',
 };
-// Leave time for the response to reach the browser's unchanged five-second limit.
-export const SERVER_DEADLINE_MS = RECOMMENDATION_DEADLINE_MS - 500;
+export const SERVER_DEADLINE_MS = 4_500;
+export const SCORING_SERVER_DEADLINE_MS = RECOMMENDATION_DEADLINE_MS - 500;
 
 function testExpired(env: WorkerEnv): boolean {
   if (env.LLM_ENVIRONMENT !== 'test' || env.LLM_TEST_EXPIRES_AT === undefined)
@@ -95,7 +100,14 @@ export async function recommend(
   deps: Dependencies = {},
 ): Promise<Response> {
   const started = Date.now();
-  const deadline = started + SERVER_DEADLINE_MS;
+  const fullScoring = env.LLM_MODEL === CATALOG_SCORING_MODEL;
+  const serverDeadline = fullScoring
+    ? SCORING_SERVER_DEADLINE_MS
+    : SERVER_DEADLINE_MS;
+  const deadline = started + serverDeadline;
+  const promptVersion = fullScoring
+    ? CATALOG_SCORING_PROMPT
+    : RECOMMENDATION_PROMPT_VERSION;
   const requestId = crypto.randomUUID();
   const abort = new AbortController();
   const diagnostic: Diagnostic = {
@@ -119,7 +131,7 @@ export async function recommend(
     ...(diagnostic.modelVersion
       ? {
           modelVersion: diagnostic.modelVersion,
-          promptVersion: RECOMMENDATION_PROMPT_VERSION,
+          promptVersion,
         }
       : {}),
   });
@@ -142,7 +154,7 @@ export async function recommend(
     )
       return fallback('unavailable');
     diagnostic.modelVersion = limits.LLM_MODEL;
-    diagnostic.promptVersion = RECOMMENDATION_PROMPT_VERSION;
+    diagnostic.promptVersion = promptVersion;
     if (request.method !== 'POST') {
       status = 405;
       return fallback('unavailable');
@@ -202,7 +214,13 @@ export async function recommend(
       return fallback('unavailable');
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
-    const body = providerBody(input, catalog, limits);
+    if (fullScoring && (catalog.items.length !== 89 || !input.goal))
+      return fallback('insufficient-results');
+    const body = fullScoring
+      ? scoringBody(input, catalog)
+      : providerBody(input, catalog, limits);
+    if (body.request.max_tokens > limits.LLM_MAX_OUTPUT_TOKENS)
+      return fallback('unavailable');
     if (inputTokenBound(body) > limits.LLM_MAX_INPUT_TOKENS)
       return fallback('catalog-too-large');
     const budget =
@@ -210,7 +228,10 @@ export async function recommend(
       durableBudget(env.RECOMMENDATION_BUDGET!, limits.LLM_ENVIRONMENT);
     const provider =
       deps.provider ??
-      anthropicProvider(env.ANTHROPIC_API_KEY, deps.fetch ?? fetch);
+      (fullScoring ? catalogScoringProvider : anthropicProvider)(
+        env.ANTHROPIC_API_KEY,
+        deps.fetch ?? fetch,
+      );
     const identifier = await (deps.clientKey?.() ??
       clientKey(request, env.LLM_RATE_KEY));
     active();
@@ -276,7 +297,7 @@ export async function recommend(
         youtubeIds: parsed.data.youtubeIds,
         catalogVersion: catalog.catalogVersion,
         modelVersion: limits.LLM_MODEL,
-        promptVersion: RECOMMENDATION_PROMPT_VERSION,
+        promptVersion,
       };
     } catch (error) {
       return fallback(
@@ -296,7 +317,7 @@ export async function recommend(
     timer = setTimeout(() => {
       abort.abort();
       resolve(fallback('timeout'));
-    }, SERVER_DEADLINE_MS);
+    }, serverDeadline);
   });
   const result = await Promise.race([
     execute().catch(() =>

@@ -15,53 +15,59 @@ import { UsageEventSchema } from '../contracts/usageEvent';
 import { IntakeResults } from './IntakeResults';
 
 const publicCatalog = parsePublicCatalog(fixture);
-const catalog = publicCatalog.items.map(toCatalogItem);
+const props = {
+  catalog: publicCatalog.items.map(toCatalogItem),
+  publicCatalog,
+  recommendationCatalog: publicCatalog,
+};
 const success = {
   outcome: 'success',
-  youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls', 'fx09IntroCt', 'fx01GrntRpt'],
+  youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls', 'fx01GrntRpt'],
   catalogVersion: publicCatalog.catalogVersion,
   modelVersion: 'fixture-model',
   promptVersion: 'fixture-prompt',
 };
-function deferredResponse() {
-  let resolve!: (value: Response) => void;
-  const promise = new Promise<Response>((done) => {
-    resolve = done;
-  });
-  return { promise, resolve };
-}
-function goal(value = 'a fictional semantic goal') {
+function goal(text = 'A fictional request') {
   fireEvent.change(screen.getByLabelText('What do you want to learn or do?'), {
-    target: { value },
+    target: { value: text },
   });
+}
+function choose(name: 'Deterministic' | 'Haiku AI') {
+  fireEvent.click(screen.getByRole('radio', { name }));
 }
 function submit() {
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
-function usage() {
+function setup(ai = true) {
   const send = vi.fn(async (event: unknown) => {
     UsageEventSchema.parse(event);
     return 'accepted' as const;
   });
-  return {
-    session: {
-      sessionId: crypto.randomUUID(),
-      src: 'pilot' as const,
-      sender: { send },
-    },
-    catalog: publicCatalog,
-  };
+  const view = (
+    <StrictMode>
+      <IntakeResults
+        {...props}
+        usage={{
+          catalog: publicCatalog,
+          session: {
+            sessionId: crypto.randomUUID(),
+            src: 'pilot',
+            sender: { send },
+          },
+        }}
+      />
+    </StrictMode>
+  );
+  const rendered = render(view);
+  if (ai) choose('Haiku AI');
+  send.mockClear();
+  return { send, view, ...rendered };
 }
-const props = {
-  catalog,
-  recommendationCatalog: publicCatalog,
-  availableFunctionAreas: publicCatalog.functionAreas,
-};
 beforeEach(() => {
   vi.stubEnv('VITE_LLM_ENABLED', 'true');
   vi.stubGlobal(
     'fetch',
-    vi.fn().mockImplementation(async () => Response.json(success)),
+    vi.fn(async () => Response.json(success)),
   );
 });
 afterEach(() => {
@@ -71,234 +77,172 @@ afterEach(() => {
   vi.useRealTimers();
 });
 
-describe('LLM submissions', () => {
-  it('makes one request per submit, preserves model order, and displays the complete capped set without duplicate events', async () => {
-    const logging = usage();
-    const view = (
-      <StrictMode>
-        <IntakeResults {...props} usage={logging} />
-      </StrictMode>
+describe('independent recommendation engines', () => {
+  it('defaults to deterministic even when AI is enabled, and changing engine or typing makes no request', () => {
+    setup(false);
+    expect(screen.getByRole('radio', { name: 'Deterministic' })).toHaveProperty(
+      'checked',
+      true,
     );
-    const { rerender } = render(view);
-    expect(
-      screen.getByText(/send your goal and selected options to Anthropic/),
-    ).toBeTruthy();
-    logging.session.sender.send.mockClear();
-    goal('fictional-private-goal');
+    goal('Draft a grant report');
+    submit();
     expect(fetch).not.toHaveBeenCalled();
+    choose('Haiku AI');
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it('makes one AI call per submit, preserves order without padding, and emits only final engine events', async () => {
+    const { send, rerender, view } = setup();
+    goal('private-fictional-goal');
     submit();
     expect(screen.getByRole('status').textContent).toBe(
       'Finding AI suggestions…',
     );
-    expect(document.activeElement).toBe(
-      screen.getByRole('heading', { name: 'Videos to start with' }),
-    );
-    expect(logging.session.sender.send).not.toHaveBeenCalled();
     await screen.findByText('AI suggestions');
-    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(screen.getAllByRole('listitem')).toHaveLength(3);
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       '[Fixture] Budget sheet',
     );
-    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
-    expect(screen.getAllByRole('listitem')).toHaveLength(4);
     rerender(view);
-    goal('unsubmitted-private-goal');
+    goal('an unsubmitted change');
     expect(fetch).toHaveBeenCalledTimes(1);
-    const events = logging.session.sender.send.mock.calls.map(([event]) =>
-      UsageEventSchema.parse(event),
-    );
-    expect(events.filter((event) => event.type === 'search')).toHaveLength(1);
-    expect(events.filter((event) => event.type === 'impression')).toHaveLength(
-      4,
-    );
-    expect(
-      events.every(
-        (event) =>
-          event.recommendationEngine === 'llm' &&
-          event.llmFallbackReason === 'none',
-      ),
-    ).toBe(true);
-    expect(events[0]).toMatchObject({
-      modelVersion: 'fixture-model',
-      promptVersion: 'fixture-prompt',
-      resultCount: 4,
-    });
-    expect(new Set(events.map((event) => event.searchId)).size).toBe(1);
-    expect(JSON.stringify(events)).not.toContain('private-goal');
-    expect(window.location.search).not.toContain('private-goal');
-    fireEvent.click(
-      screen.getAllByRole('link', { name: /Watch on YouTube/ })[0],
-    );
-    expect(logging.session.sender.send.mock.calls.at(-1)?.[0]).toMatchObject({
-      type: 'click',
-      matchType: 'semantic',
-      rank: 1,
-    });
+    const events = send.mock.calls.map(([e]) => UsageEventSchema.parse(e));
+    expect(events.filter((e) => e.type === 'search')).toHaveLength(1);
+    expect(events.filter((e) => e.type === 'impression')).toHaveLength(3);
+    expect(events.every((e) => e.recommendationEngine === 'llm')).toBe(true);
+    expect(JSON.stringify(events)).not.toContain('private-fictional-goal');
+    expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
   });
-  it('skips all-blank submissions and disabled calls, while blank goal with an area is valid', async () => {
-    render(<IntakeResults {...props} />);
+  it('preserves a valid abstention and requires an explicit engine choice for local matching', async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({ ...success, youtubeIds: [] }),
+    );
+    const { send } = setup();
+    goal('Draft a grant report');
     submit();
-    expect(fetch).not.toHaveBeenCalled();
-    expect(screen.getByText('Standard matching')).toBeTruthy();
-    fireEvent.click(screen.getByText(/Refine by function area or tool/));
-    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-      target: { value: 'Operations' },
-    });
+    await screen.findByText('No confident AI matches found.');
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    await waitFor(() =>
+      expect(
+        send.mock.calls.filter(
+          ([e]) => UsageEventSchema.parse(e).type === 'search',
+        ),
+      ).toHaveLength(1),
+    );
+    choose('Deterministic');
     submit();
-    await screen.findByText('AI suggestions');
-    expect(
-      JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body)).goal,
-    ).toBe('');
-    vi.stubEnv('VITE_LLM_ENABLED', 'false');
-    goal('a different goal');
-    submit();
-    expect(screen.getByText('Standard matching')).toBeTruthy();
     expect(fetch).toHaveBeenCalledTimes(1);
+    expect(screen.queryByText('No confident AI matches found.')).toBeNull();
   });
   it.each([
-    [
-      { ...success, catalogVersion: `sha256:${'0'.repeat(64)}` },
-      'catalog-mismatch',
-    ],
-    [{ ...success, youtubeIds: ['fx01GrntRpt'] }, 'insufficient-results'],
-    [
-      { ...success, youtubeIds: ['unknown0000', 'fx01GrntRpt'] },
-      'invalid-response',
-    ],
-    [{ outcome: 'fallback', reason: 'budget-exhausted' }, 'budget-exhausted'],
-    [{ outcome: 'fallback', reason: 'rate-limited' }, 'rate-limited'],
-    [{ outcome: 'fallback', reason: 'disabled' }, 'disabled'],
+    { ...success, youtubeIds: ['fx01GrntRpt'] },
+    { ...success, youtubeIds: ['fx04BdgtSht', 'fx04BdgtSht'] },
+    { ...success, youtubeIds: ['unknown0000', 'fx01GrntRpt'] },
+    { ...success, catalogVersion: `sha256:${'0'.repeat(64)}` },
+    { outcome: 'fallback', reason: 'budget-exhausted' },
+    { outcome: 'fallback', reason: 'rate-limited' },
+    { outcome: 'fallback', reason: 'disabled' },
   ])(
-    'uses complete standard matching and bounded usage metadata for a rejected selection',
-    async (response, reason) => {
+    'shows unavailable without substitute cards or phantom usage for rejected responses',
+    async (response) => {
       vi.mocked(fetch).mockResolvedValue(Response.json(response));
-      const logging = usage();
-      render(<IntakeResults {...props} usage={logging} />);
-      const initial = screen
-        .getAllByRole('listitem')
-        .map((item) => item.textContent);
-      logging.session.sender.send.mockClear();
-      goal('unmatched');
+      const { send } = setup();
+      goal();
       submit();
-      await screen.findByText('Standard matching');
-      // The status commits before the passive effect sends usage events.
-      await waitFor(() =>
-        expect(logging.session.sender.send).toHaveBeenCalledTimes(5),
+      await screen.findByText(/AI recommendations are unavailable/);
+      expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+      expect(send).not.toHaveBeenCalled();
+      expect(fetch).toHaveBeenCalledTimes(1);
+      expect(screen.getByRole('radio', { name: 'Haiku AI' })).toHaveProperty(
+        'checked',
+        true,
       );
-      expect(
-        screen.getAllByRole('listitem').map((item) => item.textContent),
-      ).toEqual(initial);
-      expect(logging.session.sender.send.mock.calls[0][0]).toMatchObject({
-        type: 'search',
-        recommendationEngine: 'rules',
-        llmFallbackReason: reason,
-      });
-      expect(logging.session.sender.send).toHaveBeenCalledTimes(5);
     },
   );
-  it('keeps only the latest submitted result and never logs the earlier response', async () => {
-    const first = deferredResponse();
-    const second = deferredResponse();
+  it('never dispatches an empty goal or a disabled AI selection', () => {
+    setup();
+    submit();
+    expect(screen.getByText(/Enter a task description/)).toBeTruthy();
+    expect(fetch).not.toHaveBeenCalled();
+    vi.stubEnv('VITE_LLM_ENABLED', 'false');
+    goal();
+    submit();
+    expect(screen.getByText(/AI recommendations are unavailable/)).toBeTruthy();
+    expect(fetch).not.toHaveBeenCalled();
+  });
+  it('does not let a pending AI response cross an engine switch', async () => {
+    let resolve!: (r: Response) => void;
+    vi.mocked(fetch).mockReturnValue(
+      new Promise((done) => {
+        resolve = done;
+      }),
+    );
+    const { send } = setup();
+    goal('Draft a grant report');
+    submit();
+    choose('Deterministic');
+    submit();
+    const localCards = screen
+      .queryAllByRole('listitem')
+      .map((x) => x.textContent);
+    await act(async () => {
+      resolve(Response.json(success));
+      await Promise.resolve();
+    });
+    expect(screen.queryAllByRole('listitem').map((x) => x.textContent)).toEqual(
+      localCards,
+    );
+    expect(
+      send.mock.calls.every(
+        ([e]) => UsageEventSchema.parse(e).recommendationEngine === 'rules',
+      ),
+    ).toBe(true);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it('ignores an earlier AI submission after a later one completes', async () => {
+    let resolve!: (r: Response) => void;
     vi.mocked(fetch)
-      .mockReturnValueOnce(first.promise)
-      .mockReturnValueOnce(second.promise);
-    const logging = usage();
-    render(<IntakeResults {...props} usage={logging} />);
-    logging.session.sender.send.mockClear();
+      .mockReturnValueOnce(
+        new Promise((done) => {
+          resolve = done;
+        }),
+      )
+      .mockResolvedValueOnce(Response.json(success));
+    setup();
     goal('first');
     submit();
     goal('second');
     submit();
+    await screen.findByText('AI suggestions');
     await act(async () => {
-      second.resolve(
-        Response.json({
-          ...success,
-          youtubeIds: ['fx09IntroCt', 'fx01GrntRpt', 'fx04BdgtSht'],
-        }),
-      );
+      resolve(Response.json({ ...success, youtubeIds: [] }));
+      await Promise.resolve();
     });
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      '[Fixture] Start here',
-    );
-    const count = logging.session.sender.send.mock.calls.length;
-    await act(async () => {
-      first.resolve(Response.json(success));
-    });
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      '[Fixture] Start here',
-    );
-    expect(logging.session.sender.send).toHaveBeenCalledTimes(count);
-    expect(
-      logging.session.sender.send.mock.calls.filter(
-        ([event]) => UsageEventSchema.parse(event).type === 'search',
-      ),
-    ).toHaveLength(1);
+    expect(screen.getByText('AI suggestions')).toBeTruthy();
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
-  it.each(['edit', 'clear'])(
-    'cancels pending results on %s without a stale display or extra impressions',
-    async (action) => {
-      const pending = deferredResponse();
-      vi.mocked(fetch).mockReturnValue(pending.promise);
-      const logging = usage();
-      render(<IntakeResults {...props} usage={logging} />);
-      goal();
-      submit();
-      if (action === 'edit') goal('new unsubmitted text');
-      else fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-      const initial = screen
-        .getAllByRole('listitem')
-        .map((item) => item.textContent);
-      const count = logging.session.sender.send.mock.calls.length;
-      await act(async () => {
-        pending.resolve(Response.json(success));
-      });
-      expect(screen.queryByText('AI suggestions')).toBeNull();
-      expect(
-        screen.getAllByRole('listitem').map((item) => item.textContent),
-      ).toEqual(initial);
-      expect(logging.session.sender.send).toHaveBeenCalledTimes(count);
-    },
-  );
-  it('completes rules fallback at five seconds and ignores a later success', async () => {
+  it('enforces the 35-second window and rejects a late success without retrying', async () => {
     vi.useFakeTimers();
-    const pending = deferredResponse();
-    vi.mocked(fetch).mockReturnValue(pending.promise);
-    const logging = usage();
-    render(<IntakeResults {...props} usage={logging} />);
-    logging.session.sender.send.mockClear();
+    let resolve!: (r: Response) => void;
+    vi.mocked(fetch).mockReturnValue(
+      new Promise((done) => {
+        resolve = done;
+      }),
+    );
+    const { send } = setup();
     goal();
     submit();
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(4999);
+      await vi.advanceTimersByTimeAsync(35_000);
     });
-    expect(screen.getByRole('status').textContent).toBe(
-      'Finding AI suggestions…',
-    );
+    expect(screen.getByText(/AI recommendations are unavailable/)).toBeTruthy();
     await act(async () => {
-      await vi.advanceTimersByTimeAsync(1);
+      resolve(Response.json(success));
+      await Promise.resolve();
     });
-    expect(screen.getByText('Standard matching')).toBeTruthy();
-    expect(logging.session.sender.send.mock.calls[0][0]).toMatchObject({
-      llmFallbackReason: 'timeout',
-    });
-    const count = logging.session.sender.send.mock.calls.length;
-    await act(async () => {
-      pending.resolve(Response.json(success));
-    });
-    expect(screen.getByText('Standard matching')).toBeTruthy();
-    expect(logging.session.sender.send).toHaveBeenCalledTimes(count);
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
     expect(fetch).toHaveBeenCalledTimes(1);
-  });
-  it('keeps the fixture catalog offline even when the browser flag is enabled', async () => {
-    render(<IntakeResults catalog={catalog} />);
-    goal();
-    submit();
-    await waitFor(() =>
-      expect(screen.getByText('Standard matching')).toBeTruthy(),
-    );
-    expect(fetch).not.toHaveBeenCalled();
-    expect(
-      screen.queryByText(/send your goal and selected options to Anthropic/),
-    ).toBeNull();
+    expect(send).not.toHaveBeenCalled();
   });
 });

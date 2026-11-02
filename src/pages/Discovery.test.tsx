@@ -19,11 +19,15 @@ const items = catalog.items.map(toCatalogItem);
 
 function setup() {
   const send = vi.fn<UsageSender['send']>().mockResolvedValue('accepted');
-  const fetchMock = vi
-    .fn()
-    .mockResolvedValue(
-      new Response(JSON.stringify({ outcome: 'fallback', reason: 'disabled' })),
-    );
+  const fetchMock = vi.fn().mockResolvedValue(
+    Response.json({
+      outcome: 'success',
+      youtubeIds: ['fx04BdgtSht', 'fx01GrntRpt'],
+      catalogVersion: catalog.catalogVersion,
+      modelVersion: 'fixture-model',
+      promptVersion: 'fixture-prompt',
+    }),
+  );
   vi.stubGlobal('fetch', fetchMock);
   render(
     <StrictMode>
@@ -43,6 +47,7 @@ function setup() {
       />
     </StrictMode>,
   );
+  fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
   const goal = screen.getByRole('textbox', {
     name: /what do you want to learn/i,
   });
@@ -93,7 +98,7 @@ describe('text-first discovery', () => {
       expect(document.activeElement).toBe(
         screen.getByRole('heading', { name: 'Videos to start with' }),
       );
-      expect(screen.getByText('Standard matching')).toBeTruthy();
+      expect(screen.getByText('AI suggestions')).toBeTruthy();
     },
   );
 
@@ -118,6 +123,7 @@ describe('text-first discovery', () => {
     'AC-82.3 blank description "%s" uses fallback without a provider request',
     (value) => {
       const { goal, fetchMock, searches } = setup();
+      fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
       fireEvent.change(goal, { target: { value } });
       fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
       expect(searches()).toHaveLength(1);

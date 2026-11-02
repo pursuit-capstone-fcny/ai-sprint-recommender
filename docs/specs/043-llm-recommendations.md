@@ -14,7 +14,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Goal
 
-- Move #43 to MVP. Use the existing intake form to request LLM-ranked catalog videos, with #11–#13 providing the rules fallback.
+- Move #43 to MVP. Use an engine toggle on the existing intake form. Deterministic runs #102 locally; Haiku V1 independently assesses the complete catalog. Neither is a prefilter or automatic fallback for the other.
 - Depends on #63 and #10–#14. Production enablement also depends on #19.
 
 ### Non-goals
@@ -27,7 +27,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-43.1 Existing form
   - Given #82's plain-language description and optional function area and tool refinements
   - When someone submits Find videos
-  - Then one submission starts at most one LLM request and shows an accessible loading state. Blank goals remain valid; no selected function area, goal or tools goes straight to #13's Start-here set without a paid call
+  - Then Deterministic is selected initially. Changing the toggle makes no request. A deterministic task submission runs #102 locally; a Haiku submission makes at most one server request with an accessible loading state. Haiku requires a nonblank description. Blank deterministic input retains catalog browsing
 - AC-43.2 Ranked results
   - Given a valid response from #63
   - When results render
@@ -35,23 +35,23 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-43.3 Card content
   - Given LLM picks
   - When cards render
-  - Then titles, links and descriptions come from the catalog. Reasons use verified tag matches or the neutral text "Suggested for your goal"; cross-area picks are labeled. Show more reveals remaining validated picks from the same response without another paid call
-- AC-43.4 Reliable fallback
-  - Given a disabled flag, provider failure, invalid or mismatched response, fewer than two eligible LLM picks, or no response within five seconds of submission
+  - Then titles, links and descriptions come from the catalog. Reasons use verified tag matches or the neutral text "Suggested for your goal"; cross-area picks are labeled. Display at most eight validated picks with no Show more and no minimum count; do not add filler
+- AC-43.4 Independent outcomes
+  - Given the selected engine returns no matches or fails
   - When the page chooses its result set
-  - Then it uses the complete #11–#13 result set, marks it as standard matching, and shows the existing unavailable state if the catalog is empty. It does not mix partial model output into fallback results
+  - Then a valid empty AI result shows no confident matches, while invalid output, disabled calls, provider errors and timeout show unavailable with no replacement cards. The user must explicitly select Deterministic to run #102. A deterministic task with no compatible videos stays empty
 - AC-43.5 Latest submission wins
-  - Given changed inputs, another submission or a completed fallback
+  - Given changed inputs, another submission or an engine switch
   - When an earlier request finishes
   - Then it cannot replace the displayed results or create extra impressions. Editing fields, rerendering and expanding results make no new provider calls
 - AC-43.6 Disclosure and logging
   - Given the approved data policy from #8
   - When someone uses the form
-  - Then the notice explains that entered goals and selected options go to the approved provider and asks people to omit personal information. Raw goals stay out of URLs, storage and #16 logs. Usage events record `recommendationEngine` as `llm` or `rules`, a bounded fallback reason and versions, while preserving existing `mode` values and event deduplication
+  - Then the notice explains that entered goals and selected options go to the approved provider and asks people to omit personal information. Raw goals stay out of URLs, storage and #16 logs. Usage events record `recommendationEngine` as `llm` or `rules`, a bounded outcome reason and versions, while preserving existing `mode` values and event deduplication. Unavailable attempts create no phantom search or impression events; valid abstentions may record zero results when test logging is enabled
 
 ### Open questions
 
-- [ ] Confirm the proposed five-second wait and minimum of two LLM picks. #13 already handles small or empty catalogs.
+- [ ] Production AI enablement remains subject to #19 and #63. This integration keeps paid calls and production usage logging disabled.
 - [ ] Approve the short AI disclosure and update #20's explainer for semantic ranking, standard matching and cost/failure fallback.
 
 ### Evidence required
@@ -71,9 +71,14 @@ The matching explainer describes this flow; provider disclosure and existing
 privacy protections continue to apply. This does not enable LLM calls or change
 the separate #83 result-count policy.
 
-### Result-count policy update
+### Demo engine selection
 
-Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
-and Show-more requirements. Display at most eight matches; fill fewer than six
-with labeled fallback videos to six, subject to the eligible catalog size.
-The existing model validation gates remain separate from this display minimum.
+The user-requested engine toggle supersedes automatic fallback and result
+padding in the earlier #43/#83 text. Task requests display zero to eight
+compatible picks. V1 retains its existing two-primary-task gate and all 89
+complete public catalog rows, with no deterministic annotations, rankings or
+prefiltering sent to Haiku. Model/prompt settings and validation are unchanged.
+The AI browser window is 35 seconds, with a 34.5-second V1 server deadline.
+Deterministic matching has no provider wait. Historical candidates and recorded
+results remain on their archived branches; this integration makes no new
+quality claim and performs no paid evaluation.

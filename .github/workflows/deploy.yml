@@ -25,6 +25,7 @@ jobs:
         env:
           VITE_LIBRARY_ORIGIN: ${{ vars.LIBRARY_PRODUCTION_ORIGIN }}
           VITE_CATALOG_SOURCE: static
+          VITE_LLM_ENABLED: 'false'
           VITE_USAGE_ENVIRONMENT: production
           VITE_USAGE_ENABLED: 'false'
           VITE_USAGE_TEST_URL: ''

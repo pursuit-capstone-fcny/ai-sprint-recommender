@@ -48,7 +48,7 @@ describe('recommendation request', () => {
     });
     expect(JSON.parse(options.body)).toEqual(request);
   });
-  it('enforces five seconds even when a response body ignores abort', async () => {
+  it('enforces the bounded AI window even when a response body ignores abort', async () => {
     vi.useFakeTimers();
     vi.stubGlobal(
       'fetch',
@@ -60,7 +60,7 @@ describe('recommendation request', () => {
       request,
       new AbortController().signal,
     );
-    await vi.advanceTimersByTimeAsync(5000);
+    await vi.advanceTimersByTimeAsync(35000);
     expect(await result).toEqual({ outcome: 'fallback', reason: 'timeout' });
     expect(fetch).toHaveBeenCalledTimes(1);
   });
