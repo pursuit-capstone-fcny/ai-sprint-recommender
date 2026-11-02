@@ -21,6 +21,9 @@ const rowsOf = (catalog: ReturnType<typeof catalogFixture>) =>
     functionAreas: item.functionAreas,
     tasks: item.tasks,
     tools: item.tools,
+    lengthSeconds: item.lengthSeconds,
+    addedAt: item.addedAt,
+    startHere: item.startHere,
   }));
 const providerResponse = (value: unknown, stop = 'end_turn') =>
   Response.json({

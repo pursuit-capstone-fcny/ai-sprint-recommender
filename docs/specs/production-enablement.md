@@ -32,7 +32,7 @@ client review or a new relevance evaluation.
   response checks. A production-specific Durable Object enforces the
   $5 monthly and $1 daily caps, 10 global and 3 client requests per minute,
   concurrency 2, 80,000 conservative input tokens and 16,384 output tokens. The
-  current complete-catalog request measures 58,166 under that input bound, and
+  current complete-catalog request measures 63,506 under that input bound, and
   the request asks for at most 2,000 output tokens.
   No paid retry or
   deterministic substitution is added. Diagnostics omit prompt/response bodies.

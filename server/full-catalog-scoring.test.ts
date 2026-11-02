@@ -23,6 +23,10 @@ describe('catalog pick protocol', () => {
     catalog.items[88].description = 'Long public description. '
       .repeat(25)
       .trim();
+    // Duration and recency restrictions need these public fields.
+    catalog.items[3].lengthSeconds = 240;
+    catalog.items[3].addedAt = '2026-10-01';
+    catalog.items[3].startHere = true;
     const input = {
       ...inputFixture(),
       functionArea: 'Operations',
@@ -39,6 +43,9 @@ describe('catalog pick protocol', () => {
         functionAreas: item.functionAreas,
         tasks: item.tasks,
         tools: item.tools,
+        lengthSeconds: item.lengthSeconds,
+        addedAt: item.addedAt,
+        startHere: item.startHere,
       })),
     );
     expect(JSON.parse(intake.text)).toEqual({

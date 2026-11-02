@@ -64,6 +64,7 @@ export function prepareCatalogScoring(
   )
     throw new Error('Invalid selected catalog tags');
   // Positions replace IDs in the request; the ID map stays on the server.
+  // Length, date and start-here metadata let Haiku apply goal restrictions.
   const rows = catalog.items.map((item, position) => ({
     position,
     title: item.title,
@@ -71,6 +72,9 @@ export function prepareCatalogScoring(
     functionAreas: item.functionAreas,
     tasks: item.tasks,
     tools: item.tools,
+    lengthSeconds: item.lengthSeconds,
+    addedAt: item.addedAt,
+    startHere: item.startHere,
   }));
   const request = {
     model: CATALOG_SCORING_MODEL,
