@@ -50,6 +50,15 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
   });
   if (config.vars.LLM_ENABLED === 'true' && !configured)
     throw new Error('Production LLM requires a published catalog origin');
+} else {
+  // Named Previews isolate the exported budget class from production storage.
+  config.migrations = [
+    {
+      tag: 'recommendation-budget-v1',
+      new_sqlite_classes: ['RecommendationBudget'],
+    },
+  ];
+  config.previews = { vars: { ...config.vars, LLM_ENABLED: 'false' } };
 }
 await writeFile(
   'wrangler.library.jsonc',

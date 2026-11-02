@@ -4,7 +4,7 @@ on:
   pull_request:
 
 concurrency:
-  # Previews and production update versions of the same Cloudflare Worker.
+  # Keep preview and production updates serialized for the same parent Worker.
   group: deploy-production
   cancel-in-progress: false
 
@@ -37,11 +37,12 @@ jobs:
           pnpm build
           node scripts/configure-library-app.mjs
 
-      # Uploads a preview version and prints its preview URL in the run log.
-      # Production is untouched until the PR merges and deploy.yml runs.
-      - name: Upload Cloudflare preview version
+      # Version URLs are unavailable for Workers that export Durable Objects.
+      # Named Previews provide an isolated URL without changing production or
+      # inheriting its preview base configuration. Paid calls remain disabled.
+      - name: Deploy isolated Cloudflare preview
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: versions upload --config wrangler.library.jsonc
+          command: preview --name pr-${{ github.event.number }} --config wrangler.library.jsonc --ignore-base-config
