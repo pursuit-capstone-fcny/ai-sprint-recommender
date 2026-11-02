@@ -225,7 +225,7 @@ export function interpretWorkflowIntent(
         // A duration is not a meeting-minutes source, even when hyphenated.
         if (
           alias.type.id === 'minutes' &&
-          /^\d+$|^(one|two|three|four|five|ten|fifteen|thirty|sixty)$/.test(
+          /^\d+$|^(a|an|few|several|one|two|three|four|five|ten|fifteen|thirty|sixty)$/.test(
             normalized[start - 1] ?? '',
           )
         )
@@ -249,9 +249,12 @@ export function interpretWorkflowIntent(
           continue;
         if (
           alias.type.id === 'answer' &&
-          normalized
-            .slice(Math.max(clauseStart(start), start - 3), end + 3)
-            .some((word) => ['clarifying', 'clarify', 'missing'].includes(word))
+          (normalized[end] === 'sheet' ||
+            normalized
+              .slice(Math.max(clauseStart(start), start - 3), end + 3)
+              .some((word) =>
+                ['clarifying', 'clarify', 'missing'].includes(word),
+              ))
         )
           continue;
         for (let i = start; i < end; i += 1) occupied.add(i);
@@ -375,6 +378,22 @@ export function interpretWorkflowIntent(
   }
   for (const mention of materials) {
     if (sources.has(mention) || outputs.has(mention)) continue;
+    // A recording described as already made is source material, even after "need".
+    if (
+      mention.type.id === 'video' &&
+      (normalized
+        .slice(
+          Math.max(clauseStart(mention.start), mention.start - 3),
+          mention.start,
+        )
+        .includes('recorded') ||
+        /^(?:(?:that|which|we|have|already) )*recorded\b/.test(
+          normalized.slice(mention.end, mention.end + 6).join(' '),
+        ))
+    ) {
+      sources.add(mention);
+      continue;
+    }
     const verb = lastVerb(mention.start);
     const word = normalized[verb];
     const prefix = normalized.slice(clauseStart(mention.start), mention.start);

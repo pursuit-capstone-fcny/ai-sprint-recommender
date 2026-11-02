@@ -1,10 +1,9 @@
-import type { CandidateRequirement, OperationRule } from '../taskIntent';
+import type { OperationRule } from '../taskIntent';
 
-const candidate = (
-  tasks: string[],
-  priority = 100,
-  extra: Omit<CandidateRequirement, 'tasks' | 'priority'> = {},
-): CandidateRequirement => ({ tasks, priority, ...extra });
+import { candidate, rule } from './operationRules';
+import { taskOperations } from './taskOperations';
+import { taskDiscovery } from './taskDiscovery';
+import { taskParaphrases } from './taskParaphrases';
 const formulas = [candidate(['Spreadsheet formulas'])];
 const survey = [
   candidate(['Survey analysis'], 100, {
@@ -26,31 +25,25 @@ const citedDocuments = candidate(['Document Q&A'], 80, {
   ],
   excludeTasks: ['App building'],
 });
-const rule = (
-  id: string,
-  when: string[][],
-  tasks: string[],
-  source: string | undefined,
-  outputs: string[],
-  candidates: CandidateRequirement[],
-  extra: Partial<OperationRule> = {},
-): OperationRule => ({
-  id,
-  when,
-  tasks,
-  source,
-  outputs,
-  candidates,
-  ...extra,
-});
-
 /** Predicate groups express requested operations; candidate links describe transferable instruction. */
 export const operationRules: readonly OperationRule[] = [
+  ...taskOperations,
+  ...taskDiscovery,
+  ...taskParaphrases,
   rule(
     'vocabulary-helper',
     [
       ['word', 'vocabulary'],
-      ['grade', 'teaching', 'sentence'],
+      [
+        'grade',
+        'teaching',
+        'sentence',
+        'teach',
+        'class',
+        'classroom',
+        'year group',
+        'unit',
+      ],
       ['helper', 'assistant', 'routine'],
     ],
     ['Lesson planning', 'Custom assistants'],
@@ -61,6 +54,9 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Lesson planning'], 80, {
         excludeTasks: ['Curriculum design', 'Language learning'],
         excludeTeaching: ['accessible personalized syllabus'],
+      }),
+      candidate(['Storytelling'], 75, {
+        when: ['visual', 'character', 'picture'],
       }),
     ],
   ),
@@ -75,13 +71,21 @@ export const operationRules: readonly OperationRule[] = [
         'presentation',
         'conceptual',
         'design discussion',
+        'understand',
+        'structure',
       ],
     ],
     ['Custom assistants'],
     undefined,
     [],
-    [candidate(['Custom assistants'], 100, { allTasks: ['Lesson planning'] })],
-    { explanatory: true },
+    [
+      candidate(['Custom assistants'], 100, { allTasks: ['Lesson planning'] }),
+      candidate(['Accessible content'], 75, {
+        when: ['accessibility', 'accessible', 'parent', 'student'],
+        excludeTasks: ['Custom assistants'],
+      }),
+    ],
+    { explanatory: true, clearSource: true },
   ),
   rule(
     'scanned-feedback',
@@ -93,7 +97,23 @@ export const operationRules: readonly OperationRule[] = [
     ['Survey analysis', 'Qualitative analysis', 'Report generation'],
     'form',
     ['analysis', 'document'],
-    survey,
+    [
+      ...survey,
+      candidate(['Chart creation'], 75, {
+        allTasks: ['Exploratory analysis'],
+        whenAll: [
+          ['rating', 'score', 'chart', 'quantitative'],
+          ['correct', 'error', 'mistaken', 'verify'],
+        ],
+      }),
+      candidate(['Chart creation'], 75, {
+        allTasks: ['Survey analysis'],
+        whenAll: [
+          ['rating', 'score', 'chart', 'quantitative'],
+          ['correct', 'error', 'mistaken', 'verify'],
+        ],
+      }),
+    ],
   ),
   rule(
     'numeric-survey-chart',
@@ -124,8 +144,8 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'conditional-totals',
     [
-      ['total', 'amount owed', 'sum'],
-      ['each', 'per', 'only where'],
+      ['total', 'amount owed', 'sum', 'add up', 'adds up', 'add'],
+      ['each', 'per', 'only where', 'one volunteer', 'one person'],
       ['hour', 'employee', 'person', 'volunteer', 'claim'],
     ],
     ['Spreadsheet formulas', 'Data aggregation'],
@@ -143,46 +163,108 @@ export const operationRules: readonly OperationRule[] = [
     'spreadsheet',
     ['formula'],
     formulas,
+    { precedence: 1 },
   ),
   rule(
     'participation-comparison',
     [
       ['partner', 'organization', 'participation', 'list'],
-      ['new', 'joining', 'came back', 'stopped', 'distinct'],
+      [
+        'new',
+        'joining',
+        'came back',
+        'stopped',
+        'distinct',
+        'first time',
+        'different organization',
+      ],
       ['separate', 'event', 'fair', 'file', 'across'],
     ],
     ['List comparison'],
     'spreadsheet',
     ['comparison'],
-    [candidate(['List comparison']), candidate(['Data cleaning'], 75)],
+    [
+      candidate(['List comparison']),
+      candidate(['Data cleaning'], 75),
+      candidate(['Spreadsheet formulas'], 70, {
+        excludeTasks: ['List comparison', 'Data aggregation'],
+        whenAll: [
+          ['count'],
+          ['row', 'formula', 'calculation', 'unique', 'distinct', 'once'],
+        ],
+      }),
+    ],
   ),
   rule(
     'terminology-replacement',
     [
       ['replacement', 'approved'],
-      ['name', 'language', 'term'],
+      ['name', 'language', 'term', 'label'],
       ['workbook', 'spreadsheet', 'throughout'],
     ],
     ['Terminology updates'],
     'spreadsheet',
     ['spreadsheet'],
     [candidate(['Terminology updates']), candidate(['Data cleaning'], 80)],
+    { supersedes: ['record-action-lookup'] },
   ),
   rule(
     'data-cleaning',
     [
-      ['duplicate', 'impossible', 'missing', 'blank field'],
-      ['row', 'export', 'date', 'value'],
+      [
+        'duplicate',
+        'impossible',
+        'missing',
+        'blank field',
+        'blank',
+        'inconsistent',
+        'empty field',
+        'repeated row',
+        'odd date',
+        'spelling',
+      ],
+      ['row', 'export', 'date', 'value', 'spreadsheet'],
     ],
     ['Data cleaning'],
     'spreadsheet',
     ['cleaned-data'],
-    [candidate(['Data cleaning']), candidate(['Terminology updates'], 75)],
+    [
+      candidate(['Data cleaning']),
+      candidate(['Exploratory analysis'], 80, { teaching: ['data cleaning'] }),
+      candidate(['List comparison'], 75, {
+        whenAll: [
+          ['duplicate', 'repeat', 'repeated'],
+          ['name', 'label', 'organization', 'program'],
+        ],
+      }),
+      candidate(['Terminology updates'], 75, {
+        when: [
+          'term',
+          'category',
+          'replacement',
+          'language',
+          'standardize',
+          'corrected',
+          'change log',
+          'spelling',
+        ],
+      }),
+    ],
   ),
   rule(
     'directory-structuring',
     [
-      ['directory', 'copied text', 'unstructured', 'jumble'],
+      [
+        'directory',
+        'stuck onto',
+        'exhibitor',
+        'copied text',
+        'unstructured',
+        'jumble',
+        'pasted',
+        'one cell',
+        'mess',
+      ],
       ['column', 'table', 'row'],
     ],
     ['Data structuring'],
@@ -190,39 +272,114 @@ export const operationRules: readonly OperationRule[] = [
     ['spreadsheet'],
     [
       candidate(['Data structuring'], 100, { excludeTasks: ['App building'] }),
-      candidate(['Data cleaning'], 75),
+      candidate(['Data cleaning'], 75, {
+        when: ['mess', 'tidy', 'clean', 'check', 'excel', 'one cell'],
+      }),
     ],
   ),
   rule(
     'attendance-triage',
     [
       ['attendance', 'attended', 'barely coming'],
-      ['contact', 'follow up', 'outreach', 'drifting', 'prioritize'],
+      [
+        'contact',
+        'follow up',
+        'outreach',
+        'drifting',
+        'prioritize',
+        'call first',
+        'call',
+      ],
     ],
     ['Attendance analysis', 'Student outreach'],
     'spreadsheet',
     ['analysis'],
     [
       candidate(['Attendance analysis']),
-      candidate(['Student interventions'], 80),
+      candidate(['Student interventions'], 80, {
+        unlessExcludedTasks: ['App building'],
+      }),
+      candidate(['Case management'], 75, {
+        allTasks: ['Spreadsheet generation'],
+        whenAll: [
+          ['follow up', 'contact'],
+          ['record', 'next date', 'tracker'],
+        ],
+      }),
+      candidate(['Data cleaning'], 75, {
+        when: [
+          'missing value',
+          'strange value',
+          'data quality',
+          'invalid record',
+        ],
+      }),
+      candidate(['Exploratory analysis'], 75, {
+        allTasks: ['Report generation', 'Chart creation'],
+        when: [
+          'missing value',
+          'strange value',
+          'data quality',
+          'invalid record',
+        ],
+      }),
+      candidate(['Survey analysis'], 70, {
+        allTasks: ['Translation'],
+        whenAll: [['attendance band'], ['missing', 'strange', 'quality']],
+      }),
     ],
+    { supersedes: ['data-cleaning'] },
   ),
   rule(
     'financial-review',
     [
-      ['financial statement', 'public account', 'ratio', 'reserve'],
-      ['year', 'income', 'expense', 'spending', 'revenue'],
+      [
+        'financial statement',
+        'public account',
+        'ratio',
+        'reserve',
+        'irs filing',
+        'auditor pdf',
+      ],
+      [
+        'year',
+        'income',
+        'expense',
+        'spending',
+        'revenue',
+        'financial',
+        'finance',
+      ],
     ],
     ['Financial analysis'],
     'document',
     ['analysis'],
-    [candidate(['Financial analysis']), candidate(['Grant due diligence'], 80)],
+    [
+      candidate(['Financial analysis']),
+      candidate(['Grant due diligence'], 80),
+      candidate(['Document Q&A'], 75, {
+        teaching: [
+          'source reference',
+          'targeted document',
+          'collection of source documents',
+        ],
+        excludeTasks: ['App building'],
+        when: ['trace', 'verify', 'citation', 'source reference'],
+      }),
+    ],
   ),
   rule(
     'grantee-comparison',
     [
-      ['annual report', 'grantee'],
-      ['compare', 'comparison', 'renewing', 'developed', 'evolved'],
+      ['annual report', 'grantee', 'publication'],
+      [
+        'compare',
+        'comparison',
+        'renewing',
+        'developed',
+        'evolved',
+        'side by side',
+      ],
     ],
     ['Grant due diligence', 'Document comparison'],
     'document',
@@ -233,13 +390,21 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document Q&A'], 80, {
         teaching: ['collection of source documents', 'cross document'],
         excludeTasks: ['App building'],
+        when: ['several', 'renewing', 'over time', 'evolved', 'developed'],
       }),
     ],
   ),
   rule(
     'document-comparison',
     [
-      ['agreement', 'policy', 'disclosure', 'document'],
+      [
+        'agreement',
+        'policy',
+        'disclosure',
+        'document',
+        'banking',
+        'bank terms',
+      ],
       ['compare', 'version', 'changed', 'fee change', 'replacement agreement'],
     ],
     ['Document comparison'],
@@ -249,7 +414,23 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Document comparison']),
       candidate(['Grant due diligence'], 80),
       citedDocuments,
+      candidate(['Editing proofreading'], 75, {
+        whenAll: [
+          ['message', 'letter', 'communication', 'note'],
+          ['claim', 'check', 'review'],
+        ],
+      }),
+      candidate(['Custom assistants'], 70, {
+        allTasks: ['Knowledge management', 'Responsible AI'],
+        teaching: ['policy pdf'],
+        whenAll: [['exact passage'], ['specific question']],
+      }),
+      candidate(['Document Q&A'], 70, {
+        teaching: ['cited source'],
+        whenAll: [['exact passage'], ['specific question']],
+      }),
     ],
+    { supersedes: ['document-review'] },
   ),
   rule(
     'rfp-review',
@@ -262,6 +443,10 @@ export const operationRules: readonly OperationRule[] = [
         'submission',
         'allow',
         'eligibility',
+        'eligible',
+        'summary',
+        'draft',
+        'template',
       ],
     ],
     ['RFP review'],
@@ -278,19 +463,35 @@ export const operationRules: readonly OperationRule[] = [
     'grant-inquiry',
     [
       ['foundation', 'funder', 'inquiry'],
-      ['response', 'answer', 'draft'],
-      ['instruction', 'overview', 'future', 'launch'],
+      ['response', 'answer', 'draft', 'write'],
+      ['instruction', 'overview', 'future', 'launch', 'guidance'],
     ],
     ['Grant drafting'],
     'document',
     ['document'],
-    [candidate(['Grant drafting']), candidate(['Editing proofreading'], 75)],
+    [
+      candidate(['Grant drafting']),
+      candidate(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'check', 'proofread', 'catch', 'overclaim'],
+      }),
+      candidate(['RFP review'], 75, {
+        allTasks: ['Work planning'],
+        when: ['criteria', 'eligibility', 'spending rule'],
+      }),
+    ],
+    { preferDetectedSource: true },
   ),
   rule(
     'donor-repurposing',
     [
       ['report', 'research'],
-      ['donor', 'briefing event', 'online event'],
+      [
+        'donor',
+        'supporter',
+        'briefing event',
+        'online event',
+        'online briefing',
+      ],
       ['post', 'opening remark', 'webinar', 'event'],
     ],
     ['Content repurposing', 'Webinar planning', 'Social media writing'],
@@ -301,6 +502,40 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Social media writing'], 80),
       candidate(['Content repurposing'], 75, {
         allTasks: ['Custom assistants'],
+        when: [
+          'voice',
+          'style',
+          'opening remark',
+          'briefing event',
+          'online event',
+          'online briefing',
+        ],
+      }),
+      candidate(['Presentation creation'], 75, {
+        teaching: ['presentation outline'],
+        when: ['webinar', 'outline', 'slide', 'presentation'],
+      }),
+      candidate(['Document summary'], 70, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: [
+          'running order',
+          'presenter',
+          'speaking note',
+          'condense',
+          'distill',
+          'summarize',
+        ],
+      }),
+      candidate(['Document summary'], 70, {
+        teaching: ['speaker', 'panel'],
+        when: [
+          'running order',
+          'presenter',
+          'speaking note',
+          'condense',
+          'distill',
+          'summarize',
+        ],
       }),
     ],
   ),
@@ -308,7 +543,7 @@ export const operationRules: readonly OperationRule[] = [
     'biography',
     [
       ['bio', 'biography'],
-      ['resume', 'qualification', 'experience'],
+      ['resume', 'cv', 'qualification', 'experience'],
       ['draft', 'website', 'word'],
     ],
     ['Document drafting'],
@@ -316,36 +551,90 @@ export const operationRules: readonly OperationRule[] = [
     ['document'],
     [
       candidate(['Document drafting'], 100, { teaching: ['bio'] }),
-      candidate(['Editing proofreading'], 75),
+      candidate(['Cover letter writing'], 80),
+      candidate(['Editing proofreading'], 75, {
+        when: ['review', 'edit', 'check', 'proofread'],
+      }),
     ],
   ),
   rule(
     'document-review',
     [
-      ['review', 'check', 'proofread'],
-      ['grammar', 'claim', 'tracked change', 'accept or reject'],
+      ['review', 'check', 'proofread', 'edit', 'comment'],
+      [
+        'grammar',
+        'claim',
+        'tracked change',
+        'tracked edit',
+        'unsupported',
+        'accept or reject',
+        'accept each',
+      ],
       ['draft', 'letter', 'document', 'word'],
     ],
     ['Editing proofreading', 'Document review'],
     'document',
     ['edited-document'],
-    [candidate(['Editing proofreading', 'Document review'])],
+    [
+      candidate(['Editing proofreading', 'Document review']),
+      candidate(['Document drafting'], 75, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['voice', 'style', 'summarize', 'draft from'],
+      }),
+      candidate(['Brand voice'], 75, {
+        allTasks: ['Custom assistants', 'Document drafting'],
+        when: ['voice', 'style'],
+      }),
+      candidate(['Brand voice'], 70, {
+        allTasks: ['Custom assistants', 'Document drafting'],
+        teaching: ['writing convention', 'op ed'],
+        whenAll: [['tracked change'], ['comment', 'grammar', 'verify']],
+      }),
+      candidate(['Document drafting'], 70, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        whenAll: [['tracked change'], ['comment', 'grammar', 'verify']],
+      }),
+    ],
   ),
   rule(
     'technical-plain-language',
     [
-      ['technical', 'security', 'jargon'],
-      ['trustee', 'board', 'nontechnical'],
-      ['explain', 'understand', 'adapt', 'decision'],
+      ['technical', 'security', 'jargon', 'risk assessment', 'it consultant'],
+      ['trustee', 'board', 'nontechnical', 'chair', 'treasurer'],
+      [
+        'explain',
+        'explanation',
+        'understand',
+        'adapt',
+        'decision',
+        'act on',
+        'rewrite',
+      ],
     ],
     ['Plain language', 'Board communications'],
     'document',
-    ['document'],
+    ['document', 'email'],
     [
       candidate(['Board communications']),
-      candidate(['Plain language', 'Editing proofreading'], 80),
+      candidate(['Plain language'], 80),
+      candidate(['Editing proofreading'], 80, {
+        when: [
+          'security',
+          'fact',
+          'version',
+          'draft',
+          'claim',
+          'proofread',
+          'review',
+          'check',
+        ],
+      }),
+      candidate(['Document drafting'], 75, {
+        allTasks: ['Document Q&A', 'Document summary'],
+        when: ['email', 'summary'],
+      }),
     ],
-    { explanatory: true },
+    { explanatory: true, outputWhen: { email: ['email'] } },
   ),
   rule(
     'visual-rights-guide',
@@ -362,7 +651,21 @@ export const operationRules: readonly OperationRule[] = [
         allTasks: ['Educational materials'],
         excludeTasks: ['Custom assistants'],
       }),
-      candidate(['Outreach materials', 'Plain language'], 80),
+      candidate(['Outreach materials'], 80),
+      candidate(['Plain language'], 80, {
+        when: [
+          'english',
+          'reading level',
+          'simplify',
+          'sentence',
+          'language',
+          'wording',
+        ],
+      }),
+      candidate(['Board communications'], 80, { minimumStrength: 0.5 }),
+      candidate(['Design feedback'], 75, {
+        when: ['icon', 'layout', 'critique'],
+      }),
     ],
   ),
   rule(
@@ -374,7 +677,15 @@ export const operationRules: readonly OperationRule[] = [
     ['Design feedback'],
     'image',
     ['image'],
-    [candidate(['Design feedback'])],
+    [
+      candidate(['Design feedback'], 100, {
+        excludeTasks: ['Outreach materials'],
+      }),
+      candidate(['Design feedback'], 80, {
+        allTasks: ['Outreach materials'],
+        when: ['poster', 'flier', 'flyer', 'handout', 'print'],
+      }),
+    ],
   ),
   rule(
     'attachment-flow',
@@ -392,7 +703,7 @@ export const operationRules: readonly OperationRule[] = [
     'outlook-thread',
     [
       ['outlook'],
-      ['thread', 'exchange'],
+      ['thread', 'exchange', 'back and forth', 'chain'],
       ['reply', 'invitation', 'invite', 'summary', 'agreed'],
     ],
     ['Email summary', 'Email drafting', 'Meeting scheduling'],
@@ -403,20 +714,37 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'formal-minutes',
     [
-      ['recording', 'transcript', 'discussion'],
-      ['formal minute', 'decision', 'deadline', 'action'],
-      ['committee', 'meeting', 'minute'],
+      ['recording', 'transcript', 'discussion', 'text of'],
+      ['formal minute', 'decision', 'deadline', 'action', 'structured minute'],
+      ['committee', 'meeting', 'minute', 'call', 'steering group'],
     ],
     ['Meeting minutes', 'Transcription'],
-    'recording',
+    'transcript',
     ['minutes'],
-    [candidate(['Meeting minutes']), candidate(['Transcription'], 80)],
+    [
+      candidate(['Meeting minutes']),
+      candidate(['Transcription'], 80),
+      candidate(['Document summary'], 75, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: ['word record', 'summary', 'outline'],
+      }),
+      candidate(['Document summary'], 75, {
+        teaching: ['panel', 'speaker'],
+        when: [
+          'outline',
+          'word file',
+          'word record',
+          'download',
+          'detailed summary',
+        ],
+      }),
+    ],
   ),
   rule(
     'policy-helper',
     [
-      ['helper', 'assistant', 'bot'],
-      ['policy', 'manual', 'leave', 'reimbursement'],
+      ['helper', 'assistant', 'bot', 'help desk', 'answer service'],
+      ['policy', 'manual', 'leave', 'reimbursement', 'handbook', 'hr'],
       ['answer', 'question', 'cite', 'admit'],
     ],
     ['Knowledge management', 'Custom assistants'],
@@ -425,21 +753,58 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Custom assistants'], 100, {
         allTasks: ['Knowledge management'],
-        excludeTasks: ['Workflow automation'],
+        excludeTasks: ['Workflow automation', 'Process documentation'],
         minimumStrength: 0.5,
       }),
+      candidate(['Knowledge management'], 75, {
+        allTasks: ['Process documentation'],
+        minimumStrength: 0.5,
+        when: [
+          'manual',
+          'policy pdf',
+          'reference',
+          'project',
+          'source document',
+          'knowledge file',
+        ],
+      }),
       candidate(['Document Q&A'], 75, {
-        teaching: ['citation', 'notebook'],
-        excludeTasks: ['App building'],
+        teaching: ['notebook', 'collection of source documents'],
+      }),
+      candidate(['Document Q&A'], 75, {
+        teaching: ['cited source'],
+        when: [
+          'source',
+          'reference',
+          'handbook',
+          'faq',
+          'lookup',
+          'look up',
+          'retrieve',
+        ],
+      }),
+      candidate(['Knowledge management'], 75, {
+        allTasks: ['Process documentation'],
+        minimumStrength: 0.5,
+        whenAll: [['handbook'], ['hand off', 'human', 'person', 'exception']],
+      }),
+      candidate(['Document Q&A'], 70, {
+        allTasks: ['Document drafting', 'Document summary'],
+        whenAll: [
+          ['handbook'],
+          ['again', 'same question', 'retest'],
+          ['instruction', 'change'],
+        ],
       }),
     ],
+    { precedence: 1 },
   ),
   rule(
     'historical-document-question',
     [
       ['minute', 'document', 'source'],
       ['board', 'historical', 'years'],
-      ['citation', 'find what', 'original', 'when'],
+      ['citation', 'find what', 'original', 'when', 'which year', 'evidence'],
     ],
     ['Document Q&A'],
     'document',
@@ -473,8 +838,8 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'peer-conversation',
     [
-      ['peer', 'coordinator', 'coworker'],
-      ['conversation', 'deadline', 'handoff'],
+      ['peer', 'coordinator', 'coworker', 'teammate'],
+      ['conversation', 'deadline', 'handoff', 'shift', 'unfinished'],
       ['practice', 'feedback', 'pause', 'role play'],
     ],
     ['Role play', 'Difficult conversations'],
@@ -494,7 +859,17 @@ export const operationRules: readonly OperationRule[] = [
   rule(
     'staff-process',
     [
-      ['process', 'procedure', 'handoff'],
+      [
+        'process',
+        'procedure',
+        'handoff',
+        'step',
+        'hand over',
+        'handover',
+        'passed on',
+        'who does what',
+        'way of working',
+      ],
       ['checklist', 'responsibility', 'responsibilities', 'requirement'],
     ],
     ['Process documentation'],
@@ -503,12 +878,28 @@ export const operationRules: readonly OperationRule[] = [
     [
       candidate(['Process documentation']),
       candidate(['Process documentation'], 80, { minimumStrength: 0.5 }),
+      candidate(['Student interventions', 'Client intake'], 70, {
+        allTasks: ['App building'],
+        unlessExcludedTasks: ['App building'],
+        whenAll: [
+          ['follow up', 'follow ups'],
+          ['record', 'recorded', 'capture', 'field'],
+          ['handover', 'handoff', 'passed on', 'reception'],
+        ],
+      }),
     ],
   ),
   rule(
     'peer-learning',
     [
-      ['cross department', 'peer learning', 'sharing'],
+      [
+        'cross department',
+        'across department',
+        'peer learning',
+        'mixed group',
+        'sharing',
+        'share what',
+      ],
       ['practice time', 'protected', 'experiment', 'demonstration', 'group'],
     ],
     ['Peer learning', 'Change management'],
@@ -516,8 +907,39 @@ export const operationRules: readonly OperationRule[] = [
     [],
     [
       candidate(['Peer learning']),
-      candidate(['AI policy', 'Responsible AI'], 80, {
+      candidate(['AI policy'], 80, {
         excludeTasks: ['Document drafting', 'Custom assistants'],
+        when: [
+          'policy',
+          'privacy',
+          'responsible',
+          'safe',
+          'guideline',
+          'risk',
+          'sensitive',
+          'stopped',
+          'adoption',
+          'barrier',
+          'concern',
+        ],
+      }),
+      candidate(['Responsible AI'], 80, {
+        excludeTasks: ['Document drafting', 'Custom assistants'],
+        when: [
+          'policy',
+          'privacy',
+          'responsible',
+          'guideline',
+          'risk',
+          'sensitive',
+          'stopped',
+          'adoption',
+          'barrier',
+          'concern',
+        ],
+      }),
+      candidate(['Retreat planning'], 75, {
+        when: ['each month', 'monthly', 'term', 'agenda', 'facilitation'],
       }),
     ],
     { explanatory: true },
@@ -526,19 +948,56 @@ export const operationRules: readonly OperationRule[] = [
     'training-media',
     [
       ['audio', 'podcast'],
-      ['document', 'training pack', 'source material'],
-      ['video', 'explainer', 'conversation', 'listen'],
+      [
+        'document',
+        'training pack',
+        'training material',
+        'text',
+        'refresher',
+        'source material',
+        'guide',
+        'induction',
+        'manual',
+      ],
+      [
+        'video',
+        'explainer',
+        'conversation',
+        'listen',
+        'overview',
+        'reinforcement',
+        'sample',
+      ],
     ],
     ['Audio generation', 'Video creation'],
     'document',
     ['audio', 'video'],
-    [candidate(['Audio generation']), candidate(['Audio review'], 80)],
+    [
+      candidate(['Audio generation']),
+      candidate(['Audio review'], 80),
+      candidate(['Document summary'], 75, {
+        allTasks: ['Document drafting', 'Document Q&A'],
+        when: ['description', 'learning objective'],
+      }),
+      candidate(['Document summary'], 75, {
+        teaching: ['speaker', 'panel'],
+        when: ['description', 'learning objective'],
+      }),
+      candidate(['Scriptwriting'], 75, {
+        allTasks: ['Video creation'],
+        whenAll: [
+          ['video', 'explainer'],
+          ['description', 'learning objective', 'reinforcement'],
+        ],
+      }),
+    ],
+    { outputWhen: { video: ['video', 'explainer'] } },
   ),
   rule(
     'song-generation',
     [
       ['song', 'music'],
-      ['style', 'voice', 'lyric', 'version'],
+      ['style', 'voice', 'lyric', 'version', 'mood', 'brief'],
     ],
     ['Music generation'],
     'context',
@@ -585,7 +1044,7 @@ export const operationRules: readonly OperationRule[] = [
     'course-syllabus',
     [
       ['paper', 'course'],
-      ['week', 'session', 'syllabus'],
+      ['week', 'session', 'syllabus', 'term'],
       ['reading', 'objective', 'assignment', 'assessment'],
     ],
     ['Curriculum design', 'Lesson planning'],
@@ -604,8 +1063,21 @@ export const operationRules: readonly OperationRule[] = [
     'context',
     ['form'],
     [
+      candidate(['Form generation'], 110, {
+        allTasks: ['Evaluation design'],
+        when: ['rubric', 'evaluation'],
+      }),
       candidate(['Form generation']),
-      candidate(['Process documentation'], 75, { allTasks: ['Client intake'] }),
+      candidate(['Process documentation'], 75, {
+        allTasks: ['Client intake'],
+        when: ['intake', 'handoff', 'procedure', 'accommodation'],
+      }),
+      candidate(['Code debugging'], 70, {
+        whenAll: [
+          ['script', 'code'],
+          ['error', 'debug', 'correct'],
+        ],
+      }),
     ],
   ),
   rule(
@@ -622,15 +1094,33 @@ export const operationRules: readonly OperationRule[] = [
       candidate(['Code debugging']),
       candidate(['Code generation'], 75, {
         teaching: ['execution error', 'error message', 'corrected full script'],
+        when: ['apps script', 'google form', 'javascript'],
       }),
     ],
   ),
   rule(
     'photo-editing',
-    [['photo'], ['brighter', 'dark', 'exposure', 'lightroom', 'edit']],
+    [
+      ['photo', 'portrait'],
+      ['brighter', 'dark', 'exposure', 'lightroom', 'edit'],
+    ],
     ['Photo editing'],
     'image',
     ['image'],
-    [candidate(['Photo editing'])],
+    [
+      candidate(['Photo editing']),
+      candidate(['Design feedback'], 75, {
+        teaching: ['diagnose', 'screenshot'],
+        when: [
+          'crop',
+          'subject',
+          'background',
+          'mask',
+          'layout',
+          'balance',
+          'critique',
+        ],
+      }),
+    ],
   ),
 ];

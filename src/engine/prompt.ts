@@ -213,7 +213,7 @@ function mentions(words: string[], entries: VocabularyEntry[]): Mention[] {
   return found;
 }
 
-function interpret(
+export function interpretPrompt(
   catalog: PublicCatalog,
   request: PromptRequest,
   options: PromptOptions,
@@ -392,6 +392,29 @@ const INSTRUCTION_STRENGTH: Record<InstructionForm, number> = {
   mentioned: 0,
 };
 
+/** Internal shared validation for reviewed task evidence. */
+export function prepareInstructions(
+  catalog: PublicCatalog,
+  entries: readonly TaskInstruction[] = [],
+) {
+  const instructions = new Map<string, InstructionForm>();
+  for (const entry of entries) {
+    const key = JSON.stringify([entry.youtubeId, entry.task]);
+    if (
+      instructions.has(key) ||
+      !Object.hasOwn(INSTRUCTION_STRENGTH, entry.form) ||
+      !catalog.items.some(
+        (item) =>
+          item.youtubeId === entry.youtubeId && item.tasks.includes(entry.task),
+      )
+    ) {
+      throw new Error('Invalid or duplicate task instruction evidence.');
+    }
+    instructions.set(key, entry.form);
+  }
+  return instructions;
+}
+
 function compare(a: PromptRecommendation, b: PromptRecommendation): number {
   const x = a.evidence;
   const y = b.evidence;
@@ -461,7 +484,7 @@ export function recommendFromPrompt(
   if (!Number.isInteger(limit) || limit < 0)
     throw new RangeError('Result limit must be a nonnegative integer.');
   const { interpretation, unsupportedOnlyTool, workflows, learningFormats } =
-    interpret(catalog, request, options);
+    interpretPrompt(catalog, request, options);
   const fit = preparePromptFit(
     catalog,
     promptPolarity(promptWords(request.prompt)).positiveWords,
@@ -491,21 +514,7 @@ export function recommendFromPrompt(
     };
 
   const counts = new Map<string, number>();
-  const instructions = new Map<string, InstructionForm>();
-  for (const entry of options.instructions ?? []) {
-    const key = JSON.stringify([entry.youtubeId, entry.task]);
-    if (
-      instructions.has(key) ||
-      !Object.hasOwn(INSTRUCTION_STRENGTH, entry.form) ||
-      !catalog.items.some(
-        (item) =>
-          item.youtubeId === entry.youtubeId && item.tasks.includes(entry.task),
-      )
-    ) {
-      throw new Error('Invalid or duplicate task instruction evidence.');
-    }
-    instructions.set(key, entry.form);
-  }
+  const instructions = prepareInstructions(catalog, options.instructions);
   for (const item of catalog.items)
     counts.set(item.youtubeId, (counts.get(item.youtubeId) ?? 0) + 1);
   const active = catalog.items.filter(

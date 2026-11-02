@@ -75,6 +75,23 @@ export interface PromptLanguage {
 }
 
 const VERB_FORMS: Record<string, string> = {
+  organisation: 'organization',
+  organisations: 'organization',
+  programme: 'program',
+  programmes: 'program',
+  practise: 'practice',
+  practised: 'practice',
+  organise: 'organize',
+  organising: 'organize',
+  renaming: 'name',
+  handed: 'hand',
+  scanned: 'scan',
+  scanning: 'scan',
+  misses: 'miss',
+  added: 'add',
+  checked: 'check',
+  checking: 'check',
+  adding: 'add',
   creating: 'create',
   created: 'create',
   asking: 'ask',
@@ -149,10 +166,23 @@ export function languageTokens(text: string): string[] {
     .map(languageWord);
 }
 
-/** Preserve sentence scope without changing token offsets inside each sentence. */
+/** Normalize lexical idioms and preserve sentence/clause boundaries for every parser. */
 export function promptWords(text: string): string[] {
-  return text
+  // Postposed rejections describe the alternative before the negative predicate.
+  const normalized = text
     .replace(/[’']/g, "'")
+    .replace(
+      /([^.!?;,—]+?)\s+(?:won't|will not|wouldn't|would not|doesn't|does not)\s+(?:solve|help|work|meet|address)\b/gi,
+      'not $1',
+    )
+    .replace(
+      /([^.!?;,—]+?)\s+(?:isn't|is not)\s+(?:what (?:we|I) (?:need|want)|(?:the |our )?goal)\b/gi,
+      'not $1',
+    )
+    .replace(/([^.!?;,—]+?)\s+is a different job\b/gi, 'not $1');
+  // This describes verbatim text, not the Microsoft application.
+  return normalized
+    .replace(/\bword[ -]+for[ -]+word\b/gi, 'verbatim')
     .replace(/\b(i|we|you|they)'d\b/gi, '$1 would')
     .replace(
       /\b(can|could|do|does|did|is|are|was|were|should|would|must|has|have|had)n't\b/gi,

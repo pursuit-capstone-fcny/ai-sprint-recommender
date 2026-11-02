@@ -1,3 +1,13 @@
+/** A new positive request ends a preceding rejection, even inside one sentence. */
+export function startsPositiveRequest(words: readonly string[], index: number) {
+  return (
+    ['i', 'we', 'please'].includes(words[index]) &&
+    ['need', 'want', 'would', 'prefer', 'use', 'show'].includes(
+      words[index + 1],
+    )
+  );
+}
+
 /** Bounded clause exclusions shared by task, material, format and keyword parsing. */
 export function promptPolarity(words: string[]) {
   const excluded = new Set<number>();
@@ -20,6 +30,27 @@ export function promptPolarity(words: string[]) {
       ].includes(word)
     )
       continue;
+    const roleQualifier = words.findIndex(
+      (part, index) =>
+        index > start &&
+        index < start + 15 &&
+        ['treating', 'treat', 'assuming', 'assume'].includes(part),
+    );
+    // Rejecting how a practice partner behaves does not reject the rehearsal itself.
+    if (
+      word === 'not' &&
+      words[start + 1] === 'want' &&
+      roleQualifier > start &&
+      words.slice(start + 2, roleQualifier).includes('partner') &&
+      words.slice(start + 2, roleQualifier).includes('practice') &&
+      !words.slice(start, roleQualifier).some((part) => boundaries.has(part))
+    ) {
+      excluded.add(start);
+      let end = roleQualifier;
+      while (end < words.length && !boundaries.has(words[end]))
+        excluded.add(end++);
+      continue;
+    }
     const following = words.slice(start + 1, start + 5);
     const clauseStart =
       Math.max(
@@ -30,6 +61,26 @@ export function promptPolarity(words: string[]) {
     // Additive comparisons and lack of experience do not reject a tool/task.
     if (
       (word === 'not' && following[0] === 'only') ||
+      // "People will not read the guide" describes the audience, not rejected input.
+      (word === 'not' &&
+        (prefix.at(-1) === 'will' ||
+          (['do', 'does'].includes(prefix.at(-1) ?? '') &&
+            prefix
+              .slice(0, -1)
+              .some((part) =>
+                [
+                  'i',
+                  'we',
+                  'they',
+                  'people',
+                  'staff',
+                  'team',
+                  'volunteer',
+                  'learner',
+                  'reader',
+                ].includes(part),
+              ))) &&
+        ['read', 'reading'].includes(following[0])) ||
       // A topic such as "explain what we should and should not upload" is
       // discussing a rule, not excluding the topic from recommendations.
       (word === 'not' &&
@@ -41,6 +92,20 @@ export function promptPolarity(words: string[]) {
         following.some((part) =>
           ['experience', 'knowledge', 'training'].includes(part),
         )) ||
+      // Missing source answers and refused-access examples describe test cases,
+      // rather than rejecting the following referral or citation instruction.
+      (word === 'not' &&
+        prefix.some((part) => ['question', 'questions'].includes(part)) &&
+        ((following[0] === 'answered' &&
+          prefix.some((part) => ['are', 'is', 'were', 'was'].includes(part))) ||
+          (following[0] === 'see' && prefix.includes('refuse')))) ||
+      // A lack of time to read a source does not reject its application or subject.
+      (word === 'not' &&
+        following[0] === 'have' &&
+        following.slice(1).includes('time') &&
+        words
+          .slice(start + 1, start + 8)
+          .some((part) => ['read', 'reading', 'review'].includes(part))) ||
       (word === 'not' &&
         /^(?:really )?(?:know|sure|understand|familiar)\b/.test(
           following.join(' '),
@@ -50,13 +115,7 @@ export function promptPolarity(words: string[]) {
     let end = start + 1;
     while (end < words.length) {
       if (boundaries.has(words[end])) break;
-      if (
-        ['i', 'we', 'please'].includes(words[end]) &&
-        ['need', 'want', 'would', 'prefer', 'use', 'show'].includes(
-          words[end + 1],
-        )
-      )
-        break;
+      if (startsPositiveRequest(words, end)) break;
       if (
         words[end] === 'and' &&
         ['then', 'please', 'instead'].includes(words[end + 1])

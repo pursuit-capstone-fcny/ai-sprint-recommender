@@ -167,7 +167,12 @@ export const workflows: WorkflowConfig = {
     {
       id: 'recording',
       label: 'Recording',
-      aliases: ['recording', 'recordings', 'recorded session'],
+      aliases: [
+        'recording',
+        'recordings',
+        'recorded session',
+        'recorded video',
+      ],
       tasks: [],
     },
     {
@@ -220,7 +225,7 @@ export const workflows: WorkflowConfig = {
     {
       id: 'app',
       label: 'Application prototype',
-      aliases: ['app', 'application', 'web app', 'prototype'],
+      aliases: ['app', 'web app', 'prototype', 'software application'],
       tasks: ['App building'],
     },
     {
