@@ -23,7 +23,7 @@ export function requiredPlatform(prompt: string) {
   const quantityOrDuration =
     'a|an|the|one|two|three|four|five|six|seven|eight|nine|ten|few|several|some|minutes?|hours?|days?|weeks?|months?|years?';
   const connector =
-    'only|for|about|on|from|with|using|in|that|which|and|to|but|please|quickly|today';
+    'only|for|about|on|from|with|using|in|that|which|and|to|but|as|because|so|at|by|without|within|while|during|before|after|through|until|since|per|rather|instead|please|quickly|today';
   const exclusiveName = `((?!(?:${quantityOrDuration})\\b)[a-z][a-z0-9-]*(?:\\s+(?!(?:${connector})\\b)[a-z][a-z0-9-]*)*)`;
   const exclusive = [
     ...prompt.matchAll(
@@ -42,7 +42,8 @@ export function requiredPlatform(prompt: string) {
   matches.push(
     ...exclusive.filter(
       (match) =>
-        !/\b(?:AI|English|Spanish|French|Mandarin|German|Arabic)\s*$/i.test(
+        !/^AI$/i.test(match[1]) &&
+        !/\b(?:English|Spanish|French|Mandarin|German|Arabic)\s*$/i.test(
           match[1],
         ) &&
         // Source material and output style are not application names. Preserve

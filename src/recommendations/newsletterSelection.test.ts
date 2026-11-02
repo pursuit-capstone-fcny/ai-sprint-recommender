@@ -55,6 +55,10 @@ it.each([
   ['in Word only', 'Word'],
   ['using only FictionalWriter', 'FictionalWriter'],
   ['using only fictionalwriter', 'fictionalwriter'],
+  ['using only mailchimp as my editor', 'mailchimp'],
+  ['using only Microsoft Excel because we own it', 'Microsoft Excel'],
+  ['using only Fictional Writer rather than ChatGPT', 'Fictional Writer'],
+  ['using only Fictional AI', 'Fictional AI'],
 ] as const)(
   'AC-12.21: scopes an exclusive platform independently of the dictionary: %s',
   (suffix, expected) => {
