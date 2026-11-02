@@ -22,83 +22,78 @@ const { rows, request } = graderRequest(
   benchmark.profiles[1].input,
   benchmark.catalog,
 );
-const assessment = (position: number, grade = 0, extra = {}) => ({
-  position,
-  rationale: 'Mismatch.',
-  grade,
-  quote: null,
-  rank: null,
-  ...extra,
-});
-const allZero = () => rows.map((row) => assessment(row.position));
 const quoted = (position: number) => rows[position].description.slice(10, 60);
+const pick = (position: number, grade: 2 | 3, quote = quoted(position)) => ({
+  position,
+  rationale: 'Fixture.',
+  grade,
+  quote,
+});
 
 describe('catalog grader request', () => {
-  it('sends all 89 public rows, the goal and the noWork-first schema without IDs', () => {
-    const data = JSON.parse(request.messages[0].content);
-    expect(data.catalog).toHaveLength(89);
-    expect(data.goal).toBe(benchmark.profiles[1].input.goal);
+  it('caches the catalog, sends the request last and asks only for useful picks', () => {
+    const [catalog, intake] = request.messages[0].content;
+    expect(catalog.cache_control).toEqual({ type: 'ephemeral' });
+    expect(JSON.parse(catalog.text).catalog).toHaveLength(89);
+    expect(JSON.parse(intake.text)).toEqual(benchmark.profiles[1].input);
+    expect('cache_control' in intake).toBe(false);
     for (const id of ids) expect(JSON.stringify(request)).not.toContain(id);
     const schema = request.output_config.format.schema;
-    expect(Object.keys(schema.properties)).toEqual(['noWork', 'assessments']);
-    expect(schema.required).toEqual(['noWork', 'assessments']);
-    expect(Object.keys(schema.properties.assessments.items.properties)).toEqual(
-      ['position', 'rationale', 'grade', 'quote', 'rank'],
-    );
+    expect(Object.keys(schema.properties)).toEqual(['noWork', 'picks']);
+    expect(schema.properties.picks.items.properties.grade.enum).toEqual([2, 3]);
+    expect(request.max_tokens).toBe(2_000);
     expect(request.system).toBe(GRADER_SYSTEM_PROMPT);
-    expect(request.system).toContain(
-      'one assessment for EACH catalog position',
-    );
-    expect(request.thinking).toEqual({ type: 'disabled' });
+    expect(request.system).toContain('A blank goal is not no-work');
+    expect(request.system).not.toContain('EACH catalog position');
   });
 });
 
 describe('reading grades', () => {
-  it('treats noWork as an empty list and ignores any assessments sent with it', () => {
+  it('treats noWork as an empty list', () => {
     expect(
-      readGrades({ noWork: true, assessments: allZero() }, rows, ids),
-    ).toEqual({ status: 'no-work', ignoredAssessments: 89, youtubeIds: [] });
+      readGrades({ noWork: true, picks: [pick(1, 3)] }, rows, ids),
+    ).toEqual({ status: 'no-work', ignoredPicks: 1, youtubeIds: [] });
   });
-  it('orders grade 3 before 2, then rank, then position, at most eight', () => {
-    const assessments = allZero();
-    assessments[5] = assessment(5, 2, { quote: quoted(5), rank: 1 });
-    assessments[9] = assessment(9, 3, { quote: quoted(9), rank: 2 });
-    assessments[3] = assessment(3, 3, { quote: quoted(3), rank: 1 });
-    for (const position of [20, 21, 22, 23, 24, 25, 26])
-      assessments[position] = assessment(position, 2, {
-        quote: quoted(position),
-        rank: null,
-      });
-    const result = readGrades({ noWork: false, assessments }, rows, ids);
-    expect(result.status).toBe('graded');
+  it('orders grade 3 before 2, then emitted order, and keeps at most eight', () => {
+    const picks = [
+      pick(5, 2),
+      pick(9, 3),
+      pick(3, 3),
+      ...[20, 21, 22, 23, 24, 25].map((position) => pick(position, 2)),
+    ];
+    const result = readGrades({ noWork: false, picks }, rows, ids);
     expect(result.youtubeIds).toEqual(
-      [3, 9, 5, 20, 21, 22, 23, 24].map((position) => ids[position]),
+      [9, 3, 5, 20, 21, 22, 23, 24].map((position) => ids[position]),
     );
   });
-  it('drops a grade 2-3 pick whose quote is not in that description', () => {
-    const assessments = allZero();
-    assessments[4] = assessment(4, 3, { quote: quoted(5), rank: 1 });
-    assessments[6] = assessment(6, 2, { quote: quoted(6), rank: 2 });
-    const result = readGrades({ noWork: false, assessments }, rows, ids);
+  it('drops a pick whose quote is not in that description and a repeated pick', () => {
+    const result = readGrades(
+      {
+        noWork: false,
+        picks: [pick(4, 3, quoted(5)), pick(6, 2), pick(6, 3)],
+      },
+      rows,
+      ids,
+    );
     expect(result).toMatchObject({
       status: 'graded',
       quoteFailures: 1,
+      repeated: 1,
       youtubeIds: [ids[6]],
     });
   });
-  it('rejects a missing or repeated position instead of guessing', () => {
-    const missing = allZero().slice(1);
-    expect(
-      readGrades({ noWork: false, assessments: missing }, rows, ids),
-    ).toMatchObject({ status: 'invalid', missing: 1 });
-    const repeated = [...allZero(), assessment(0)];
-    expect(
-      readGrades({ noWork: false, assessments: repeated }, rows, ids),
-    ).toMatchObject({ status: 'invalid', repeated: 1 });
-    expect(readGrades({ assessments: [] }, rows, ids)).toMatchObject({
+  it('rejects malformed output and out-of-range positions', () => {
+    expect(readGrades({ picks: [] }, rows, ids)).toMatchObject({
       status: 'invalid',
       reason: 'schema',
     });
+    expect(
+      readGrades(
+        { noWork: false, picks: [pick(0, 3), { ...pick(0, 3), position: 89 }] },
+        rows,
+        ids,
+      ),
+    ).toMatchObject({ status: 'invalid', reason: 'out-of-range' });
   });
 });
 
@@ -141,7 +136,23 @@ describe('grader approval and cost', () => {
         ),
       ).toThrow();
   });
-  it('prices measured usage at the approved Haiku rates', () => {
-    expect(graderCost(18_000, 4_000)).toBe(3_800);
+  it('prices cache writes at 1.25x and cache reads at 0.1x input', () => {
+    expect(graderCost({ input_tokens: 18_000, output_tokens: 4_000 })).toBe(
+      3_800,
+    );
+    expect(
+      graderCost({
+        input_tokens: 100,
+        cache_creation_input_tokens: 16_000,
+        output_tokens: 500,
+      }),
+    ).toBe(10 + 2_000 + 250);
+    expect(
+      graderCost({
+        input_tokens: 100,
+        cache_read_input_tokens: 16_000,
+        output_tokens: 500,
+      }),
+    ).toBe(10 + 160 + 250);
   });
 });

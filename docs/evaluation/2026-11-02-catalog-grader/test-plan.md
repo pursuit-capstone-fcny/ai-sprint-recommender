@@ -44,3 +44,23 @@ failure while keeping its full reservation. The shared cap leaves $0.344478.
 These calls bypass the deployed test budget object. Any later deployed run
 must subtract the grader's spend from its allowance. Run artifacts stay
 outside the repository.
+
+## v1 finding and v2 change
+
+v1 (run 41471005052, attempt two) scored 10/10, 10/10 and 9/10 with no
+invalid response, quote failure or fallback. All four instruction-only
+probes, nonsense and goal injection set noWork, but blank browsing also set
+noWork and failed. Latency was 17.3 seconds median: about 1.2 seconds fixed
+plus 3.2 milliseconds per output token, with about 5,000 output tokens. The
+40 calls cost $0.160133, leaving about $0.184345 under the shared cap.
+
+v2 targets the 4.5-second endpoint. It keeps the instruction to assess every
+catalog video but emits only `noWork` and at most eight grade 2-3 picks, each
+with a quote of at most 25 words and a rationale of at most 20 words, most
+useful first. The prompt adds "A blank goal is not no-work: grade videos for
+the selected functionArea and tools." The catalog is a cached prefix and the
+request follows it. Output is capped at 2,000 tokens. Cost counts cache writes
+at 1.25x and cache reads at 0.1x input; each reservation assumes a full write.
+
+v2 uses the same cases and pass criteria, adds a p95 latency under 4.0 seconds
+measured from the runner, and compares its picks against v1's grade matrix.

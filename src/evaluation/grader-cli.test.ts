@@ -45,42 +45,53 @@ const setEnvironment = (allowanceMicrodollars: number) => {
   vi.stubEnv('GITHUB_RUN_ID', '123');
   vi.stubEnv('GITHUB_RUN_ATTEMPT', '2');
 };
-// Grades the first two catalog videos 3 with a verified quote; no-work goals abstain.
+// Picks the first two catalog videos as grade 3 with verified quotes; no-work
+// goals abstain. The first call writes the catalog cache and later calls read it.
 const provider = (failAt = Infinity) => {
   let calls = 0;
   return vi.fn<typeof fetch>(async (url, init) => {
     if (String(url).endsWith('/count_tokens'))
       return Response.json({ input_tokens: 20_000 });
     if (++calls >= failAt) return new Response(null, { status: 500 });
-    const data = JSON.parse(JSON.parse(String(init?.body)).messages[0].content);
+    const [catalog, intake] = JSON.parse(String(init?.body)).messages[0]
+      .content;
+    const rows = JSON.parse(catalog.text).catalog;
     const noWork =
       /no work task|catalog administrator|formatting test|Ignore every previous|zxqv/.test(
-        data.goal,
+        JSON.parse(intake.text).goal,
       );
-    const assessments = data.catalog.map(
-      (row: { position: number; description: string }) => ({
+    const picks = rows
+      .slice(0, 2)
+      .map((row: { position: number; description: string }) => ({
         position: row.position,
         rationale: 'Fixture.',
-        grade: row.position < 2 ? 3 : 0,
-        quote: row.position < 2 ? row.description.slice(0, 30) : null,
-        rank: row.position < 2 ? row.position + 1 : null,
-      }),
-    );
+        grade: 3,
+        quote: row.description.slice(0, 30),
+      }));
     return Response.json({
       stop_reason: 'end_turn',
       content: [
         {
           type: 'text',
-          text: JSON.stringify({
-            noWork,
-            assessments: noWork ? [] : assessments,
-          }),
+          text: JSON.stringify({ noWork, picks: noWork ? [] : picks }),
         },
       ],
-      usage: { input_tokens: 20_000, output_tokens: 4_000 },
+      usage: {
+        input_tokens: 100,
+        ...(calls === 1
+          ? { cache_creation_input_tokens: 19_900 }
+          : { cache_read_input_tokens: 19_900 }),
+        output_tokens: 400,
+      },
     });
   });
 };
+// First call: 100 x $0.10 + 19,900 x $0.125 + 400 x $0.50 per million, rounded up.
+const FIRST = 2_698;
+// Later calls read the cache: 100 x $0.10 + 19,900 x $0.01 + 400 x $0.50.
+const LATER = 409;
+// Reservation: (20,000 + 2,000) x $0.125 + 2,000 x $0.50 per million.
+const RESERVED = 3_750;
 const saved = () =>
   JSON.parse(readFileSync('build/evaluation/grader/cases.json', 'utf8'));
 
@@ -90,7 +101,7 @@ afterEach(() => {
 });
 
 describe('catalog grader run', () => {
-  it('runs thirty benchmark cases and ten controls once each with measured cost', async () => {
+  it('runs thirty benchmark cases and ten controls once each with cache-aware cost', async () => {
     setEnvironment(1_000_000);
     const fetcher = provider();
     vi.stubGlobal('fetch', fetcher);
@@ -104,7 +115,7 @@ describe('catalog grader run', () => {
     ).toHaveLength(10);
     // 40 generations plus 40 free token counts; no retries.
     expect(fetcher).toHaveBeenCalledTimes(80);
-    expect(state.spentMicrodollars).toBe(40 * 4_000);
+    expect(state.spentMicrodollars).toBe(FIRST + 39 * LATER);
     const control = (id: string) =>
       state.records.find((row: { id: string }) => row.id === id);
     expect(control('injection-empty-task')).toMatchObject({
@@ -119,16 +130,15 @@ describe('catalog grader run', () => {
     });
   });
   it('stops before a call whose full reservation exceeds the allowance', async () => {
-    // Each reservation is (22,000 x $0.10 + 10,000 x $0.50) / 1M = $0.0072.
-    // After one $0.004 call, the next $0.0072 reservation is $0.000001 short.
-    setEnvironment(4_000 + 7_200 - 1);
+    // After the first call, the next reservation is $0.000001 short.
+    setEnvironment(FIRST + RESERVED - 1);
     vi.stubGlobal('fetch', provider());
     await main();
     const state = saved();
     expect(
       state.records.map((row: { outcome: string }) => row.outcome),
     ).toEqual(['graded', 'budget-stop']);
-    expect(state.spentMicrodollars).toBe(4_000);
+    expect(state.spentMicrodollars).toBe(FIRST);
   });
   it('stops on a provider error and keeps its full reservation', async () => {
     setEnvironment(1_000_000);
@@ -138,6 +148,6 @@ describe('catalog grader run', () => {
     expect(
       state.records.map((row: { outcome: string }) => row.outcome),
     ).toEqual(['graded', 'provider-error']);
-    expect(state.spentMicrodollars).toBe(4_000 + 7_200);
+    expect(state.spentMicrodollars).toBe(FIRST + RESERVED);
   });
 });

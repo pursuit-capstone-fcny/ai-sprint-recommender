@@ -107,10 +107,12 @@ export async function main() {
     if (!counted.ok)
       throw new Error(`Token count failed with HTTP ${counted.status}.`);
     const inputTokens = (await counted.json()).input_tokens as number;
-    const reservation = graderCost(
-      inputTokens + SCHEMA_TOKEN_MARGIN,
-      GRADER_MAX_OUTPUT_TOKENS,
-    );
+    // Assume the whole input is a cache write, the most expensive case.
+    const reservation = graderCost({
+      input_tokens: 0,
+      cache_creation_input_tokens: inputTokens + SCHEMA_TOKEN_MARGIN,
+      output_tokens: GRADER_MAX_OUTPUT_TOKENS,
+    });
     if (spent + reservation > approval.allowanceMicrodollars) {
       records.push({ ...entry, outcome: 'budget-stop', reservation });
       save();
@@ -151,7 +153,7 @@ export async function main() {
       usage.input_tokens +
       (usage.cache_creation_input_tokens ?? 0) +
       (usage.cache_read_input_tokens ?? 0);
-    const cost = graderCost(measuredInput, usage.output_tokens);
+    const cost = graderCost(usage);
     spent += cost;
     const text =
       body.stop_reason === 'end_turn' &&
@@ -192,7 +194,9 @@ export async function main() {
       benchmark.profiles.find(
         (profile) =>
           profile.id ===
-          ('sourceProfileId' in entry ? entry.sourceProfileId : entry.id),
+          ('sourceProfileId' in entry
+            ? entry.sourceProfileId
+            : entry.id.replace(/^mixed-/, '')),
       ) ?? null;
     const displayed = selection.results.map((match) => match.item.youtubeId);
     records.push({
@@ -200,6 +204,7 @@ export async function main() {
       outcome: grades.status,
       latencyMs,
       inputTokens: measuredInput,
+      cacheReadTokens: usage.cache_read_input_tokens ?? 0,
       outputTokens: usage.output_tokens,
       costMicrodollars: cost,
       reservation,
@@ -230,7 +235,8 @@ function summarize(records: Record<string, unknown>[], spent: number) {
     displayedIds?: string[];
     score?: { passed: boolean } | null;
     gateFreeScore?: { passed: boolean } | null;
-    grades?: { quoteFailures?: number };
+    cacheReadTokens?: number;
+    grades?: { quoteFailures?: number; repeated?: number };
   };
   const rows = records as unknown as Row[];
   const lines = [
@@ -268,7 +274,7 @@ function summarize(records: Record<string, unknown>[], spent: number) {
     '',
     `Calls: ${latencies.length}. Stopped early: ${rows.some((row) => ['budget-stop', 'transport-failure', 'provider-error'].includes(row.outcome)) ? 'yes' : 'no'}.`,
     `Latency median/p95/max: ${at(latencies, 0.5)}/${at(latencies, 0.95)}/${latencies.at(-1)} ms. Output tokens median/max: ${at(output, 0.5)}/${output.at(-1)}.`,
-    `Quote failures (downgraded to grade 1): ${rows.reduce((sum, row) => sum + (row.grades?.quoteFailures ?? 0), 0)}.`,
+    `Quote failures (pick dropped): ${rows.reduce((sum, row) => sum + (row.grades?.quoteFailures ?? 0), 0)}. Repeated picks dropped: ${rows.reduce((sum, row) => sum + (row.grades?.repeated ?? 0), 0)}. Calls reading the cached catalog: ${rows.filter((row) => (row.cacheReadTokens ?? 0) > 0).length}.`,
     `Spend, including full reservations for unknown usage: $${(spent / 1e6).toFixed(6)}.`,
     '',
   );
