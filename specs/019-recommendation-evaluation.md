@@ -1,11 +1,23 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V57 failed three instruction-only controls; V58 adds one abstention rule and awaits paid validation. V56 remains the last validated candidate.
+- **Status:** V57 and V58 failed instruction-only controls. An offline catalog grader awaits its paid run. V56 remains the last validated candidate.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
+
+- Given the offline catalog grader, when a profile or control is graded, then
+  Haiku grades every one of the 89 catalog positions 0-3, or sets noWork. The
+  runner rejects a missing or repeated position, downgrades a grade 2-3 pick to
+  grade 1 when its quote is not in that description, and orders grade 3, then
+  2, then the model's rank, at most eight. Scores use the browser selector.
+
+- Given the grader's paid run, when each case starts, then reserve the counted
+  input tokens plus the full output limit and stop before a call that exceeds
+  the approved allowance. Make one call per case, no retries, and stop on any
+  provider failure while keeping its full reservation. No deadline applies;
+  the live endpoint and production stay unchanged.
 
 - Given full-catalog Haiku selection, when the test endpoint builds a request,
   then send one short generic system prompt with no benchmark-specific wording

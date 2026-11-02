@@ -1,0 +1,62 @@
+name: Grade catalog with Haiku
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: recommendation-evaluation
+  cancel-in-progress: false
+
+jobs:
+  grade:
+    if: >-
+      github.event.pull_request.number == 76 &&
+      github.event.pull_request.head.repo.full_name == github.repository &&
+      github.event.label.name == 'grade-catalog-test'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - name: Install and check without provider calls
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm typecheck
+          pnpm test
+      - name: Run one approved grading pass
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GRADER_EVALUATION_APPROVAL: ${{ vars.GRADER_EVALUATION_APPROVAL }}
+          GRADER_APPROVAL_FILE: ${{ runner.temp }}/grader-approval.json
+        run: |
+          node --input-type=module <<'JS'
+          import {writeFileSync} from 'node:fs';
+          if (!process.env.GRADER_EVALUATION_APPROVAL) throw new Error('Missing owner approval for this exact workflow attempt.');
+          writeFileSync(process.env.GRADER_APPROVAL_FILE, process.env.GRADER_EVALUATION_APPROVAL, {mode: 0o600});
+          JS
+          rm -rf build/evaluation/grader
+          node scripts/grade-catalog.mjs
+      - name: Save complete or partial evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: catalog-grades-${{ github.run_id }}-${{ github.run_attempt }}
+          path: build/evaluation/grader/
+          retention-days: 30
+          if-no-files-found: warn
+      - name: Summarize grading
+        if: always()
+        run: |
+          if [ -f build/evaluation/grader/summary.md ]; then
+            cat build/evaluation/grader/summary.md >> "$GITHUB_STEP_SUMMARY"
+          fi
