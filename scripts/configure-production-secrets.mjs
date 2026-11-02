@@ -11,25 +11,37 @@ if (
 )
   throw new Error('Production provider configuration is incomplete');
 
-const command = ['exec', 'wrangler', 'secret'];
+const command = ['node_modules/wrangler/bin/wrangler.js', 'secret'];
 const target = ['--config', 'wrangler.library.jsonc'];
+let stage = 'listing secret names';
 try {
   const existing = JSON.parse(
-    execFileSync('pnpm', [...command, 'list', ...target], {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    }),
+    execFileSync(
+      process.execPath,
+      [...command, 'list', '--format', 'json', ...target],
+      {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      },
+    ),
   );
   const secrets = { ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY };
   if (!existing.some(({ name }) => name === 'LLM_RATE_KEY'))
     secrets.LLM_RATE_KEY = randomBytes(32).toString('hex');
-  execFileSync('pnpm', [...command, 'bulk', ...target], {
+  stage = 'uploading server secrets';
+  execFileSync(process.execPath, [...command, 'bulk', ...target], {
     input: JSON.stringify(secrets),
     stdio: ['pipe', 'pipe', 'pipe'],
   });
   console.log('Production provider secrets configured.');
-} catch {
+} catch (error) {
   // Child-process errors can contain stdin. Never print the underlying error.
-  console.error('Production provider secret configuration failed.');
+  const failure =
+    error instanceof SyntaxError
+      ? 'invalid CLI JSON'
+      : `exit ${Number(error.status) || 'unknown'}`;
+  console.error(
+    `Production provider secret configuration failed while ${stage}: ${failure}.`,
+  );
   process.exit(1);
 }
