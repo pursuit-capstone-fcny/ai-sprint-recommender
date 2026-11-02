@@ -47,7 +47,7 @@ describe('browser recommendation outcomes', () => {
       reason: 'invalid-response',
     });
   });
-  it('preserves valid nonempty model order and the existing diversity requirement', () => {
+  it('preserves valid nonempty model order', () => {
     const state = select(success);
     expect(state.status).toBe('ready');
     if (state.status === 'unavailable')
@@ -80,16 +80,6 @@ describe('browser recommendation outcomes', () => {
       },
       'catalog-mismatch',
     ],
-    [
-      'one pick',
-      { ...success, youtubeIds: ['fx01GrntRpt'] },
-      'insufficient-results',
-    ],
-    [
-      'one primary task',
-      { ...success, youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls'] },
-      'insufficient-results',
-    ],
   ])('does not substitute cards for %s', (_, response, reason) => {
     expect(select(response)).toEqual({ status: 'unavailable', reason });
   });
@@ -106,15 +96,26 @@ describe('browser recommendation outcomes', () => {
       reason,
     });
   });
-  it('does not accept untagged videos as task diversity', () => {
-    expect(
-      selectRecommendationState(
-        catalog.map((item) => ({ ...item, tasks: [] })),
-        profile,
-        envelope.catalogVersion,
-        success,
-      ),
-    ).toEqual({ status: 'unavailable', reason: 'insufficient-results' });
+  it.each([
+    ['one pick', ['fx01GrntRpt']],
+    ['one primary task', ['fx04BdgtSht', 'fx03BdgtXls']],
+  ])('shows %s in model order; task tags only reorder', (_, youtubeIds) => {
+    const state = select({ ...success, youtubeIds });
+    expect(state.status).toBe('ready');
+    if (state.status === 'unavailable')
+      throw new Error('Expected ready results');
+    expect(state.selection.results.map(({ item }) => item.youtubeId)).toEqual(
+      youtubeIds,
+    );
+  });
+  it('keeps untagged picks instead of rejecting the answer', () => {
+    const state = selectRecommendationState(
+      catalog.map((item) => ({ ...item, tasks: [] })),
+      profile,
+      envelope.catalogVersion,
+      success,
+    );
+    expect(state.status).toBe('ready');
   });
   it('rejects a retired ID without returning a partial set', () => {
     expect(

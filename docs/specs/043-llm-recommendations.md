@@ -94,3 +94,22 @@ general catalog suggestions. Every card is labeled "Fallback video", and the
 original no-match or unavailable message remains visible. Nonempty lists are
 not filled, engine validation remains independent, and no extra provider call
 is made. See [acceptance criteria](no-match-fallbacks.md).
+
+### November 2 fast pick update
+
+This supersedes the V1 two-primary-task gate, prompt and 35-second timing
+sentences above. The no-match fallback update is unchanged.
+
+- AC-43.7 Fast catalog picks
+  - Given a nonblank Haiku submission
+  - When the endpoint asks Haiku
+  - Then `catalog-pick-evidence-v4` returns at most eight quoted picks within a
+    6.5-second server deadline inside a 7-second browser window, and the
+    notice says results can take up to 7 seconds. A timeout shows the
+    unavailable outcome with fallback videos; there is no paid retry
+- AC-43.8 Task tags reorder only
+  - Given valid Haiku picks
+  - When the page selects cards
+  - Then task tags may move a different-task pick into the first three but
+    never reject the answer. One pick or picks sharing one task still show as
+    AI results; zero picks or noWork follow the no-match fallback update

@@ -13,6 +13,15 @@ import { environment } from './test-helpers';
 import type { Budget } from './budget';
 
 const usage = { input_tokens: 21000, output_tokens: 7000 };
+const rowsOf = (catalog: ReturnType<typeof catalogFixture>) =>
+  catalog.items.map((item, position) => ({
+    position,
+    title: item.title,
+    description: item.description,
+    functionAreas: item.functionAreas,
+    tasks: item.tasks,
+    tools: item.tools,
+  }));
 const providerResponse = (value: unknown, stop = 'end_turn') =>
   Response.json({
     stop_reason: stop,
@@ -41,26 +50,25 @@ describe('V1 Haiku provider transport', () => {
     });
     expect(fetcher).toHaveBeenCalledTimes(1);
     const wire = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
-    expect(JSON.parse(wire.messages[0].content).catalog).toEqual(
-      catalogFixture().items,
+    expect(JSON.parse(wire.messages[0].content[0].text).catalog).toEqual(
+      rowsOf(catalogFixture()),
     );
     expect(wire).toMatchObject({
       model: 'claude-haiku-5-5',
-      max_tokens: 16384,
+      max_tokens: 2000,
       thinking: { type: 'disabled' },
       output_config: { effort: 'low' },
     });
     expect(JSON.stringify(wire)).not.toContain('fixture-only');
   });
-  it.each(['duplicate', 'invented evidence', 'missing row'])(
-    'preserves usage when %s rejects the complete assessment',
+  it.each(['an out-of-range position', 'an extra field', 'a missing decision'])(
+    'preserves usage when %s rejects the response',
     async (failure) => {
-      const value = assessmentFixture();
-      if (failure === 'duplicate')
-        value.assessments[88].youtubeId = value.assessments[0].youtubeId;
-      if (failure === 'invented evidence')
-        value.assessments[0].quote = 'Invented passage';
-      if (failure === 'missing row') value.assessments.pop();
+      const value: Record<string, unknown> = assessmentFixture();
+      if (failure === 'an out-of-range position')
+        value.picks = [{ ...assessmentFixture().picks[0], position: 89 }];
+      if (failure === 'an extra field') value.override = 'approved';
+      if (failure === 'a missing decision') delete value.noWork;
       const result = await catalogScoringProvider(
         'fixture-only',
         vi.fn(async () => providerResponse(value)),
@@ -103,16 +111,8 @@ describe('V1 Haiku provider transport', () => {
       expect(fetcher).toHaveBeenCalledTimes(1);
     }
   });
-  it('preserves an evidence-backed empty assessment without a rules substitute', async () => {
-    const value = assessmentFixture();
-    value.priorityOrder = [];
-    for (const r of value.assessments)
-      Object.assign(r, {
-        grade: 0,
-        stepId: null,
-        quote: '',
-        constraintChecks: [],
-      });
+  it('preserves an empty pick list without a rules substitute', async () => {
+    const value = { noWork: false, picks: [] };
     const result = await catalogScoringProvider(
       'fixture-only',
       vi.fn(async () => providerResponse(value)),
@@ -140,10 +140,7 @@ function endpointSetup() {
   const catalog = catalogFixture();
   catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(catalog)).digest('hex')}`;
   const input = { ...inputFixture(), catalogVersion: catalog.catalogVersion };
-  const assessment = {
-    ...assessmentFixture(),
-    catalogVersion: catalog.catalogVersion,
-  };
+  const assessment = assessmentFixture();
   const fetcher = vi.fn<typeof fetch>(async (url) => {
     const path = String(url);
     if (path === 'https://api.anthropic.com/v1/messages')
@@ -191,7 +188,7 @@ describe('V1 endpoint integration', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-score-evidence-v1',
+      promptVersion: 'catalog-pick-evidence-v4',
     });
     expect(s.budget.reserve).toHaveBeenCalledWith(
       expect.any(String),
@@ -206,9 +203,10 @@ describe('V1 endpoint integration', () => {
     expect(providerCalls).toHaveLength(1);
     expect(
       JSON.parse(
-        JSON.parse(String(providerCalls[0][1]?.body)).messages[0].content,
+        JSON.parse(String(providerCalls[0][1]?.body)).messages[0].content[0]
+          .text,
       ).catalog,
-    ).toEqual(s.catalog.items);
+    ).toEqual(rowsOf(s.catalog));
   });
   it.each([
     'disabled',
@@ -238,7 +236,7 @@ describe('V1 endpoint integration', () => {
       ),
     ).toHaveLength(0);
   });
-  it('has a bounded V1 server window inside the 35-second browser window', () => {
-    expect(SCORING_SERVER_DEADLINE_MS).toBe(34500);
+  it('has a 6.5-second server window inside the 7-second browser window', () => {
+    expect(SCORING_SERVER_DEADLINE_MS).toBe(6500);
   });
 });

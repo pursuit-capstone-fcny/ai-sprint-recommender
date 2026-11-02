@@ -178,8 +178,21 @@ describe('independent recommendation engines', () => {
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(screen.queryByText('No confident AI matches found.')).toBeNull();
   });
+  it('shows a single valid AI pick without fallback cards', async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({ ...success, youtubeIds: ['fx01GrntRpt'] }),
+    );
+    setup();
+    goal();
+    submit();
+    await waitFor(() =>
+      expect(screen.getAllByRole('listitem')).toHaveLength(1),
+    );
+    expect(screen.getByText('Suggested for your goal')).toBeTruthy();
+    expect(screen.queryByText('Fallback video')).toBeNull();
+    expect(screen.queryByText(/AI recommendations are unavailable/)).toBeNull();
+  });
   it.each([
-    [{ ...success, youtubeIds: ['fx01GrntRpt'] }, 'insufficient-results'],
     [
       { ...success, youtubeIds: ['fx04BdgtSht', 'fx04BdgtSht'] },
       'invalid-response',
