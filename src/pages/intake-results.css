@@ -359,6 +359,11 @@
   gap: 16px;
   margin: 12px 0 24px;
 }
+
+.fallback-explanation {
+  max-width: 68ch;
+  margin: 0 0 1.5rem;
+}
 .results-head h2 {
   font:
     46px/1.08 'Bebas Neue',

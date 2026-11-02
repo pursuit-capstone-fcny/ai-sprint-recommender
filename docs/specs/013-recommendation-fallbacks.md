@@ -69,7 +69,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Result-count policy update
 
-Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
-and Show-more requirements. Display at most eight matches; fill fewer than six
-with labeled fallback videos to six, subject to the eligible catalog size.
-The existing model validation gates remain separate from this display minimum.
+For the current engine-toggle flow, the November 2 user request in
+[the no-match fallback spec](no-match-fallbacks.md) supersedes the historical
+thin-list filling requirements above and in [#83](083-expanded-recommendations.md).
+Only zero-match submitted results receive up to six clearly labeled general
+fallback videos, subject to the eligible catalog size. Nonempty lists remain
+unchanged. Existing model validation gates remain separate from display policy.

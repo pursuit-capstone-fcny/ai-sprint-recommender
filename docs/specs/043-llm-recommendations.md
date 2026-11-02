@@ -35,11 +35,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-43.3 Card content
   - Given LLM picks
   - When cards render
-  - Then titles, links and descriptions come from the catalog. Reasons use verified tag matches or the neutral text "Suggested for your goal"; cross-area picks are labeled. Display at most eight validated picks with no Show more and no minimum count; do not add filler
+  - Then titles, links and descriptions come from the catalog. Reasons use verified tag matches or the neutral text "Suggested for your goal"; cross-area picks are labeled. Display at most eight validated picks with no Show more and no minimum count; do not fill nonempty match lists. Zero-match fallbacks follow the November 2 update below
 - AC-43.4 Independent outcomes
   - Given the selected engine returns no matches or fails
   - When the page chooses its result set
-  - Then a valid empty AI result shows no confident matches, while invalid output, disabled calls, provider errors and timeout show unavailable with no replacement cards. The user must explicitly select Deterministic to run #102. A deterministic task with no compatible videos stays empty
+  - Then preserve the no-confident-matches or unavailable outcome and show up to six clearly labeled general fallback videos, per [the no-match fallback spec](no-match-fallbacks.md). This does not run the other engine, retry the provider or turn fallback suggestions into matches
 - AC-43.5 Latest submission wins
   - Given changed inputs, another submission or an engine switch
   - When an earlier request finishes
@@ -47,7 +47,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-43.6 Disclosure and logging
   - Given the approved data policy from #8
   - When someone uses the form
-  - Then the notice explains that entered goals and selected options go to the approved provider and asks people to omit personal information. Raw goals stay out of URLs, storage and #16 logs. Usage events record `recommendationEngine` as `llm` or `rules`, a bounded outcome reason and versions, while preserving existing `mode` values and event deduplication. Unavailable attempts create no phantom search or impression events; valid abstentions may record zero results when test logging is enabled
+  - Then the notice explains that entered goals and selected options go to the approved provider and asks people to omit personal information. Raw goals stay out of URLs, storage and #16 logs. Usage events record `recommendationEngine` as `llm` or `rules`, a bounded outcome reason and versions, while preserving existing `mode` values and event deduplication. Actual fallback cards use local `rules` origin metadata and the bounded AI outcome reason; unavailable attempts without displayed cards create no phantom events
 
 ### Open questions
 
@@ -85,3 +85,12 @@ methods. The AI browser window is 35 seconds, with a 34.5-second V1 server deadl
 Deterministic matching has no provider wait. Historical candidates and recorded
 results remain on their archived branches; this integration makes no new
 quality claim and performs no paid evaluation.
+
+### November 2 no-match fallback update
+
+The user's subsequent request supersedes the empty/no-replacement presentation
+above: completed nonblank submissions with zero matches now show up to six
+general catalog suggestions. Every card is labeled "Fallback video", and the
+original no-match or unavailable message remains visible. Nonempty lists are
+not filled, engine validation remains independent, and no extra provider call
+is made. See [acceptance criteria](no-match-fallbacks.md).
