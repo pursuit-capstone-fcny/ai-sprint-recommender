@@ -2839,6 +2839,22 @@ describe('deterministic free-text recommendations', () => {
       ).toEqual([photo.youtubeId]);
     },
   );
+  it('AC-12.15 keeps additive not-only tools nonexclusive', () => {
+    const photo = lesson(
+      1,
+      ['Photo editing'],
+      'Make a dark photo brighter in Lightroom.',
+      ['Adobe Lightroom'],
+    );
+    const { run } = fixture([photo]);
+    expect(
+      ids(
+        run(
+          'Make a dark photo brighter using not only Lightroom but also Photoshop',
+        ),
+      ),
+    ).toEqual([photo.youtubeId]);
+  });
   it('AC-12.8 abstains when the required native application has no compatible lesson', () => {
     const photo = lesson(
       1,

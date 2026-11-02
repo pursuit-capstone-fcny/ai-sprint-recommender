@@ -108,6 +108,8 @@ export function interpretOperation(
   // Extend explicit tool-exclusion lists across commas, but stop incidental negatives
   // such as "claims we cannot support, with edits in Word" at the comma.
   for (let start = 0; start < toolWords.length; start++) {
+    // Additive "not only X but also Y" names permitted tools, not exclusions.
+    if (toolWords[start] === 'not' && toolWords[start + 1] === 'only') continue;
     if (
       !['not', 'no', 'without', 'avoid', 'exclude', 'excluding'].includes(
         toolWords[start],

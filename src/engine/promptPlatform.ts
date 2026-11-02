@@ -28,7 +28,7 @@ export function requiredPlatform(prompt: string) {
   const exclusive = [
     ...prompt.matchAll(
       new RegExp(
-        `\\b(?:in|using|with|use)\\s+${exclusiveName}\\s+only\\b`,
+        `\\b(?:in|using|with|use)\\s+(?!not\\s+only\\b)${exclusiveName}\\s+only\\b`,
         'gi',
       ),
     ),

@@ -59,6 +59,8 @@ it.each([
   ['using only Microsoft Excel because we own it', 'Microsoft Excel'],
   ['using only Fictional Writer rather than ChatGPT', 'Fictional Writer'],
   ['using only Fictional AI', 'Fictional AI'],
+  ['using not only Lightroom but also Photoshop', undefined],
+  ['with not only mailchimp but also ChatGPT', undefined],
 ] as const)(
   'AC-12.21: scopes an exclusive platform independently of the dictionary: %s',
   (suffix, expected) => {
@@ -82,6 +84,7 @@ it.each([
   'Draft a newsletter using only our notes',
   'Draft a newsletter with only supplied documents',
   'Draft a newsletter using only text',
+  'Draft a newsletter using not only ChatGPT but also Claude',
 ])(
   'AC-12.21: returns newsletter instruction for a general writing request: %s',
   (goal) => {
