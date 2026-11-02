@@ -31,7 +31,9 @@ client review or a new relevance evaluation.
   `catalog-score-evidence-v1`, the complete public catalog, and the existing
   strict response checks. A production-specific Durable Object enforces the
   $5 monthly and $1 daily caps, 10 global and 3 client requests per minute,
-  concurrency 2, 63,000 input tokens and 16,384 output tokens. No paid retry or
+  concurrency 2, 80,000 conservative input tokens and 16,384 output tokens. The
+  current complete-catalog request measures 68,667 under that input bound.
+  No paid retry or
   deterministic substitution is added. Diagnostics omit prompt/response bodies.
 
 ### AC-PROD-3: Deployment and rollback

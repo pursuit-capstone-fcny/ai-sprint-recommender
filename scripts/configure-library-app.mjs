@@ -37,7 +37,7 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
     LLM_APPROVALS_RECORDED: 'true',
     LLM_ENVIRONMENT: 'production',
     LLM_MODEL: 'claude-haiku-5-5',
-    LLM_MAX_INPUT_TOKENS: '63000',
+    LLM_MAX_INPUT_TOKENS: '80000',
     LLM_MAX_OUTPUT_TOKENS: '16384',
     LLM_REQUESTS_PER_MINUTE: '10',
     LLM_CLIENT_REQUESTS_PER_MINUTE: '3',
