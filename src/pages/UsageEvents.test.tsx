@@ -86,7 +86,7 @@ describe('browser usage events', () => {
     const { rerender } = render(view);
     await waitFor(() => expect(logged()).toHaveLength(4));
     expect(logged().every((event) => event.type === 'impression')).toBe(true);
-    expect(screen.getByText(/Your typed goal is not logged/)).toBeTruthy();
+    expect(screen.queryByText(/Test preview: we log/)).toBeNull();
     fireEvent.change(screen.getByLabelText('Your goal'), {
       target: { value: 'report writing plus private fixture words' },
     });

@@ -40,6 +40,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given logging approved under #8
   - When a visit starts
   - Then a random session ID lives only in page memory and ends on reload or close; stored events contain only schema fields, no raw goal, referrer, name, email or application-collected IP. The notice states what is collected and for how long
+  - Learner presentation update, November 2, 2026: Jason requested removing the test-preview usage notice in the brand redesign. [AC-BRAND-6](brand-kit-redesign.md#ac-brand-6-learner-copy) supersedes the notice-presentation requirement for the learner page. Collection and retention behavior are unchanged.
 - AC-16.5 Source tag
   - Given `src` is website, email, session, pilot or team
   - When an event is logged

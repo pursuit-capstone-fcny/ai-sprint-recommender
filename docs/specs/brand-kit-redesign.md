@@ -1,7 +1,7 @@
 # Spec: AI Sprint brand kit redesign
 
 - **Issue:** Design implementation requested by Jason, November 2, 2026
-- **PR:** Pending
+- **PR:** #111
 - **Status:** in review
 
 The approved HTML design and supplied AI Sprint brand kit define the visual
@@ -50,10 +50,19 @@ Deterministic / Haiku AI engine switch.
 - **Given** either recommendation engine
 - **When** the learner submits, clears, switches engines or plays a result
 - **Then** existing cancellation, accessible result focus/count announcements,
-  independent-engine behavior and privacy disclosures remain. AI requests send
+  independent-engine behavior and the AI provider disclosure remain. AI requests send
   the freeform goal with `functionArea: null` and `tools: []`; raw goals stay out
   of browser storage, URLs and usage events. Provider and collection enablement
   are unchanged.
+
+### AC-BRAND-6: Learner copy
+
+- **Given** the learner page
+- **When** its form and information sections render
+- **Then** the test-preview usage notice is absent. The How we pick videos text
+  ends after the explanation that Haiku AI assesses the complete catalog
+  independently. Provider availability stays in the AI-specific form disclosure.
+  Usage collection and retention behavior are unchanged.
 
 ## Validation
 

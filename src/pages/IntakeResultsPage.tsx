@@ -2,7 +2,6 @@ import sprintLogo from '../assets/ai-sprint-logo.png';
 import { useCatalog } from '../data/useCatalog';
 import { IntakeResults } from './IntakeResults';
 import { DiscoveryHero } from './DiscoveryHero';
-import { recommendationsEnabled } from '../recommendations/requestRecommendations';
 import { getUsageSession } from '../usage/usageSession';
 import { RequestForm } from '../requests/RequestForm';
 import './global.css';
@@ -12,10 +11,6 @@ export function IntakeResultsPage() {
   const catalog = useCatalog();
   const usageSession =
     catalog.status === 'ready' ? getUsageSession(catalog.source) : null;
-  const llmEnabled =
-    recommendationsEnabled() &&
-    catalog.status === 'ready' &&
-    catalog.source === 'remote';
 
   return (
     <>
@@ -102,9 +97,7 @@ export function IntakeResultsPage() {
                 Describe what you want to do, choose Deterministic or Haiku AI,
                 then select Find videos. Deterministic matching compares your
                 requested work and constraints with the catalog locally. Haiku
-                AI assesses the complete catalog independently. Neither engine
-                fills short lists or switches to the other engine automatically.
-                {!llmEnabled && ' AI calls are currently disabled.'}
+                AI assesses the complete catalog independently.
               </p>
             </section>
             <section className="info-panel" aria-labelledby="about-library">

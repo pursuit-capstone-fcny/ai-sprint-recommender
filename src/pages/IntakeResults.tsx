@@ -255,13 +255,6 @@ export function IntakeResults({
               {!llmEnabled && ' AI calls are disabled in this deployment.'}
             </p>
           )}
-          {usage && (
-            <p className="usage-notice">
-              Test preview: we log search tags, displayed videos, clicks, time
-              and source with a random ID for this page visit. Your typed goal
-              is not logged. Logs are kept for one day; cleanup runs hourly.
-            </p>
-          )}
           <div className="form-actions">
             <button type="submit" className="btn btn-primary">
               Find videos
