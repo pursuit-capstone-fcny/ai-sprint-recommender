@@ -177,6 +177,77 @@ describe('offline full-catalog scoring protocol', () => {
     expect(result.eligibleIds).toEqual(['scoring0000', 'scoring0001']);
   });
 
+  it('rejects a constraint check copied onto an independent step', () => {
+    const assessment = assessmentFixture();
+    assessment.workSteps.push({
+      id: 'w2',
+      requestQuote: 'draft a report',
+      label: 'Draft report',
+    });
+    assessment.hardConstraints = [
+      { id: 'c1', requestQuote: 'using the approved editor', scope: 'w2' },
+    ];
+    assessment.assessments[0].constraintChecks = [
+      {
+        constraintId: 'c1',
+        status: 'satisfied',
+        sourceField: 'description',
+        quote: 'Check records before drafting a report.',
+      },
+    ];
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete(assessment);
+    expect(result.state).toEqual({
+      status: 'unavailable',
+      reason: 'invalid-response',
+    });
+    expect(result.validationFailure).toBe('constraint-evidence');
+  });
+
+  it('rejects a tool inferred into an empty metadata field even on a blocked candidate', () => {
+    const catalog = catalogFixture();
+    catalog.items[0].tools = [];
+    const assessment = assessmentFixture();
+    assessment.hardConstraints = [
+      { id: 'c1', requestQuote: 'using the approved editor', scope: 'all' },
+    ];
+    assessment.assessments[0].constraintChecks = [
+      {
+        constraintId: 'c1',
+        status: 'violated',
+        sourceField: 'tools',
+        quote: 'Fixture spreadsheet',
+      },
+    ];
+    assessment.assessments[1].constraintChecks = [
+      {
+        constraintId: 'c1',
+        status: 'satisfied',
+        sourceField: 'tools',
+        quote: 'Fixture editor',
+      },
+    ];
+    assessment.priorityOrder = ['scoring0001'];
+    expect(
+      prepareCatalogScoring(inputFixture(), catalog).complete(assessment)
+        .validationFailure,
+    ).toBe('constraint-evidence');
+    assessment.assessments[0].constraintChecks = [
+      { constraintId: 'c1', status: 'unknown', sourceField: null, quote: '' },
+    ];
+    const unknown = prepareCatalogScoring(inputFixture(), catalog).complete(
+      assessment,
+    );
+    expect(unknown.validationFailure).toBeNull();
+    expect(unknown.eligibleIds).toEqual(['scoring0001']);
+    expect(unknown.state).toEqual({
+      status: 'unavailable',
+      reason: 'insufficient-results',
+    });
+  });
+
   it.each(['unknown', 'violated'] as const)(
     'excludes useful-rated videos when a global constraint is %s without filling empty slots',
     (status) => {
