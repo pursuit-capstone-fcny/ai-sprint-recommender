@@ -41,6 +41,12 @@ it.each([
   'Draft a newsletter for donors',
   'Write a weekly newsletter',
   'Draft a newsletter in English only',
+  'Create a newsletter',
+  'Compose a newsletter',
+  'Create a newsletter banner and draft a newsletter for donors',
+  'Draft a newsletter, with a friendly tone',
+  'Draft a newsletter please',
+  'Draft a newsletter quickly',
 ])(
   'AC-12.21: returns newsletter instruction for a general writing request: %s',
   (goal) => {
@@ -85,6 +91,13 @@ it.each([
 
 it.each([
   'Create an image for a newsletter',
+  'Create a newsletter image',
+  'Create a newsletter banner',
+  'Create a newsletter summary',
+  'Write a newsletter banner',
+  'Draft a newsletter summary',
+  'Create a newsletter cover image',
+  'Compose a newsletter logo',
   'Summarize a newsletter',
   'Create a newsletter signup form',
   'Do not draft a newsletter. Repair a bicycle tire instead.',
