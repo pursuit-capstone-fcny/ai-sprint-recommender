@@ -1,7 +1,7 @@
 import { languageTokens, promptWords } from './promptLanguage';
 import { promptPolarity } from './promptPolarity';
 
-/** A request for an application's own controls requires that platform, even outside the dictionary. */
+/** Native controls or an exclusive named application require that platform, even outside the dictionary. */
 export function requiredPlatform(prompt: string) {
   const name = '([A-Z][A-Za-z0-9-]*(?:\\s+[A-Z][A-Za-z0-9-]*)*)';
   const positive = promptPolarity(promptWords(prompt)).positiveWords.join(' ');
@@ -20,6 +20,40 @@ export function requiredPlatform(prompt: string) {
       ),
     ),
   ];
+  const quantityOrDuration =
+    'a|an|the|one|two|three|four|five|six|seven|eight|nine|ten|few|several|some|minutes?|hours?|days?|weeks?|months?|years?';
+  const connector =
+    'only|for|about|on|from|with|using|in|that|which|and|to|but|as|because|so|at|by|without|within|while|during|before|after|through|until|since|per|rather|instead|please|quickly|today';
+  const exclusiveName = `((?!(?:${quantityOrDuration})\\b)[a-z][a-z0-9-]*(?:\\s+(?!(?:${connector})\\b)[a-z][a-z0-9-]*)*)`;
+  const exclusive = [
+    ...prompt.matchAll(
+      new RegExp(
+        `\\b(?:in|using|with|use)\\s+(?!not\\s+only\\b)${exclusiveName}\\s+only\\b`,
+        'gi',
+      ),
+    ),
+    ...prompt.matchAll(
+      new RegExp(
+        `\\b(?:in|using|with|use)\\s+only\\s+${exclusiveName}\\b`,
+        'gi',
+      ),
+    ),
+  ];
+  matches.push(
+    ...exclusive.filter(
+      (match) =>
+        !/^AI$/i.test(match[1]) &&
+        !/\b(?:English|Spanish|French|Mandarin|German|Arabic)\s*$/i.test(
+          match[1],
+        ) &&
+        // Source material and output style are not application names. Preserve
+        // vendor-qualified products such as Apple Notes and Microsoft Word.
+        (/^(?:Microsoft|Google|Apple|Adobe)\s+/i.test(match[1]) ||
+          !/\b(?:information|data|facts?|text|content|materials?|documents?|notes?|files?|resources?|sentences?|paragraphs?|words|language|tone)\s*$/i.test(
+            match[1],
+          )),
+    ),
+  );
   const app = /\b(?:built[ -]in\s+)?([A-Z][a-zA-Z]+)\s+app\b/.exec(prompt);
   if (
     app &&

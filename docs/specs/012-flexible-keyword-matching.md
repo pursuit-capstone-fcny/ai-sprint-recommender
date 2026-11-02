@@ -123,6 +123,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When selecting transferable instruction
   - Then admit only the declared component's positive conditions and teaching evidence, keep the primary method first and apply shared compatibility checks. Questions described as unanswered or refused-access test cases do not negate a following referral or citation instruction; explicit method exclusions remain active. Concrete peer-group safety boundaries can use policy instruction without automatically adding a general risk discussion.
 
+- AC-12.21 General newsletter writing
+  - Given a catalog video with instructional evidence for newsletter writing
+  - When a user asks to draft or write a newsletter, including one for donors
+  - Then recognize the writing operation without requiring adult-learner or reading-level context. Keep the more specific adaptation operation when requested, preserve published task labels, and apply the evidence, tool, capability and exclusion checks. Abstain on unverified exclusive-tool or offline requirements. Newsletter mentions in image, summary or signup-form requests do not imply newsletter writing; never fill the result list with unrelated videos.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

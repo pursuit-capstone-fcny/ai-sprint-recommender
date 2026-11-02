@@ -71,7 +71,7 @@ export function recommendVideos(
     catalog,
     options,
   );
-  if (intent.operation?.id === 'catalog-task' && current.unsupportedOnlyTool)
+  if (intent.operation?.requireToolOnlyProof && current.unsupportedOnlyTool)
     return {
       interpretation: intent.interpretation,
       warnings: [

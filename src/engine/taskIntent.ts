@@ -37,6 +37,10 @@ export interface OperationRule {
   outputs: string[];
   candidates: CandidateRequirement[];
   explanatory?: boolean;
+  /** Flat tool tags cannot prove an exclusive-tool workflow. */
+  requireToolOnlyProof?: boolean;
+  /** A matched phrase must end at a clause boundary or one of these connector words. */
+  phraseContinuations?: string[];
   precedence?: number;
   /** Suppress a more generic operation only when this complete rule also matches. */
   supersedes?: string[];
@@ -45,9 +49,20 @@ export interface OperationRule {
   preferDetectedSource?: boolean;
   outputWhen?: Record<string, string[]>;
 }
-export function containsPhrase(words: readonly string[], phrase: string) {
+export function containsPhrase(
+  words: readonly string[],
+  phrase: string,
+  continuations?: readonly string[],
+) {
   const parts = languageTokens(phrase);
-  return words.some((_, i) => parts.every((part, j) => words[i + j] === part));
+  return words.some(
+    (_, i) =>
+      parts.every((part, j) => words[i + j] === part) &&
+      (!continuations ||
+        !words[i + parts.length] ||
+        ['\u0000', '\u0001'].includes(words[i + parts.length]) ||
+        continuations.includes(words[i + parts.length])),
+  );
 }
 
 /** An operation needs evidence from every condition group, not a single topic noun. */
@@ -73,7 +88,11 @@ export function interpretOperation(
   const has = (phrase: string) => containsPhrase(positive, phrase);
   const matched = operationRules.filter(
     (rule) =>
-      rule.when.every((group) => group.some(has)) && !rule.unless?.some(has),
+      rule.when.every((group) =>
+        group.some((phrase) =>
+          containsPhrase(positive, phrase, rule.phraseContinuations),
+        ),
+      ) && !rule.unless?.some(has),
   );
   const superseded = new Set(matched.flatMap((rule) => rule.supersedes ?? []));
   const recognized = matched
@@ -89,6 +108,8 @@ export function interpretOperation(
   // Extend explicit tool-exclusion lists across commas, but stop incidental negatives
   // such as "claims we cannot support, with edits in Word" at the comma.
   for (let start = 0; start < toolWords.length; start++) {
+    // Additive "not only X but also Y" names permitted tools, not exclusions.
+    if (toolWords[start] === 'not' && toolWords[start + 1] === 'only') continue;
     if (
       !['not', 'no', 'without', 'avoid', 'exclude', 'excluding'].includes(
         toolWords[start],
@@ -201,6 +222,7 @@ export function interpretOperation(
     (declared.length
       ? {
           id: 'catalog-task',
+          requireToolOnlyProof: true,
           when: [],
           tasks: declared,
           source:
