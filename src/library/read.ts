@@ -35,7 +35,8 @@ export async function readPublishedManifest(
     signal,
     credentials: 'omit',
     referrerPolicy: 'no-referrer',
-    redirect: 'error',
+    // Workers supports manual/follow only. A redirect is rejected by !ok below.
+    redirect: 'manual',
     cache: 'no-store',
   });
   if (
@@ -90,7 +91,7 @@ export async function readPublishedCatalog(options: {
       signal,
       credentials: 'omit',
       referrerPolicy: 'no-referrer',
-      redirect: 'error',
+      redirect: 'manual',
       // Omit the field for immutable snapshots. Workers rejects explicit
       // `default`; the browser and Worker can both use their normal caching.
       ...(!immutable ? { cache: 'no-store' as const } : {}),

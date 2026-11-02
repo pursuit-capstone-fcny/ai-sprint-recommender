@@ -40,7 +40,8 @@ export function catalogScoringProvider(
     const response = await fetcher('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       signal,
-      redirect: 'error',
+      // Reject redirects via the non-OK response check; Workers has no error mode.
+      redirect: 'manual',
       headers: {
         'content-type': 'application/json',
         'anthropic-version': '2023-06-01',
