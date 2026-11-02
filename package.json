@@ -19,7 +19,8 @@
     "prepare": "husky",
     "build:apps-script:test": "node scripts/build-apps-script.mjs --test",
     "check:catalog": "node scripts/check-catalog.mjs",
-    "evaluate": "node scripts/evaluate-recommendations.mjs"
+    "evaluate": "node scripts/evaluate-recommendations.mjs",
+    "score:offline": "node scripts/score-catalog-offline.mjs"
   },
   "dependencies": {
     "react": "^19.3.1",
