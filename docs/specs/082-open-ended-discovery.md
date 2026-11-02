@@ -61,6 +61,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - [x] Implementation direction from Jason on November 2, 2026: remove function-area and tool selectors. This records the implementation request, not a claim of separate Ali/Eliot sign-off.
 - [ ] Approve task, role and mission-based example prompts.
 
+- AC-82.6 Real deterministic examples
+  - Given AI calls are disabled and the real deterministic selection path
+  - When a learner submits the exact placeholder, "Copilot" or a natural tool inquiry
+  - Then relevant catalog items appear without a provider request or generic fallback substitution. Regression tests must submit through the page and cannot mock the matcher or provider response to prove deterministic discovery.
+
 ### Evidence required
 
 - Test: submit without selectors, blank inputs, maximum length, Enter/button equivalence and no pre-submit requests.

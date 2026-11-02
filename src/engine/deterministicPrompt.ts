@@ -10,6 +10,7 @@ import { learningFormats } from './promptConfig/learningFormats';
 import { instructions } from './promptConfig/instructions';
 import { interpretOperation } from './taskIntent';
 import { compatibleCandidates } from './taskCompatibility';
+import { discoveryCandidates } from './discovery';
 
 export const defaultPromptOptions: PromptOptions = {
   language,
@@ -71,7 +72,10 @@ export function recommendVideos(
     catalog,
     options,
   );
-  if (intent.operation?.requireToolOnlyProof && current.unsupportedOnlyTool)
+  if (
+    (!intent.operation || intent.operation.requireToolOnlyProof) &&
+    current.unsupportedOnlyTool
+  )
     return {
       interpretation: intent.interpretation,
       warnings: [
@@ -79,7 +83,9 @@ export function recommendVideos(
       ],
       recommendations: [],
     };
-  const compatible = compatibleCandidates(catalog, intent, options);
+  const compatible = intent.operation
+    ? compatibleCandidates(catalog, intent, options)
+    : discoveryCandidates(catalog, intent, options);
   return {
     interpretation: intent.interpretation,
     warnings: compatible.length
@@ -93,7 +99,7 @@ export function recommendVideos(
         item: row.item,
         rank: index + 1,
         reason: row.reason,
-        origin: 'operation',
+        origin: intent.operation ? 'operation' : 'discovery',
       })),
   };
 }

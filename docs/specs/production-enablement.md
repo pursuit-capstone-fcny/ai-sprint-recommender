@@ -52,3 +52,12 @@ client review or a new relevance evaluation.
 - **Then** screenshots record the prompts and actual outputs, and accepted
   collector receipts and a private dashboard read establish analytics delivery.
   An error or abstention is reported as such rather than described as success.
+
+### AC-PROD-5: Recommendation recovery
+
+- **Given** Jason's November 2 request to repair both live engines
+- **When** the tested recovery branch is deployed with `LLM_PRODUCTION_ENABLED=true`
+- **Then** the exact intake placeholder and a broad "Copilot" query produce
+  actual matches through each selected engine on production. Record the deployed
+  commit, build/runtime enablement and observed outcomes. Keep the existing
+  budget, secret storage, usage configuration and no-retry policy.
