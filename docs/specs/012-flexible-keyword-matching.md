@@ -128,6 +128,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When a user asks to draft or write a newsletter, including one for donors
   - Then recognize the writing operation without requiring adult-learner or reading-level context. Keep the more specific adaptation operation when requested, preserve published task labels, and apply the evidence, tool, capability and exclusion checks. Abstain on unverified exclusive-tool or offline requirements. Newsletter mentions in image, summary or signup-form requests do not imply newsletter writing; never fill the result list with unrelated videos.
 
+- AC-12.22 General presentation creation
+  - Given catalog instruction for creating presentations
+  - When a user asks to create a slide deck, build slides or draft a presentation, including for fundraising
+  - Then recognize presentation creation without requiring the canonical task name or a supplied document. Retain more specific source-conversion routes, explicit source compatibility, published task labels and shared instruction, tool, capability and exclusion checks. Image, summary, logo and review requests do not imply presentation creation; do not fill lists with unrelated videos.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.
