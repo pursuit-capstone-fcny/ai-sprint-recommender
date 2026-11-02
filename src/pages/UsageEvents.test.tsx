@@ -78,7 +78,7 @@ describe('browser usage events', () => {
       <StrictMode>
         <IntakeResults
           catalog={catalog}
-          availableFunctionAreas={publicCatalog.functionAreas}
+
           usage={usage}
         />
       </StrictMode>
@@ -86,19 +86,9 @@ describe('browser usage events', () => {
     const { rerender } = render(view);
     await waitFor(() => expect(logged()).toHaveLength(4));
     expect(logged().every((event) => event.type === 'impression')).toBe(true);
-    expect(screen.getByText(/Your typed goal is not logged/)).toBeTruthy();
-    fireEvent.click(screen.getByText(/Refine by function area or tool/));
-    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-      target: { value: 'Operations' },
-    });
-    fireEvent.change(
-      screen.getByLabelText('What do you want to learn or do?'),
-      {
-        target: { value: 'report writing plus private fixture words' },
-      },
-    );
-    fireEvent.change(screen.getByLabelText('Tool (optional)'), {
-      target: { value: 'ChatGPT' },
+    expect(screen.queryByText(/Test preview: we log/)).toBeNull();
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing plus private fixture words' },
     });
     expect(logged()).toHaveLength(4);
     submit();
@@ -107,8 +97,8 @@ describe('browser usage events', () => {
     expect(search).toMatchObject({
       type: 'search',
       tasks: ['report writing'],
-      tools: ['ChatGPT'],
-      functionArea: 'Operations',
+      tools: [],
+      functionArea: null,
       resultCount: 4,
       strongMatchCount: 4,
       recommendationEngine: 'rules',
@@ -126,12 +116,9 @@ describe('browser usage events', () => {
     ).toBe(true);
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     rerender(view);
-    fireEvent.change(
-      screen.getByLabelText('What do you want to learn or do?'),
-      {
-        target: { value: 'unsubmitted edit' },
-      },
-    );
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'unsubmitted edit' },
+    });
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
     );
@@ -182,14 +169,10 @@ describe('browser usage events', () => {
     render(
       <IntakeResults
         catalog={catalog}
-        availableFunctionAreas={publicCatalog.functionAreas}
+
         usage={{ session: session(), catalog: publicCatalog }}
       />,
     );
-    fireEvent.click(screen.getByText(/Refine by function area or tool/));
-    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-      target: { value: 'Operations' },
-    });
     submit();
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     fireEvent.click(

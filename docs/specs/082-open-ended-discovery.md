@@ -58,7 +58,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Open questions
 
-- [ ] Should function and tool selectors remain as optional refinements, or be removed? Record Ali and Eliot’s decision.
+- [x] Implementation direction from Jason on November 2, 2026: remove function-area and tool selectors. This records the implementation request, not a claim of separate Ali/Eliot sign-off.
 - [ ] Approve task, role and mission-based example prompts.
 
 ### Evidence required
@@ -105,3 +105,14 @@ and `git diff --check`. A fictional-catalog browser check verified Enter
 submission and result focus on desktop, example selection, and keyboard
 expansion and selection of refinements at a 390-pixel mobile viewport, with no
 horizontal overflow. Cloudflare preview validation has not been performed.
+
+### November 2, 2026 brand redesign
+
+The approved design replaces the provisional collapsed refinements with one
+freeform textarea and removes the example-fill buttons. The existing engine
+switch remains by Jason's explicit instruction. Enter submits the form;
+Shift+Enter adds a line. The earlier optional-selector implementation notes above
+are historical. See [the redesign criteria](brand-kit-redesign.md) for the current
+layout and [the runtime](../recommendation-runtime.md#text-first-discovery) for
+current request behavior. Independent matching, cancellation, privacy and result
+eligibility policies are unchanged. Client validation gates remain separate.

@@ -1,10 +1,4 @@
-import {
-  cleanup,
-  fireEvent,
-  render,
-  screen,
-  within,
-} from '@testing-library/react';
+import { cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import fixture from '../../fixtures/public-catalog.json';
 import { IntakeResultsPage } from './IntakeResultsPage';
@@ -38,32 +32,30 @@ describe('catalog page integration', () => {
     expect(await screen.findByText('No videos available')).toBeTruthy();
     expect(screen.queryByRole('alert')).toBeNull();
     fireEvent.click(screen.getByRole('button', { name: 'Refresh catalog' }));
-    expect(
-      await screen.findByLabelText('Function area (optional)'),
-    ).toBeTruthy();
+    expect(await screen.findByLabelText('Your goal')).toBeTruthy();
     expect(fetchMock).toHaveBeenCalledTimes(3);
   });
 
-  it('uses served dictionary choices, including a tool without any videos', async () => {
+  it('renders the branded text-first page with real catalog cards and no hero video placeholder', async () => {
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue({ ok: true, json: async () => fixture }),
     );
     render(<IntakeResultsPage />);
-    const select = await screen.findByLabelText('Function area (optional)');
+    const goal = await screen.findByLabelText('Your goal');
+    expect(goal.tagName).toBe('TEXTAREA');
+    expect(screen.queryAllByRole('combobox')).toHaveLength(0);
+    expect(screen.getByRole('radio', { name: 'Deterministic' })).toBeTruthy();
+    expect(screen.getByRole('radio', { name: 'Haiku AI' })).toBeTruthy();
     expect(
-      [...select.querySelectorAll('option')].map((option) => option.value),
-    ).toEqual(['', ...fixture.functionAreas]);
-    expect(fixture.items.some((item) => item.tools.includes('Claude'))).toBe(
-      false,
-    );
-    fireEvent.click(
-      screen.getByText('Refine by function area or tool (optional)'),
-    );
-    const toolSelect = screen.getByLabelText('Tool (optional)');
-    expect(
-      within(toolSelect).getByRole('option', { name: 'Claude' }),
+      screen.getByRole('heading', { name: 'See AI at work in nonprofits.' }),
     ).toBeTruthy();
+    expect(
+      document.querySelector(
+        '.inspiration button, .inspiration iframe, .inspiration video',
+      ),
+    ).toBeNull();
+    expect(screen.queryByText(/placeholder videos|design mock/i)).toBeNull();
     expect(
       screen.getByText(`${fixture.items.length} videos loaded`),
     ).toBeTruthy();

@@ -12,7 +12,7 @@ describe('App', () => {
     );
     expect(
       screen.getByRole('heading', {
-        name: /find the right ai video for your work/i,
+        name: /what would you like to do with ai/i,
       }),
     ).toBeTruthy();
   });

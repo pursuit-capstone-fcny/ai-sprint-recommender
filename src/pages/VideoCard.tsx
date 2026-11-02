@@ -100,6 +100,11 @@ export function VideoCard({
       </div>
 
       <div className="card-body">
+        <h3>{item.title}</h3>
+        {item.durationSeconds === undefined && (
+          <span className="sr-only">Length unavailable</span>
+        )}
+        <p className="description">{item.description}</p>
         {matchType === 'cross-area' ? (
           <span className="tag tag-fallback">From another area</span>
         ) : matchType === 'fallback' ? (
@@ -113,11 +118,6 @@ export function VideoCard({
         ) : (
           firstTool && <span className="tag">{firstTool}</span>
         )}
-        <h3>{item.title}</h3>
-        {item.durationSeconds === undefined && (
-          <span className="sr-only">Length unavailable</span>
-        )}
-        <p className="description">{item.description}</p>
         <p className="reason">
           <span className="reason-label">Why this video</span>
           {reason}
