@@ -42,17 +42,16 @@ request and `complete(decodedAssessment)`. Completion exposes the validated
 validation-failure code. Invalid responses are rejected as a whole.
 
 The request uses `claude-haiku-5-5`, low effort, thinking disabled, and prompt
-`catalog-score-evidence-v2`. Its JSON schema requires `catalogVersion`,
+`catalog-score-evidence-v1`. Its JSON schema requires `catalogVersion`,
 `goalStatus`, `workSteps`, `hardConstraints`, `assessments` and `priorityOrder`.
 The request file records the exact system prompt and schema. Local validation
 adds cardinality, reference, quote-provenance and ordering checks beyond the
 provider's structural schema.
 
-V2 compares taught input/operation/output across both accepted and rejected
-items, rather than using example topics to judge transfer. It requests shorter
-rationales and explicit per-step constraint bookkeeping. Response schema,
-evidence validation, ranking, task-diversity gate and fallback policy are
-unchanged. V1 source and results remain preserved in the separate sample study.
+The default remains V1. A V2 instruction experiment is preserved in commit
+`7a3b776f518d4b8ecae9632a8f74c632cd353efb`; it was not promoted. Response
+schema, evidence validation, ranking, task-diversity gate and fallback policy
+remain unchanged. Existing candidate source and results stay preserved.
 
 Every item includes the public title, description, tags, date, duration, status
 and start-here field. Canonical dictionaries validate input tags but are not
