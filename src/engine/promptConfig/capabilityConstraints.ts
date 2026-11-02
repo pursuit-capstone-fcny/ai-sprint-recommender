@@ -6,6 +6,7 @@ export const capabilityConstraints: readonly CapabilityConstraint[] = [
     when: [
       [
         'offline only',
+        'works offline',
         'network disconnected',
         'without a network',
         'no network',

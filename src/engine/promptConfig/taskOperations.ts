@@ -58,6 +58,41 @@ export const taskOperations: readonly OperationRule[] = [
     ],
   ),
   r(
+    'newsletter-drafting',
+    [
+      ['draft', 'write', 'create', 'compose'].flatMap((action) =>
+        [
+          'a newsletter',
+          'the newsletter',
+          'a weekly newsletter',
+          'a donor newsletter',
+        ].map((object) => `${action} ${object}`),
+      ),
+    ],
+    ['Newsletter writing'],
+    'context',
+    ['document'],
+    [c(['Newsletter writing'])],
+    {
+      requireToolOnlyProof: true,
+      phraseContinuations: [
+        'for',
+        'about',
+        'on',
+        'from',
+        'with',
+        'using',
+        'in',
+        'that',
+        'which',
+        'and',
+        'to',
+        'please',
+        'quickly',
+      ],
+    },
+  ),
+  r(
     'client-correspondence',
     [
       ['landlord', 'tenant'],
