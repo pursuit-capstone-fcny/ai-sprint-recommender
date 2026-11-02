@@ -133,6 +133,12 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When a user asks to create a slide deck, build slides or draft a presentation, including for fundraising
   - Then recognize presentation creation without requiring the canonical task name or a supplied document. Retain more specific source-conversion routes, explicit source compatibility, published task labels and shared instruction, tool, capability and exclusion checks. Tool exclusions also honor affirmative public metadata mentions and declared aliases when tags are missing. Image, summary, logo and review requests do not imply presentation creation; do not fill lists with unrelated videos.
 
+- AC-12.23 Broad catalog discovery
+  - Given a tool-only inquiry such as "Copilot" or a broad role/topic description such as the intake placeholder
+  - When no specific task or source/output workflow is recognized
+  - Then discover active distinct catalog items through canonical tool tags or meaningful title/task topic anchors, retain instruction and exclusion checks, and explain the result as browsing or a related topic. Never rescue a rejected specific operation, exclusive-tool request or unsupported capability through broad discovery, and never fill a nonempty set with unrelated items.
+  - Recognize broad questions such as "What can I create with Copilot?" and "Tell me more about Copilot" through affirmative inquiry structure. An unknown action such as deleting volunteer records or booking volunteer travel is not evidence of a broad discovery request.
+
 ### Open questions
 
 - [ ] Confirm a short, tested stop-word list and phrase precedence with #7; tied fuzzy tool matches should remain unmapped rather than choose arbitrarily.

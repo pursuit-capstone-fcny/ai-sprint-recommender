@@ -218,6 +218,8 @@ describe('independent recommendation engines', () => {
       await screen.findByText(/AI recommendations are unavailable/);
       expect(screen.getAllByRole('listitem')).toHaveLength(6);
       expect(screen.getAllByText('Fallback video')).toHaveLength(6);
+      // Delivery starts in an effect after the fallback cards render.
+      await waitFor(() => expect(send).toHaveBeenCalledTimes(7));
       const events = send.mock.calls.map(([e]) => UsageEventSchema.parse(e));
       expect(events.filter((e) => e.type === 'search')).toHaveLength(1);
       expect(events.filter((e) => e.type === 'impression')).toHaveLength(6);

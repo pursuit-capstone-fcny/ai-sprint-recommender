@@ -37,6 +37,40 @@ afterEach(() => {
 });
 
 describe('V1 Haiku provider transport', () => {
+  it.each([
+    'Copilot',
+    'For example, I coordinate volunteers and need help planning outreach.',
+  ])(
+    'AC-PROD-5: sends broad discovery goals with an explicit discovery policy: %s',
+    async (goal) => {
+      const fetcher = vi.fn<typeof fetch>(async () =>
+        providerResponse(assessmentFixture()),
+      );
+      const result = await catalogScoringProvider('fixture-only', fetcher)(
+        scoringBody({ ...inputFixture(), goal }, catalogFixture()),
+        new AbortController().signal,
+      );
+      const wire = JSON.parse(String(fetcher.mock.calls[0][1]?.body));
+      expect(wire.system).toContain(
+        'A tool-only inquiry is a valid discovery goal',
+      );
+      expect(wire.system).toContain(
+        'A role, mission or topic description is also a valid discovery goal',
+      );
+      expect(wire.system).toContain(
+        'do not require a concrete task for discovery',
+      );
+      expect(wire.system).toContain('Do not pad broad discovery');
+      expect(JSON.parse(wire.messages[0].content[1].text).goal).toBe(goal);
+      expect(JSON.parse(wire.messages[0].content[0].text).catalog).toHaveLength(
+        89,
+      );
+      expect(result.value).toEqual({
+        youtubeIds: ['scoring0000', 'scoring0001'],
+      });
+      expect(fetcher).toHaveBeenCalledTimes(1);
+    },
+  );
   it('sends the complete prepared V1 request once and returns only validated IDs', async () => {
     const body = scoringBody(inputFixture(), catalogFixture());
     const fetcher = vi.fn<typeof fetch>(async () =>
@@ -115,7 +149,7 @@ describe('V1 Haiku provider transport', () => {
     }
   });
   it('preserves an empty pick list without a rules substitute', async () => {
-    const value = { noWork: false, picks: [] };
+    const value = { noWork: false, goalType: 'task', picks: [] };
     const result = await catalogScoringProvider(
       'fixture-only',
       vi.fn(async () => providerResponse(value)),
@@ -191,7 +225,7 @@ describe('V1 endpoint integration', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v4',
+      promptVersion: 'catalog-pick-evidence-v6',
     });
     expect(s.budget.reserve).toHaveBeenCalledWith(
       expect.any(String),
