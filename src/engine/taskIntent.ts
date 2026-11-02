@@ -37,6 +37,8 @@ export interface OperationRule {
   outputs: string[];
   candidates: CandidateRequirement[];
   explanatory?: boolean;
+  /** Flat tool tags cannot prove an exclusive-tool workflow. */
+  requireToolOnlyProof?: boolean;
   precedence?: number;
   /** Suppress a more generic operation only when this complete rule also matches. */
   supersedes?: string[];
@@ -201,6 +203,7 @@ export function interpretOperation(
     (declared.length
       ? {
           id: 'catalog-task',
+          requireToolOnlyProof: true,
           when: [],
           tasks: declared,
           source:

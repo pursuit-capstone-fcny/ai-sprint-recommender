@@ -58,6 +58,31 @@ export const taskOperations: readonly OperationRule[] = [
     ],
   ),
   r(
+    'newsletter-drafting',
+    [
+      ['draft', 'write', 'create', 'compose'].flatMap((action) =>
+        [
+          'a newsletter',
+          'the newsletter',
+          'a weekly newsletter',
+          'a donor newsletter',
+        ].map((object) => `${action} ${object}`),
+      ),
+    ],
+    ['Newsletter writing'],
+    'context',
+    ['document'],
+    [c(['Newsletter writing'])],
+    {
+      requireToolOnlyProof: true,
+      unless: [
+        'newsletter signup',
+        'newsletter sign up',
+        'newsletter subscription',
+      ],
+    },
+  ),
+  r(
     'client-correspondence',
     [
       ['landlord', 'tenant'],
