@@ -1,9 +1,12 @@
 {
   // The API is disabled by default; no Durable Object migration is applied here.
   "name": "ai-sprint-recommender",
-  "main": "server/worker.ts",
+  // Keep the budget class exported after production creates its namespace.
+  // Disabled previews do not bind to it or call the provider.
+  "main": "server/enabled-worker.ts",
   "vars": { "LLM_ENABLED": "false" },
   "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["global_fetch_strictly_public"],
   "assets": {
     "directory": "./dist",
     "binding": "ASSETS",

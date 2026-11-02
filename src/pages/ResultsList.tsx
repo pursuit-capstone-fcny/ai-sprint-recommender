@@ -7,6 +7,7 @@ export const RESULTS_HEADING_ID = 'results-heading';
 interface ResultsListProps {
   results: RankedMatch[];
   loading?: boolean;
+  fallbackOnly?: boolean;
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
   showClosestMatch?: boolean;
@@ -24,6 +25,7 @@ interface ResultsListProps {
 export function ResultsList({
   results,
   loading = false,
+  fallbackOnly = false,
   playingId,
   onPlay,
   showClosestMatch = true,
@@ -31,10 +33,14 @@ export function ResultsList({
   feedback,
 }: ResultsListProps) {
   return (
-    <section aria-busy={loading} aria-labelledby={RESULTS_HEADING_ID}>
+    <section
+      aria-busy={loading}
+      aria-labelledby={RESULTS_HEADING_ID}
+      aria-describedby={fallbackOnly ? 'fallback-explanation' : undefined}
+    >
       <div className="results-head">
         <h2 id={RESULTS_HEADING_ID} tabIndex={-1}>
-          Videos to start with
+          {fallbackOnly ? 'Fallback videos' : 'Videos to start with'}
         </h2>
         <p className="pill results-count" aria-live="polite" aria-atomic="true">
           {results.length} {results.length === 1 ? 'video' : 'videos'}
@@ -43,11 +49,18 @@ export function ResultsList({
           </span>
         </p>
       </div>
+      {fallbackOnly && (
+        <p id="fallback-explanation" className="fallback-explanation">
+          These are general library suggestions. They were not matched to your
+          request.
+        </p>
+      )}
       <ul className="video-card-grid">
         {results.map((match, index) => (
           <VideoCard
             key={match.item.youtubeId}
             match={match}
+            fallbackLabel={fallbackOnly ? 'Fallback video' : undefined}
             isPlaying={playingId === match.item.youtubeId}
             showClosestMatch={showClosestMatch}
             feedback={

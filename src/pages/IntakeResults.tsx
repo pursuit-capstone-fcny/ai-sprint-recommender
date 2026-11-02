@@ -11,6 +11,7 @@ import {
   type RecommendationSelection,
 } from '../recommendations/selectRecommendations';
 import { deterministicSelection } from '../recommendations/deterministicSelection';
+import { fallbackVideos } from '../recommendations/fallbackVideos';
 import {
   selectRecommendationState,
   type RecommendationState,
@@ -76,9 +77,37 @@ export function IntakeResults({
     recommendationsEnabled() && recommendationCatalog !== undefined;
   useEffect(() => () => pending.current?.abort(), []);
 
+  const displayedSelection = useMemo<RecommendationSelection>(() => {
+    if (
+      !completed ||
+      completed.profile.goalWords.length === 0 ||
+      selection.results.length > 0 ||
+      (completed.state.status === 'unavailable' &&
+        completed.state.reason === 'not-requested')
+    )
+      return selection;
+    const fallbacks = fallbackVideos(catalog);
+    if (fallbacks.length === 0) return selection;
+    return {
+      ...selection,
+      results: fallbacks,
+      // These cards are local catalog suggestions, never successful AI picks.
+      recommendationEngine: 'rules',
+      llmFallbackReason:
+        engine === 'llm'
+          ? completed.state.status === 'unavailable'
+            ? completed.state.reason
+            : 'insufficient-results'
+          : 'not-requested',
+    };
+  }, [catalog, completed, engine, selection]);
+  const fallbackOnly =
+    !loading &&
+    displayedSelection !== selection &&
+    displayedSelection.results.length > 0;
   const results = useMemo(
-    () => (loading ? [] : selection.results),
-    [loading, selection.results],
+    () => (loading ? [] : displayedSelection.results),
+    [loading, displayedSelection.results],
   );
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
@@ -86,7 +115,7 @@ export function IntakeResults({
   const usageContext = useMemo(
     () =>
       !loading &&
-      completed?.state.status !== 'unavailable' &&
+      (completed?.state.status !== 'unavailable' || fallbackOnly) &&
       usageSession &&
       usageCatalog
         ? createRecommendationUsage(
@@ -95,14 +124,15 @@ export function IntakeResults({
             profile,
             results,
             completed !== null,
-            selection,
+            displayedSelection,
           )
         : null,
     [
       usageSession,
       usageCatalog,
       profile,
-      selection,
+      displayedSelection,
+      fallbackOnly,
       completed,
       results,
       loading,
@@ -285,12 +315,12 @@ export function IntakeResults({
               ? completed.state.reason === 'not-requested'
                 ? 'Enter a task description to request AI recommendations.'
                 : engine === 'llm'
-                  ? 'AI recommendations are unavailable. You can select Deterministic and submit again.'
+                  ? 'AI recommendations are unavailable.'
                   : 'The catalog is unavailable for deterministic matching.'
               : completed?.state.status === 'abstained'
                 ? 'No confident AI matches found.'
                 : completed
-                  ? results.length === 0
+                  ? selection.results.length === 0
                     ? 'No compatible videos found.'
                     : engine === 'llm'
                       ? 'AI suggestions'
@@ -298,6 +328,7 @@ export function IntakeResults({
                   : null}
         </p>
         <ResultsList
+          fallbackOnly={fallbackOnly}
           feedback={
             question && usageContext
               ? { question, bind: usageContext.feedback }
