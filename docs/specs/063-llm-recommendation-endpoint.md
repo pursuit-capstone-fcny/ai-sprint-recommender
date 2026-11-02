@@ -51,6 +51,12 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Open questions
 
+Broad tool and role inquiries are valid discovery goals. Tool discovery requires
+the requested tool in the video's own tags or description; broad role discovery
+requires instruction for the role's work or a substantial useful component.
+These inquiries admit only grade 3 or 2 picks and have no minimum count. They
+must not be filled with weak contextual picks or generic nonprofit/AI material.
+
 - [ ] Approve the Worker proposal, provider/model, retention terms and concrete rate, token and spend limits. Include the cost of the live evaluation in #19.
 - [ ] The engine requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 2,000-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.
 

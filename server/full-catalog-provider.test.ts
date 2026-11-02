@@ -60,6 +60,7 @@ describe('V1 Haiku provider transport', () => {
       expect(wire.system).toContain(
         'do not require a concrete task for discovery',
       );
+      expect(wire.system).toContain('Do not pad broad discovery');
       expect(JSON.parse(wire.messages[0].content[1].text).goal).toBe(goal);
       expect(JSON.parse(wire.messages[0].content[0].text).catalog).toHaveLength(
         89,
