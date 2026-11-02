@@ -47,6 +47,7 @@ export function selectRecommendationState(
     result.youtubeIds.some((id) => !byId.has(id))
   )
     return { status: 'unavailable', reason: 'invalid-response' };
+  // Task tags only reorder picks; they never reject a valid answer.
   const results = applyAiDedupe(
     result.youtubeIds.map((id) => ({
       item: byId.get(id)!,
@@ -59,13 +60,6 @@ export function selectRecommendationState(
     })),
     3,
   );
-  const distinctTasks = new Set(
-    results
-      .map(({ item }) => item.tasks[0]?.trim().toLowerCase())
-      .filter(Boolean),
-  );
-  if (distinctTasks.size < 2)
-    return { status: 'unavailable', reason: 'insufficient-results' };
   const selection: RecommendationSelection = {
     results,
     recommendationEngine: 'llm',

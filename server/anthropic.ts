@@ -74,7 +74,17 @@ export interface ProviderBody {
     model: string;
     max_tokens: number;
     system: string;
-    messages: { role: string; content: string }[];
+    messages: {
+      role: string;
+      // Block content lets the scoring engine cache its unchanging catalog.
+      content:
+        | string
+        | {
+            type: 'text';
+            text: string;
+            cache_control?: { type: 'ephemeral' };
+          }[];
+    }[];
     thinking?: unknown;
     output_config: {
       format: { type: string; schema: unknown };

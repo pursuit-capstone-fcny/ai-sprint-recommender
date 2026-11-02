@@ -28,11 +28,12 @@ client review or a new relevance evaluation.
 - **Given** the owner enables production Haiku with existing server credentials
 - **When** a learner submits a Haiku goal
 - **Then** the same-origin Worker uses `claude-haiku-5-5` and
-  `catalog-score-evidence-v1`, the complete public catalog, and the existing
-  strict response checks. A production-specific Durable Object enforces the
+  `catalog-pick-evidence-v4`, the complete public catalog, and its strict
+  response checks. A production-specific Durable Object enforces the
   $5 monthly and $1 daily caps, 10 global and 3 client requests per minute,
   concurrency 2, 80,000 conservative input tokens and 16,384 output tokens. The
-  current complete-catalog request measures 68,667 under that input bound.
+  current complete-catalog request measures 63,506 under that input bound, and
+  the request asks for at most 2,000 output tokens.
   No paid retry or
   deterministic substitution is added. Diagnostics omit prompt/response bodies.
 

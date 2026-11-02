@@ -281,7 +281,7 @@ export function IntakeResults({
           {engine === 'llm' && (
             <p className="usage-notice" id="ai-disclosure">
               AI suggestions send your goal to Anthropic. Leave out personal
-              information. Results can take up to 35 seconds.
+              information. Results can take up to 7 seconds.
               {!llmEnabled && ' AI calls are disabled in this deployment.'}
             </p>
           )}

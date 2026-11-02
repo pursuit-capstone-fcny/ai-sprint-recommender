@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then Haiku 5.5 low with thinking disabled uses `catalog-score-evidence-v1` to assess all 89 complete public catalog items. Useful assessments require exact description evidence, a quoted requested work step and evidence for every applicable constraint. Validate complete unique coverage and the whole eligible ordering, then apply the unchanged diversity gate and eight-video cap. Empty valid results abstain; no provider tools, prefiltering or filler are used
+  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v4` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with an exact description quote and a short rationale. A repeated pick keeps its first occurrence, a quote absent from that description drops the pick, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response
@@ -43,7 +43,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.5 Bounded failure and cost
   - Given an anonymous endpoint, concurrent requests or provider errors
   - When traffic reaches configured limits
-  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a 34.5-second V1 server deadline inside the browser's 35-second limit and no paid retries
+  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a 6.5-second server deadline inside the browser's 7-second limit and no paid retries
 - AC-63.6 Privacy and diagnostics
   - Given successful, rejected or failed calls
   - When diagnostics are recorded
@@ -52,7 +52,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 ### Open questions
 
 - [ ] Approve the Worker proposal, provider/model, retention terms and concrete rate, token and spend limits. Include the cost of the live evaluation in #19.
-- [ ] V1 requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 16,384-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.
+- [ ] The engine requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 2,000-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.
 
 ### Evidence required
 

@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { RecommendationVersionSchema } from './usageEvent';
 
 export const RECOMMENDATION_PATH = '/api/recommendations';
-export const RECOMMENDATION_DEADLINE_MS = 35_000;
+export const RECOMMENDATION_DEADLINE_MS = 7_000;
 export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v8';
 
 const catalogVersion = z.string().regex(/^sha256:[a-f0-9]{64}$/);
