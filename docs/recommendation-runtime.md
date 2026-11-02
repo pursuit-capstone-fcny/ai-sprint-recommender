@@ -1,8 +1,11 @@
 # Recommendation runtime
 
-The normal deployment serves `POST /api/recommendations` with
-`LLM_ENABLED=false`. It needs no provider key or Durable Object migration.
-Production usage logging remains disabled in `.github/workflows/deploy.yml`.
+Production supports independent opt-ins through `LLM_PRODUCTION_ENABLED` and
+`USAGE_PRODUCTION_ENABLED`. Both default off unless their repository variable
+is exactly `true`. The owner requested live enablement on November 2, 2026;
+see [the production enablement spec](specs/production-enablement.md) for the
+budget, collector and validation requirements. Production preserves its Durable
+Object class and budget storage even when calls are disabled.
 
 The implementation supports Anthropic Messages with structured JSON output.
 No provider or model is enabled by this change. Before live use, record the

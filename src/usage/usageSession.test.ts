@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { testUsageEndpoint, usageSource } from './usageSession';
+import { usageEndpoint, usageSource } from './usageSession';
 
 const endpoint = 'https://script.google.com/macros/s/test/exec';
 function enable() {
@@ -13,28 +13,45 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
-describe('test-only usage configuration', () => {
-  it('defaults off and rejects production, fixtures, mismatched URLs and non-Apps-Script endpoints', () => {
-    expect(testUsageEndpoint('remote')).toBeNull();
+describe('environment-specific usage configuration', () => {
+  it('defaults off and rejects missing production endpoints, fixtures and invalid URLs', () => {
+    expect(usageEndpoint('remote')).toBeNull();
     enable();
-    expect(testUsageEndpoint('remote')).toBe(endpoint);
-    expect(testUsageEndpoint('fixture')).toBeNull();
+    expect(usageEndpoint('remote')).toBe(endpoint);
+    expect(usageEndpoint('fixture')).toBeNull();
     vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
-    expect(testUsageEndpoint('remote')).toBeNull();
+    expect(usageEndpoint('remote')).toBeNull();
     vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'test');
     vi.stubEnv('VITE_USAGE_ENABLED', 'false');
-    expect(testUsageEndpoint('remote')).toBeNull();
+    expect(usageEndpoint('remote')).toBeNull();
     vi.stubEnv('VITE_USAGE_ENABLED', 'true');
     vi.stubEnv('VITE_USAGE_TEST_URL', `${endpoint}?other=1`);
-    expect(testUsageEndpoint('remote')).toBeNull();
+    expect(usageEndpoint('remote')).toBeNull();
     for (const url of [
       'http://script.google.com/macros/s/test/exec',
       'https://example.test/exec',
     ]) {
       vi.stubEnv('VITE_CATALOG_URL', url);
       vi.stubEnv('VITE_USAGE_TEST_URL', url);
-      expect(testUsageEndpoint('remote')).toBeNull();
+      expect(usageEndpoint('remote')).toBeNull();
     }
+  });
+
+  it('uses only the production endpoint in production and never logs fixtures', () => {
+    enable();
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+    expect(usageEndpoint('remote')).toBeNull();
+    const production = 'https://script.google.com/macros/s/production/exec';
+    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', production);
+    expect(usageEndpoint('remote')).toBe(production);
+    expect(usageEndpoint('fixture')).toBeNull();
+    vi.stubEnv('VITE_USAGE_ENABLED', 'false');
+    expect(usageEndpoint('remote')).toBeNull();
+    vi.stubEnv('VITE_USAGE_ENABLED', 'true');
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'unknown');
+    expect(usageEndpoint('remote')).toBeNull();
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'test');
+    expect(usageEndpoint('remote')).toBe(endpoint);
   });
 
   it.each(['website', 'email', 'session', 'pilot', 'team'])(
