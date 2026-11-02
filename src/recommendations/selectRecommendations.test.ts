@@ -112,11 +112,6 @@ describe('final recommendation selection', () => {
       { ...success, youtubeIds: ['fx01GrntRpt'] },
       'insufficient-results',
     ],
-    [
-      'only one distinct task',
-      { ...success, youtubeIds: ['fx04BdgtSht', 'fx03BdgtXls'] },
-      'insufficient-results',
-    ],
     ['disabled', { outcome: 'fallback', reason: 'disabled' }, 'disabled'],
   ])('uses complete rules results for %s', (_, response, reason) => {
     const selected = select(response);
@@ -137,6 +132,7 @@ describe('final recommendation selection', () => {
     ]);
   });
   it.each([
+    ['only one distinct task', [['budget tracking'], ['budget tracking']]],
     ['two untagged picks', [[], []]],
     ['an untagged pick before one task', [[], ['budget tracking']]],
     ['an untagged pick after one task', [['budget tracking'], []]],
@@ -147,7 +143,7 @@ describe('final recommendation selection', () => {
         ['budget tracking', 'meeting notes'],
       ],
     ],
-  ])('uses complete rules results for %s', (_, tasks) => {
+  ])('keeps two valid picks in model order for %s', (_, tasks) => {
     const candidates = catalog.slice(0, 2).map((item, index) => ({
       ...item,
       tasks: tasks[index],
@@ -158,9 +154,11 @@ describe('final recommendation selection', () => {
       envelope.catalogVersion,
       { ...success, youtubeIds: candidates.map((item) => item.youtubeId) },
     );
-    expect(selected.recommendationEngine).toBe('rules');
-    expect(selected.llmFallbackReason).toBe('insufficient-results');
-    expect(selected.results).toEqual(selectRulesResults(candidates, profile));
+    expect(selected.recommendationEngine).toBe('llm');
+    expect(selected.llmFallbackReason).toBe('none');
+    expect(selected.results.map(({ item }) => item.youtubeId)).toEqual(
+      candidates.map((item) => item.youtubeId),
+    );
   });
   it('preserves an untagged pick and remaining picks when two primary tasks are present', () => {
     const youtubeIds = [

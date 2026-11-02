@@ -7,9 +7,10 @@ Status: Test policy approved by Jason on October 29, 2026.
 - Given fewer eligible items, when results render, then show the smaller set
   without duplicates, invented matches or padding. Rules weak-match and
   Start-here handling retain their existing eligibility rules.
-- Given model picks, when validation runs, then preserve the existing two-real-
-  primary-task gate and top-three diversity ordering. Six is not a validity
-  threshold. Invalid output still causes complete rules fallback.
+- Given model picks, when validation runs, then preserve top-three diversity
+  ordering. Task tags only reorder picks; fewer than two valid picks causes
+  rules fallback. Six is not a validity threshold. Invalid output still causes
+  complete rules fallback.
 - Given eight displayed cards, when usage logging is enabled in a test, then
   the search count and impressions reflect all eight exactly once. Resubmission
   creates a new search and resets playback; editing alone makes no model call.

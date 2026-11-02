@@ -14,11 +14,12 @@ Live calls remain disabled pending #8 provider, privacy and budget approval and
   with an area or tool remains valid. Loading is announced and focus moves to
   the results heading.
 - Given a success response, when the page selects cards, then all IDs are
-  active in the same catalog version, with at most eight displayed. The first three preserve model order while
-  reserving slots for two primary tasks; two same-task videos may remain.
-  Demoted videos follow within the eight-card cap; there is no further expansion. Fewer than two distinct primary task tags causes
-  complete rules fallback; untagged picks and secondary tags do not count toward
-  that minimum. Unknown, duplicate or retired IDs reject the whole response.
+  active in the same catalog version, with at most eight displayed. The first
+  three preserve model order while reserving slots for two primary tasks; two
+  same-task videos may remain. Demoted videos follow within the eight-card cap;
+  there is no further expansion. Task tags only reorder picks and never reject
+  or shorten a valid response. Fewer than two valid picks causes complete rules
+  fallback. Unknown, duplicate or retired IDs reject the whole response.
 - Given semantic picks, when cards render, then their content and links come
   from the catalog. Reasons cite matched tags or say "Suggested for your goal".
   Cross-area picks are labeled. Smaller valid sets are not padded.

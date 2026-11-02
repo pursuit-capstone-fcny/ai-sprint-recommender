@@ -12,7 +12,7 @@ import { applyDedupe } from '../engine/dedupe';
 import { computeMatch } from '../engine/match';
 
 export const RECOMMENDATION_PAGE_SIZE = MAX_RECOMMENDATIONS;
-// Preserve the original top-three ordering and two-primary-task gate.
+// Preserve the original top-three ordering.
 const DIVERSITY_WINDOW = 3;
 export interface RecommendationSelection extends Partial<RecommendationVersion> {
   results: RankedMatch[];
@@ -99,17 +99,12 @@ export function selectRecommendations(
   // Reject the whole response. Never blend valid fragments with rules results.
   if (result.youtubeIds.some((id) => !active.has(id)))
     return rulesSelection(catalog, profile, 'invalid-response', versions);
+  // Task tags only reorder picks; they never reject or shorten a valid answer.
   const results = applyDedupe(
     result.youtubeIds.map((id) => semanticMatch(active.get(id)!, profile)),
     DIVERSITY_WINDOW,
   );
-  const distinctTasks = new Set(
-    results
-      .map(({ item }) => item.tasks[0]?.trim().toLowerCase())
-      .filter(Boolean),
-  ).size;
-  // Untagged picks cannot establish task diversity.
-  if (distinctTasks < 2)
+  if (results.length < 2)
     return rulesSelection(catalog, profile, 'insufficient-results', versions);
   return {
     results,

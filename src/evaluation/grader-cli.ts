@@ -175,7 +175,7 @@ export async function main() {
       ...entry.input,
       goalWords: entry.input.goal.trim().split(/\s+/).filter(Boolean),
     };
-    // Score through the browser selector, including the task-diversity gate.
+    // Score through the browser selector, which reorders picks by task tag.
     const selection = selectRecommendations(
       items,
       intake,
