@@ -37,6 +37,17 @@ jobs:
           pnpm build
           node scripts/configure-library-app.mjs
 
+      # PR previews upload undeployed versions of this same Worker. Deploy the
+      # runtime first so secret updates apply to a deployed version, and create
+      # its production Durable Object before permitting paid requests.
+      - name: Deploy production runtime with provider calls disabled
+        if: vars.LLM_PRODUCTION_ENABLED == 'true'
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy --config wrangler.library.jsonc --var LLM_ENABLED:false
+
       - name: Configure production provider secrets
         if: vars.LLM_PRODUCTION_ENABLED == 'true'
         env:
