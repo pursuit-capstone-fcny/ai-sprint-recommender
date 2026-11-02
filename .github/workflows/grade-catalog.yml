@@ -8,7 +8,9 @@ permissions:
   contents: read
 
 concurrency:
-  group: recommendation-evaluation
+  # Every label event starts a run of each labeled workflow, and a newer pending
+  # run in a shared group cancels this one. The grader uses no deployed budget.
+  group: catalog-grader
   cancel-in-progress: false
 
 jobs:
