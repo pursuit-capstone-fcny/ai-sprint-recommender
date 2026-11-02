@@ -1,7 +1,7 @@
 # Spec: Production analytics and LLM enablement
 
 - **Issue:** User request, November 2, 2026
-- **PR:** Pending
+- **PR:** #114
 - **Status:** in review
 
 Jason requested live production analytics, paid LLM calls, and screenshots of
