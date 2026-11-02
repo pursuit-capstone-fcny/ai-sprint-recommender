@@ -263,6 +263,12 @@ export async function runExperiment({
   assert.equal(plan.version, 'single-call-latency-v1');
   assert.equal(plan.priorCeilingMicrodollars, 4_958_747);
   assert.equal(plan.capMicrodollars, 5_000_000);
+  assert.equal(
+    approval.priorCeilingMicrodollars,
+    plan.priorCeilingMicrodollars,
+  );
+  assert.equal(approval.capMicrodollars, plan.capMicrodollars);
+  assert.equal(approval.maxNewCeilingMicrodollars, 41_253);
   assert.equal(plan.maxInputTokenBound, 63_000);
   assert.equal(plan.maxOutputTokens, 2048);
   assert.equal(plan.researchTransportTimeoutMs, 30_000);
