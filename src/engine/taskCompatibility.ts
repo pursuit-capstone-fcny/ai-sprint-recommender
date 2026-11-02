@@ -3,7 +3,8 @@ import type {
   PublicCatalogItem,
 } from '../contracts/publicCatalog';
 import { prepareInstructions, type PromptOptions } from './prompt';
-import { languageTokens } from './promptLanguage';
+import { languageTokens, promptWords } from './promptLanguage';
+import { promptPolarity } from './promptPolarity';
 import { usesRequiredPlatform } from './promptPlatform';
 import {
   containsPhrase,
@@ -137,12 +138,28 @@ export function compatibleCandidates(
   const ids = new Map<string, number>();
   for (const item of catalog.items)
     ids.set(item.youtubeId, (ids.get(item.youtubeId) ?? 0) + 1);
+  const excludedToolNames = intent.interpretation.excludedTools.flatMap(
+    (tool) => [
+      tool,
+      ...catalog.synonyms
+        .filter((row) => row.category === 'tool' && row.target === tool)
+        .map((row) => row.alias),
+    ],
+  );
   const rows = catalog.items.flatMap((item) => {
+    const positiveMetadata = excludedToolNames.length
+      ? promptPolarity(
+          promptWords(`${item.title}. ${item.description}`),
+        ).positiveWords.join(' ')
+      : '';
     if (
       item.status !== 'active' ||
       ids.get(item.youtubeId) !== 1 ||
       item.tools.some((tool) =>
         intent.interpretation.excludedTools.includes(tool),
+      ) ||
+      excludedToolNames.some((tool) =>
+        usesRequiredPlatform([positiveMetadata], tool),
       )
     )
       return [];
