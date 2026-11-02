@@ -72,6 +72,34 @@ afterEach(() => {
 });
 
 describe('LLM submissions', () => {
+  it('announces abstention without replacement cards and only uses rules after an explicit choice', async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({ ...success, youtubeIds: [] }),
+    );
+    const logging = usage();
+    render(<IntakeResults {...props} usage={logging} />);
+    logging.session.sender.send.mockClear();
+    goal();
+    submit();
+    await screen.findByText('No confident matches found for this request.');
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(screen.queryByText('Standard matching')).toBeNull();
+    await waitFor(() =>
+      expect(logging.session.sender.send).toHaveBeenCalledTimes(1),
+    );
+    expect(logging.session.sender.send.mock.calls[0][0]).toMatchObject({
+      type: 'search',
+      resultCount: 0,
+      recommendationEngine: 'llm',
+      llmFallbackReason: 'none',
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Use standard matching' }),
+    );
+    expect(screen.getByText('Standard matching')).toBeTruthy();
+    expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
+    expect(fetch).toHaveBeenCalledTimes(1);
+  });
   it('names OpenAI when the test build uses Luna', () => {
     vi.stubEnv('VITE_LLM_PROVIDER', 'openai');
     render(<IntakeResults {...props} />);
@@ -218,36 +246,25 @@ describe('LLM submissions', () => {
     [{ outcome: 'fallback', reason: 'budget-exhausted' }, 'budget-exhausted'],
     [{ outcome: 'fallback', reason: 'rate-limited' }, 'rate-limited'],
     [{ outcome: 'fallback', reason: 'disabled' }, 'disabled'],
+    [{ ...success, youtubeIds: ['fx04BdgtSht', 'fx04BdgtSht'] }, 'duplicates'],
+    [{ outcome: 'success', youtubeIds: [] }, 'malformed empty response'],
   ])(
-    'uses complete standard matching and bounded usage metadata for a rejected selection',
+    'shows unavailable without substitute cards or misleading usage metadata for a rejected selection',
     async (response, reason) => {
       vi.mocked(fetch).mockResolvedValue(Response.json(response));
       const logging = usage();
       render(<IntakeResults {...props} usage={logging} />);
-      const initial = screen
-        .getAllByRole('listitem')
-        .map((item) => item.textContent);
       logging.session.sender.send.mockClear();
       goal('unmatched');
       submit();
-      await screen.findByText('Standard matching');
-      // The status commits before the passive effect sends usage events.
-      await waitFor(() =>
-        expect(logging.session.sender.send).toHaveBeenCalledTimes(
-          initial.length + 1,
-        ),
-      );
+      await screen.findByText('AI suggestions are unavailable.');
+      expect(screen.queryAllByRole('listitem'), reason).toHaveLength(0);
+      expect(screen.queryByText('Standard matching')).toBeNull();
       expect(
-        screen.getAllByRole('listitem').map((item) => item.textContent),
-      ).toEqual(initial);
-      expect(logging.session.sender.send.mock.calls[0][0]).toMatchObject({
-        type: 'search',
-        recommendationEngine: 'rules',
-        llmFallbackReason: reason,
-      });
-      expect(logging.session.sender.send).toHaveBeenCalledTimes(
-        initial.length + 1,
-      );
+        screen.queryByText('No confident matches found for this request.'),
+      ).toBeNull();
+      expect(logging.session.sender.send).not.toHaveBeenCalled();
+      expect(fetch).toHaveBeenCalledTimes(1);
     },
   );
   it('keeps only the latest submitted result and never logs the earlier response', async () => {
@@ -313,7 +330,7 @@ describe('LLM submissions', () => {
       expect(logging.session.sender.send).toHaveBeenCalledTimes(count);
     },
   );
-  it('completes rules fallback at five seconds and ignores a later success', async () => {
+  it('shows unavailable at five seconds without retrying or accepting a late success', async () => {
     vi.useFakeTimers();
     const pending = deferredResponse();
     vi.mocked(fetch).mockReturnValue(pending.promise);
@@ -331,17 +348,41 @@ describe('LLM submissions', () => {
     await act(async () => {
       await vi.advanceTimersByTimeAsync(1);
     });
-    expect(screen.getByText('Standard matching')).toBeTruthy();
-    expect(logging.session.sender.send.mock.calls[0][0]).toMatchObject({
-      llmFallbackReason: 'timeout',
-    });
+    expect(screen.getByText('AI suggestions are unavailable.')).toBeTruthy();
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(logging.session.sender.send).not.toHaveBeenCalled();
     const count = logging.session.sender.send.mock.calls.length;
     await act(async () => {
       pending.resolve(Response.json(success));
     });
-    expect(screen.getByText('Standard matching')).toBeTruthy();
+    expect(screen.getByText('AI suggestions are unavailable.')).toBeTruthy();
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
     expect(logging.session.sender.send).toHaveBeenCalledTimes(count);
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+  it('removes earlier AI cards when a later request fails and allows an explicit local alternative', async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(Response.json(success))
+      .mockRejectedValueOnce(new Error('offline fixture'));
+    render(<IntakeResults {...props} />);
+    goal('first fixture request');
+    submit();
+    await screen.findByText('AI suggestions');
+    expect(screen.getAllByRole('listitem')).toHaveLength(4);
+    goal('second fixture request');
+    submit();
+    await screen.findByText('AI suggestions are unavailable.');
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(screen.getByLabelText('What do you want to learn?')).toHaveProperty(
+      'value',
+      'second fixture request',
+    );
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Use standard matching' }),
+    );
+    expect(screen.getByText('Standard matching')).toBeTruthy();
+    expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
   it('keeps the fixture catalog offline even when the browser flag is enabled', async () => {
     render(<IntakeResults catalog={catalog} />);

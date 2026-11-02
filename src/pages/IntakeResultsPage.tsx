@@ -105,7 +105,7 @@ export function IntakeResultsPage() {
               <h2 id="how-it-works">How we pick videos</h2>
               <p>
                 {llmEnabled
-                  ? "AI suggestions compare your goal with the video catalog. We use standard matching if AI suggestions aren't available. Cards always use the catalog's titles, descriptions and links."
+                  ? "AI suggestions compare your goal with the video catalog. If no confident matches are found or suggestions are unavailable, you can edit your request or choose standard matching. Cards always use the catalog's titles, descriptions and links."
                   : 'We look at your area first, then what you want to learn, then your tools. If nothing fits exactly, we show the closest videos and say so.'}
               </p>
             </section>

@@ -1,16 +1,19 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
 import type { IntakeProfile } from '../contracts/intakeProfile';
+import type { RankedMatch } from '../contracts/rankedMatch';
 import {
   recommendationsEnabled,
   requestRecommendations,
 } from '../recommendations/requestRecommendations';
 import {
   rulesSelection,
-  selectRecommendations,
   RECOMMENDATION_PAGE_SIZE,
-  type RecommendationSelection,
 } from '../recommendations/selectRecommendations';
+import {
+  selectRecommendationState,
+  type RecommendationState,
+} from '../recommendations/selectRecommendationState';
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
@@ -23,6 +26,7 @@ const EMPTY_PROFILE: IntakeProfile = {
   goalWords: [],
   tools: [],
 };
+const EMPTY_RESULTS: RankedMatch[] = [];
 function splitGoalWords(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
@@ -56,15 +60,17 @@ export function IntakeResults({
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<{
     profile: IntakeProfile;
-    selection: RecommendationSelection;
+    state: RecommendationState;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const pending = useRef<AbortController | null>(null);
   const profile = completed?.profile ?? EMPTY_PROFILE;
-  const selection = useMemo(
+  const recommendationState = useMemo<RecommendationState>(
     () =>
-      completed?.selection ??
-      rulesSelection(catalog, EMPTY_PROFILE, 'not-requested'),
+      completed?.state ?? {
+        status: 'ready',
+        selection: rulesSelection(catalog, EMPTY_PROFILE, 'not-requested'),
+      },
     [catalog, completed],
   );
   const llmEnabled =
@@ -76,12 +82,18 @@ export function IntakeResults({
     [catalog, dictionaryTools],
   );
 
-  const results = selection.results;
+  const selection =
+    recommendationState.status === 'unavailable'
+      ? null
+      : recommendationState.selection;
+  const results = selection?.results ?? EMPTY_RESULTS;
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
+  // A failed request has no selected engine. The existing event contract cannot
+  // represent that state; do not attribute it to rules or emit phantom impressions.
   const usageContext = useMemo(
     () =>
-      usageSession && usageCatalog
+      usageSession && usageCatalog && selection
         ? createRecommendationUsage(
             usageSession,
             usageCatalog,
@@ -121,7 +133,7 @@ export function IntakeResults({
     setCompleted(null);
   }
 
-  function handleFindVideos() {
+  function handleFindVideos(engine: 'auto' | 'rules' = 'auto') {
     cancelPending();
     const nextProfile = {
       functionArea,
@@ -130,14 +142,17 @@ export function IntakeResults({
     };
     const blank =
       functionArea === null && !goalText.trim() && tools.length === 0;
-    if (!llmEnabled || blank || !recommendationCatalog) {
+    if (engine === 'rules' || !llmEnabled || blank || !recommendationCatalog) {
       setCompleted({
         profile: nextProfile,
-        selection: rulesSelection(
-          catalog,
-          nextProfile,
-          blank ? 'not-requested' : 'disabled',
-        ),
+        state: {
+          status: 'ready',
+          selection: rulesSelection(
+            catalog,
+            nextProfile,
+            engine === 'rules' || blank ? 'not-requested' : 'disabled',
+          ),
+        },
       });
     } else {
       const controller = new AbortController();
@@ -157,7 +172,7 @@ export function IntakeResults({
         setLoading(false);
         setCompleted({
           profile: nextProfile,
-          selection: selectRecommendations(
+          state: selectRecommendationState(
             catalog,
             nextProfile,
             recommendationCatalog.catalogVersion,
@@ -241,11 +256,31 @@ export function IntakeResults({
         {loading
           ? 'Finding AI suggestions…'
           : completed
-            ? selection.recommendationEngine === 'llm'
-              ? 'AI suggestions'
-              : 'Standard matching'
+            ? recommendationState.status === 'abstained'
+              ? 'No confident matches found for this request.'
+              : recommendationState.status === 'unavailable'
+                ? 'AI suggestions are unavailable.'
+                : recommendationState.selection.recommendationEngine === 'llm'
+                  ? 'AI suggestions'
+                  : 'Standard matching'
             : null}
       </p>
+      {!loading && completed && recommendationState.status !== 'ready' && (
+        <div className="state-panel">
+          <p>
+            {recommendationState.status === 'abstained'
+              ? 'Try a more specific description, or use standard matching for catalog-based suggestions.'
+              : 'We could not generate validated suggestions. Edit your request or use standard matching for catalog-based suggestions.'}
+          </p>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() => handleFindVideos('rules')}
+          >
+            Use standard matching
+          </button>
+        </div>
+      )}
       <ResultsList
         loading={loading}
         results={results}
