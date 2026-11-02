@@ -72,6 +72,55 @@ afterEach(() => {
 });
 
 describe('browser usage events', () => {
+  it('collects explicit production feedback while automatic usage stays disabled', async () => {
+    vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
+    vi.stubEnv('VITE_CATALOG_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+    vi.stubEnv('VITE_USAGE_ENABLED', 'false');
+    vi.stubEnv('VITE_FEEDBACK_ENABLED', 'true');
+    vi.stubEnv('VITE_FEEDBACK_QUESTION', 'Was this helpful?');
+    vi.mocked(fetch).mockImplementation(async (_url, init) =>
+      init?.method === 'POST'
+        ? Response.json({ ok: true, status: 'accepted' })
+        : Response.json(publicCatalog),
+    );
+    render(<IntakeResultsPage />);
+    await screen.findByRole('button', { name: 'Find videos' });
+    expect(logged()).toHaveLength(0);
+    submit();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Play Fixture video 0' }),
+    );
+    expect(logged()).toHaveLength(0);
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Helpful: Fixture video 0',
+      }),
+    );
+    await screen.findByText('Saved as helpful. You can change your response.');
+    expect(logged()).toHaveLength(1);
+    expect(logged()[0]).toMatchObject({
+      type: 'feedback',
+      helpful: true,
+      voteRevision: 1,
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Not helpful: Fixture video 0',
+      }),
+    );
+    await screen.findByText(
+      'Saved as not helpful. You can change your response.',
+    );
+    expect(logged()).toHaveLength(2);
+    expect(logged()[1]).toMatchObject({
+      type: 'feedback',
+      helpful: false,
+      voteRevision: 2,
+    });
+  });
+
   it('logs one submitted search, each displayed card once and both clicks, even in StrictMode', async () => {
     const usage = { session: session(), catalog: publicCatalog };
     const view = (

@@ -66,7 +66,10 @@ async function post(url: string, body: string): Promise<Attempt> {
 
 // Serialize writes to avoid contending with this page's own Apps Script lock.
 // Nothing is persisted, and a missing acknowledgment is never called delivered.
-export function createUsageSender(url: string) {
+export function createUsageSender(
+  url: string,
+  { automaticUsageEnabled = true }: { automaticUsageEnabled?: boolean } = {},
+) {
   const queue: Pending[] = [];
   let running = false;
   let stopped = false;
@@ -115,6 +118,7 @@ export function createUsageSender(url: string) {
         parsed.success &&
         parsed.data.type === 'feedback';
       if (
+        (!automaticUsageEnabled && !explicitFeedback) ||
         stopped ||
         (rateLimited && !explicitFeedback) ||
         queue.length >= USAGE_QUEUE_LIMIT ||
