@@ -44,6 +44,17 @@ it.each([
   ['in english only', undefined],
   ['using only ai', undefined],
   ['with only a minute to spare', undefined],
+  ['using only public information', undefined],
+  ['in plain English only', undefined],
+  ['using only our notes', undefined],
+  ['with only supplied documents', undefined],
+  ['using only text', undefined],
+  ['in simple Spanish only', undefined],
+  ['using only apple notes', 'apple notes'],
+  ['in Microsoft Word only', 'Microsoft Word'],
+  ['in Word only', 'Word'],
+  ['using only FictionalWriter', 'FictionalWriter'],
+  ['using only fictionalwriter', 'fictionalwriter'],
 ] as const)(
   'AC-12.21: scopes an exclusive platform independently of the dictionary: %s',
   (suffix, expected) => {
@@ -62,6 +73,11 @@ it.each([
   'Draft a newsletter, with a friendly tone',
   'Draft a newsletter please',
   'Draft a newsletter quickly',
+  'Draft a newsletter using only public information',
+  'Draft a newsletter in plain English only',
+  'Draft a newsletter using only our notes',
+  'Draft a newsletter with only supplied documents',
+  'Draft a newsletter using only text',
 ])(
   'AC-12.21: returns newsletter instruction for a general writing request: %s',
   (goal) => {

@@ -42,9 +42,15 @@ export function requiredPlatform(prompt: string) {
   matches.push(
     ...exclusive.filter(
       (match) =>
-        !/^(?:AI|English|Spanish|French|Mandarin|German|Arabic)$/i.test(
+        !/\b(?:AI|English|Spanish|French|Mandarin|German|Arabic)\s*$/i.test(
           match[1],
-        ),
+        ) &&
+        // Source material and output style are not application names. Preserve
+        // vendor-qualified products such as Apple Notes and Microsoft Word.
+        (/^(?:Microsoft|Google|Apple|Adobe)\s+/i.test(match[1]) ||
+          !/\b(?:information|data|facts?|text|content|materials?|documents?|notes?|files?|resources?|sentences?|paragraphs?|words|language|tone)\s*$/i.test(
+            match[1],
+          )),
     ),
   );
   const app = /\b(?:built[ -]in\s+)?([A-Z][a-zA-Z]+)\s+app\b/.exec(prompt);
