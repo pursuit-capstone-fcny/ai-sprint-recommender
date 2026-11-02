@@ -19,13 +19,17 @@ YouTube clicks retain that context and rank, even while inputs have unsent edits
 Copy link is not logged. Session IDs and source tags live only in page memory;
 there are no cookies, storage entries, background sync or persistent retries.
 
-Goal tasks are matched with the current engine vocabulary and filtered against
-the served dictionary. The sender never serializes raw goals, reasons, titles,
-URLs or referrers. Only the `src` query parameter is read for attribution, with
+Goal tasks recognize the published task wording, its equivalent engine task
+name and published task aliases, and return only the original served dictionary
+values. For example, RFP wording can log `grant opportunity review` without
+serializing an internal task name. This is keyword co-occurrence, not proof of
+semantic usefulness, and never derives search keywords from returned videos.
+The sender never serializes raw goals, reasons, titles, URLs or referrers.
+Only the `src` query parameter is read for attribution, with
 missing/unknown values normalized to `website`/`other`.
 
-Only #11 `strong` results count as strong. Other cards map to `start-here` when
-that designation has no matching signals, `cross-area` when outside a selected
+Only deterministic `strong` results count as strong. Other cards map to
+`start-here` when that designation has no matching signals, `cross-area` when outside a selected
 area, or `weak`. Search fallback type describes cross-area/start-here cards in
 the initial result set, or `none` when neither is used. Empty sets use
 `unavailable`. This mapping does not change ranking or infer LLM success.

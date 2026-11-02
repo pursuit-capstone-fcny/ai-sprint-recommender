@@ -2,6 +2,7 @@ import type { IntakeProfile } from '../contracts/intakeProfile';
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import type { UsageEvent } from '../contracts/usageEvent';
+import { canonicalTaskName } from '../contracts/taskVocabulary';
 import { expandSynonyms, normalizeText } from '../engine/vocabulary';
 import type { RecommendationSelection } from '../recommendations/selectRecommendations';
 import type { UsageSession } from './usageSession';
@@ -13,11 +14,29 @@ type Target = Extract<UsageEvent, { type: 'click' }>['target'];
 
 export function canonicalGoalTasks(words: string[], catalog: PublicCatalog) {
   const expanded = new Set(words.flatMap(expandSynonyms));
+  const goal = words.flatMap(normalizeText);
+  const hasAlias = (alias: string) => {
+    const parts = normalizeText(alias);
+    return (
+      parts.length > 0 &&
+      goal.some((_, start) =>
+        parts.every((part, offset) => goal[start + offset] === part),
+      )
+    );
+  };
   return catalog.tasks
     .filter(
       (task) =>
         task.length <= 120 &&
-        normalizeText(task).some((word) => expanded.has(word)),
+        ([task, canonicalTaskName(task)].some((name) =>
+          normalizeText(name).some((word) => expanded.has(word)),
+        ) ||
+          catalog.synonyms.some(
+            (row) =>
+              row.category === 'task' &&
+              row.target === task &&
+              hasAlias(row.alias),
+          )),
     )
     .slice(0, 50);
 }

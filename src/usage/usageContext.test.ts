@@ -44,3 +44,45 @@ describe('usage metadata', () => {
     ).toBe('start-here');
   });
 });
+
+it('records original published task names for equivalent engine wording without leaking private input', () => {
+  const current = {
+    ...catalog,
+    tasks: [
+      'grant opportunity review',
+      'newsletter drafting',
+      'unrelated task',
+    ],
+  };
+  expect(canonicalGoalTasks(['RFP', 'private-fixture-words'], current)).toEqual(
+    ['grant opportunity review'],
+  );
+  expect(canonicalGoalTasks(['newsletter', 'newsletter'], current)).toEqual([
+    'newsletter drafting',
+  ]);
+  expect(canonicalGoalTasks(['private-fixture-words'], current)).toEqual([]);
+  expect(canonicalGoalTasks(['RFP'], current)).not.toContain('RFP review');
+});
+it('uses complete published task aliases and caps keyword output without using returned cards', () => {
+  const current = {
+    ...catalog,
+    tasks: ['governance'],
+    synonyms: [
+      {
+        category: 'task' as const,
+        alias: 'oversight process',
+        target: 'governance',
+      },
+    ],
+  };
+  expect(canonicalGoalTasks(['oversight', 'process'], current)).toEqual([
+    'governance',
+  ]);
+  expect(canonicalGoalTasks(['process'], current)).toEqual([]);
+  expect(
+    canonicalGoalTasks(['tag'], {
+      ...catalog,
+      tasks: Array.from({ length: 80 }, (_, i) => `tag ${i}`),
+    }),
+  ).toHaveLength(50);
+});

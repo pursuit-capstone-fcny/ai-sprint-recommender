@@ -3,6 +3,7 @@ import fixture from '../../fixtures/public-catalog.json';
 import { impressionEvent, searchEvent } from '../../fixtures/usage-events';
 import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { UsageEventSchema } from '../contracts/usageEvent';
+import { canonicalGoalTasks } from '../usage/usageContext';
 import {
   buildAnalyticsReport,
   newYorkDate,
@@ -47,6 +48,63 @@ const task = (report: ReturnType<typeof run>, tag = 'grant reports') =>
   report.tags.find((row) => row.category === 'task' && row.tag === tag)!;
 
 describe('MVP analytics aggregation', () => {
+  it('counts published task names across keyword searches, card tags and associations', () => {
+    const published = parsePublicCatalog({
+      ...catalog,
+      catalogVersion: `sha256:${'3'.repeat(64)}`,
+      tasks: [
+        'grant opportunity review',
+        'newsletter drafting',
+        'budget tracking',
+      ],
+      synonyms: [],
+      items: catalog.items.map((item, index) =>
+        index === 0 ? { ...item, tasks: ['grant opportunity review'] } : item,
+      ),
+    });
+    const goalTasks = canonicalGoalTasks(
+      ['RFP', 'private-fixture-words'],
+      published,
+    );
+    const report = buildAnalyticsReport({
+      current: published,
+      filter: window,
+      records: [
+        search(1, {
+          catalogVersion: published.catalogVersion,
+          tasks: goalTasks,
+        }),
+        record(2, { catalogVersion: published.catalogVersion }),
+        record(3, {
+          catalogVersion: published.catalogVersion,
+          type: 'click',
+          target: 'youtube',
+        }),
+      ],
+    });
+    expect(
+      report.tags.find((row) => row.tag === 'grant opportunity review'),
+    ).toMatchObject({
+      category: 'task',
+      searches: 1,
+      appearances: 1,
+      youtubeClicks: 1,
+    });
+    expect(
+      report.tags.find((row) => row.tag === 'newsletter drafting'),
+    ).toMatchObject({
+      searches: 0,
+      appearances: 0,
+    });
+    expect(
+      report.associations.find((row) => row.tag === 'grant opportunity review'),
+    ).toMatchObject({
+      appearances: 1,
+      youtubeClicks: 1,
+    });
+    expect(JSON.stringify(report)).not.toContain('private-fixture-words');
+    expect(report.tags.some((row) => row.tag === 'RFP review')).toBe(false);
+  });
   it('keeps daily/source/mode facts additive and preserves zero inventory for Looker parameter controls', () => {
     const report = run(
       [search(), record(2), record(3, { src: 'team', searchId: uuid(67) })],
