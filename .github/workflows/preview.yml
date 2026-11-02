@@ -31,6 +31,10 @@ jobs:
           # Opt in only after deploying and verifying the matching collector.
           VITE_USAGE_ENABLED: ${{ vars.LIBRARY_TEST_COLLECTION_READY == 'true' && vars.LIBRARY_TEST_ORIGIN && vars.CATALOG_TEST_URL && 'true' || 'false' }}
           VITE_USAGE_TEST_URL: ${{ vars.CATALOG_TEST_URL }}
+          VITE_FEEDBACK_ENABLED: ${{ vars.FEEDBACK_PREVIEW_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_FEEDBACK_QUESTION: ${{ vars.FEEDBACK_QUESTION }}
+          VITE_REQUESTS_ENABLED: ${{ vars.REQUESTS_PREVIEW_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_REQUESTS_CONFIG: ${{ vars.REQUESTS_CONFIG }}
         run: |
           pnpm install --frozen-lockfile
           if [[ -z "$VITE_LIBRARY_ORIGIN" ]]; then node scripts/seed-library-demo.mjs; fi

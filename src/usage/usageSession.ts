@@ -1,5 +1,6 @@
 import type { UsageEvent } from '../contracts/usageEvent';
 import { createUsageSender, type UsageSender } from './sendUsage';
+import { feedbackQuestion } from '../feedback/vote';
 
 export interface UsageSession {
   sessionId: string;
@@ -31,7 +32,7 @@ export function usageEndpoint(source: 'remote' | 'fixture'): string | null {
   )?.trim();
   if (
     source !== 'remote' ||
-    import.meta.env.VITE_USAGE_ENABLED !== 'true' ||
+    (import.meta.env.VITE_USAGE_ENABLED !== 'true' && !feedbackQuestion()) ||
     (environment !== 'test' && environment !== 'production') ||
     !url ||
     !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(
@@ -56,7 +57,9 @@ export function getUsageSession(
     session = {
       sessionId: crypto.randomUUID(),
       src: usageSource(window.location.search),
-      sender: createUsageSender(url),
+      sender: createUsageSender(url, {
+        automaticUsageEnabled: import.meta.env.VITE_USAGE_ENABLED === 'true',
+      }),
     };
   }
   return session;

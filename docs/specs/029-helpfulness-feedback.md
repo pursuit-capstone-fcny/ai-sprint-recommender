@@ -77,3 +77,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Final wording, collection/access/retention decisions, operating ownership and
   live Cloudflare/collector delivery remain open. The user confirmed no operating
   approvals are available. This update does not mark acceptance complete.
+
+### Live rollout, November 2, 2026
+
+Jason authorized enabling private video feedback and approved "Was this helpful?".
+See [the rollout record](../live-feedback-requests.md) for configuration,
+restricted reporting access, regression coverage and deployment verification.
+This authorization does not assert separate Ali/Eliot approval.

@@ -31,6 +31,10 @@ jobs:
           VITE_USAGE_ENABLED: ${{ vars.USAGE_PRODUCTION_ENABLED == 'true' && 'true' || 'false' }}
           VITE_USAGE_PRODUCTION_URL: ${{ vars.CATALOG_PRODUCTION_URL }}
           VITE_USAGE_TEST_URL: ''
+          VITE_FEEDBACK_ENABLED: ${{ vars.FEEDBACK_PRODUCTION_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_FEEDBACK_QUESTION: ${{ vars.FEEDBACK_QUESTION }}
+          VITE_REQUESTS_ENABLED: ${{ vars.REQUESTS_PRODUCTION_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_REQUESTS_CONFIG: ${{ vars.REQUESTS_CONFIG }}
         run: |
           [[ -n "$VITE_LIBRARY_ORIGIN" ]]
           pnpm install --frozen-lockfile
