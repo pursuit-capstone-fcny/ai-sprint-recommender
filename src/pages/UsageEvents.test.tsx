@@ -203,4 +203,32 @@ describe('browser usage events', () => {
     expect(screen.queryByText(/Your typed goal is not logged/)).toBeNull();
     expect(fetch).toHaveBeenCalledTimes(1);
   });
+
+  it('logs production searches and impressions only to the production collector', async () => {
+    const production = 'https://script.google.com/macros/s/production/exec';
+    vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
+    vi.stubEnv('VITE_CATALOG_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_TEST_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', production);
+    vi.stubEnv('VITE_USAGE_ENABLED', 'true');
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+    vi.mocked(fetch).mockImplementation(async (_url, init) =>
+      init?.method === 'POST'
+        ? Response.json({ ok: true, status: 'accepted' })
+        : Response.json(publicCatalog),
+    );
+    render(<IntakeResultsPage />);
+    await screen.findByRole('button', { name: 'Find videos' });
+    submit();
+    await waitFor(() =>
+      expect(logged().filter((event) => event.type === 'search')).toHaveLength(
+        1,
+      ),
+    );
+    await waitFor(() => expect(logged()).toHaveLength(9));
+    const posts = vi
+      .mocked(fetch)
+      .mock.calls.filter(([, init]) => init?.method === 'POST');
+    expect(posts.every(([url]) => url === production)).toBe(true);
+  });
 });
