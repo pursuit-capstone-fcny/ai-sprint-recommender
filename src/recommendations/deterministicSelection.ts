@@ -3,13 +3,14 @@ import type { PublicCatalog } from '../contracts/publicCatalog';
 import type { IntakeProfile } from '../contracts/intakeProfile';
 import { recommendVideos } from '../engine/deterministicPrompt';
 import type { RecommendationSelection } from './selectRecommendations';
+import { deterministicCatalog } from './deterministicCatalog';
 
 export function deterministicSelection(
   catalog: PublicCatalog,
   goal: string,
   profile: IntakeProfile,
 ): RecommendationSelection {
-  const result = recommendVideos(catalog, {
+  const result = recommendVideos(deterministicCatalog(catalog), {
     prompt: goal,
     functionArea: profile.functionArea,
     tools: profile.tools,
@@ -17,7 +18,9 @@ export function deterministicSelection(
   });
   return {
     results: result.recommendations.map(({ item, reason }) => ({
-      item: toCatalogItem(item),
+      item: toCatalogItem(
+        catalog.items.find((source) => source.youtubeId === item.youtubeId)!,
+      ),
       reason,
       matchType: 'strong',
     })),

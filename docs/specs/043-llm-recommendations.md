@@ -78,7 +78,10 @@ padding in the earlier #43/#83 text. Task requests display zero to eight
 compatible picks. V1 retains its existing two-primary-task gate and all 89
 complete public catalog rows, with no deterministic annotations, rankings or
 prefiltering sent to Haiku. Model/prompt settings and validation are unchanged.
-The AI browser window is 35 seconds, with a 34.5-second V1 server deadline.
+A private deterministic adapter maps equivalent Sheet task names to #102's
+vocabulary; cards retain their original public metadata and this projection
+never enters Haiku's context. Broad or unknown tags do not imply specific
+methods. The AI browser window is 35 seconds, with a 34.5-second V1 server deadline.
 Deterministic matching has no provider wait. Historical candidates and recorded
 results remain on their archived branches; this integration makes no new
 quality claim and performs no paid evaluation.
