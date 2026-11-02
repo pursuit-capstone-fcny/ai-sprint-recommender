@@ -98,3 +98,22 @@ describe('connected library reader', () => {
     ).toThrow('Conflicting');
   });
 });
+
+it('includes the same published catalog and keeps staff collection opt-in and validated', () => {
+  const services = analyticsServices();
+  const book = SpreadsheetApp.openById('fixture-catalog');
+  const result = readLibraryDashboard(book);
+  expect(result.catalog?.items.length).toBeGreaterThan(0);
+  expect(result.catalog?.synonyms).toBeDefined();
+  expect(result.topicUsage).toBeUndefined();
+  services.properties.TOPIC_USAGE_ENABLED = 'true';
+  services.properties.TOPIC_USAGE_URL =
+    'https://script.google.com/macros/s/fixture/exec';
+  services.properties.TOPIC_USAGE_RETENTION_DAYS = '1';
+  expect(readLibraryDashboard(book).topicUsage).toEqual({
+    url: services.properties.TOPIC_USAGE_URL,
+    retentionDays: 1,
+  });
+  services.properties.TOPIC_USAGE_URL = 'https://unapproved.test/collect';
+  expect(readLibraryDashboard(book).topicUsage).toBeUndefined();
+});

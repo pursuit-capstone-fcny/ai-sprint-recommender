@@ -6,7 +6,10 @@ import {
 } from '../apps-script/published-library';
 import { readAnalyticsRecords } from '../apps-script/analytics-sheet';
 import { buildAnalyticsReport } from '../src/analytics/report';
-import { DashboardSnapshotSchema } from '../src/admin/snapshot';
+import {
+  DashboardSnapshotSchema,
+  TopicUsageConfigSchema,
+} from '../src/admin/snapshot';
 const DAY = 86_400_000;
 export { importLibraryRows } from '../apps-script/library-source';
 export function readLibraryDashboard(
@@ -46,7 +49,17 @@ export function readLibraryDashboard(
     },
     date,
   );
+  const properties = PropertiesService.getScriptProperties();
+  const topicUsage = TopicUsageConfigSchema.safeParse({
+    url: properties.getProperty('TOPIC_USAGE_URL'),
+    retentionDays: Number(properties.getProperty('TOPIC_USAGE_RETENTION_DAYS')),
+  });
   return DashboardSnapshotSchema.parse({
+    catalog,
+    ...(properties.getProperty('TOPIC_USAGE_ENABLED') === 'true' &&
+    topicUsage.success
+      ? { topicUsage: topicUsage.data }
+      : {}),
     state: records.length ? 'ready' : 'empty',
     refreshedAt: now.toISOString(),
     staleAt: new Date(now.getTime() + 15 * 60_000).toISOString(),

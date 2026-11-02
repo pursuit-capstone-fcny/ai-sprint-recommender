@@ -55,13 +55,13 @@ and the test Script Properties in agreement. This is not production approval.
 reference validator for the backend and browser sender. A POST contains one JSON
 object, encoded as `text/plain`, at most 16,384 UTF-8 bytes.
 
-| Fields                                              | Rule                                                                                                                             |
-| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| `schemaVersion`, `eventId`, `sessionId`, `searchId` | Version 1 and UUIDs, normalized to lowercase                                                                                     |
-| `type`, `time`, `mode`, `src`, `catalogVersion`     | Search/impression/click; UTC ISO time; recommendations/topic/direct; approved source or `other`; current catalog SHA-256 version |
-| Search                                              | `functionArea` as one canonical tag or `null`, unique `tools` and `tasks`, `resultCount`, `strongMatchCount`, `fallbackType`     |
-| Impression/click                                    | Active `youtubeId`, one-based `rank`, `matchType`; click also requires `target` as `embed` or `youtube`                          |
-| Recommendation mode                                 | `recommendationEngine` and `llmFallbackReason`; LLM success requires a configured `modelVersion`/`promptVersion` pair            |
+| Fields                                              | Rule                                                                                                                                                                                         |
+| --------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `schemaVersion`, `eventId`, `sessionId`, `searchId` | Version 1 and UUIDs, normalized to lowercase                                                                                                                                                 |
+| `type`, `time`, `mode`, `src`, `catalogVersion`     | Search/impression/click; UTC ISO time; recommendations/topic/direct; approved source or `other`; current catalog SHA-256 version                                                             |
+| Search                                              | `functionArea` as one canonical tag or `null`, optional unique `functionAreas` for topic-mode multi-selection, unique `tools` and `tasks`, `resultCount`, `strongMatchCount`, `fallbackType` |
+| Impression/click                                    | Active `youtubeId`, one-based `rank`, `matchType`; click also requires `target` as `embed` or `youtube`                                                                                      |
+| Recommendation mode                                 | `recommendationEngine` and `llmFallbackReason`; LLM success requires a configured `modelVersion`/`promptVersion` pair                                                                        |
 
 Recommendation metadata is absent in topic/direct mode. Rules events use a reason
 such as `not-requested`, `disabled` or `timeout`; LLM success uses `none`.
@@ -192,3 +192,14 @@ See [dashboard setup and acceptance](../docs/analytics/dashboard.md) for explici
 properties, per-view Looker filters, trigger authorization, retention, error
 recovery and the remaining FCNY deployment gates. No analytics read operation is
 added to the public web app, and production logging remains off.
+
+### Staff topic search
+
+The private analytics app can send mode=topic, src=team events to the existing
+approved collector. Search events may include functionAreas, an array of
+canonical filter tags. When present, functionArea is its only entry or null for
+zero/multiple entries. This additive field is topic-only. Older events remain
+readable. Reporting counts each selected function area once per search. Deploy
+the updated collector and private report before enabling admin TOPIC_USAGE_*
+settings. No raw topic wording is collected. Existing caps, retention and
+best-effort delivery remain in force.

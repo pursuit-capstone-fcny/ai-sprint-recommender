@@ -402,3 +402,27 @@ describe('MVP analytics aggregation', () => {
     expect(() => run([], { ...window, tag: 'ChatGPT' })).toThrow();
   });
 });
+
+it('counts each selected function area once for topic searches while excluding team traffic by default', () => {
+  const event = UsageEventSchema.parse({
+    ...searchEvent,
+    mode: 'topic',
+    recommendationEngine: undefined,
+    llmFallbackReason: undefined,
+    src: 'team',
+    functionArea: null,
+    functionAreas: catalog.functionAreas.slice(0, 2),
+    tools: [],
+    tasks: [],
+  });
+  const records = [{ event, receivedAt: '2026-10-20T12:00:00.000Z' }];
+  expect(run(records).diagnostics.selectedEvents).toBe(0);
+  const report = run(records, { ...window, includeTeam: true });
+  expect(report.diagnostics.selectedEvents).toBe(1);
+  for (const tag of catalog.functionAreas.slice(0, 2))
+    expect(
+      report.tags.find(
+        (row) => row.category === 'functionArea' && row.tag === tag,
+      )?.searches,
+    ).toBe(1);
+});
