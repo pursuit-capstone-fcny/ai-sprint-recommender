@@ -69,7 +69,23 @@ export function providerBody(
   // This map stays on the server; the provider selects numbered candidates.
   return { request, catalogIds: catalog.items.map((item) => item.youtubeId) };
 }
-export type ProviderBody = ReturnType<typeof providerBody>;
+export interface ProviderBody {
+  request: {
+    model: string;
+    max_tokens: number;
+    system: string;
+    messages: { role: string; content: string }[];
+    thinking?: unknown;
+    output_config: {
+      format: { type: string; schema: unknown };
+      effort?: string;
+    };
+  };
+  catalogIds: string[];
+  complete?: ReturnType<
+    typeof import('./full-catalog-scoring').prepareCatalogScoring
+  >['complete'];
+}
 const count = z.number().int().min(0).max(100).optional();
 export const ProviderValidationSchema = z.object({
   validationFailure: z.enum([

@@ -8,9 +8,13 @@ import {
 } from '../recommendations/requestRecommendations';
 import {
   rulesSelection,
-  selectRecommendations,
   type RecommendationSelection,
 } from '../recommendations/selectRecommendations';
+import { deterministicSelection } from '../recommendations/deterministicSelection';
+import {
+  selectRecommendationState,
+  type RecommendationState,
+} from '../recommendations/selectRecommendationState';
 import type { PublicCatalog } from '../contracts/publicCatalog';
 import { createRecommendationUsage } from '../usage/usageContext';
 import type { UsageSession } from '../usage/usageSession';
@@ -41,6 +45,7 @@ interface IntakeResultsProps {
   availableTools?: string[];
   usage?: { session: UsageSession; catalog: PublicCatalog };
   recommendationCatalog?: PublicCatalog;
+  publicCatalog?: PublicCatalog;
 }
 
 export function IntakeResults({
@@ -49,24 +54,35 @@ export function IntakeResults({
   availableTools: dictionaryTools,
   usage,
   recommendationCatalog,
+  publicCatalog,
 }: IntakeResultsProps) {
+  const [engine, setEngine] = useState<'rules' | 'llm'>('rules');
   const [functionArea, setFunctionArea] = useState<string | null>(null);
   const [goalText, setGoalText] = useState('');
   const [tools, setTools] = useState<string[]>([]);
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<{
     profile: IntakeProfile;
-    selection: RecommendationSelection;
+    state: RecommendationState;
   } | null>(null);
   const [loading, setLoading] = useState(false);
   const pending = useRef<AbortController | null>(null);
   const profile = completed?.profile ?? EMPTY_PROFILE;
-  const selection = useMemo(
-    () =>
-      completed?.selection ??
-      rulesSelection(catalog, EMPTY_PROFILE, 'not-requested'),
-    [catalog, completed],
-  );
+  const selection = useMemo<RecommendationSelection>(() => {
+    if (
+      completed?.state.status === 'unavailable' ||
+      (engine === 'llm' && !completed)
+    )
+      return {
+        results: [],
+        recommendationEngine: engine,
+        llmFallbackReason: 'none',
+      };
+    return (
+      completed?.state.selection ??
+      rulesSelection(catalog, EMPTY_PROFILE, 'not-requested')
+    );
+  }, [catalog, completed, engine]);
   const llmEnabled =
     recommendationsEnabled() && recommendationCatalog !== undefined;
   useEffect(() => () => pending.current?.abort(), []);
@@ -76,13 +92,19 @@ export function IntakeResults({
     [catalog, dictionaryTools],
   );
 
-  const results = selection.results;
+  const results = useMemo(
+    () => (loading ? [] : selection.results),
+    [loading, selection.results],
+  );
   const usageSession = usage?.session;
   const usageCatalog = usage?.catalog;
   const question = feedbackQuestion();
   const usageContext = useMemo(
     () =>
-      usageSession && usageCatalog
+      !loading &&
+      completed?.state.status !== 'unavailable' &&
+      usageSession &&
+      usageCatalog
         ? createRecommendationUsage(
             usageSession,
             usageCatalog,
@@ -92,7 +114,15 @@ export function IntakeResults({
             selection,
           )
         : null,
-    [usageSession, usageCatalog, profile, selection, completed, results],
+    [
+      usageSession,
+      usageCatalog,
+      profile,
+      selection,
+      completed,
+      results,
+      loading,
+    ],
   );
   useEffect(() => {
     usageContext?.display(results);
@@ -131,18 +161,36 @@ export function IntakeResults({
     };
     const blank =
       functionArea === null && !goalText.trim() && tools.length === 0;
-    if (!llmEnabled || blank || !recommendationCatalog) {
+    if (engine === 'rules') {
+      const snapshot = publicCatalog ?? recommendationCatalog ?? usageCatalog;
+      const selected = goalText.trim()
+        ? snapshot
+          ? deterministicSelection(snapshot, goalText, nextProfile)
+          : null
+        : rulesSelection(catalog, nextProfile, 'not-requested');
       setCompleted({
         profile: nextProfile,
-        selection: rulesSelection(
-          catalog,
-          nextProfile,
-          blank ? 'not-requested' : 'disabled',
-        ),
+        state: selected
+          ? { status: 'ready', selection: selected }
+          : { status: 'unavailable', reason: 'unavailable' },
+      });
+    } else if (
+      !llmEnabled ||
+      !recommendationCatalog ||
+      blank ||
+      !goalText.trim()
+    ) {
+      setCompleted({
+        profile: nextProfile,
+        state: {
+          status: 'unavailable',
+          reason: llmEnabled ? 'not-requested' : 'disabled',
+        },
       });
     } else {
       const controller = new AbortController();
       pending.current = controller;
+      setCompleted(null);
       setLoading(true);
       void requestRecommendations(
         {
@@ -158,7 +206,7 @@ export function IntakeResults({
         setLoading(false);
         setCompleted({
           profile: nextProfile,
-          selection: selectRecommendations(
+          state: selectRecommendationState(
             catalog,
             nextProfile,
             recommendationCatalog.catalogVersion,
@@ -184,7 +232,7 @@ export function IntakeResults({
       <form
         className="search-panel"
         aria-labelledby="search-panel-title"
-        aria-describedby={llmEnabled ? 'ai-disclosure' : undefined}
+        aria-describedby={engine === 'llm' ? 'ai-disclosure' : undefined}
         onSubmit={(event) => {
           event.preventDefault();
           handleFindVideos();
@@ -193,6 +241,31 @@ export function IntakeResults({
         <div className="panel-head">
           <h2 id="search-panel-title">What are you working on?</h2>
         </div>
+        <fieldset className="engine-choice">
+          <legend>Recommendation engine</legend>
+          {(
+            [
+              ['rules', 'Deterministic'],
+              ['llm', 'Haiku AI'],
+            ] as const
+          ).map(([value, label]) => (
+            <label key={value}>
+              <input
+                type="radio"
+                name="recommendation-engine"
+                value={value}
+                checked={engine === value}
+                onChange={() => {
+                  cancelPending();
+                  setEngine(value);
+                  setCompleted(null);
+                  setPlayingId(null);
+                }}
+              />
+              {label}
+            </label>
+          ))}
+        </fieldset>
         <IntakeForm
           functionArea={functionArea}
           onFunctionAreaChange={(value) => {
@@ -209,10 +282,11 @@ export function IntakeResults({
           selectedTools={tools}
           onToggleTool={handleToggleTool}
         />
-        {llmEnabled && (
+        {engine === 'llm' && (
           <p className="usage-notice" id="ai-disclosure">
             AI suggestions send your goal and selected options to Anthropic.
-            Leave out personal information.
+            Leave out personal information. Results can take up to 35 seconds.
+            {!llmEnabled && ' AI calls are disabled in this deployment.'}
           </p>
         )}
         {usage && (
@@ -238,11 +312,21 @@ export function IntakeResults({
       <p role="status" className="catalog-notice">
         {loading
           ? 'Finding AI suggestions…'
-          : completed
-            ? selection.recommendationEngine === 'llm'
-              ? 'AI suggestions'
-              : 'Standard matching'
-            : null}
+          : completed?.state.status === 'unavailable'
+            ? completed.state.reason === 'not-requested'
+              ? 'Enter a task description to request AI recommendations.'
+              : engine === 'llm'
+                ? 'AI recommendations are unavailable. You can select Deterministic and submit again.'
+                : 'The catalog is unavailable for deterministic matching.'
+            : completed?.state.status === 'abstained'
+              ? 'No confident AI matches found.'
+              : completed
+                ? results.length === 0
+                  ? 'No compatible videos found.'
+                  : engine === 'llm'
+                    ? 'AI suggestions'
+                    : 'Standard matching'
+                : null}
       </p>
       <ResultsList
         feedback={

@@ -60,7 +60,7 @@ export function IntakeForm({
         <div className="discovery-examples" aria-label="Example searches">
           <span>Try an example:</span>
           {[
-            ['Task', 'Draft a grant report'],
+            ['Task', 'Summarize an RFP and check eligibility'],
             ['Role', 'I coordinate volunteers and need help planning outreach'],
             ['Mission', 'Our nonprofit helps families find housing'],
           ].map(([kind, example]) => (

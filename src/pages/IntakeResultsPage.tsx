@@ -87,6 +87,7 @@ export function IntakeResultsPage() {
                 <IntakeResults
                   key={catalog.catalog.catalogVersion}
                   catalog={catalog.items}
+                  publicCatalog={catalog.catalog}
                   recommendationCatalog={
                     catalog.source === 'remote' ? catalog.catalog : undefined
                   }
@@ -106,9 +107,12 @@ export function IntakeResultsPage() {
             <section className="info-panel" aria-labelledby="how-it-works">
               <h2 id="how-it-works">How we pick videos</h2>
               <p>
-                {llmEnabled
-                  ? 'Describe your work and select Find videos. AI suggestions compare your description and any optional refinements with the video catalog. If AI suggestions are unavailable, we use standard matching. No follow-up interview is required.'
-                  : 'Describe your work and select Find videos. Standard matching uses words in your description to look for related tasks, video titles and descriptions. You can optionally refine by function area or tool. If nothing matches, we suggest videos to start with. No follow-up interview is required.'}
+                Choose Deterministic or Haiku AI, then select Find videos.
+                Deterministic matching compares your requested work and
+                constraints with the catalog locally. Haiku AI assesses the
+                complete catalog independently. Neither engine fills short lists
+                or switches to the other engine automatically.
+                {!llmEnabled && ' AI calls are currently disabled.'}
               </p>
             </section>
             <section className="info-panel" aria-labelledby="about-library">

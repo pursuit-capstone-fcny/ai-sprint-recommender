@@ -21,7 +21,7 @@ const schema = z.object({
   LLM_MODEL: z.string().regex(/^[A-Za-z0-9][A-Za-z0-9._-]{0,79}$/),
   LIBRARY_ORIGIN: CatalogSourceSchema,
   LLM_MAX_INPUT_TOKENS: positive.max(200_000),
-  LLM_MAX_OUTPUT_TOKENS: positive.max(2_000),
+  LLM_MAX_OUTPUT_TOKENS: positive.max(16_384),
   LLM_REQUESTS_PER_MINUTE: positive.max(10_000),
   LLM_CLIENT_REQUESTS_PER_MINUTE: positive.max(100),
   LLM_MAX_CONCURRENCY: positive.max(100),

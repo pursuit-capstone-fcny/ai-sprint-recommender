@@ -69,6 +69,23 @@ const catalog: CatalogItem[] = [
   },
 ];
 
+const publicCatalog = {
+  schemaVersion: 1 as const,
+  catalogVersion: `sha256:${'a'.repeat(64)}`,
+  functionAreas: [
+    ...new Set([...catalog.flatMap((i) => i.functionAreas), 'Leadership']),
+  ],
+  tasks: [...new Set(catalog.flatMap((i) => i.tasks))],
+  tools: [...new Set(catalog.flatMap((i) => i.tools))],
+  synonyms: [],
+  adjacentTools: [],
+  items: catalog.map(({ isStartHere, durationSeconds, ...i }) => ({
+    ...i,
+    startHere: isStartHere,
+    lengthSeconds: durationSeconds ?? null,
+  })),
+};
+
 function selectFundraising() {
   fireEvent.change(screen.getByLabelText(/function area/i), {
     target: { value: 'Fundraising' },
@@ -78,7 +95,7 @@ function selectFundraising() {
 
 describe('IntakeResults', () => {
   it('shows the available matches and labeled fallback when the catalog has fewer than six', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     selectFundraising();
 
     const cards = screen.getAllByRole('listitem');
@@ -89,19 +106,19 @@ describe('IntakeResults', () => {
   });
 
   it('shows results for "Not sure" without crashing', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
   });
 
   it('keeps displayed results while typing and re-ranks on submission', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     selectFundraising();
 
     const firstCardBefore = screen.getAllByRole('listitem')[0];
     expect(firstCardBefore.textContent).toContain('Widget Setup Basics');
 
     fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
-      target: { value: 'gizmo' },
+      target: { value: 'gizmo onboarding' },
     });
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
       'Widget Setup Basics',
@@ -112,23 +129,23 @@ describe('IntakeResults', () => {
     expect(firstCardAfter.textContent).toContain('Gizmo Onboarding Guide');
   });
 
-  it('labels fallback picks as "Closest match" and hides Show more', () => {
-    render(<IntakeResults catalog={catalog} />);
+  it('does not add unrelated fallback cards to a task request', () => {
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     fireEvent.change(screen.getByLabelText(/function area/i), {
       target: { value: 'Leadership' },
     });
     fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
-      target: { value: 'gizmo' },
+      target: { value: 'gizmo onboarding' },
     });
 
     fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 
-    expect(screen.getAllByText('Closest match').length).toBeGreaterThan(0);
+    expect(screen.queryAllByText('Closest match')).toHaveLength(0);
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
   it('fills a thin matched set with distinct fallback videos and has no Show more', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     selectFundraising();
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
     expect(screen.getAllByText('Closest match')).toHaveLength(1);
@@ -136,7 +153,7 @@ describe('IntakeResults', () => {
   });
 
   it('narrows to one tool with the tool select, and "Any AI tool" undoes it', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     selectFundraising();
     const toolSelect = screen.getByLabelText(/tool/i) as HTMLSelectElement;
     expect(toolSelect.value).toBe('');
@@ -166,7 +183,7 @@ describe('IntakeResults', () => {
   });
 
   it('"Clear" resets area, goal and tool', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     const area = screen.getByLabelText(/function area/i) as HTMLSelectElement;
     const goal = screen.getByLabelText(
       /what do you want to learn/i,
@@ -174,7 +191,7 @@ describe('IntakeResults', () => {
     const tool = screen.getByLabelText(/tool/i) as HTMLSelectElement;
 
     selectFundraising();
-    fireEvent.change(goal, { target: { value: 'gizmo' } });
+    fireEvent.change(goal, { target: { value: 'gizmo onboarding' } });
     fireEvent.change(tool, { target: { value: 'Claude' } });
 
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
@@ -186,7 +203,7 @@ describe('IntakeResults', () => {
   });
 
   it('"Find videos" moves focus to the results heading', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     fireEvent.click(screen.getByRole('button', { name: /find videos/i }));
     expect(document.activeElement).toBe(
       screen.getByRole('heading', { name: 'Videos to start with' }),
@@ -194,7 +211,7 @@ describe('IntakeResults', () => {
   });
 
   it('labels fallback discovery picks in the "Not sure" state', () => {
-    render(<IntakeResults catalog={catalog} />);
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     const cards = screen.getAllByRole('listitem');
     expect(cards.length).toBeGreaterThan(0);
     expect(screen.queryByText('Closest match')).toBeNull();
@@ -207,6 +224,6 @@ describe('IntakeResults', () => {
       target: { value: 'Leadership' },
     });
     fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-    expect(screen.getAllByText('Closest match').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Closest match')).toHaveLength(5);
   });
 });

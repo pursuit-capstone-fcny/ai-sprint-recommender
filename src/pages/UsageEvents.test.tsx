@@ -112,7 +112,7 @@ describe('browser usage events', () => {
       resultCount: 4,
       strongMatchCount: 4,
       recommendationEngine: 'rules',
-      llmFallbackReason: 'disabled',
+      llmFallbackReason: 'not-requested',
       fallbackType: 'none',
     });
     expect(JSON.stringify(logged())).not.toContain('private fixture words');

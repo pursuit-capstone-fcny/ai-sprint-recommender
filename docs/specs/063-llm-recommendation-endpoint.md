@@ -14,7 +14,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 
 ### Goal
 
-- Provide a bounded server call that selects and ranks active catalog items for #43. Proposed home: a Cloudflare Worker alongside the existing SPA, with Apps Script remaining the catalog source.
+- Provide a bounded server call that selects and ranks active catalog items for #43. Proposed home: a Cloudflare Worker alongside the existing SPA, using the trusted versioned static catalog from ADR 0004.
 - MVP dependency: #9 catalog contract.
 
 ### Non-goals
@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then it returns structured JSON containing up to 10 distinct `youtubeId` values in recommendation order, or an empty list for no relevant picks. The prompt prioritizes function area, task fit and tool fit, and treats goals and catalog text as untrusted data. No provider tools are enabled
+  - Then Haiku 5.5 low with thinking disabled uses `catalog-score-evidence-v1` to assess all 89 complete public catalog items. Useful assessments require exact description evidence, a quoted requested work step and evidence for every applicable constraint. Validate complete unique coverage and the whole eligible ordering, then apply the unchanged diversity gate and eight-video cap. Empty valid results abstain; no provider tools, prefiltering or filler are used
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response
@@ -43,7 +43,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.5 Bounded failure and cost
   - Given an anonymous endpoint, concurrent requests or provider errors
   - When traffic reaches configured limits
-  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a 4.5-second server deadline inside the browser's five-second limit and no paid retries
+  - Then server-side input/output token, request-rate, concurrency and daily/monthly spend caps prevent further paid calls. Reserve estimated maximum call cost atomically before dispatch and reconcile actual usage. A missing limit, exhausted budget or kill switch returns fallback without calling the provider; one submission makes at most one provider call, with a 34.5-second V1 server deadline inside the browser's 35-second limit and no paid retries
 - AC-63.6 Privacy and diagnostics
   - Given successful, rejected or failed calls
   - When diagnostics are recorded
@@ -52,7 +52,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 ### Open questions
 
 - [ ] Approve the Worker proposal, provider/model, retention terms and concrete rate, token and spend limits. Include the cost of the live evaluation in #19.
-- [ ] Proposed candidate policy: include the full valid catalog with capped descriptions when it fits the input budget. On overflow, use the rules fallback until an explicit shortlist policy passes #19; never silently truncate the catalog.
+- [ ] V1 requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 16,384-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.
 
 ### Evidence required
 
@@ -61,9 +61,10 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - Manual check: one deployed signed-out request, one forced failure, and inspection of the browser bundle and server logs for secret or goal leakage.
 - Rollback signal: invalid picks, exposed data or unenforced limits; disable the server flag and keep the rules path available.
 
-### Result-count policy update
+### Demo integration
 
-Spec [#83](083-expanded-recommendations.md) supersedes the earlier three-result
-and Show-more requirements. Display at most eight matches; fill fewer than six
-with labeled fallback videos to six, subject to the eligible catalog size.
-The existing model validation gates remain separate from this display minimum.
+The engine toggle keeps this endpoint independent of #102. An AI error or
+abstention never invokes the deterministic engine. The published catalog
+snapshot is trusted server input; browser-provided catalog rows are rejected.
+Production paid calls and usage logging remain disabled. This PR does not
+activate a test deployment or authorize additional spending.

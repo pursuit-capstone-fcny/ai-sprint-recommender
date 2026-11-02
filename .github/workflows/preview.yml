@@ -25,6 +25,7 @@ jobs:
           VITE_LIBRARY_ORIGIN: ${{ vars.LIBRARY_TEST_ORIGIN }}
           VITE_LIBRARY_DEMO: ${{ vars.LIBRARY_TEST_ORIGIN && 'false' || 'true' }}
           VITE_CATALOG_SOURCE: static
+          VITE_LLM_ENABLED: 'false'
           VITE_USAGE_ENVIRONMENT: test
           # Opt in only after deploying and verifying the matching collector.
           VITE_USAGE_ENABLED: ${{ vars.LIBRARY_TEST_COLLECTION_READY == 'true' && vars.LIBRARY_TEST_ORIGIN && vars.CATALOG_TEST_URL && 'true' || 'false' }}
