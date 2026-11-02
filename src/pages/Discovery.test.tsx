@@ -34,8 +34,7 @@ function setup() {
       <IntakeResults
         catalog={items}
         recommendationCatalog={catalog}
-        availableFunctionAreas={catalog.functionAreas}
-        availableTools={catalog.tools}
+
         usage={{
           catalog,
           session: {
@@ -49,7 +48,7 @@ function setup() {
   );
   fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
   const goal = screen.getByRole('textbox', {
-    name: /what do you want to learn/i,
+    name: /your goal/i,
   });
   const form = screen.getByRole('form', { name: 'What are you working on?' });
   const searches = () =>
@@ -77,10 +76,7 @@ describe('text-first discovery', () => {
     'AC-82.1/3/5 submits "%s" without selectors or another interview',
     async (description) => {
       const { goal, fetchMock, searches } = setup();
-      const details = screen
-        .getByText(/Refine by function area or tool/)
-        .closest('details');
-      expect(details?.open).toBe(false);
+      expect(screen.queryAllByRole('combobox')).toHaveLength(0);
       expect(screen.getAllByRole('textbox')[0]).toBe(goal);
       fireEvent.change(goal, { target: { value: description } });
       expect(fetchMock).not.toHaveBeenCalled();
@@ -102,21 +98,23 @@ describe('text-first discovery', () => {
     },
   );
 
-  it('AC-82.2 examples fill and focus the description without submitting', () => {
-    const { goal, fetchMock, searches } = setup();
-    for (const kind of ['Task', 'Role', 'Mission']) {
-      const example = screen.getByRole('button', {
-        name: new RegExp(`^${kind}:`),
-      });
-      fireEvent.click(example);
-      expect(goal).toHaveProperty(
-        'value',
-        example.textContent?.replace(`${kind}: `, ''),
-      );
-      expect(document.activeElement).toBe(goal);
-    }
+  it('uses a multiline textbox without category or tool selectors', () => {
+    const { goal, fetchMock } = setup();
+    expect(goal.tagName).toBe('TEXTAREA');
+    expect(screen.queryAllByRole('combobox')).toHaveLength(0);
+    expect(screen.queryByText(/Refine by function area or tool/)).toBeNull();
+    fireEvent.keyDown(goal, { key: 'Enter', shiftKey: true });
     expect(fetchMock).not.toHaveBeenCalled();
-    expect(searches()).toHaveLength(0);
+  });
+
+  it('Enter submits the textarea once, while Shift+Enter leaves it editable', async () => {
+    const { goal, fetchMock, searches } = setup();
+    fireEvent.change(goal, { target: { value: 'Draft a grant report' } });
+    fireEvent.keyDown(goal, { key: 'Enter', shiftKey: true });
+    expect(fetchMock).not.toHaveBeenCalled();
+    fireEvent.keyDown(goal, { key: 'Enter' });
+    await waitFor(() => expect(searches()).toHaveLength(1));
+    expect(fetchMock).toHaveBeenCalledTimes(1);
   });
 
   it.each(['', '   '])(
@@ -144,7 +142,7 @@ describe('text-first discovery', () => {
       fireEvent.change(goal, { target: { value: description } });
       if (method === 'button')
         fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-      else fireEvent.submit(form); // Native form submission, also used by Enter in the text input.
+      else fireEvent.submit(form); // Native form submission, also used by Enter in the textarea.
       await waitFor(() => expect(searches()).toHaveLength(1));
       const search = searches()[0];
       const submittedEvents = send.mock.calls
@@ -183,23 +181,14 @@ describe('text-first discovery', () => {
     expect(JSON.parse(fetchMock.mock.calls[0][1].body).goal).toHaveLength(500);
   });
 
-  it('AC-82.4 exposes optional selectors and keeps selected refinements visible when closed', () => {
-    setup();
-    const summary = screen.getByText(/Refine by function area or tool/);
-    fireEvent.click(summary);
-    expect(
-      screen.getByRole('combobox', { name: 'Function area (optional)' }),
-    ).toBeTruthy();
-    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-      target: { value: 'Fundraising' },
-    });
-    fireEvent.change(screen.getByLabelText('Tool (optional)'), {
-      target: { value: 'ChatGPT' },
-    });
-    fireEvent.click(summary);
-    expect(summary.textContent).toContain('Fundraising, ChatGPT');
+  it('Clear resets the freeform goal without changing the selected engine', () => {
+    const { goal } = setup();
+    fireEvent.change(goal, { target: { value: 'Draft a report' } });
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-    expect(summary.textContent).not.toContain('Fundraising');
-    expect(summary.textContent).not.toContain('ChatGPT');
+    expect(goal).toHaveProperty('value', '');
+    expect(screen.getByRole('radio', { name: 'Haiku AI' })).toHaveProperty(
+      'checked',
+      true,
+    );
   });
 });

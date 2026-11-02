@@ -28,7 +28,7 @@ const success = {
   promptVersion: 'fixture-prompt',
 };
 function goal(text = 'A fictional request') {
-  fireEvent.change(screen.getByLabelText('What do you want to learn or do?'), {
+  fireEvent.change(screen.getByLabelText('Your goal'), {
     target: { value: text },
   });
 }

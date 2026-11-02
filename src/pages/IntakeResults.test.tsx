@@ -86,23 +86,18 @@ const publicCatalog = {
   })),
 };
 
-function selectFundraising() {
-  fireEvent.change(screen.getByLabelText(/function area/i), {
-    target: { value: 'Fundraising' },
-  });
+function submitDiscovery() {
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
 
 describe('IntakeResults', () => {
   it('shows the available matches and labeled fallback when the catalog has fewer than six', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    selectFundraising();
+    submitDiscovery();
 
     const cards = screen.getAllByRole('listitem');
     expect(cards).toHaveLength(5);
-    for (const card of cards.slice(0, 4)) {
-      expect(card.textContent).toMatch(/fundraising|about|made with/i);
-    }
+    expect(screen.getAllByText('More to explore')).toHaveLength(5);
   });
 
   it('shows results for "Not sure" without crashing', () => {
@@ -112,12 +107,12 @@ describe('IntakeResults', () => {
 
   it('keeps displayed results while typing and re-ranks on submission', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    selectFundraising();
+    submitDiscovery();
 
     const firstCardBefore = screen.getAllByRole('listitem')[0];
     expect(firstCardBefore.textContent).toContain('Widget Setup Basics');
 
-    fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
+    fireEvent.change(screen.getByLabelText(/your goal/i), {
       target: { value: 'gizmo onboarding' },
     });
     expect(screen.getAllByRole('listitem')[0].textContent).toContain(
@@ -131,10 +126,7 @@ describe('IntakeResults', () => {
 
   it('does not add unrelated fallback cards to a task request', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    fireEvent.change(screen.getByLabelText(/function area/i), {
-      target: { value: 'Leadership' },
-    });
-    fireEvent.change(screen.getByLabelText(/what do you want to learn/i), {
+    fireEvent.change(screen.getByLabelText(/your goal/i), {
       target: { value: 'gizmo onboarding' },
     });
 
@@ -146,59 +138,21 @@ describe('IntakeResults', () => {
 
   it('fills a thin matched set with distinct fallback videos and has no Show more', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    selectFundraising();
+    submitDiscovery();
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
-    expect(screen.getAllByText('Closest match')).toHaveLength(1);
+    expect(screen.getAllByText('More to explore')).toHaveLength(5);
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 
-  it('narrows to one tool with the tool select, and "Any AI tool" undoes it', () => {
+  it('Clear resets the description, results and playback', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    selectFundraising();
-    const toolSelect = screen.getByLabelText(/tool/i) as HTMLSelectElement;
-    expect(toolSelect.value).toBe('');
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      'Widget Setup Basics',
-    );
-
-    fireEvent.change(toolSelect, { target: { value: 'Claude' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-    expect(toolSelect.value).toBe('Claude');
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      'Sprocket Tracking Walkthrough',
-    );
-
-    fireEvent.change(toolSelect, { target: { value: 'Copilot' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-    expect(toolSelect.value).toBe('Copilot');
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      'Gizmo Onboarding Guide',
-    );
-
-    fireEvent.change(toolSelect, { target: { value: '' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-    expect(screen.getAllByRole('listitem')[0].textContent).toContain(
-      'Widget Setup Basics',
-    );
-  });
-
-  it('"Clear" resets area, goal and tool', () => {
-    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
-    const area = screen.getByLabelText(/function area/i) as HTMLSelectElement;
-    const goal = screen.getByLabelText(
-      /what do you want to learn/i,
-    ) as HTMLInputElement;
-    const tool = screen.getByLabelText(/tool/i) as HTMLSelectElement;
-
-    selectFundraising();
+    const goal = screen.getByLabelText(/your goal/i);
     fireEvent.change(goal, { target: { value: 'gizmo onboarding' } });
-    fireEvent.change(tool, { target: { value: 'Claude' } });
-
+    fireEvent.click(screen.getAllByRole('button', { name: /Play / })[0]);
+    expect(document.querySelectorAll('iframe')).toHaveLength(1);
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-
-    expect(area.value).toBe('');
-    expect(goal.value).toBe('');
-    expect(tool.value).toBe('');
+    expect(goal).toHaveProperty('value', '');
+    expect(document.querySelectorAll('iframe')).toHaveLength(0);
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 
@@ -220,10 +174,7 @@ describe('IntakeResults', () => {
     expect(firstItem).toBeTruthy();
     expect(within(cards[0]).getByText('More to explore')).toBeTruthy();
 
-    fireEvent.change(screen.getByLabelText(/function area/i), {
-      target: { value: 'Leadership' },
-    });
     fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-    expect(screen.getAllByText('Closest match')).toHaveLength(5);
+    expect(screen.getAllByText('More to explore')).toHaveLength(5);
   });
 });

@@ -42,7 +42,7 @@ it('shows only the model picks without filling short lists', async () => {
     <IntakeResults
       catalog={expandedCatalog}
       recommendationCatalog={expandedPublicCatalog}
-      availableFunctionAreas={expandedPublicCatalog.functionAreas}
+
       usage={{
         catalog: expandedPublicCatalog,
         session: {
@@ -54,14 +54,10 @@ it('shows only the model picks without filling short lists', async () => {
     />,
   );
   fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
-  fireEvent.change(screen.getByLabelText('What do you want to learn or do?'), {
+  fireEvent.change(screen.getByLabelText('Your goal'), {
     target: { value: 'A fictional request' },
   });
   send.mockClear();
-  fireEvent.click(screen.getByText(/Refine by function area or tool/));
-  fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-    target: { value: 'Operations' },
-  });
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
   await screen.findByText('AI suggestions');
   expect(screen.getAllByRole('listitem')).toHaveLength(2);
@@ -93,6 +89,7 @@ it('shows only the model picks without filling short lists', async () => {
 it.each(['rules', 'llm'] as const)(
   'AC-83.4/5: %s counts the displayed set once and resets playback on resubmission',
   async (engine) => {
+    const displayedCount = engine === 'llm' ? 8 : 6;
     vi.stubEnv('VITE_LLM_ENABLED', engine === 'llm' ? 'true' : 'false');
     const send = vi.fn(async (event: unknown) => {
       UsageEventSchema.parse(event);
@@ -115,7 +112,7 @@ it.each(['rules', 'llm'] as const)(
         <IntakeResults
           catalog={expandedCatalog}
           recommendationCatalog={expandedPublicCatalog}
-          availableFunctionAreas={expandedPublicCatalog.functionAreas}
+
           usage={{
             catalog: expandedPublicCatalog,
             session: {
@@ -129,38 +126,35 @@ it.each(['rules', 'llm'] as const)(
     );
     if (engine === 'llm') {
       fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
-      fireEvent.change(
-        screen.getByLabelText('What do you want to learn or do?'),
-        { target: { value: 'A fictional request' } },
-      );
+      fireEvent.change(screen.getByLabelText('Your goal'), {
+        target: { value: 'A fictional request' },
+      });
     }
     send.mockClear();
-    fireEvent.click(screen.getByText(/Refine by function area or tool/));
-    fireEvent.change(screen.getByLabelText('Function area (optional)'), {
-      target: { value: 'Operations' },
-    });
     const submit = () =>
       fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
     submit();
     await waitFor(() =>
-      expect(screen.getAllByRole('listitem')).toHaveLength(8),
+      expect(screen.getAllByRole('listitem')).toHaveLength(displayedCount),
     );
     const events = () =>
       send.mock.calls.map(([event]) => UsageEventSchema.parse(event));
     await waitFor(() =>
       expect(
         events().filter((event) => event.type === 'impression'),
-      ).toHaveLength(8),
+      ).toHaveLength(displayedCount),
     );
     expect(events().filter((event) => event.type === 'search')).toHaveLength(1);
     expect(events()[0]).toMatchObject({
       type: 'search',
-      resultCount: 8,
+      resultCount: displayedCount,
       recommendationEngine: engine,
     });
-    expect(screen.getByText(/8 videos/).getAttribute('aria-live')).toBe(
-      'polite',
-    );
+    expect(
+      screen
+        .getByText(new RegExp(`${displayedCount} videos`))
+        .getAttribute('aria-live'),
+    ).toBe('polite');
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     fireEvent.click(
       screen.getAllByRole('button', { name: /Play \[Fixture\] Video/ })[0],
@@ -175,7 +169,7 @@ it.each(['rules', 'llm'] as const)(
     );
     expect(
       events().filter((event) => event.type === 'impression'),
-    ).toHaveLength(16);
+    ).toHaveLength(displayedCount * 2);
     const searches = events().filter((event) => event.type === 'search');
     expect(searches[0].searchId).not.toBe(searches[1].searchId);
     for (const search of searches) {
@@ -183,14 +177,14 @@ it.each(['rules', 'llm'] as const)(
         (event) =>
           event.searchId === search.searchId && event.type === 'impression',
       );
-      expect(impressions).toHaveLength(8);
+      expect(impressions).toHaveLength(displayedCount);
       expect(
         new Set(
           impressions.map((event) =>
             'youtubeId' in event ? event.youtubeId : null,
           ),
         ).size,
-      ).toBe(8);
+      ).toBe(displayedCount);
     }
     expect(fetch).toHaveBeenCalledTimes(engine === 'llm' ? 2 : 0);
   },

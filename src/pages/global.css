@@ -1,35 +1,39 @@
-/* Light theme only, matching the team prototype. */
+/* AI for Nonprofits Sprint brand kit. Light theme. */
 :root {
   /* Color */
-  --navy: #10253f;
-  --navy-2: #1c4567;
-  --navy-hover: #1b3a5c;
-  --teal: #00a99a;
-  --teal-hover: #10bcac;
-  --teal-ink: #062d34;
-  --teal-soft: #7de4d9;
-  --teal-tint: #effaf8;
-  --teal-tint-ink: #1f5f5a;
-  --ink: #172b43;
-  --ink-2: #3a5068;
-  --muted: #56677c;
-  --line: #e2e9f0;
-  --field-line: #d5dfe9;
-  --bg: #f5f8fb;
+  --navy: #00183a;
+  --navy-2: #003481;
+  --navy-hover: #0071cd;
+  --blue: #0071cd;
+  --sky: #89d8ff;
+  --yellow: #ffd166;
+  --lime: #dcf763;
+  --teal: var(--yellow);
+  --teal-hover: #ffca4e;
+  --teal-ink: var(--navy);
+  --teal-soft: var(--sky);
+  --teal-tint: #eff7fb;
+  --teal-tint-ink: var(--navy-2);
+  --ink: #00183a;
+  --ink-2: #003481;
+  --muted: #425776;
+  --line: #b5ddf4;
+  --field-line: #7c97bf;
+  --bg: #fff;
   --surface: #fff;
   --surface-soft: #eef3f7;
   --surface-soft-hover: #e1e9f0;
   --pill: #eaf0f6;
   --pill-ink: #3f5a75;
-  --tag: #e8f8f5;
-  --tag-ink: #2a625e;
+  --tag: #ccf1ff;
+  --tag-ink: #003481;
   --amber: #fff1d1;
   --amber-ink: #6a4700;
   --ok: #e8f8f1;
   --ok-ink: #23604c;
   --alert-bg: #fdecec;
   --alert-ink: #8a1c1c;
-  --focus: #1456c4;
+  --focus: #0071cd;
   --yt-red: #e62117;
 
   /* Spacing: 8px scale (half step for tight pills) */
@@ -73,7 +77,7 @@ body {
   background: var(--bg);
   color: var(--ink);
   font-family:
-    Inter,
+    Montserrat,
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -104,6 +108,15 @@ iframe {
 :focus-visible {
   outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+::selection {
+  background: var(--lime);
+  color: var(--navy);
+}
+
+textarea {
+  caret-color: var(--blue);
 }
 
 @media (prefers-reduced-motion: reduce) {
