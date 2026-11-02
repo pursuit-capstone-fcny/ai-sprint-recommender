@@ -11,6 +11,7 @@ import { CatalogSourceSchema, readLimits } from './config';
 import { EVALUATION_CATALOG_URL } from './evaluation-catalog-policy';
 import { RecommendationBudget } from './budget-object';
 import { TestStorage } from './test-helpers';
+import { HAIKU_V57_SYSTEM_PROMPT } from './haiku-policy';
 
 afterEach(() => vi.unstubAllGlobals());
 
@@ -41,13 +42,11 @@ describe('frozen test catalog isolation', () => {
                   {
                     type: 'text',
                     text: JSON.stringify(
+                      // rank3 repeats rank1; the first occurrence is kept.
                       Object.fromEntries(
                         Array.from({ length: 8 }, (_, i) => [
                           'rank' + (i + 1),
-                          {
-                            use: i < 2 ? 'Prepare an AI policy' : '',
-                            position: i === 0 ? 0 : i === 1 ? 88 : null,
-                          },
+                          [0, 88, 0][i] ?? null,
                         ]),
                       ),
                     ),
@@ -136,7 +135,16 @@ describe('frozen test catalog isolation', () => {
       if (isHaiku) {
         expect(payload.thinking).toEqual({ type: 'disabled' });
         expect(payload.output_config.effort).toBe('low');
-        expect(payload.system).toContain('use null in all eight ranks');
+        expect(payload.system).toBe(HAIKU_V57_SYSTEM_PROMPT);
+        expect(payload.output_config.format.schema.properties.rank1).toEqual({
+          anyOf: [
+            {
+              type: 'integer',
+              enum: snapshot.items.map((_, position) => position),
+            },
+            { type: 'null' },
+          ],
+        });
       }
     },
   );

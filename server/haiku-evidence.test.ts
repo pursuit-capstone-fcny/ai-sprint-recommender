@@ -75,14 +75,7 @@ describe('single-pass Haiku selection evidence', () => {
     );
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
-  it.each([
-    'missing-use',
-    'empty-use',
-    'unused-with-use',
-    'duplicate',
-    'range',
-    'extra',
-  ])(
+  it.each(['missing-use', 'empty-use', 'unused-with-use', 'range', 'extra'])(
     'rejects %s without repairing output or losing measured usage',
     async (mode) => {
       const value: Record<string, unknown> = slots();
@@ -90,7 +83,6 @@ describe('single-pass Haiku selection evidence', () => {
       if (mode === 'empty-use') value.rank1 = { use: '', position: 0 };
       if (mode === 'unused-with-use')
         value.rank2 = { use: 'Unselected', position: null };
-      if (mode === 'duplicate') value.rank2 = value.rank1;
       if (mode === 'range')
         value.rank1 = {
           use: 'A claimed method',
@@ -106,12 +98,7 @@ describe('single-pass Haiku selection evidence', () => {
         value: null,
         inputTokens: 1800,
         outputTokens: 220,
-        validationFailure:
-          mode === 'duplicate'
-            ? 'duplicate'
-            : mode === 'range'
-              ? 'out-of-range'
-              : 'schema',
+        validationFailure: mode === 'range' ? 'out-of-range' : 'schema',
       });
       expect(fetcher).toHaveBeenCalledTimes(1);
       if (mode === 'missing-use')

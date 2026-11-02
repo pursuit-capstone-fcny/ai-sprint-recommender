@@ -189,11 +189,30 @@ describe('Anthropic adapter', () => {
     for (const item of catalog.items)
       expect(JSON.stringify(wire)).not.toContain(item.youtubeId);
   });
+  it('drops repeated positions, keeps the first occurrence and counts the repeats', async () => {
+    const result = await anthropicProvider('fixture-only', async () =>
+      Response.json(payload(JSON.stringify(slots([2, 0, 2, 1, 0])))),
+    )(body, new AbortController().signal);
+    expect(result).toEqual({
+      value: {
+        youtubeIds: [2, 0, 1].map((position) => body.catalogIds[position]),
+      },
+      duplicateCount: 2,
+      inputTokens: 200,
+      outputTokens: 20,
+    });
+  });
+  it('still rejects an out-of-range position alongside a repeat', async () => {
+    const result = await anthropicProvider('fixture-only', async () =>
+      Response.json(payload(JSON.stringify(slots([1, 1, 4])))),
+    )(body, new AbortController().signal);
+    expect(result).toMatchObject({
+      value: null,
+      validationFailure: 'out-of-range',
+      outOfRangeCount: 1,
+    });
+  });
   it.each([
-    [
-      slots([1, 1]),
-      { validationFailure: 'duplicate', selectionCount: 2, duplicateCount: 1 },
-    ],
     [
       slots([-1]),
       {

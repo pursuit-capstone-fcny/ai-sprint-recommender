@@ -13,10 +13,11 @@ import { parseBenchmark } from '../src/evaluation/benchmark';
 import { injectionProbes } from '../src/evaluation/injection-probes';
 import { providerBody, inputTokenBound } from './anthropic';
 import { readLimits, callCost } from './config';
-import { haikuDeployedBody } from './haiku';
+import { haikuDeployedBody, haikuV57Body } from './haiku';
 import { lunaDeployedBody } from './luna';
 import { LUNA_TARGETED_RANKING_INSTRUCTION } from './luna-policy';
 import {
+  HAIKU_V57_SYSTEM_PROMPT,
   HAIKU_DEPLOYED_RESERVATION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_BREADTH_INSTRUCTION,
@@ -200,5 +201,51 @@ describe('optimized Haiku low request', () => {
       expect(normalized).toBe(luna.input[0].content);
       expect(haiku.request.system).not.toContain('positions array');
     }
+  });
+});
+
+describe('V57 Haiku request', () => {
+  it('sends one generic prompt, the unchanged catalog rows and the numeric rank schema', () => {
+    const benchmark = parseBenchmark(
+      JSON.parse(
+        readFileSync(
+          'docs/evaluation/2026-10-28-task-tags/benchmark.json',
+          'utf8',
+        ),
+      ),
+    );
+    const limits = readLimits(config.vars)!;
+    for (const profile of [
+      ...benchmark.profiles,
+      ...injectionProbes(benchmark),
+    ]) {
+      const original = providerBody(
+        { ...profile.input, catalogVersion: benchmark.catalog.catalogVersion },
+        benchmark.catalog,
+        limits,
+      );
+      const v57 = haikuV57Body(original);
+      expect(v57.request.system).toBe(HAIKU_V57_SYSTEM_PROMPT);
+      expect(v57.request.messages).toEqual(
+        haikuDeployedBody(original).request.messages,
+      );
+      expect(v57.request.output_config).toEqual(original.request.output_config);
+      expect(v57.selectionEvidence).toBeUndefined();
+      expect(v57.catalogIds).toEqual(original.catalogIds);
+      expect(v57.request.max_tokens).toBe(512);
+      expect(v57.request.thinking).toEqual({ type: 'disabled' });
+      expect(v57.request.output_config.effort).toBe('low');
+      expect(inputTokenBound(v57)).toBeLessThanOrEqual(
+        limits.LLM_MAX_INPUT_TOKENS,
+      );
+    }
+    for (const removed of [
+      LUNA_TARGETED_RANKING_INSTRUCTION,
+      HAIKU_BREADTH_INSTRUCTION,
+      'six to eight',
+      'survey statistics',
+      'counterparty',
+    ])
+      expect(HAIKU_V57_SYSTEM_PROMPT).not.toContain(removed);
   });
 });

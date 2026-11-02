@@ -24,7 +24,7 @@ import { boundedJson } from './bounded-json';
 import { lunaDeployedBody, lunaProvider } from './luna';
 import { LUNA_DEPLOYED_PROMPT } from './luna-policy';
 import { HAIKU_DEPLOYED_PROMPT } from './haiku-policy';
-import { haikuDeployedBody } from './haiku';
+import { haikuV57Body } from './haiku';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
@@ -250,7 +250,7 @@ export async function recommend(
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
     const originalBody = providerBody(input, catalog, limits);
-    const body = boundedHaiku ? haikuDeployedBody(originalBody) : originalBody;
+    const body = boundedHaiku ? haikuV57Body(originalBody) : originalBody;
     let bound: number;
     try {
       bound =
@@ -376,6 +376,13 @@ export async function recommend(
           if (validation.success) Object.assign(diagnostic, validation.data);
         }
         return fallback('invalid-response');
+      }
+      if (limits.LLM_ENVIRONMENT === 'test') {
+        const repeats = ProviderValidationSchema.shape.duplicateCount.safeParse(
+          result.duplicateCount,
+        );
+        if (repeats.success && repeats.data)
+          diagnostic.duplicateCount = repeats.data;
       }
       return {
         outcome: 'success',

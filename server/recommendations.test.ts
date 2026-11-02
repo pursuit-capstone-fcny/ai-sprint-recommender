@@ -431,6 +431,32 @@ describe('recommendation endpoint', () => {
       expect(diagnostic.mock.calls[1][0].validationFailure).toBeUndefined();
     },
   );
+  it.each(['test', 'production'])(
+    'records dropped repeats only in test diagnostics (%s)',
+    async (target) => {
+      const { deps, provider, diagnostic } = setup();
+      provider.mockResolvedValueOnce({
+        value: { youtubeIds: [catalog.items[1].youtubeId] },
+        duplicateCount: 1,
+        inputTokens: 100,
+        outputTokens: 20,
+      });
+      const response = await recommend(
+        request(),
+        { ...environment, LLM_ENVIRONMENT: target },
+        deps,
+      );
+      const publicBody = await response.json();
+      expect(publicBody).toMatchObject({
+        outcome: 'success',
+        youtubeIds: [catalog.items[1].youtubeId],
+      });
+      expect(publicBody.duplicateCount).toBeUndefined();
+      expect(diagnostic.mock.calls[0][0].duplicateCount).toBe(
+        target === 'test' ? 1 : undefined,
+      );
+    },
+  );
   it('retains maximum spend after ambiguous provider failures, without retries', async () => {
     const { deps, provider, budget } = setup();
     provider.mockRejectedValueOnce(

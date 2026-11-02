@@ -182,6 +182,7 @@ export function anthropicProvider(
     const content = contentSchema.safeParse(parsed.content);
     let value: unknown = null;
     let validation: ProviderValidation | undefined;
+    let repeats = 0;
     if (parsed.stop_reason !== 'end_turn') {
       validation = {
         validationFailure:
@@ -251,17 +252,13 @@ export function anthropicProvider(
           const positions = rankKeys
             .map((key) => output.data[key])
             .filter((position) => position !== null);
-          const duplicateCount = positions.length - new Set(positions).size;
-          const outOfRangeCount = positions.filter(
+          // A repeated position adds no new pick. Keep its first rank.
+          const unique = [...new Set(positions)];
+          repeats = positions.length - unique.length;
+          const outOfRangeCount = unique.filter(
             (position) => position >= body.catalogIds.length,
           ).length;
-          if (duplicateCount)
-            validation = {
-              validationFailure: 'duplicate',
-              selectionCount: positions.length,
-              duplicateCount,
-            };
-          else if (outOfRangeCount)
+          if (outOfRangeCount)
             validation = {
               validationFailure: 'out-of-range',
               selectionCount: positions.length,
@@ -269,9 +266,7 @@ export function anthropicProvider(
             };
           else
             value = {
-              youtubeIds: positions.map(
-                (position) => body.catalogIds[position],
-              ),
+              youtubeIds: unique.map((position) => body.catalogIds[position]),
             };
         }
       } catch {
@@ -282,6 +277,7 @@ export function anthropicProvider(
     return {
       value,
       ...validation,
+      ...(value && repeats ? { duplicateCount: repeats } : {}),
       inputTokens:
         parsed.usage.input_tokens +
         (parsed.usage.cache_creation_input_tokens ?? 0) +

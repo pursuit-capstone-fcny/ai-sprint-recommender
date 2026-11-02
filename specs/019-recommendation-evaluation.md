@@ -1,15 +1,26 @@
 # Spec: Evaluate recommendations
 
 - **Issue:** #19
-- **Status:** V56 retained: no observed duplicates in forty calls; expanded review remains open.
+- **Status:** V57 simplified prompt prepared; paid validation not yet approved. V56 remains the last validated candidate.
 - **Depends on:** #7, #43, #63 and #8 approvals
 - **Source:** [Approved scope](../docs/specs/019-recommendation-evaluation.md)
 
 ## Acceptance criteria
 
-- Given full-catalog Haiku selection, when emitting each rank, then choose an
-  unused position before its short usefulness note. Preserve strict duplicate
-  rejection, measured usage, all 89 candidates and the final task-diversity gate.
+- Given full-catalog Haiku selection, when the test endpoint builds a request,
+  then send one short generic system prompt with no benchmark-specific wording
+  or target count, all 89 frozen catalog rows and the original eight numeric
+  rank slots. Request no usefulness notes. Keep the final task-diversity gate.
+
+- Given a provider response that repeats a catalog position, when the server
+  validates it, then keep the first occurrence, drop later repeats and record
+  their count in test diagnostics only. Still reject the whole response for an
+  out-of-range position or malformed output, and keep measured usage.
+
+- Given full-catalog Haiku V56 selection, when emitting each rank, then choose an
+  unused position before its short usefulness note. Preserve measured usage,
+  all 89 candidates and the final task-diversity gate. V57 replaces V56's strict
+  duplicate rejection with the first-occurrence rule above.
 
 - Given the additional $1 planning allowance, when validating a test run, then
   carry the $3.798745 prior ceiling and $0.366876 unknown reservations under the

@@ -6,19 +6,24 @@ import {
   HAIKU_BROWSING_INSTRUCTION,
   HAIKU_FINAL_CHECK_INSTRUCTION,
   HAIKU_MIXED_GOAL_INSTRUCTION,
+  HAIKU_V57_SYSTEM_PROMPT,
 } from './haiku-policy';
 
-// Anthropic does not support maxItems. Retain its existing eight required
-// slots, strict duplicate/range validation and known-usage accounting.
-export function haikuDeployedBody(body: ProviderBody): ProviderBody {
-  const compact = compactRanking(body);
-  // Keep each candidate together on its own line without changing any field,
-  // catalog position or response-schema value.
-  const data: { catalog: unknown[] } = JSON.parse(compact.content);
-  const content = compact.content.replace(
+// Keep each candidate together on its own line without changing any field,
+// catalog position or response-schema value.
+function catalogRows(content: string): string {
+  const data: { catalog: unknown[] } = JSON.parse(content);
+  return content.replace(
     JSON.stringify(data.catalog),
     `[\n${data.catalog.map((row) => JSON.stringify(row)).join(',\n')}\n]`,
   );
+}
+
+// Anthropic does not support maxItems. Retain its existing eight required
+// slots, range validation and known-usage accounting.
+export function haikuDeployedBody(body: ProviderBody): ProviderBody {
+  const compact = compactRanking(body);
+  const content = catalogRows(compact.content);
   const system = compact.system
     .replace('return an empty positions array', 'use null in all eight ranks')
     .replace(
@@ -39,6 +44,21 @@ export function haikuDeployedBody(body: ProviderBody): ProviderBody {
       ...body.request,
       system: `${rankedSystem} ${HAIKU_FINAL_CHECK_INSTRUCTION}`,
       messages: [{ role: 'user', content }],
+    },
+  };
+}
+
+// V57 sends the same catalog rows and the original numeric rank schema with
+// one short system prompt. No usefulness notes are requested.
+export function haikuV57Body(body: ProviderBody): ProviderBody {
+  return {
+    ...body,
+    request: {
+      ...body.request,
+      system: HAIKU_V57_SYSTEM_PROMPT,
+      messages: [
+        { role: 'user', content: catalogRows(compactRanking(body).content) },
+      ],
     },
   };
 }
