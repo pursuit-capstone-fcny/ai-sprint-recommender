@@ -1,4 +1,5 @@
 import { AcceptedUsageSchema, type AcceptedUsage } from '../analytics/report';
+import { MAX_RETAINED_USAGE_EVENTS } from '../contracts/usageEvent';
 import type { FeedbackEvent } from './vote';
 
 // Reduce across the full retained log before any source/context filtering.
@@ -7,7 +8,8 @@ export function buildFeedbackReport(
   records: AcceptedUsage[],
   includeTeam = false,
 ) {
-  if (records.length > 10_000) throw new Error('Feedback capacity reached');
+  if (records.length > MAX_RETAINED_USAGE_EVENTS)
+    throw new Error('Feedback capacity reached');
   const events = new Map<string, FeedbackEvent>();
   const latest = new Map<string, FeedbackEvent>();
   const revisions = new Map<string, string>();

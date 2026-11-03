@@ -3,6 +3,7 @@ import { RecommendationVersionSchema } from './usageEvent';
 
 export const RECOMMENDATION_PATH = '/api/recommendations';
 export const RECOMMENDATION_DEADLINE_MS = 7_000;
+export const QUEUED_RECOMMENDATION_DEADLINE_MS = 300_000;
 export const RECOMMENDATION_PROMPT_VERSION = 'catalog-rank-v8';
 
 const catalogVersion = z.string().regex(/^sha256:[a-f0-9]{64}$/);
@@ -16,6 +17,7 @@ export const RecommendationRequestSchema = z.strictObject({
     .max(50)
     .refine((values) => new Set(values).size === values.length),
   catalogVersion,
+  clientId: z.uuid().optional(),
 });
 
 export const RecommendationFallbackReasonSchema = z.enum([

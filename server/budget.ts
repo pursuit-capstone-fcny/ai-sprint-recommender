@@ -20,6 +20,7 @@ export type ReservationResult =
   | { ok: true }
   | { ok: false; reason: 'rate-limited' | 'budget-exhausted' | 'timeout' };
 export interface Budget {
+  cancel?(id: string): Promise<void>;
   reserve(
     id: string,
     client: string,

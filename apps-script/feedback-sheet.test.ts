@@ -106,6 +106,43 @@ afterEach(() => {
 });
 
 describe('feedback Sheet adapter', () => {
+  it('keeps feedback reporting available with a mixed burst log above 10,000 events', () => {
+    const { data } = setup();
+    const time = new Date().toISOString();
+    const up = {
+      ...impressionEvent,
+      time,
+      type: 'feedback',
+      schemaVersion: 2,
+      helpful: true,
+      voteRevision: 1,
+    };
+    const down = {
+      ...up,
+      eventId: crypto.randomUUID(),
+      helpful: false,
+      voteRevision: 2,
+    };
+    const impressions = Array.from({ length: 10_001 }, () => ({
+      ...impressionEvent,
+      time,
+      eventId: crypto.randomUUID(),
+    }));
+    data.usage.Usage = [
+      ['eventId', 'receivedAt', 'eventJson'],
+      ...[...impressions, up, down].map((event) => [
+        event.eventId,
+        time,
+        JSON.stringify(event),
+      ]),
+    ];
+    data.feedback.Feedback = [['previous report']];
+    refreshFeedbackReport();
+    expect(data.feedback.Feedback).toEqual([
+      ['youtubeId', 'helpful', 'notHelpful', 'responses', 'helpfulRate'],
+      [up.youtubeId, 0, 1, 1, 0],
+    ]);
+  });
   it('AC-29.2/3: collector gates feedback independently and accepts retries through the append-only event contract', () => {
     setup();
     const event = {

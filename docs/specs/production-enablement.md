@@ -10,6 +10,9 @@ for LLM spending. This deployment uses a $5 monthly cap and a $1 daily cap.
 Keep the existing collector's one-day retention, hourly purge, 20 events/minute
 and 1,000-row caps. Jason separately approved increasing its daily cap from
 100 to 1,000 events for live collection and sample runs.
+The later [1,000-user scaling request](backend-burst-scaling.md) supersedes only
+the technical throughput/row limits and adds buffered automatic collection.
+Retention, private access and the $1/day and $5/month AI caps stay unchanged.
 This is the owner's production enablement request; it does not claim additional
 client review or a new relevance evaluation.
 
@@ -30,12 +33,16 @@ client review or a new relevance evaluation.
 - **Then** the same-origin Worker uses `claude-haiku-5-5` and
   `catalog-pick-evidence-v9`, the complete public catalog, and its strict
   response checks. A production-specific Durable Object enforces the
-  $5 monthly and $1 daily caps, 10 global and 3 client requests per minute,
-  concurrency 2, 80,000 conservative input tokens and 16,384 output tokens. The
+  $5 monthly and $1 daily caps, 1,000 global and 3 ephemeral page/network requests
+  per minute, concurrency 32, 80,000 conservative input tokens and 16,384 output tokens. The
   current complete-catalog request measures 65,270 under that input bound, and
   the request asks for at most 2,000 output tokens.
   No paid retry or
   deterministic substitution is added. Diagnostics omit prompt/response bodies.
+  Queue at most 1,000 admissions in memory, with a five-minute browser deadline
+  and an independent 6.5-second deadline for each paid dispatch. No raw goal or
+  provider request is stored in the budget queue. Restarts can lose waiting work,
+  while durable reservations preserve spending enforcement.
 
 ### AC-PROD-3: Deployment and rollback
 

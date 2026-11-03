@@ -14,7 +14,12 @@ export {
   installFeedbackReporting,
 } from './feedback-sheet';
 
-export { doPost, initializeUsageLog, purgeUsageLog } from './usage-sheet';
+export {
+  doPost,
+  initializeUsageLog,
+  purgeUsageLog,
+  configureUsageBurst,
+} from './usage-sheet';
 export {
   initializeRequests,
   purgeRequests,

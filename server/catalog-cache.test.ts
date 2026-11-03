@@ -3,6 +3,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   catalogCacheKey,
   readCatalogSnapshot,
+  readSharedCatalogSnapshot,
   type CatalogCache,
   CATALOG_CACHE_SECONDS,
 } from './catalog-cache';
@@ -63,6 +64,61 @@ async function seed(
 }
 afterEach(() => vi.useRealTimers());
 describe('validated catalog snapshot cache', () => {
+  it('shares a cold read without allowing one caller to cancel another', async () => {
+    let release: (response: Response) => void = () => {};
+    const fetcher = vi.fn<typeof fetch>(
+      () =>
+        new Promise((resolve) => {
+          release = resolve;
+        }),
+    );
+    const first = new AbortController();
+    const options = {
+      origin,
+      source,
+      requestedVersion: catalog.catalogVersion,
+      fetcher: staticCatalogFetch(fetcher),
+    };
+    const one = readSharedCatalogSnapshot({ ...options, signal: first.signal });
+    const aborted = expect(one).rejects.toThrow('aborted');
+    const two = readSharedCatalogSnapshot({
+      ...options,
+      signal: new AbortController().signal,
+    });
+    await vi.waitFor(() => expect(fetcher).toHaveBeenCalledTimes(1));
+    first.abort();
+    await aborted;
+    release(Response.json(catalog));
+    expect(await two).toEqual(catalog);
+  });
+
+  it('bounds distinct cold reads and expires a transport that ignores abort', async () => {
+    vi.useFakeTimers();
+    const fetcher = vi.fn<typeof fetch>(() => new Promise(() => {}));
+    const pending = Array.from({ length: 16 }, (_, index) =>
+      readSharedCatalogSnapshot({
+        origin,
+        source,
+        requestedVersion: `sha256:${index.toString(16).padStart(64, '0')}`,
+        fetcher,
+        signal: new AbortController().signal,
+      }).then(
+        () => false,
+        () => true,
+      ),
+    );
+    await expect(
+      readSharedCatalogSnapshot({
+        origin,
+        source,
+        requestedVersion: `sha256:${'f'.repeat(64)}`,
+        fetcher,
+        signal: new AbortController().signal,
+      }),
+    ).rejects.toThrow('capacity');
+    await vi.advanceTimersByTimeAsync(5000);
+    expect((await Promise.all(pending)).every(Boolean)).toBe(true);
+  });
   it('reuses a validated version without another source request and expires at 60 seconds', async () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2026-10-21T00:00:00Z'));

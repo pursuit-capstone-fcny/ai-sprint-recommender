@@ -84,6 +84,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When delivery runs
   - Then do not retry it. The 32-event queue, 60-second lifetime, 10-second per-attempt deadline, in-memory-only storage, configured caps, cooldown handling and disabled/full stops remain unchanged.
 
+- AC-16.12 Buffered burst collection
+  - Given the later [1,000-user scaling request](backend-burst-scaling.md) and an enabled matching collector
+  - When automatic events use the same-origin Worker endpoint
+  - Then batch at most 20 events/16 KB per browser POST, with one bounded retry of identical event IDs after an uncertain receipt. A `queued` receipt means durable enqueue, not accepted Sheet delivery. Eight bounded SQLite shards forward at most 50 events/64 KB per authenticated server POST and retry temporary failures within the existing one-hour event expiry. The collector takes one lock and writes accepted rows once per batch, returning individual receipts. Durable buffer recovery supersedes the direct sender's no-replay rule in AC-16.9; legacy direct clients retain AC-16.9 cooldowns and AC-16.11 bounded retries. Explicit feedback continues through the direct path and requires an accepted/duplicate collector receipt. No raw goals, IPs or new event fields enter storage. Preserve one-day retention and private reporting. Technical ceilings are 20,000 events/minute, 100,000/day and 100,000 retained rows only after editor configuration; defaults stay unchanged.
+
 ### Open questions
 
 - [ ] Ali to approve logging, retention and Option A at #8. Until then, production logging stays off; Option B needs a separate privacy design and revised anonymity claims.

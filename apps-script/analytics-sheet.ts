@@ -187,7 +187,7 @@ export function readAnalyticsRecords(
     const bytes = usageBodyBytes(json);
     if (bytes > 16_384) throw new Error('Invalid usage body');
     totalBytes += bytes;
-    if (totalBytes > 8 * 1024 * 1024)
+    if (totalBytes > 64 * 1024 * 1024)
       throw new Error('Analytics input capacity reached');
     const record = AcceptedUsageSchema.parse({
       receivedAt: received,

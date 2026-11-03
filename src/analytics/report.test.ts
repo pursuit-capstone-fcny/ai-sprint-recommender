@@ -48,6 +48,14 @@ const task = (report: ReturnType<typeof run>, tag = 'grant reports') =>
   report.tags.find((row) => row.category === 'task' && row.tag === tag)!;
 
 describe('MVP analytics aggregation', () => {
+  it('reports retained traffic above 10,000 events after a scaled burst', () => {
+    const report = run(
+      Array.from({ length: 10_001 }, (_, index) =>
+        search(index + 1, { searchId: uuid(20_000 + index) }),
+      ),
+    );
+    expect(task(report).searches).toBe(10_001);
+  });
   it('counts published task names across keyword searches, card tags and associations', () => {
     const published = parsePublicCatalog({
       ...catalog,

@@ -9,6 +9,81 @@ import {
 export const CATALOG_CACHE_SECONDS = 60;
 const MAX_CATALOG_BYTES = 1_048_576;
 const storedAtHeader = 'x-catalog-stored-at';
+const inFlight = new Map<string, Promise<PublicCatalog>>();
+const snapshots = new Map<
+  string,
+  { catalog: PublicCatalog; storedAt: number }
+>();
+
+// Public catalog reads only. A disconnected caller cannot abort another page's
+// cold read, and neither goals nor recommendation results enter this map.
+export async function readSharedCatalogSnapshot(
+  options: Parameters<typeof readCatalogSnapshot>[0],
+) {
+  const key = JSON.stringify([
+    options.origin,
+    options.source,
+    options.requestedVersion ?? 'latest',
+  ]);
+  for (const [name, entry] of snapshots)
+    if (
+      Date.now() < entry.storedAt ||
+      Date.now() - entry.storedAt >= CATALOG_CACHE_SECONDS * 1000
+    )
+      snapshots.delete(name);
+  const saved = snapshots.get(key);
+  if (saved) {
+    options.signal.throwIfAborted();
+    return saved.catalog;
+  }
+  let pending = inFlight.get(key);
+  if (!pending && inFlight.size < 16) {
+    const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const timeout = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        controller.abort();
+        reject(new Error('Catalog read deadline'));
+      }, 5000);
+    });
+    pending = Promise.race([
+      // Start the shared TTL at a fresh trusted source read, rather than
+      // extending the age of a snapshot already held in the edge cache.
+      readCatalogSnapshot({
+        ...options,
+        cache: undefined,
+        signal: controller.signal,
+      }),
+      timeout,
+    ])
+      .then((catalog) => {
+        if (
+          !options.requestedVersion ||
+          options.requestedVersion === catalog.catalogVersion
+        ) {
+          if (snapshots.size >= 4)
+            snapshots.delete(snapshots.keys().next().value!);
+          snapshots.set(key, { catalog, storedAt: Date.now() });
+        }
+        return catalog;
+      })
+      .finally(() => {
+        clearTimeout(timer);
+        inFlight.delete(key);
+      });
+    inFlight.set(key, pending);
+  }
+  if (!pending) throw new Error('Catalog read capacity reached');
+  const shared = pending;
+  return new Promise<PublicCatalog>((resolve, reject) => {
+    const cancel = () => reject(new Error('Catalog read aborted'));
+    options.signal.addEventListener('abort', cancel, { once: true });
+    if (options.signal.aborted) cancel();
+    shared
+      .then(resolve, reject)
+      .finally(() => options.signal.removeEventListener('abort', cancel));
+  });
+}
 
 export interface CatalogCache {
   match(request: Request): Promise<Response | undefined>;
