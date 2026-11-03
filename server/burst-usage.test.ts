@@ -1,5 +1,6 @@
 // @vitest-environment node
 import { createHash } from 'node:crypto';
+import { readFileSync } from 'node:fs';
 import { afterEach, expect, it, vi } from 'vitest';
 import { UsageBuffer, bufferUsage } from './usage-buffer';
 import { TestStorage } from './test-helpers';
@@ -234,6 +235,37 @@ it('deduplicates queued retries and expires undelivered data without an upstream
     (await [...test.storage.values()][0].list({ prefix: 'event:', limit: 100 }))
       .size,
   ).toBe(0);
+});
+
+it('preserves acknowledged queued events through both production deployment steps', async () => {
+  const workflow = readFileSync(
+    new URL('../.github/workflows/deploy.yml', import.meta.url),
+    'utf8',
+  );
+  const commands = workflow
+    .split('\n')
+    .filter((line) =>
+      line.includes('command: deploy --config wrangler.library.jsonc'),
+    );
+  expect(commands).toHaveLength(2);
+  const test = setup();
+  for (const [index, command] of commands.entries()) {
+    await test.enqueue(test.eventsFor());
+    const overrides = Object.fromEntries(
+      [...command.matchAll(/--var\s+([A-Z_]+):([^\s]+)/g)].map((match) => [
+        match[1],
+        match[2],
+      ]),
+    );
+    const nextEnv = { ...test.env, ...overrides };
+    for (const store of test.storage.values()) {
+      const restarted = new UsageBuffer({ storage: store }, nextEnv, {
+        fetcher: test.upstream,
+      });
+      await restarted.alarm();
+    }
+    expect(test.accepted).toHaveLength((index + 1) * 10);
+  }
 });
 
 it('purges every expired event after an outage, beyond one delivery page', async () => {

@@ -38,8 +38,10 @@ the source for daily/monthly projections; this change approves no new spending.
    HTTPS Apps Script `/exec` URL; the configuration script rejects invalid URLs
    or missing batch secrets before deployment.
 6. Deploy through the existing production workflow. It first deploys the runtime
-   with paid calls and buffering off, installs missing server secrets, then
-   deploys the configured flags. No source file contains the shared secret.
+   with paid calls off, installs missing server secrets, then deploys the
+   configured flags. Both deployment steps preserve the configured buffer flag
+   so routine releases do not purge acknowledged events. Explicitly disabling
+   buffering still erases pending events. No source file contains the shared secret.
 
 The Worker validates strict schema, time, trusted public catalog references and
 the model/prompt pair before enqueue. Eight shards each hold at most 4,000

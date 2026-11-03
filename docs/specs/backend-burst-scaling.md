@@ -46,6 +46,8 @@ in a queue. Deterministic ranking stays in the browser.
   Retain no raw goals, explanations, contact data or IPs. Buffer age is at most
   one hour, within existing event expiry. Bounded queue capacity and kill switches
   fail closed. Explicit feedback continues to require an accepted collector receipt.
+  Routine deployments preserve pending events; explicit disablement, invalid
+  configuration or expiry still erase undelivered buffered data.
 
 ### AC-SCALE-4: Collector and reporting capacity
 
@@ -53,6 +55,8 @@ in a queue. Deterministic ranking stays in the browser.
 - **When** a validated batch is received
 - **Then** validate and append accepted events under one lock with one Sheet write
   and flush per batch, retaining individual event receipts and duplicate semantics.
+  Usage and feedback reports share the same retained-event ceiling, including
+  mixed logs with more than 10,000 events.
   Raise only technical event/row ceilings for the agreed burst, preserve one-day
   retention and private reporting, and reconcile all 10,000 synthetic events from
   1,000 searches with eight impressions and one click each. Old single-event
