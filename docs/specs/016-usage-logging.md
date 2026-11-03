@@ -53,7 +53,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given a submitted search
   - When the UI renders or expands its results
   - Then one search event is sent per submission and one impression per displayed video per `searchId`; rerenders do not resend them. Submitted fallback cards retain their actual fallback match types.
-  - Given default cards before a submission or after Clear
+  - Given default cards before a nonblank submission, after Clear, or after a blank/whitespace-only deterministic submission
   - When the UI displays or rerenders them
   - Then send no automatic search or impression events. A play or YouTube action sends a direct impression once per video in that browsing context and a direct click per action, using `mode=direct`, `matchType=direct`, and no recommendation-engine metadata. Clear starts a new browsing context; submitted results retain their search context during unsubmitted edits. Explicit feedback remains available and uses the displayed card's context.
 - AC-16.8 Operations

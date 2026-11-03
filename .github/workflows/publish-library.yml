@@ -26,6 +26,18 @@ on:
         description: Optional collector URL for a manually requested isolated app preview
         type: string
         default: ''
+      app_feedback_enabled:
+        description: Enable helpfulness feedback in the isolated test app
+        type: boolean
+        default: false
+      app_requests_config:
+        description: Optional public request policy for the isolated test app
+        type: string
+        default: ''
+      app_live_haiku:
+        description: Run a fifteen-minute isolated Haiku test with a five-cent budget
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -44,6 +56,9 @@ jobs:
           PREVIEW_NAME: ${{ inputs.preview_name }}
           DATA_BRANCH: ${{ inputs.data_branch || (inputs.environment == 'production' && 'library-data' || 'library-data-test') }}
           APP_COLLECTOR_URL: ${{ inputs.app_collector_url }}
+          APP_FEEDBACK_ENABLED: ${{ inputs.app_feedback_enabled && 'true' || 'false' }}
+          APP_REQUESTS_CONFIG: ${{ inputs.app_requests_config }}
+          APP_LIVE_HAIKU: ${{ inputs.app_live_haiku && 'true' || 'false' }}
         run: |
           [[ "$REQUEST_ID" =~ ^[a-f0-9-]{36}$ ]]
           [[ "$CONTENT_COMMIT" =~ ^[a-f0-9]{40}$ ]]
@@ -60,6 +75,9 @@ jobs:
           if [[ -n "$APP_COLLECTOR_URL" ]]; then
             [[ "$TARGET" == test && -n "$PREVIEW_NAME" ]]
             [[ "$APP_COLLECTOR_URL" =~ ^https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec$ ]]
+          fi
+          if [[ "$APP_FEEDBACK_ENABLED" == true || -n "$APP_REQUESTS_CONFIG" || "$APP_LIVE_HAIKU" == true ]]; then
+            [[ -n "$APP_COLLECTOR_URL" && "$TARGET" == test && -n "$PREVIEW_NAME" ]]
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       # Keep the newest archive even when an older manifest is selected for rollback.
@@ -126,18 +144,43 @@ jobs:
           VITE_USAGE_ENABLED: 'true'
           VITE_CATALOG_SOURCE: static
           VITE_LIBRARY_DEMO: 'false'
-          VITE_LLM_ENABLED: 'false'
-          VITE_REQUESTS_ENABLED: 'false'
-          VITE_FEEDBACK_ENABLED: 'false'
+          VITE_LLM_ENABLED: ${{ inputs.app_live_haiku && 'true' || 'false' }}
+          PRIVATE_TEST_LIVE_HAIKU: ${{ inputs.app_live_haiku && 'true' || 'false' }}
+          VITE_REQUESTS_ENABLED: ${{ inputs.app_requests_config != '' && 'true' || 'false' }}
+          VITE_REQUESTS_CONFIG: ${{ inputs.app_requests_config }}
+          VITE_FEEDBACK_ENABLED: ${{ inputs.app_feedback_enabled && 'true' || 'false' }}
+          VITE_FEEDBACK_QUESTION: ${{ inputs.app_feedback_enabled && 'Was this helpful?' || '' }}
         run: |
           [[ "$TEST_ORIGIN" =~ ^https://ai-sprint-library-test\.[a-zA-Z0-9-]+\.workers\.dev$ ]]
           export VITE_LIBRARY_ORIGIN="https://$PREVIEW_NAME-${TEST_ORIGIN#https://}"
+          if [[ -n "$VITE_REQUESTS_CONFIG" ]]; then
+            node --input-type=module -e 'import { ContributionConfigSchema } from "./src/contracts/contribution.ts"; const config = ContributionConfigSchema.parse(JSON.parse(process.env.VITE_REQUESTS_CONFIG)); if (config.endpoint !== process.env.VITE_USAGE_TEST_URL) throw new Error("Requests must use the isolated collector");'
+          fi
           pnpm build
+          export LLM_TEST_EXPIRES_AT="$(date -u -d '+15 minutes' +%Y-%m-%dT%H:%M:%SZ)"
           node scripts/configure-library-app.mjs
+      - name: Prepare temporary preview credentials
+        if: inputs.app_collector_url != ''
+        env:
+          PROVIDER_KEY: ${{ inputs.app_live_haiku && secrets.ANTHROPIC_API_KEY || '' }}
+          LIVE_HAIKU: ${{ inputs.app_live_haiku && 'true' || 'false' }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { writeFileSync } from 'node:fs';
+          import { randomBytes } from 'node:crypto';
+          if (process.env.LIVE_HAIKU === 'true' && !process.env.PROVIDER_KEY) throw new Error('Missing provider credential');
+          writeFileSync(`${process.env.RUNNER_TEMP}/preview-secrets.json`, JSON.stringify({
+            ANTHROPIC_API_KEY: process.env.PROVIDER_KEY,
+            LLM_RATE_KEY: process.env.LIVE_HAIKU === 'true' ? randomBytes(32).toString('hex') : '',
+          }), { mode: 0o600 });
+          NODE
       - name: Deploy isolated workflow-test app
         if: inputs.app_collector_url != ''
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: preview --name ${{ inputs.preview_name }} --config wrangler.library.jsonc --ignore-base-config
+          command: preview --name ${{ inputs.preview_name }} --config wrangler.library.jsonc --ignore-base-config --secrets-file ${{ runner.temp }}/preview-secrets.json
+      - name: Remove temporary credential file
+        if: always() && inputs.app_collector_url != ''
+        run: rm -f "$RUNNER_TEMP/preview-secrets.json"

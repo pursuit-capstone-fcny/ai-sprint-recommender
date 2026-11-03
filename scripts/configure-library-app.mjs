@@ -1,3 +1,4 @@
+import { privateTestHaiku } from './private-test-haiku.mjs';
 import ts from 'typescript';
 import { readFile, writeFile } from 'node:fs/promises';
 import { projectLibraryOrigin } from '../library/project.ts';
@@ -59,6 +60,15 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
     },
   ];
   config.previews = { vars: { ...config.vars, LLM_ENABLED: 'false' } };
+  const testLimits = privateTestHaiku(process.env, configured);
+  if (testLimits) {
+    config.previews.durable_objects = {
+      bindings: [
+        { name: 'RECOMMENDATION_BUDGET', class_name: 'RecommendationBudget' },
+      ],
+    };
+    Object.assign(config.previews.vars, testLimits);
+  }
 }
 await writeFile(
   'wrangler.library.jsonc',

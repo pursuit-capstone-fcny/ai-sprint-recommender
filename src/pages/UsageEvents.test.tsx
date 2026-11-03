@@ -74,6 +74,35 @@ afterEach(() => {
 });
 
 describe('browser usage events', () => {
+  it.each(['', '   '])(
+    'AC-16.7: a blank deterministic submission keeps defaults out of analytics (%j)',
+    async (goal) => {
+      render(
+        <IntakeResults
+          catalog={catalog}
+          usage={{ session: session(), catalog: publicCatalog }}
+        />,
+      );
+      fireEvent.change(screen.getByLabelText('Your goal'), {
+        target: { value: goal },
+      });
+      submit();
+      expect(
+        screen.getByRole('heading', { name: 'Videos to start with' }),
+      ).toBeTruthy();
+      expect(logged()).toEqual([]);
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Play Fixture video 0' }),
+      );
+      await waitFor(() => expect(logged()).toHaveLength(2));
+      expect(logged().map((event) => event.type)).toEqual([
+        'impression',
+        'click',
+      ]);
+      expect(logged().every((event) => event.mode === 'direct')).toBe(true);
+    },
+  );
+
   it('AC-16.7: every Clear resets direct views even without a submitted search', async () => {
     render(
       <StrictMode>
@@ -227,7 +256,12 @@ describe('browser usage events', () => {
       render(<IntakeResultsPage />);
       await screen.findByRole('button', { name: 'Find videos' });
       expect(logged()).toHaveLength(0);
-      if (submitted) submit();
+      if (submitted) {
+        fireEvent.change(screen.getByLabelText('Your goal'), {
+          target: { value: 'report writing' },
+        });
+        submit();
+      }
       fireEvent.click(
         screen.getByRole('button', { name: 'Play Fixture video 0' }),
       );
@@ -246,7 +280,7 @@ describe('browser usage events', () => {
         helpful: true,
         voteRevision: 1,
         mode: submitted ? 'recommendations' : 'direct',
-        matchType: submitted ? 'weak' : 'direct',
+        matchType: submitted ? 'strong' : 'direct',
       });
       fireEvent.click(
         screen.getByRole('button', {
@@ -339,6 +373,9 @@ describe('browser usage events', () => {
     const usage = { session: session(), catalog: publicCatalog };
     render(<IntakeResults catalog={catalog} usage={usage} />);
     expect(logged()).toHaveLength(0);
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing' },
+    });
     submit();
     await waitFor(() => expect(logged()).toHaveLength(5));
     submit();
@@ -363,6 +400,9 @@ describe('browser usage events', () => {
         usage={{ session: session(), catalog: publicCatalog }}
       />,
     );
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing' },
+    });
     submit();
     expect(screen.getAllByRole('listitem')).toHaveLength(4);
     fireEvent.click(
@@ -385,6 +425,9 @@ describe('browser usage events', () => {
     );
     render(<IntakeResultsPage />);
     await screen.findByRole('button', { name: 'Find videos' });
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing' },
+    });
     submit();
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
@@ -409,6 +452,9 @@ describe('browser usage events', () => {
     );
     render(<IntakeResultsPage />);
     await screen.findByRole('button', { name: 'Find videos' });
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing' },
+    });
     submit();
     await waitFor(() =>
       expect(logged().filter((event) => event.type === 'search')).toHaveLength(

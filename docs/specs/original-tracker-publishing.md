@@ -102,3 +102,21 @@ Use fictional fixtures for checked-in tests. Live baseline comparisons operate
 on temporary public-only exports and save counts/hash evidence, never private
 tracker fields. Source-sheet migration and Apps Script deployment are separate
 from application code review and do not enable new permissions or paid calls.
+
+### Full workflow verification on the private copy
+
+- Given a named test app preview and Restricted source copy, when feedback and
+  contribution controls are enabled, then feedback stays in the source Usage
+  log and topic/demo submissions go to a separate Restricted review workbook.
+- Given the initial default cards or a blank deterministic submission, when no
+  video is opened and no feedback is submitted, then no search or appearance is
+  recorded. Explicit card actions retain their direct-browsing context.
+- Given an unmatched submission, when fallback cards replace the defaults, then
+  the displayed IDs and ranks match the recorded impressions, with no strong or
+  semantic match claim. A later submission replaces that search context.
+- Given an explicitly requested live Haiku test, when the named preview is
+  deployed, then its Durable Object namespace has a five-cent daily and monthly
+  budget, one concurrent request, two requests per minute, and an expiry no more
+  than fifteen minutes away. Ordinary publication keeps paid calls disabled.
+  Turning the test off overwrites its temporary provider credential with an
+  empty value. Credentials never enter source, logs, or the browser bundle.
