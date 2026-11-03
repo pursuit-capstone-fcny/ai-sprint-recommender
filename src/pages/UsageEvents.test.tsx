@@ -73,6 +73,39 @@ afterEach(() => {
 });
 
 describe('browser usage events', () => {
+  it('AC-16.7: every Clear resets direct views even without a submitted search', async () => {
+    render(
+      <StrictMode>
+        <IntakeResults
+          catalog={catalog}
+          usage={{ session: session(), catalog: publicCatalog }}
+        />
+      </StrictMode>,
+    );
+    const contexts = new Set<string>();
+    for (let visit = 0; visit < 3; visit++) {
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Play Fixture video 0' }),
+      );
+      await waitFor(() =>
+        expect(logged().filter((event) => event.type === 'click')).toHaveLength(
+          visit + 1,
+        ),
+      );
+      const event = logged().at(-1)!;
+      expect(event.mode).toBe('direct');
+      expect(contexts.has(event.searchId)).toBe(false);
+      contexts.add(event.searchId);
+      expect(
+        logged().filter((event) => event.type === 'impression'),
+      ).toHaveLength(visit + 1);
+      const count = logged().length;
+      fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+      expect(logged()).toHaveLength(count);
+    }
+    expect(logged().some((event) => event.type === 'search')).toBe(false);
+  });
+
   it('AC-16.7/24.19: passive browsing sends nothing; actual browsing actions count only as direct use', async () => {
     const usage = { session: session(), catalog: publicCatalog };
     const view = (
