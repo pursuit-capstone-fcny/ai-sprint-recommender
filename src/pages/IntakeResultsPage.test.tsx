@@ -57,8 +57,8 @@ describe('catalog page integration', () => {
     ).toBeNull();
     expect(screen.queryByText(/placeholder videos|design mock/i)).toBeNull();
     expect(
-      screen.getByText(`${fixture.items.length} videos loaded`),
-    ).toBeTruthy();
+      screen.queryByText(`${fixture.items.length} videos loaded`),
+    ).toBeNull();
     expect(screen.getAllByText('Length unavailable').length).toBeGreaterThan(0);
   });
 });

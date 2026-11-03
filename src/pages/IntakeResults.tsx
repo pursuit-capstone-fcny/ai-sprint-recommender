@@ -54,7 +54,7 @@ export function IntakeResults({
   recommendationCatalog,
   publicCatalog,
 }: IntakeResultsProps) {
-  const [engine, setEngine] = useState<'rules' | 'llm'>('rules');
+  const [engine, setEngine] = useState<'rules' | 'llm'>('llm');
   const [goalText, setGoalText] = useState('');
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [completed, setCompleted] = useState<{
@@ -66,10 +66,7 @@ export function IntakeResults({
   const pending = useRef<AbortController | null>(null);
   const profile = completed?.profile ?? browsingProfile;
   const selection = useMemo<RecommendationSelection>(() => {
-    if (
-      completed?.state.status === 'unavailable' ||
-      (engine === 'llm' && !completed)
-    )
+    if (completed?.state.status === 'unavailable')
       return {
         results: [],
         recommendationEngine: engine,
@@ -263,8 +260,8 @@ export function IntakeResults({
             <legend>Recommendation engine</legend>
             {(
               [
-                ['rules', 'Deterministic'],
                 ['llm', 'Haiku AI'],
+                ['rules', 'Deterministic'],
               ] as const
             ).map(([value, label]) => (
               <label key={value}>
@@ -335,6 +332,11 @@ export function IntakeResults({
         </p>
         <ResultsList
           fallbackOnly={fallbackOnly}
+          hasMatches={
+            completed?.state.status === 'ready' &&
+            completed.profile.goalWords.length > 0 &&
+            selection.results.some((match) => match.matchType !== 'fallback')
+          }
           feedback={
             question && usageContext
               ? { question, bind: usageContext.feedback }

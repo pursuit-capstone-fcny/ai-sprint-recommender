@@ -22,6 +22,9 @@
   color: var(--surface);
   border-color: var(--navy);
 }
+.feedback-status:empty {
+  display: none;
+}
 .feedback-status {
   margin-top: var(--space-1) !important;
   color: var(--muted);

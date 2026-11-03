@@ -42,7 +42,6 @@ export function FeedbackControls({
         ))}
       </div>
       <p className="feedback-status" role="status">
-        {state.status === 'idle' && 'Only Sprint staff can see your response.'}
         {state.status === 'sending' && 'Sending your response…'}
         {state.status === 'saved' &&
           `Saved as ${state.helpful ? 'helpful' : 'not helpful'}. You can change your response.`}

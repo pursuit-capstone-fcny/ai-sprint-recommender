@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-26.1 Form
   - Given a peer learner
   - When they use the FCNY-owned form
-  - Then topic requests work without contact details; demo offers collect only approved contact fields after a notice stating purpose, access and retention
+  - Then topic requests work without contact details; demo offers collect only approved contact fields with self-contained consent stating staff follow-up and retention
 - AC-26.2 Review sheet
   - Given a submission
   - When it arrives
