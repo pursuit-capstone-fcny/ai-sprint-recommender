@@ -187,6 +187,11 @@ execution/logging quota. Before launch, load-test the agreed peak traffic and
 catalog contention. If that is insufficient, use ADR-0002's proxy design with
 a server-only upstream credential. Never put a secret in the SPA.
 
+Run `pnpm check:usage-capacity fixtures/usage-capacity-1000-users.json` for the
+offline 1,000-user policy preflight. The recorded limits intentionally fail this
+scenario. See [capacity target, simulation limits and release sequence](../docs/analytics/capacity.md)
+before interpreting a passing simulation as release readiness.
+
 ## Remaining #16 work
 
 - Topic/direct-video event contexts when those routes are implemented.

@@ -1,0 +1,41 @@
+{
+  "policy": {
+    "retentionDays": 1,
+    "maxPerMinute": 20,
+    "maxPerDay": 1000,
+    "maxRows": 1000,
+    "recommendationVersions": [
+      {
+        "modelVersion": "claude-haiku-5-5",
+        "promptVersion": "catalog-pick-evidence-v9"
+      }
+    ]
+  },
+  "actions": [
+    {
+      "atMs": 0,
+      "client": 0,
+      "clients": 1000,
+      "mode": "llm",
+      "cards": 8,
+      "clicks": 1
+    }
+  ],
+  "ai": {
+    "requests": 1000,
+    "limits": {
+      "LLM_ENVIRONMENT": "production",
+      "LLM_MODEL": "claude-haiku-5-5",
+      "LIBRARY_ORIGIN": "https://library.example",
+      "LLM_MAX_INPUT_TOKENS": 80000,
+      "LLM_MAX_OUTPUT_TOKENS": 16384,
+      "LLM_REQUESTS_PER_MINUTE": 10,
+      "LLM_CLIENT_REQUESTS_PER_MINUTE": 3,
+      "LLM_MAX_CONCURRENCY": 2,
+      "LLM_DAILY_MICRODOLLARS": 1000000,
+      "LLM_MONTHLY_MICRODOLLARS": 5000000,
+      "LLM_INPUT_MICRODOLLARS_PER_MILLION": 100000,
+      "LLM_OUTPUT_MICRODOLLARS_PER_MILLION": 500000
+    }
+  }
+}
