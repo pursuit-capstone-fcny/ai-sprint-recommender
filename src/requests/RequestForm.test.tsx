@@ -71,7 +71,7 @@ describe('reviewed contribution form', () => {
       screen.getByLabelText<HTMLTextAreaElement>('Topic or demo idea').value,
     ).toBe('');
   });
-  it('AC-26.1/5/7: shows the approved notice before contact and sends only consented demo email', async () => {
+  it('AC-26.1/5/7: shows self-contained demo consent and sends only consented demo email', async () => {
     vi.stubGlobal(
       'fetch',
       vi
@@ -79,11 +79,9 @@ describe('reviewed contribution form', () => {
         .mockResolvedValue(Response.json({ ok: true, status: 'accepted' })),
     );
     render(<RequestForm fallback={false} config={config} />);
-    expect(
-      screen.getByText(/Entries and contact details are deleted after 7 days/)
-        .textContent,
-    ).toContain('Nothing is published automatically');
+    expect(document.getElementById('request-notice')).toBeNull();
     fireEvent.click(screen.getByLabelText('Offer to record a demo'));
+    expect(screen.getByText(/deleting it after 7 days/)).toBeTruthy();
     fireEvent.change(screen.getByLabelText('Topic or demo idea'), {
       target: { value: 'Fictional demo idea' },
     });

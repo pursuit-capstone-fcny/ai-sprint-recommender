@@ -15,8 +15,8 @@ collections. Search matching and provider validation retain their existing rules
 ### AC-COLLECTION-1: Beginner default collection
 
 - **Given** a usable catalog containing the approved default videos
-- **When** the deterministic view first loads, the user clears the form, switches
-  back to deterministic, or submits a blank deterministic goal
+- **When** either engine view first loads, the user clears the form, switches
+  engines, or submits a blank deterministic goal
 - **Then** show the eight `DEFAULT_VIDEO_IDS` in `src/recommendations/curatedVideos.ts`
   in their approved editorial order, resolving displayed metadata from the
   current catalog. The collection starts with Starter Skills and aiSPIRE, then

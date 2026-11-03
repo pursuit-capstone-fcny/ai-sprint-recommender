@@ -8,6 +8,7 @@ interface ResultsListProps {
   results: RankedMatch[];
   loading?: boolean;
   fallbackOnly?: boolean;
+  hasMatches?: boolean;
   playingId: string | null;
   onPlay: (youtubeId: string) => void;
   showClosestMatch?: boolean;
@@ -26,6 +27,7 @@ export function ResultsList({
   results,
   loading = false,
   fallbackOnly = false,
+  hasMatches = false,
   playingId,
   onPlay,
   showClosestMatch = true,
@@ -40,7 +42,11 @@ export function ResultsList({
     >
       <div className="results-head">
         <h2 id={RESULTS_HEADING_ID} tabIndex={-1}>
-          {fallbackOnly ? 'Fallback videos' : 'Videos to start with'}
+          {fallbackOnly
+            ? 'Fallback videos'
+            : hasMatches
+              ? 'Recommended Videos'
+              : 'Videos to start with'}
         </h2>
         <p className="pill results-count" aria-live="polite" aria-atomic="true">
           {results.length} {results.length === 1 ? 'video' : 'videos'}

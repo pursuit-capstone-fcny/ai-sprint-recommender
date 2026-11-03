@@ -19,6 +19,7 @@
     "prepare": "husky",
     "build:apps-script:test": "node scripts/build-apps-script.mjs --test",
     "check:catalog": "node scripts/check-catalog.mjs",
+    "check:usage-capacity": "node scripts/check-usage-capacity.mjs",
     "build:admin": "node scripts/build-admin.mjs",
     "evaluate:displayed": "node scripts/evaluate-displayed.mjs"
   },

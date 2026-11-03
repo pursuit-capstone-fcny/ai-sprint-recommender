@@ -56,6 +56,7 @@ it.each([
         publicCatalog={discoveryCatalog}
       />,
     );
+    fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
     const input = screen.getByLabelText('Your goal');
     if (goal.startsWith('For example'))
       expect(input.getAttribute('placeholder')).toBe(goal);
