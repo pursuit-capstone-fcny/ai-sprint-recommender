@@ -56,6 +56,16 @@ describe('catalog pick protocol', () => {
     expect('cache_control' in intake).toBe(false);
     expect(JSON.stringify(plan.request)).not.toContain('scoring0000');
     expect(plan.request.max_tokens).toBe(2_000);
+    // v6 left task lists short and could return picks with empty quotes.
+    expect(plan.request.system).toContain(
+      'For a specific task, after every grade 3 or 2 pick, add the most relevant grade 1 components until there are eight',
+    );
+    expect(plan.request.system).not.toContain(
+      'Only for a specific task may relevant grade 1 components follow',
+    );
+    expect(plan.request.system).toContain(
+      'Leave out any video you cannot support with a non-empty exact quote and a non-empty rationale; an empty quote or rationale is invalid.',
+    );
   });
 
   it('returns verified picks with no minimum count', () => {
@@ -67,7 +77,7 @@ describe('catalog pick protocol', () => {
     expect(result.response).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v6',
+      promptVersion: 'catalog-pick-evidence-v7',
     });
   });
 
