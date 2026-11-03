@@ -65,6 +65,23 @@ References: [Google web-app execution identities](https://developers.google.com/
 [Session identity availability](https://developers.google.com/apps-script/reference/base/session),
 [HTML-service RPC](https://developers.google.com/apps-script/guides/html/communication).
 
+## Learner browsing events, November 3, 2026
+
+The revised browser producer follows AC-16.7. Initial default cards and cards
+restored by Clear send no automatic search or impression events. Playing a card
+or following its YouTube link records one direct impression per video in that
+browsing context and a direct click per action. These feed the existing separate
+direct-view metrics, not recommendation appearances or keyword associations.
+Submitted searches retain their search/impression/click events, including the
+actual weak/start-here/cross-area classifications on general fallback cards.
+Explicit feedback remains available even when automatic usage is disabled.
+
+This producer change takes effect when its browser build is deployed; existing
+open pages keep their loaded producer until reload. Record that deployment's
+commit and time when comparing collection volumes. Do not relabel historical
+events as browsing clicks or infer missing submissions. The report's existing
+AC-24.19 filter for real submitted matches continues to apply to retained events.
+
 ## Producer setup
 
 The producer remains in the existing Apps Script project from #88. Configure

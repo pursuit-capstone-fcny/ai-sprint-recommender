@@ -75,9 +75,11 @@ the separate #83 result-count policy.
 
 The user-requested engine toggle supersedes automatic fallback and result
 padding in the earlier #43/#83 text. Task requests display zero to eight
-compatible picks. V1 retains its existing two-primary-task gate and all 89
-complete public catalog rows, with no deterministic annotations, rankings or
+compatible picks. V1 retains its existing two-primary-task gate and the complete
+public catalog snapshot, with no deterministic annotations, rankings or
 prefiltering sent to Haiku. Model/prompt settings and validation are unchanged.
+Catalog additions and retirements follow AC-63.8's complete-request bounds
+rather than a fixed item count.
 A private deterministic adapter maps equivalent Sheet task names to #102's
 vocabulary; cards retain their original public metadata and this projection
 never enters Haiku's context. Broad or unknown tags do not imply specific

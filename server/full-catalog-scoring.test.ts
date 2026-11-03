@@ -18,6 +18,38 @@ const ids = (positions: number[]) =>
   positions.map((position) => `scoring${String(position).padStart(4, '0')}`);
 
 describe('catalog pick protocol', () => {
+  it.each([1, 88, 89, 90])(
+    'AC-63.8: prepares all %i items and resolves the last position against that snapshot',
+    (count) => {
+      const catalog = catalogFixture(count);
+      const plan = prepareCatalogScoring(inputFixture(), catalog);
+      const rows = JSON.parse(plan.request.messages[0].content[0].text).catalog;
+      expect(rows).toHaveLength(count);
+      expect(rows.at(-1).description).toBe(catalog.items.at(-1)!.description);
+      expect(
+        plan.request.output_config.format.schema.properties.picks.items
+          .properties.position.enum,
+      ).toEqual(Array.from({ length: count }, (_, i) => i));
+      expect(
+        plan.complete({
+          noWork: false,
+          goalType: 'task',
+          picks: [pick(count - 1, 3)],
+        }).response,
+      ).toMatchObject({
+        outcome: 'success',
+        youtubeIds: [catalog.items.at(-1)!.youtubeId],
+      });
+      expect(
+        plan.complete({
+          noWork: false,
+          goalType: 'task',
+          picks: [pick(count, 3)],
+        }).response,
+      ).toEqual({ outcome: 'fallback', reason: 'invalid-response' });
+    },
+  );
+
   it('caches every complete public row in source order and sends the request last, without IDs', () => {
     const catalog = catalogFixture();
     catalog.items[88].description = 'Long public description. '
@@ -325,8 +357,7 @@ describe('catalog pick protocol', () => {
   });
 
   it.each([
-    '88 items',
-    '90 items',
+    'empty catalog',
     'duplicate catalog ID',
     'retired item',
     'wrong input version',
@@ -336,9 +367,7 @@ describe('catalog pick protocol', () => {
   ])('refuses %s before preparing a provider request', (failure) => {
     const catalog = catalogFixture();
     const input = inputFixture();
-    if (failure === '88 items') catalog.items.pop();
-    if (failure === '90 items')
-      catalog.items.push({ ...catalog.items[0], youtubeId: 'scoring0089' });
+    if (failure === 'empty catalog') catalog.items = [];
     if (failure === 'duplicate catalog ID')
       catalog.items[88].youtubeId = 'scoring0000';
     if (failure === 'retired item') catalog.items[88].status = 'retired';

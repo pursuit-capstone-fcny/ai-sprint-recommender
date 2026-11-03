@@ -240,8 +240,7 @@ export async function recommend(
       return fallback('unavailable');
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
-    if (fullScoring && (catalog.items.length !== 89 || !input.goal))
-      return fallback('insufficient-results');
+    if (fullScoring && !input.goal) return fallback('insufficient-results');
     const body = fullScoring
       ? scoringBody(input, catalog)
       : providerBody(input, catalog, limits);

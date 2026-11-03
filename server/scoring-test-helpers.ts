@@ -2,7 +2,7 @@ import type { PublicCatalog } from '../src/contracts/publicCatalog';
 import type { RecommendationRequest } from '../src/contracts/recommendation';
 import type { CatalogAssessment } from './full-catalog-scoring';
 
-export function catalogFixture(): PublicCatalog {
+export function catalogFixture(count = 89): PublicCatalog {
   return {
     schemaVersion: 1,
     catalogVersion: `sha256:${'b'.repeat(64)}`,
@@ -11,7 +11,7 @@ export function catalogFixture(): PublicCatalog {
     tools: ['Fixture editor', 'Fixture spreadsheet'],
     synonyms: [],
     adjacentTools: [],
-    items: Array.from({ length: 89 }, (_, index) => ({
+    items: Array.from({ length: count }, (_, index) => ({
       youtubeId: `scoring${String(index).padStart(4, '0')}`,
       title: `Fixture video ${index}`,
       description: `Demonstrate fictional operation ${index}. Check records before drafting a report.`,

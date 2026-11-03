@@ -65,6 +65,9 @@ function discoveryTopics(
       ) ||
       /^how (?:can|could|do) (?:i|we) (?:use|learn|explore|get started with) @tool$/.test(
         toolQuery,
+      ) ||
+      /^(?:please )?(?:(?:can|could|would) you )?(?:help (?:(?:me|us) )?|(?:i|we) (?:need|want|would like) (?:some )?help )(?:with |(?:to )?(?:learn|learning|understand|explore|use|using) (?:more )?(?:about |how to use )?|get(?:ting)? started with )@tool(?: please)?$/.test(
+        toolQuery,
       ))
   )
     return [];

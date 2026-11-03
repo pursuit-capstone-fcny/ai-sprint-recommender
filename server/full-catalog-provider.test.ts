@@ -177,8 +177,8 @@ describe('V1 Haiku provider transport', () => {
   });
 });
 
-function endpointSetup() {
-  const catalog = catalogFixture();
+function endpointSetup(count = 89) {
+  const catalog = catalogFixture(count);
   catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(catalog)).digest('hex')}`;
   const input = { ...inputFixture(), catalogVersion: catalog.catalogVersion };
   const assessment = assessmentFixture();
@@ -223,6 +223,38 @@ function endpointSetup() {
   };
 }
 describe('V1 endpoint integration', () => {
+  it.each([1, 88, 89, 90])(
+    'AC-63.8: dispatches the complete %i-item catalog once and returns a pick from its last row',
+    async (count) => {
+      const s = endpointSetup(count);
+      s.assessment.picks = [
+        {
+          position: count - 1,
+          grade: 3,
+          quote: 'Check records before drafting a report.',
+          rationale: 'Teaches record checking.',
+        },
+      ];
+      const response = await recommend(s.request(), s.env, s.deps);
+      expect(await response.json()).toMatchObject({
+        outcome: 'success',
+        youtubeIds: [s.catalog.items.at(-1)!.youtubeId],
+        catalogVersion: s.catalog.catalogVersion,
+      });
+      const calls = s.fetcher.mock.calls.filter(([url]) =>
+        String(url).includes('api.anthropic.com'),
+      );
+      expect(calls).toHaveLength(1);
+      expect(
+        JSON.parse(
+          JSON.parse(String(calls[0][1]?.body)).messages[0].content[0].text,
+        ).catalog,
+      ).toEqual(rowsOf(s.catalog));
+      expect(s.budget.reserve).toHaveBeenCalledTimes(1);
+      expect(s.budget.settle).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it('loads the trusted static snapshot, reserves the full maximum and settles the measured call', async () => {
     const s = endpointSetup();
     const response = await recommend(s.request(), s.env, s.deps);
@@ -253,17 +285,20 @@ describe('V1 endpoint integration', () => {
     'disabled',
     'budget-exhausted',
     'undersized output limit',
-    'wrong catalog count',
+    'undersized input limit',
+    'empty catalog',
+    'oversized complete catalog',
   ])('does not dispatch a paid call for %s', async (failure) => {
     const s = endpointSetup();
     if (failure === 'disabled') s.env.LLM_ENABLED = 'false';
     if (failure === 'undersized output limit')
       s.env.LLM_MAX_OUTPUT_TOKENS = '1000';
-    if (failure === 'wrong catalog count') {
-      s.catalog.items.pop();
-      s.catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(s.catalog)).digest('hex')}`;
-      s.input.catalogVersion = s.catalog.catalogVersion;
-    }
+    if (failure === 'undersized input limit') s.env.LLM_MAX_INPUT_TOKENS = '1';
+    if (failure === 'empty catalog') s.catalog.items = [];
+    if (failure === 'oversized complete catalog')
+      s.catalog.items[0].description = 'x'.repeat(80_000);
+    s.catalog.catalogVersion = `sha256:${createHash('sha256').update(catalogDataJson(s.catalog)).digest('hex')}`;
+    s.input.catalogVersion = s.catalog.catalogVersion;
     if (failure === 'budget-exhausted')
       s.budget.reserve.mockImplementation(async () => ({
         ok: false,
@@ -276,6 +311,9 @@ describe('V1 endpoint integration', () => {
         String(url).includes('api.anthropic.com'),
       ),
     ).toHaveLength(0);
+    expect(s.budget.reserve).toHaveBeenCalledTimes(
+      failure === 'budget-exhausted' ? 1 : 0,
+    );
   });
   it('has a 6.5-second server window inside the 7-second browser window', () => {
     expect(SCORING_SERVER_DEADLINE_MS).toBe(6500);
