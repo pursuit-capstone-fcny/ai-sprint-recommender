@@ -79,14 +79,7 @@ export function RequestForm({
           event.preventDefault();
           void submit();
         }}
-        aria-describedby="request-notice"
       >
-        <p id="request-notice">
-          {policy.purpose} {policy.access} Review owner: {policy.owner}. Entries
-          and contact details are deleted after {policy.retentionDays} days.
-          Nothing is published automatically. Leave personal details out of the
-          topic.
-        </p>
         <fieldset disabled={status === 'sending'}>
           <legend>What would you like to do?</legend>
           <label className="request-option">
@@ -159,7 +152,8 @@ export function RequestForm({
                     edit();
                   }}
                 />{' '}
-                I agree to the contact use and retention described above.
+                I agree to Sprint staff using my email to follow up about a demo
+                and deleting it after {policy.retentionDays} days.
               </label>
             </>
           )}

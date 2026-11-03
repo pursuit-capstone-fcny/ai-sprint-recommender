@@ -74,7 +74,7 @@ function setup(ai = true, catalog = props.catalog) {
     </StrictMode>
   );
   const rendered = render(view);
-  if (ai) choose('Haiku AI');
+  choose(ai ? 'Haiku AI' : 'Deterministic');
   send.mockClear();
   return { send, view, ...rendered };
 }
@@ -164,17 +164,27 @@ describe('independent recommendation engines', () => {
     },
   );
 
-  it('defaults to deterministic even when AI is enabled, and changing engine or typing makes no request', () => {
-    setup(false);
-    expect(screen.getByRole('radio', { name: 'Deterministic' })).toHaveProperty(
+  it('defaults to Haiku first, with starter videos and no request until submission', () => {
+    setup();
+    const engines = screen.getAllByRole('radio');
+    expect(engines.map((radio) => radio.getAttribute('value'))).toEqual([
+      'llm',
+      'rules',
+    ]);
+    expect(screen.getByRole('radio', { name: 'Haiku AI' })).toHaveProperty(
       'checked',
       true,
     );
+    expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
+    expect(
+      screen.getByRole('heading', { name: 'Videos to start with' }),
+    ).toBeTruthy();
     goal('Draft a grant report');
+    expect(fetch).not.toHaveBeenCalled();
+    choose('Deterministic');
     submit();
     expect(fetch).not.toHaveBeenCalled();
     choose('Haiku AI');
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
     expect(fetch).not.toHaveBeenCalled();
   });
   it('makes one AI call per submit, preserves order without padding, and emits only final engine events', async () => {

@@ -53,6 +53,7 @@ function session() {
   };
 }
 function submit() {
+  fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
 beforeEach(() => {
