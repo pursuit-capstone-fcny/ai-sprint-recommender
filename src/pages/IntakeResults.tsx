@@ -62,8 +62,9 @@ export function IntakeResults({
     state: RecommendationState;
   } | null>(null);
   const [loading, setLoading] = useState(false);
+  const [browsingProfile, setBrowsingProfile] = useState(EMPTY_PROFILE);
   const pending = useRef<AbortController | null>(null);
-  const profile = completed?.profile ?? EMPTY_PROFILE;
+  const profile = completed?.profile ?? browsingProfile;
   const selection = useMemo<RecommendationSelection>(() => {
     if (
       completed?.state.status === 'unavailable' ||
@@ -156,6 +157,8 @@ export function IntakeResults({
     setGoalText('');
     setPlayingId(null);
     setCompleted(null);
+    // A fresh profile resets usage even when Clear is pressed while browsing.
+    setBrowsingProfile({ ...EMPTY_PROFILE });
   }
 
   function handleFindVideos() {

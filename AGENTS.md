@@ -48,6 +48,8 @@ One-time setup: install [pnpm](https://pnpm.io/installation) and
 ## Workflow rules
 
 - Never push to `main`. Work happens on branches and lands via PR.
+- When creating a PR, apply appropriate existing `type:*` and `area:*` labels.
+  Add `privacy` or `security` when relevant, preserving any existing labels.
 - Never use `--no-verify` to skip hooks. If a hook blocks you, fix the code.
 - Local hooks can be bypassed by anyone; CI and the main-audit workflow are
   the backstop. Expect direct pushes to `main` to fail the audit.

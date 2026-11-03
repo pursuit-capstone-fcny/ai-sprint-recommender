@@ -83,15 +83,19 @@ export function createRecommendationUsage(
     schemaVersion: 1 as const,
     sessionId: session.sessionId,
     searchId: crypto.randomUUID(),
-    mode: 'recommendations' as const,
+    mode: submitted ? ('recommendations' as const) : ('direct' as const),
     src: session.src,
     catalogVersion: catalog.catalogVersion,
-    recommendationEngine: metadata.recommendationEngine,
-    llmFallbackReason: metadata.llmFallbackReason,
-    ...(metadata.modelVersion && metadata.promptVersion
+    ...(submitted
       ? {
-          modelVersion: metadata.modelVersion,
-          promptVersion: metadata.promptVersion,
+          recommendationEngine: metadata.recommendationEngine,
+          llmFallbackReason: metadata.llmFallbackReason,
+          ...(metadata.modelVersion && metadata.promptVersion
+            ? {
+                modelVersion: metadata.modelVersion,
+                promptVersion: metadata.promptVersion,
+              }
+            : {}),
         }
       : {}),
   };
@@ -135,6 +139,8 @@ export function createRecommendationUsage(
     started = true;
     if (submitted) send(search);
   };
+  const matchType = (match: RankedMatch): MatchType =>
+    submitted ? usageMatchType(match, profile) : 'direct';
   const impression = (match: RankedMatch, index: number) => {
     if (!activeIds.has(match.item.youtubeId) || seen.has(match.item.youtubeId))
       return;
@@ -143,7 +149,7 @@ export function createRecommendationUsage(
       type: 'impression',
       youtubeId: match.item.youtubeId,
       rank: index + 1,
-      matchType: usageMatchType(match, profile),
+      matchType: matchType(match),
     });
   };
   return {
@@ -154,12 +160,14 @@ export function createRecommendationUsage(
           ...common,
           youtubeId: match.item.youtubeId,
           rank: index + 1,
-          matchType: usageMatchType(match, profile),
+          matchType: matchType(match),
         },
         catalog,
       };
     },
     display(results: RankedMatch[]) {
+      // Passive library browsing is not a search or a direct video view.
+      if (!submitted) return;
       start();
       results.forEach(impression);
     },
@@ -170,7 +178,7 @@ export function createRecommendationUsage(
         type: 'click',
         youtubeId: match.item.youtubeId,
         rank: index + 1,
-        matchType: usageMatchType(match, profile),
+        matchType: matchType(match),
         target,
       });
     },

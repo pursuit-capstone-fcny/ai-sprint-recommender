@@ -50,9 +50,12 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When MVP logging runs
   - Then only canonical matched dictionary tags enter analytics, after client and server allowlist validation; raw goals sent to the #43 provider follow the separate #8 policy and never enter this log. Option B remains off pending separate approval; removing emails, numbers and links does not remove names or sensitive context
 - AC-16.7 Event timing
-  - Given a submitted search or displayed result set
-  - When the UI renders or expands results
-  - Then one search event is sent per submission and one impression per displayed video per `searchId`; rerenders do not resend them, and a direct video view uses `mode=direct` and a new context `searchId` without sending a search event
+  - Given a submitted search
+  - When the UI renders or expands its results
+  - Then one search event is sent per submission and one impression per displayed video per `searchId`; rerenders do not resend them. Submitted fallback cards retain their actual fallback match types.
+  - Given default cards before a submission or after Clear
+  - When the UI displays or rerenders them
+  - Then send no automatic search or impression events. A play or YouTube action sends a direct impression once per video in that browsing context and a direct click per action, using `mode=direct`, `matchType=direct`, and no recommendation-engine metadata. Clear starts a new browsing context; submitted results retain their search context during unsubmitted edits. Explicit feedback remains available and uses the displayed card's context.
 - AC-16.8 Operations
   - Given the anonymous endpoint and retention policy
   - When events accumulate or requests spike

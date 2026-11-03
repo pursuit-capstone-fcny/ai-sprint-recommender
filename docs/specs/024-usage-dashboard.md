@@ -118,6 +118,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given recommendation-mode impressions and clicks, including default picks shown before any search, cards shown after Clear and labeled fallback cards
   - When the report aggregates appearances and clicks
   - Then count an impression or click only when a search event exists for its sessionId, searchId and catalogVersion and its matchType is `strong` or `semantic`. Default picks with no search, and `weak`, `start-here` or `cross-area` cards, count in no video, tag, association or fact total and are not reported as unattributed. Keyword searches still count. Direct and topic modes are unchanged. The rule uses existing version 1 fields, so it also applies to previously retained events. A real match whose search event was lost in delivery is also excluded, so totals stay conservative.
+  - Given a learner using the revised AC-16.7 browser producer
+  - When default cards are browsed before submission or after Clear
+  - Then passive display creates no events; actual play/YouTube actions contribute only to the separate direct-view and direct-click metrics. Do not rewrite historical events to infer browsing actions or missing submissions.
 - AC-24.20 Aligned numeric columns
   - Given any analytics table
   - When it renders numeric columns
