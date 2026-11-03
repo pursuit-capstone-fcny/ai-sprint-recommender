@@ -38,6 +38,10 @@ on:
         description: Run a fifteen-minute isolated Haiku test with a five-cent budget
         type: boolean
         default: false
+      app_analytics_url:
+        description: Optional private analytics dashboard for the isolated test app
+        type: string
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -59,6 +63,7 @@ jobs:
           APP_FEEDBACK_ENABLED: ${{ inputs.app_feedback_enabled && 'true' || 'false' }}
           APP_REQUESTS_CONFIG: ${{ inputs.app_requests_config }}
           APP_LIVE_HAIKU: ${{ inputs.app_live_haiku && 'true' || 'false' }}
+          APP_ANALYTICS_URL: ${{ inputs.app_analytics_url }}
         run: |
           [[ "$REQUEST_ID" =~ ^[a-f0-9-]{36}$ ]]
           [[ "$CONTENT_COMMIT" =~ ^[a-f0-9]{40}$ ]]
@@ -78,6 +83,10 @@ jobs:
           fi
           if [[ "$APP_FEEDBACK_ENABLED" == true || -n "$APP_REQUESTS_CONFIG" || "$APP_LIVE_HAIKU" == true ]]; then
             [[ -n "$APP_COLLECTOR_URL" && "$TARGET" == test && -n "$PREVIEW_NAME" ]]
+          fi
+          if [[ -n "$APP_ANALYTICS_URL" ]]; then
+            [[ -n "$APP_COLLECTOR_URL" && "$TARGET" == test && -n "$PREVIEW_NAME" ]]
+            [[ "$APP_ANALYTICS_URL" =~ ^https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec$ ]]
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       # Keep the newest archive even when an older manifest is selected for rollback.
@@ -150,6 +159,7 @@ jobs:
           VITE_REQUESTS_CONFIG: ${{ inputs.app_requests_config }}
           VITE_FEEDBACK_ENABLED: ${{ inputs.app_feedback_enabled && 'true' || 'false' }}
           VITE_FEEDBACK_QUESTION: ${{ inputs.app_feedback_enabled && 'Was this helpful?' || '' }}
+          VITE_ADMIN_ANALYTICS_URL: ${{ inputs.app_analytics_url }}
         run: |
           [[ "$TEST_ORIGIN" =~ ^https://ai-sprint-library-test\.[a-zA-Z0-9-]+\.workers\.dev$ ]]
           export VITE_LIBRARY_ORIGIN="https://$PREVIEW_NAME-${TEST_ORIGIN#https://}"

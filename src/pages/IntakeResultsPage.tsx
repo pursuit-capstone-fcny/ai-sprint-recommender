@@ -7,8 +7,17 @@ import { RequestForm } from '../requests/RequestForm';
 import './global.css';
 import './intake-results.css';
 
+const DEFAULT_ANALYTICS_URL =
+  'https://script.google.com/macros/s/AKfycbzw_0TUPaW2VbEEiLonCU_AsG7KJkf7H2iB2zg4oG2dmq3SNZFv2zNY-LRW73sCFS7J/exec';
+
 export function IntakeResultsPage() {
   const catalog = useCatalog();
+  const analyticsUrl =
+    import.meta.env.VITE_ADMIN_ANALYTICS_URL?.trim() ?? DEFAULT_ANALYTICS_URL;
+  const analyticsAvailable =
+    /^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(
+      analyticsUrl,
+    );
   const usageSession =
     catalog.status === 'ready' ? getUsageSession(catalog.source) : null;
 
@@ -112,17 +121,19 @@ export function IntakeResultsPage() {
             <br />
             Fund for the City of New York
           </p>
-          <nav aria-label="Staff">
-            <a
-              className="admin-analytics-link"
-              href="https://script.google.com/macros/s/AKfycbzw_0TUPaW2VbEEiLonCU_AsG7KJkf7H2iB2zg4oG2dmq3SNZFv2zNY-LRW73sCFS7J/exec"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Admin analytics
-              <span className="sr-only"> (opens in a new tab)</span>
-            </a>
-          </nav>
+          {analyticsAvailable && (
+            <nav aria-label="Staff">
+              <a
+                className="admin-analytics-link"
+                href={analyticsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Admin analytics
+                <span className="sr-only"> (opens in a new tab)</span>
+              </a>
+            </nav>
+          )}
         </div>
       </footer>
     </>

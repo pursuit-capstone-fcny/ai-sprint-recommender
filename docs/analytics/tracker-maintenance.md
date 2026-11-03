@@ -135,3 +135,18 @@ Keep a public-only pre-migration cell backup for undo. The importer reads bounde
 columns and accepts up to 5,000 tracker rows; existing snapshot byte limits and
 LLM token budgets still apply. Exceeding them produces a failure and retains the
 last good publication, rather than truncating the library.
+
+For full workflow checks, the manual dispatch also accepts
+`app_feedback_enabled`, `app_requests_config`, and `app_analytics_url`.
+The request configuration must use that same isolated collector. Deploy a
+separate authenticated analytics project with the copy's source URL and named
+catalog origin, then supply its `/exec` URL so the preview's footer reads the
+copy. An empty override hides the footer link in the isolated preview.
+
+`app_live_haiku=true` temporarily enables the repository's provider credential
+only in this named preview. The server expires it after fifteen minutes and
+limits its own test budget to $0.05 per day and month, one concurrent request,
+and two requests per minute. The test namespace retains that budget across
+redeployments. Dispatch again with `app_live_haiku=false` after testing to disable
+paid calls and overwrite both temporary credential values with empty strings.
+The runner deletes its temporary secrets file even if deployment fails.

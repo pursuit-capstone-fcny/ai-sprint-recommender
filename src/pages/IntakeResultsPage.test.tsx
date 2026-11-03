@@ -14,6 +14,24 @@ afterEach(() => {
 });
 
 describe('catalog page integration', () => {
+  it.each([
+    ['https://script.google.com/macros/s/private-test/exec', true],
+    ['https://example.invalid/untrusted', false],
+    ['', false],
+  ])(
+    'uses only a configured Apps Script analytics endpoint: %s',
+    (url, visible) => {
+      vi.stubEnv('VITE_ADMIN_ANALYTICS_URL', url);
+      vi.stubGlobal(
+        'fetch',
+        vi.fn(() => new Promise(() => {})),
+      );
+      render(<IntakeResultsPage />);
+      const link = screen.queryByRole('link', { name: /Admin analytics/ });
+      expect(Boolean(link)).toBe(visible);
+      if (link) expect(link.getAttribute('href')).toBe(url);
+    },
+  );
   it('retries a failed request, then shows a distinct empty state', async () => {
     const fetchMock = vi
       .fn()
