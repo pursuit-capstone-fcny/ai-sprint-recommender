@@ -13,6 +13,10 @@ import { toCatalogItem } from '../contracts/catalogItem';
 import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { UsageEventSchema } from '../contracts/usageEvent';
 import { IntakeResults } from './IntakeResults';
+import {
+  DEFAULT_VIDEO_IDS,
+  FALLBACK_VIDEO_IDS,
+} from '../recommendations/curatedVideos';
 
 const publicCatalog = parsePublicCatalog({
   ...fixture,
@@ -89,6 +93,77 @@ afterEach(() => {
 });
 
 describe('independent recommendation engines', () => {
+  it.each([
+    [
+      { ...success, youtubeIds: [] },
+      'No confident AI matches found.',
+      'insufficient-results',
+    ],
+    [
+      { outcome: 'fallback', reason: 'disabled' },
+      'AI recommendations are unavailable.',
+      'disabled',
+    ],
+  ])(
+    'shows eight curated fallback videos and their actual usage for %j',
+    async (response, message, reason) => {
+      vi.mocked(fetch).mockResolvedValue(Response.json(response));
+      const ids = [...DEFAULT_VIDEO_IDS, ...FALLBACK_VIDEO_IDS];
+      const snapshot = parsePublicCatalog({
+        ...publicCatalog,
+        items: ids.map((youtubeId) => ({
+          ...publicCatalog.items[0],
+          youtubeId,
+          title: `Fixture lesson ${youtubeId}`,
+        })),
+      });
+      const send = vi.fn(async (event: unknown) => {
+        UsageEventSchema.parse(event);
+        return 'accepted' as const;
+      });
+      render(
+        <IntakeResults
+          catalog={snapshot.items.map(toCatalogItem)}
+          publicCatalog={snapshot}
+          recommendationCatalog={snapshot}
+          usage={{
+            catalog: snapshot,
+            session: {
+              sessionId: crypto.randomUUID(),
+              src: 'pilot',
+              sender: { send },
+            },
+          }}
+        />,
+      );
+      choose('Haiku AI');
+      send.mockClear();
+      goal();
+      submit();
+      await screen.findByText(message);
+      expect(
+        screen.getAllByRole('heading', { level: 3 }).map((h) => h.textContent),
+      ).toEqual(FALLBACK_VIDEO_IDS.map((id) => `Fixture lesson ${id}`));
+      expect(screen.getAllByText('Fallback video')).toHaveLength(8);
+      await waitFor(() => expect(send).toHaveBeenCalledTimes(9));
+      const events = send.mock.calls.map(([event]) =>
+        UsageEventSchema.parse(event),
+      );
+      expect(events.find((event) => event.type === 'search')).toMatchObject({
+        resultCount: 8,
+        strongMatchCount: 0,
+      });
+      expect(
+        events.every(
+          (event) =>
+            event.recommendationEngine === 'rules' &&
+            event.llmFallbackReason === reason,
+        ),
+      ).toBe(true);
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+
   it('defaults to deterministic even when AI is enabled, and changing engine or typing makes no request', () => {
     setup(false);
     expect(screen.getByRole('radio', { name: 'Deterministic' })).toHaveProperty(

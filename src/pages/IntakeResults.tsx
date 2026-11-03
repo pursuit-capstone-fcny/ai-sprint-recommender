@@ -6,12 +6,10 @@ import {
   recommendationsEnabled,
   requestRecommendations,
 } from '../recommendations/requestRecommendations';
-import {
-  rulesSelection,
-  type RecommendationSelection,
-} from '../recommendations/selectRecommendations';
+import type { RecommendationSelection } from '../recommendations/selectRecommendations';
 import { deterministicSelection } from '../recommendations/deterministicSelection';
 import { fallbackVideos } from '../recommendations/fallbackVideos';
+import { defaultVideos } from '../recommendations/curatedVideos';
 import {
   selectRecommendationState,
   type RecommendationState,
@@ -29,6 +27,14 @@ const EMPTY_PROFILE: IntakeProfile = {
   goalWords: [],
   tools: [],
 };
+
+function defaultSelection(catalog: CatalogItem[]): RecommendationSelection {
+  return {
+    results: defaultVideos(catalog),
+    recommendationEngine: 'rules',
+    llmFallbackReason: 'not-requested',
+  };
+}
 function splitGoalWords(text: string): string[] {
   return text.trim().split(/\s+/).filter(Boolean);
 }
@@ -68,10 +74,7 @@ export function IntakeResults({
         recommendationEngine: engine,
         llmFallbackReason: 'none',
       };
-    return (
-      completed?.state.selection ??
-      rulesSelection(catalog, EMPTY_PROFILE, 'not-requested')
-    );
+    return completed?.state.selection ?? defaultSelection(catalog);
   }, [catalog, completed, engine]);
   const llmEnabled =
     recommendationsEnabled() && recommendationCatalog !== undefined;
@@ -169,7 +172,7 @@ export function IntakeResults({
         ? snapshot
           ? deterministicSelection(snapshot, goalText, nextProfile)
           : null
-        : rulesSelection(catalog, nextProfile, 'not-requested');
+        : defaultSelection(catalog);
       setCompleted({
         profile: nextProfile,
         state: selected
