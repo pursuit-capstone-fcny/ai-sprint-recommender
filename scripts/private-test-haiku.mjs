@@ -1,3 +1,5 @@
+import { haikuModelVars } from './haiku-model.mjs';
+
 // Only a named test preview may receive the temporary provider credential.
 export function privateTestHaiku(env, origin, now = Date.now()) {
   if (env.PRIVATE_TEST_LIVE_HAIKU !== 'true') return null;
@@ -20,7 +22,7 @@ export function privateTestHaiku(env, origin, now = Date.now()) {
     LLM_ENABLED: 'true',
     LLM_APPROVALS_RECORDED: 'true',
     LLM_ENVIRONMENT: 'test',
-    LLM_MODEL: 'claude-haiku-5-5',
+    ...haikuModelVars,
     LLM_TEST_EXPIRES_AT: new Date(expires).toISOString(),
     LLM_MAX_INPUT_TOKENS: '80000',
     LLM_MAX_OUTPUT_TOKENS: '8192',
@@ -29,8 +31,6 @@ export function privateTestHaiku(env, origin, now = Date.now()) {
     LLM_MAX_CONCURRENCY: '1',
     LLM_DAILY_MICRODOLLARS: '50000',
     LLM_MONTHLY_MICRODOLLARS: '50000',
-    LLM_INPUT_MICRODOLLARS_PER_MILLION: '100000',
-    LLM_OUTPUT_MICRODOLLARS_PER_MILLION: '500000',
     LLM_DIAGNOSTICS_ENABLED: 'true',
   };
 }

@@ -93,6 +93,24 @@ describe('tracker publication', () => {
       rows[0].cells.Description,
     );
   });
+  it.each(['Retired', 'Draft'])(
+    'blocks duplicate IDs even when one tracker row is %s',
+    (status) => {
+      analyticsServices();
+      const { baseline, rows } = trackerFixture();
+      rows.push({ row: 8, cells: { ...rows[0].cells, Status: status } });
+      const result = buildTrackerCatalog(rows, baseline);
+      expect(result.catalog).toBeNull();
+      expect(result.problems).toContainEqual({
+        row: 8,
+        field: 'YouTube Link',
+        reason: 'Duplicate video ID',
+      });
+      expect(
+        buildTrackerCatalog([...rows].reverse(), baseline).catalog,
+      ).toBeNull();
+    },
+  );
   it('requires reviewed evidence for additions and does not promote a mention to a taught task', () => {
     analyticsServices();
     const { baseline, rows } = trackerFixture();
@@ -184,6 +202,29 @@ describe('tracker publication', () => {
     });
     expect(() => planTrackerMigration(rows.slice(1), baseline)).toThrow(
       'complete published catalog',
+    );
+  });
+  it('resolves duplicate published titles by distinct YouTube IDs and rejects unresolved identities', () => {
+    analyticsServices();
+    const { baseline, rows } = trackerFixture();
+    baseline.items[1].title = baseline.items[0].title;
+    rows[1].cells['Video Title'] = baseline.items[0].title;
+    baseline.catalogVersion = buildTrackerCatalog(
+      rows,
+      baseline,
+    ).catalog!.catalogVersion;
+    rows.forEach(({ cells }) => {
+      cells['Task keywords'] = '';
+      cells['Metadata status'] = '';
+    });
+    expect(planTrackerMigration(rows, baseline).catalog).toEqual(baseline);
+    rows[0].cells['YouTube Link'] = 'Unresolved rich-link label';
+    expect(() => planTrackerMigration(rows, baseline)).toThrow(
+      'unique published video',
+    );
+    rows[0].cells['YouTube Link'] = rows[1].cells['YouTube Link'];
+    expect(() => planTrackerMigration(rows, baseline)).toThrow(
+      'unique published video',
     );
   });
   it('accepts only public YouTube link shapes', () => {

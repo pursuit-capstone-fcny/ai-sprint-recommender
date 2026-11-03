@@ -32,6 +32,8 @@ Airtable integration is deferred; it can later produce the same catalog contract
   writing. Retain existing dropdown constraints, private cells, source review
   statuses and usage policy. Refuse ambiguous identities, missing baseline videos,
   or overwriting staff metadata. A partial setup does not publish anything.
+  Duplicate published titles are allowed when distinct YouTube IDs resolve
+  them; an unresolved identity still blocks migration.
 
 ### AC-TRACKER-3: Review and explicit publication
 
@@ -76,6 +78,11 @@ Airtable integration is deferred; it can later produce the same catalog contract
   initialization neither enables collection nor copies another environment's
   logs. The dashboard keeps reading Usage from the connected source workbook.
   Activity and staff metadata never enter published catalog assets.
+  Before changing a collector's usage workbook, verify that the previous
+  workbook is accessible and has no remaining Usage records. Otherwise refuse
+  setup before any tracker writes or configuration changes, preserving its
+  retention cleanup. A separate collector project can serve the new tracker
+  while the original collector finishes retention in the old workbook.
 
 ### AC-TRACKER-7: Evidence and reproducibility
 

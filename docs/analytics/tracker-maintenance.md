@@ -6,6 +6,16 @@ The generated public snapshot remains the interface consumed by recommendations,
 usage validation and private analytics. A future Airtable importer can provide
 the same contract without changing those consumers.
 
+When switching an existing collector to the tracker, setup first checks its
+previous Usage workbook. It refuses to change targets while records remain or
+the previous workbook cannot be checked. Its existing purge trigger follows the
+configured workbook ID, so changing that ID would leave the old records without
+cleanup. Keep the old collector and purge trigger running until retention clears
+those rows. To cut over sooner, use a separate collector project for the tracker
+and leave the old project's configuration and purge trigger intact. Configure
+the new project's usage target as the tracker workbook. No old activity is copied
+or deleted by tracker initialization.
+
 ## Staff workflow
 
 1. Add the video to Video Tracker. Keep the existing title, description, YouTube

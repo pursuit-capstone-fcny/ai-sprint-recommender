@@ -109,6 +109,57 @@ describe('tracker workbook adapter', () => {
     expect(response).toEqual({ error: { code: 'USAGE_UNAVAILABLE' } });
     expect(s.data['fixture-usage'].Usage).toHaveLength(1);
   });
+  it('refuses to abandon retained activity in the previous workbook before any migration writes', () => {
+    const s = setup();
+    s.grid.slice(4).forEach((row) => {
+      row[7] = '';
+      row[8] = '';
+    });
+    s.data['fixture-usage'].Usage.push([
+      searchEvent.eventId,
+      searchEvent.time,
+      JSON.stringify(searchEvent),
+    ]);
+    const before = structuredClone(s.data);
+    const properties = { ...s.properties };
+    expect(() => initializeTrackerFromPublished()).toThrow('retention cleanup');
+    expect(s.data).toEqual(before);
+    expect(s.properties).toEqual(properties);
+    expect(s.ops.filter((op) => op.startsWith('write:'))).toEqual([]);
+  });
+  it('fails closed when the previous activity workbook cannot be checked', () => {
+    const s = setup();
+    s.grid.slice(4).forEach((row) => {
+      row[7] = '';
+      row[8] = '';
+    });
+    s.properties.USAGE_SPREADSHEET_ID = 'inaccessible-previous-book';
+    const before = structuredClone(s.data);
+    expect(() => initializeTrackerFromPublished()).toThrow(
+      'previous activity workbook',
+    );
+    expect(s.data).toEqual(before);
+    expect(s.properties.USAGE_SPREADSHEET_ID).toBe(
+      'inaccessible-previous-book',
+    );
+  });
+  it('preserves retained activity when usage already targets the source workbook', () => {
+    const s = setup();
+    s.grid.slice(4).forEach((row) => {
+      row[7] = '';
+      row[8] = '';
+    });
+    s.properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+    s.data['fixture-catalog'].Usage = [
+      ...s.data['fixture-usage'].Usage,
+      [searchEvent.eventId, searchEvent.time, JSON.stringify(searchEvent)],
+    ];
+    const retained = structuredClone(s.data['fixture-catalog'].Usage);
+    initializeTrackerFromPublished();
+    expect(s.data['fixture-catalog'].Usage).toEqual(retained);
+    expect(s.properties.USAGE_RETENTION_DAYS).toBe('30');
+    expect(s.properties.USAGE_SPREADSHEET_ID).toBe('fixture-catalog');
+  });
   it('reads only the whitelisted columns even with private adjacent content', () => {
     const s = setup();
     s.grid[3].push('Private field');

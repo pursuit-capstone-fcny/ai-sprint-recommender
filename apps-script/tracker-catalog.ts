@@ -93,13 +93,15 @@ export function buildTrackerCatalog(
   >();
   const seen = new Set<string>();
   for (const { row, cells } of rows) {
-    if (!publishedTrackerStatus(cells.Status)) continue;
     const problem = (field: string, reason: string) =>
       problems.push({ row, field, reason });
     const id = youtubeId(cells['YouTube Link']);
-    if (!id) problem('YouTube Link', 'Expected a public YouTube video link');
-    else if (seen.has(id)) problem('YouTube Link', 'Duplicate video ID');
+    // Identity must remain unambiguous across the tracker, including drafts
+    // and retired rows, just as it does in the normalized catalog.
+    if (id && seen.has(id)) problem('YouTube Link', 'Duplicate video ID');
     if (id) seen.add(id);
+    if (!publishedTrackerStatus(cells.Status)) continue;
+    if (!id) problem('YouTube Link', 'Expected a public YouTube video link');
     if (cells['Metadata status'] !== 'Ready')
       problem(
         'Metadata status',
@@ -266,7 +268,7 @@ export function planTrackerMigration(
         : baseline.items.find(
             (item) => item.youtubeId === youtubeId(cells['YouTube Link']),
           );
-    if (!item || matches.length > 1 || used.has(item.youtubeId))
+    if (!item || used.has(item.youtubeId))
       throw new Error(
         `Video Tracker row ${row}: cannot identify a unique published video.`,
       );

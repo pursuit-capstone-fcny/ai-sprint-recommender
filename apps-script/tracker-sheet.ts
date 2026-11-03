@@ -15,6 +15,26 @@ import {
 
 export class TrackerSourceError extends Error {}
 
+function checkPreviousUsage(
+  properties: GoogleAppsScript.Properties.Properties,
+  targetId: string,
+) {
+  const previousId = properties.getProperty('USAGE_SPREADSHEET_ID');
+  if (!previousId || previousId === targetId) return;
+  let previous: GoogleAppsScript.Spreadsheet.Sheet | null;
+  try {
+    previous = SpreadsheetApp.openById(previousId).getSheetByName('Usage');
+  } catch {
+    throw new Error(
+      'Cannot check the previous activity workbook. Preserve its collector and retention cleanup before switching.',
+    );
+  }
+  if (previous && previous.getLastRow() > 1)
+    throw new Error(
+      'The previous activity workbook still has records. Keep its collector and retention cleanup configured until they expire, or use a separate collector project for this tracker.',
+    );
+}
+
 export function readTracker(
   book: GoogleAppsScript.Spreadsheet.Spreadsheet,
   setup = false,
@@ -81,6 +101,9 @@ export function initializeTrackerFromPublished() {
   if (!lock.tryLock(1500)) throw new Error('Library setup is busy.');
   let result: { catalogVersion: string; updatedCells: number };
   try {
+    // The existing purge trigger follows USAGE_SPREADSHEET_ID. Redirecting it
+    // while rows remain would abandon their approved retention cleanup.
+    checkPreviousUsage(properties, book.getId());
     const { sheet, rows, positions, width } = readTracker(book, true);
     const baseline = publishedCatalog();
     const plan = planTrackerMigration(rows, baseline);
