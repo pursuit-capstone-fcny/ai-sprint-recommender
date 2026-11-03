@@ -49,9 +49,9 @@ export function selectRecommendationState(
     return { status: 'unavailable', reason: 'invalid-response' };
   // Task tags only reorder picks; they never reject a valid answer.
   const results = applyAiDedupe(
-    result.youtubeIds.map((id) => ({
+    result.youtubeIds.map((id, index) => ({
       item: byId.get(id)!,
-      reason: 'Suggested for your goal',
+      reason: result.reasons?.[index] ?? 'Suggested for your goal',
       matchType:
         profile.functionArea !== null &&
         !byId.get(id)!.functionAreas.includes(profile.functionArea)
