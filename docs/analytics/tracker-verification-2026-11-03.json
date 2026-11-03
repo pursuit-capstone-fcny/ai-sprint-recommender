@@ -1,5 +1,5 @@
 {
-  "verifiedAt": "2026-11-03T16:43:04.524Z",
+  "verifiedAt": "2026-11-03T16:50:21.652Z",
   "baselineVersion": "sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d",
   "videos": 89,
   "exactCatalogEquality": true,
@@ -22,6 +22,9 @@
     "Metadata status": 89,
     "Instruction format": 0
   },
+  "applicationBaseCommit": "851823fce3bc02934def798d84654e3411913b73",
+  "verifiedCodeCommit": "46d33a8c8c4a742376183b939b60a895c3e77801",
+  "localTestsPassed": 1241,
   "workbookMigration": "not applied: Google Sheets API denied edits; browser confirmed view-only access",
   "workbookPrivacy": "Anyone with the link; owner must set Restricted before same-workbook usage",
   "liveCutover": "not performed"

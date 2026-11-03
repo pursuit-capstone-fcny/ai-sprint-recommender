@@ -1,7 +1,7 @@
 # Spec: Maintain the catalog in the original tracker
 
 - **Issue:** User request, November 3, 2026
-- **PR:** Pending
+- **PR:** [#131](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/pull/131)
 - **Status:** in review
 
 Keep FCNY's existing Video Tracker as the per-video source, generate the public
