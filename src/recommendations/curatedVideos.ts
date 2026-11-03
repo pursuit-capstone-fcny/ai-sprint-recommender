@@ -67,5 +67,11 @@ export function defaultVideos(catalog: CatalogItem[]): RankedMatch[] {
 }
 
 export function fallbackVideos(catalog: CatalogItem[]): RankedMatch[] {
-  return collectionVideos(catalog, FALLBACK_VIDEO_IDS, DEFAULT_VIDEO_IDS);
+  // Reserve actual default replacements too, so both collections can remain
+  // distinct when more than one approved video disappears.
+  return collectionVideos(
+    catalog,
+    FALLBACK_VIDEO_IDS,
+    defaultVideos(catalog).map(({ item }) => item.youtubeId),
+  );
 }

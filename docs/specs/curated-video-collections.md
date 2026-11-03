@@ -1,8 +1,8 @@
 # Spec: Curated default and fallback video collections
 
 - **Issue:** User request, November 2, 2026
-- **PR:** Pending
-- **Status:** draft
+- **PR:** #122
+- **Status:** in review
 
 The user approved two ordered sets of eight videos. Default videos introduce
 beginners to tools and integration possibilities. Fallback videos cover broader
@@ -45,6 +45,9 @@ collections. Search matching and provider validation retain their existing rules
   then newest known dates and ascending IDs. Borrow from the opposite curated
   collection only after other replacements are exhausted. Show fewer than eight
   when fewer than eight eligible videos exist. Never mutate the input catalog.
+  Reserve the default collection's actual replacements when filling the fallback
+  collection, keeping both sets distinct whenever at least sixteen eligible
+  videos exist.
 
 ### AC-COLLECTION-4: Independent search and interaction behavior
 

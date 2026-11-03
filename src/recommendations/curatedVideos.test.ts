@@ -99,6 +99,26 @@ describe('curated browsing collections', () => {
     },
   );
 
+  it('keeps replacement videos distinct when both collections lose a selection', () => {
+    const changed = catalog.filter(
+      (row) =>
+        row.youtubeId !== DEFAULT_VIDEO_IDS[0] &&
+        row.youtubeId !== FALLBACK_VIDEO_IDS[0],
+    );
+    changed.push(item('spareVideo1', { isStartHere: true }));
+    changed.push(item('spareVideo2'));
+    const defaults = defaultVideos(changed);
+    const fallbacks = fallbackVideos(changed);
+    expect(defaults).toHaveLength(8);
+    expect(fallbacks).toHaveLength(8);
+    expect(
+      new Set([...defaults, ...fallbacks].map((row) => row.item.youtubeId))
+        .size,
+    ).toBe(16);
+    expect(defaults[7].item.youtubeId).toBe('spareVideo1');
+    expect(fallbacks[7].item.youtubeId).toBe('spareVideo2');
+  });
+
   it('borrows only when needed in a small catalog, without inventing metadata', () => {
     const shared = item(DEFAULT_VIDEO_IDS[0], {
       title: 'Updated public title',
