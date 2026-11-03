@@ -3,12 +3,15 @@ import { z } from 'zod';
 import { isContributionRequest } from './contributions';
 import { contributionPost } from './contributions-sheet';
 import { type PublicCatalog } from '../src/contracts/publicCatalog';
+import type { UsageEvent } from '../src/contracts/usageEvent';
 import { captureAnalyticsCatalog } from './analytics-snapshots';
 import { publishedCatalog } from './published-library';
 import {
   expiredUsageRows,
   MAX_USAGE_ROWS,
   receiveUsage,
+  receiveUsageBatch,
+  isUsageBatch,
   usageError,
   type UsagePolicy,
   type UsageRecord,
@@ -85,7 +88,38 @@ export function doPost(event?: { postData?: UsageRequest }) {
       }
       return sheet;
     };
-    body = receiveUsage(event?.postData, {
+    const appendRows = (rows: { event: UsageEvent; receivedAt: string }[]) => {
+      if (
+        properties.getProperty('ANALYTICS_ENABLED') === 'true' &&
+        acceptedCatalog
+      ) {
+        try {
+          captureAnalyticsCatalog(usageBook(properties), acceptedCatalog);
+        } catch {
+          console.info('analytics-snapshot', 'unavailable');
+        }
+      }
+      const target = openSheet();
+      const nextRow = target.getLastRow() + 1;
+      const gridRows = target.getMaxRows();
+      if (nextRow + rows.length - 1 > gridRows)
+        target.insertRowsAfter(
+          gridRows,
+          Math.min(Math.max(100, rows.length), MAX_USAGE_ROWS + 1 - gridRows),
+        );
+      target
+        .getRange(nextRow, 1, rows.length, 3)
+        .setNumberFormat('@')
+        .setValues(
+          rows.map(({ event, receivedAt }) => [
+            event.eventId,
+            receivedAt,
+            JSON.stringify(event),
+          ]),
+        );
+      SpreadsheetApp.flush();
+    };
+    const ports = {
       enabled,
       feedbackEnabled: properties.getProperty('FEEDBACK_ENABLED') === 'true',
       policy: () => readPolicy(properties),
@@ -97,43 +131,42 @@ export function doPost(event?: { postData?: UsageRequest }) {
         acceptedCatalog = catalog;
         return catalog;
       },
-      append: (usage, receivedAt) => {
-        if (
-          properties.getProperty('ANALYTICS_ENABLED') === 'true' &&
-          acceptedCatalog
-        ) {
-          try {
-            captureAnalyticsCatalog(usageBook(properties), acceptedCatalog);
-          } catch {
-            console.info('analytics-snapshot', 'unavailable');
-          }
-        }
-        const target = openSheet();
-        const nextRow = target.getLastRow() + 1;
-        const gridRows = target.getMaxRows();
-        if (nextRow > gridRows) {
-          target.insertRowsAfter(
-            gridRows,
-            Math.min(100, MAX_USAGE_ROWS + 1 - gridRows),
-          );
-        }
-        // JSON always starts with "{". No user string becomes a cell formula.
-        target
-          .getRange(nextRow, 1, 1, 3)
-          .setNumberFormat('@')
-          .setValues([[usage.eventId, receivedAt, JSON.stringify(usage)]]);
-        SpreadsheetApp.flush();
-      },
-    });
+      append: (usage: UsageEvent, receivedAt: string) =>
+        appendRows([{ event: usage, receivedAt }]),
+    };
+    body = isUsageBatch(event?.postData)
+      ? receiveUsageBatch(
+          event?.postData,
+          { ...ports, appendBatch: appendRows },
+          properties.getProperty('USAGE_BATCH_SECRET'),
+        )
+      : receiveUsage(event?.postData, ports);
   } catch {
     body = usageError('USAGE_UNAVAILABLE');
   }
   // Fixed outcomes only, never request bodies, IDs, tags or exception text.
   if (enabled) {
-    const receipt: { error?: { code: string } } = JSON.parse(body);
+    const receipt: {
+      error?: { code: string };
+      receipts?: { status?: string }[];
+    } = JSON.parse(body);
     console.info(
       'usage-post',
-      receipt.error ? usageError(receipt.error.code) : body,
+      receipt.error
+        ? usageError(receipt.error.code)
+        : receipt.receipts
+          ? JSON.stringify({
+              ok: true,
+              status: 'batch',
+              accepted: receipt.receipts.filter(
+                (row) => row.status === 'accepted',
+              ).length,
+              duplicates: receipt.receipts.filter(
+                (row) => row.status === 'duplicate',
+              ).length,
+              rejected: receipt.receipts.filter((row) => !row.status).length,
+            })
+          : body,
     );
   }
   return ContentService.createTextOutput(body).setMimeType(
@@ -194,4 +227,19 @@ export function purgeUsageLog() {
   } finally {
     if (locked) lock.releaseLock();
   }
+}
+
+// Editor-only rollout after deploying this collector and setting the shared
+// server secret. Never enables ingestion or changes retention/sharing.
+export function configureUsageBurst() {
+  const properties = PropertiesService.getScriptProperties();
+  const key = properties.getProperty('USAGE_BATCH_SECRET');
+  if (!key || key.length < 32 || key.length > 256)
+    throw new Error('Configure the server-only batch secret first');
+  retention.parse(propertyNumber(properties, 'USAGE_RETENTION_DAYS'));
+  properties.setProperties({
+    USAGE_MAX_PER_MINUTE: '20000',
+    USAGE_MAX_PER_DAY: '100000',
+    USAGE_MAX_ROWS: '100000',
+  });
 }

@@ -23,12 +23,14 @@ export async function loadCapacityApp() {
       contents: `
 export { UsagePolicySchema, receiveUsage } from './apps-script/usage';
 export { createUsageSender } from './src/usage/sendUsage';
+export { createBufferedUsageSender } from './src/usage/bufferedUsage';
+export { deterministicSelection } from './src/recommendations/deterministicSelection';
 export { createRecommendationUsage } from './src/usage/usageContext';
 export { createTopicUsage } from './src/usage/topicUsage';
 export { toCatalogItem } from './src/contracts/catalogItem';
 export { buildAnalyticsReport } from './src/analytics/report';
 export { catalogFixture } from './server/scoring-test-helpers';
-export { CATALOG_SCORING_MODEL, CATALOG_SCORING_PROMPT } from './server/full-catalog-scoring';
+export { CATALOG_SCORING_MODEL, CATALOG_SCORING_PROMPT, prepareCatalogScoring } from './server/full-catalog-scoring';
 export { readLimits, callCost } from './server/config';
 export { emptyLedger, reserve } from './server/budget';`,
     },

@@ -9,7 +9,7 @@ export const USAGE_QUEUE_LIMIT = 32;
 const MAX_BYTES = 16_384;
 const QUEUE_LIFETIME_MS = 60_000;
 
-type Outcome = 'accepted' | 'duplicate' | 'dropped';
+type Outcome = 'accepted' | 'duplicate' | 'dropped' | 'queued';
 type Attempt = Outcome | 'busy' | 'stopped' | { rateLimitedUntil: number };
 type Pending = {
   body: string;

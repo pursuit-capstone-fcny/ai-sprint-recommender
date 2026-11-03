@@ -8,6 +8,7 @@ import {
 } from '../contracts/publicCatalog';
 import {
   hasUsageCatalogReferences,
+  MAX_RETAINED_USAGE_EVENTS,
   UsageEventSchema,
   type UsageEvent,
 } from '../contracts/usageEvent';
@@ -146,7 +147,7 @@ export function buildAnalyticsReport(
   },
   receivedDate: (value: string) => string = newYorkDate,
 ): AnalyticsReport {
-  if (input.records.length > 10_000)
+  if (input.records.length > MAX_RETAINED_USAGE_EVENTS)
     throw new Error('Analytics row limit exceeded');
   const filter = ReportFilterSchema.parse(input.filter);
   const current = PublicCatalogSchema.parse(input.current);

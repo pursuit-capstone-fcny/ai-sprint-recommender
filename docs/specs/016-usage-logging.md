@@ -76,6 +76,11 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the operator runs `pnpm check:usage-capacity <scenario.json>`
   - Then exercise the real event producers, bounded sender, collector and learner report in memory, report generated/accepted/dropped events by type and fixed collector error codes, and exit 1 for any delivery loss. AI burst admission uses the real budget gate and current source model/prompt, with a separately labeled configured token-cost ceiling. Missing permitted version pairs and rejected AI admissions fail the check. Invalid or oversized scenarios exit 2 without echoing supplied values. No provider calls, live requests, Sheet writes or policy changes occur; passing does not establish native throughput or production configuration.
 
+- AC-16.11 Buffered burst collection
+  - Given the later [1,000-user scaling request](backend-burst-scaling.md) and an enabled matching collector
+  - When automatic events use the same-origin Worker endpoint
+  - Then batch at most 20 events/16 KB per browser POST, with one bounded retry of identical event IDs after an uncertain receipt. A `queued` receipt means durable enqueue, not accepted Sheet delivery. Eight bounded SQLite shards forward at most 50 events/64 KB per authenticated server POST and retry temporary failures within the existing one-hour event expiry. The collector takes one lock and writes accepted rows once per batch, returning individual receipts. This buffer-specific recovery supersedes the direct sender's no-replay rule in AC-16.9; legacy direct clients retain that rule. Explicit feedback continues through the direct path and requires an accepted/duplicate collector receipt. No raw goals, IPs or new event fields enter storage. Preserve one-day retention and private reporting. Technical ceilings are 20,000 events/minute, 100,000/day and 100,000 retained rows only after editor configuration; defaults stay unchanged.
+
 ### Open questions
 
 - [ ] Ali to approve logging, retention and Option A at #8. Until then, production logging stays off; Option B needs a separate privacy design and revised anonymity claims.

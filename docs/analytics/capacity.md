@@ -2,17 +2,20 @@
 
 Jason confirmed on November 3, 2026 that 1,000 simultaneous users are likely
 and both Deterministic and Haiku AI must be available. This supersedes treating
-1,000 as only a potential audience. The acceptable AI wait and event spending
-ceiling still need confirmation. Existing production approvals remain in force.
+1,000 as only a potential audience. The implementation uses a bounded five-minute AI wait and preserves the
+existing $1/day and $5/month spending caps. Existing production approvals remain in force.
 The client has no approved operating budget. The [finance estimate](cost-estimate.md)
 uses Jason's reported measured average of $0.55 per 1,000 calls for daily,
 monthly and event projections.
 
-The offline preflight below addresses the reproducibility gap in the client
-review's capacity action item. It does **not** make the current backend support
-this target or complete the native release/load validation.
+The [backend scaling implementation and rollout guide](backend-scaling.md) adds
+bounded AI waiting, durable event buffering, collector batch writes and larger
+private reports. It includes an isolated native Workerd check for 1,000
+simultaneous callers. Live provider and Apps Script throughput still require
+separate validation. The offline preflight below preserves evidence of the
+previous policy mismatch; its fixtures intentionally retain the old limits.
 
-## Reproduce the current policy mismatch
+## Reproduce the previous policy mismatch
 
 ```sh
 pnpm check:usage-capacity fixtures/usage-capacity-burst.json
@@ -88,35 +91,19 @@ goals, explanations and event bodies. Bounds are 5,000 expanded actions,
 
 ## Implementation and release sequence
 
-1. **Confirm the service target and budget.** Keep the 1,000-user burst as the
-   baseline. Set the acceptable AI completion time, repeat-search workload,
-   reporting completeness and event spending ceiling. Confirm the deployed
-   source/catalog/model/prompt pair and actual collector settings separately.
-2. **Design ingestion for the burst.** One successful search produces nine
-   events before clicks. One click per user reaches the collector's 10,000-row
-   hard ceiling with no headroom, even if configured caps were raised. Three
-   searches each produce 30,000 events. Evaluate a durable ingestion buffer,
-   bounded batch writes and an aggregate/archive strategy before changing that
-   ceiling. Preserve event-ID deduplication, privacy, retention, search joins,
-   feedback semantics and staff opt-in. Record any architecture decision through
-   the repository ADR process before implementation; this PR changes no ADR.
-3. **Design AI admission against the wait target.** The existing gate rejects
-   excess work rather than queuing it. Measure warm/cold request duration and
-   actual token usage with a small authorized sample. Verify provider/account
-   throughput, shared session-network behavior and budget reservations. Decide
-   whether a bounded queue fits the wait target or more parallel calls are
-   required. Preserve spending enforcement and avoid automatic paid retries.
-4. **Load-test isolated dependencies.** First test static catalog delivery and
-   deterministic submissions, then the ingestion path with 1,000 arrivals,
-   realistic click timing, repeated searches and optional staff browsing. Record
-   accepted/dropped/duplicate counts, queue depth, lock failures and p50/p95/p99
-   latency. A stubbed-provider test can exercise application concurrency without
-   buying 1,000 calls. Native provider throughput still needs separate evidence.
-5. **Reconcile and roll out.** In the isolated environment, compare accepted
-   receipts with private dashboard searches, appearances and clicks, including
-   source filters and no-match controls. Deploy collector compatibility first,
-   then browser changes. Only change approved caps after native measurements and
-   ownership decisions; retain kill switches and rollback evidence.
+Follow the [collector-first rollout](backend-scaling.md). The implementation
+preserves the private Sheet as the final record, one-day retention, event-ID
+deduplication and existing financial caps. Technical collector ceilings change
+only through the editor setup function. Do not enable the browser buffer before
+deploying the matching batch collector and server-only secret.
+
+Use `pnpm dev:backend-burst` and `pnpm check:backend-burst` for the native isolated
+check. It exercises actual SQLite Durable Objects, 1,000 concurrent AI callers
+and both engines' event producers, then reconciles 20,000 accepted events with
+the real dashboard report. It makes no paid calls or production Sheet writes.
+Use a separate small authorized sample for provider throughput, Apps Script
+locks/quotas, current live settings and end-to-end native receipts. Synthetic
+latency must not be presented as the provider's completion time.
 
 For workload modeling, see [Grafana's concurrency guide](https://grafana.com/docs/k6/latest/testing-guides/calculate-concurrent-users/).
 [Google SRE's capacity guidance](https://sre.google/sre-book/service-best-practices/)

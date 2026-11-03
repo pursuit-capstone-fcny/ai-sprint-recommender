@@ -156,7 +156,7 @@ describe('usage ingestion', () => {
     { maxPerMinute: 0 },
     { maxPerMinute: 4 },
     { maxPerDay: 5 },
-    { maxRows: 10_001 },
+    { maxRows: 100_001 },
     { recommendationVersions: [{ modelVersion: 'fixture-v1' }] },
   ])('AC-16.8: missing or unsafe policy fails closed %#', (change) => {
     const { ports, policy, send } = setup();

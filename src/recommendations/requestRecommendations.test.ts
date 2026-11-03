@@ -25,6 +25,31 @@ afterEach(() => {
 });
 
 describe('recommendation request', () => {
+  it('waits for queued admission with a page-memory key and cancels without a retry', async () => {
+    vi.useFakeTimers();
+    vi.stubEnv('VITE_LLM_QUEUE_ENABLED', 'true');
+    const network = vi.fn<typeof fetch>(() => new Promise(() => {}));
+    vi.stubGlobal('fetch', network);
+    const abort = new AbortController();
+    let completed = false;
+    const result = requestRecommendations(request, abort.signal).then(
+      (value) => {
+        completed = true;
+        return value;
+      },
+    );
+    await vi.advanceTimersByTimeAsync(8000);
+    expect(completed).toBe(false);
+    expect(JSON.parse(String(network.mock.calls[0][1]?.body)).clientId).toMatch(
+      /^[a-f0-9-]{36}$/,
+    );
+    abort.abort();
+    expect(await result).toEqual({
+      outcome: 'fallback',
+      reason: 'not-requested',
+    });
+    expect(network).toHaveBeenCalledTimes(1);
+  });
   it('is disabled by default and requires an explicit browser flag', () => {
     vi.stubEnv('VITE_LLM_ENABLED', 'false');
     expect(recommendationsEnabled()).toBe(false);

@@ -20,6 +20,8 @@
     "build:apps-script:test": "node scripts/build-apps-script.mjs --test",
     "check:catalog": "node scripts/check-catalog.mjs",
     "check:usage-capacity": "node scripts/check-usage-capacity.mjs",
+    "dev:backend-burst": "node scripts/serve-backend-burst.mjs",
+    "check:backend-burst": "node scripts/check-backend-burst.mjs http://127.0.0.1:8797",
     "build:admin": "node scripts/build-admin.mjs",
     "evaluate:displayed": "node scripts/evaluate-displayed.mjs"
   },

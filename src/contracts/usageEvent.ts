@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { type PublicCatalog } from './publicCatalog';
+export const MAX_RETAINED_USAGE_EVENTS = 100_000;
 
 const uuid = z.uuid().transform((value) => value.toLowerCase());
 const tag = z.string().min(1).max(120);

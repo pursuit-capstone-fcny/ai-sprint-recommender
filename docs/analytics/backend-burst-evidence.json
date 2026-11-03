@@ -1,0 +1,42 @@
+{
+  "scope": "local-workerd-synthetic-dependencies",
+  "usersPerEngine": 1000,
+  "catalogItems": 89,
+  "inputTokenBound": 62287,
+  "paidProviderCalls": 0,
+  "sheetWrites": 0,
+  "checks": {
+    "concurrentClientRequests": 1000,
+    "outcomes": {
+      "success": 1000
+    },
+    "aiSuccesses": 1000,
+    "aiLatencyMs": {
+      "p50": 1514,
+      "p95": 1705,
+      "p99": 1714
+    },
+    "queuedPages": 2000,
+    "enqueueAttempts": 2000
+  },
+  "native": {
+    "scope": "local-workerd-synthetic-dependencies",
+    "catalogItems": 89,
+    "providerCalls": 1000,
+    "peak": 32,
+    "arrivals": 1000,
+    "collector": {
+      "accepted": 20000,
+      "searches": 2000,
+      "appearances": 16000,
+      "clicks": 2000
+    },
+    "spend": {
+      "daily": 550000,
+      "monthly": 550000
+    },
+    "paidProviderCalls": 0,
+    "sheetWrites": 0
+  },
+  "passed": true
+}

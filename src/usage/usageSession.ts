@@ -1,6 +1,7 @@
 import type { UsageEvent } from '../contracts/usageEvent';
 import { createUsageSender, type UsageSender } from './sendUsage';
 import { feedbackQuestion } from '../feedback/vote';
+import { createBufferedUsageSender } from './bufferedUsage';
 
 export interface UsageSession {
   sessionId: string;
@@ -57,9 +58,16 @@ export function getUsageSession(
     session = {
       sessionId: crypto.randomUUID(),
       src: usageSource(window.location.search),
-      sender: createUsageSender(url, {
-        automaticUsageEnabled: import.meta.env.VITE_USAGE_ENABLED === 'true',
-      }),
+      sender:
+        import.meta.env.VITE_USAGE_BUFFER_ENABLED === 'true'
+          ? createBufferedUsageSender(
+              url,
+              import.meta.env.VITE_USAGE_ENABLED === 'true',
+            )
+          : createUsageSender(url, {
+              automaticUsageEnabled:
+                import.meta.env.VITE_USAGE_ENABLED === 'true',
+            }),
     };
   }
   return session;

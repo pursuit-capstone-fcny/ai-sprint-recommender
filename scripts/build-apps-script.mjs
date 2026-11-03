@@ -23,6 +23,7 @@ const exportedFunctions = [
   'installRequestRetention',
   'initializeUsageLog',
   'purgeUsageLog',
+  'configureUsageBurst',
   'clearAnalytics',
   'initializeAnalytics',
   'refreshAnalytics',

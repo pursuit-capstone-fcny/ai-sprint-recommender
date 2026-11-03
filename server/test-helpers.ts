@@ -46,24 +46,41 @@ export function staticCatalogFetch(fetcher: typeof fetch): typeof fetch {
 // Models the documented storage transaction serialization, with rollback and cloned values.
 export class TestStorage implements ObjectStorage {
   private values = new Map<string, unknown>();
+  private undo: Map<string, { present: boolean; value: unknown }> | undefined;
   private queue: Promise<unknown> = Promise.resolve();
   alarm = 0;
   async get<T>(key: string): Promise<T | undefined> {
     return structuredClone(this.values.get(key)) as T | undefined;
   }
   async put<T>(key: string, value: T): Promise<void> {
+    this.remember(key);
     this.values.set(key, structuredClone(value));
+  }
+  private remember(key: string) {
+    if (this.undo && !this.undo.has(key))
+      this.undo.set(key, {
+        present: this.values.has(key),
+        value: this.values.get(key),
+      });
   }
   async transaction<T>(
     callback: (storage: ObjectStorage) => Promise<T>,
   ): Promise<T> {
     const result = this.queue.then(async () => {
-      const before = structuredClone(this.values);
+      const journal = new Map<string, { present: boolean; value: unknown }>();
+      this.undo = journal;
+      const alarmBefore = this.alarm;
       try {
         return await callback(this);
       } catch (error) {
-        this.values = before;
+        for (const [key, before] of journal) {
+          if (before.present) this.values.set(key, before.value);
+          else this.values.delete(key);
+        }
+        this.alarm = alarmBefore;
         throw error;
+      } finally {
+        this.undo = undefined;
       }
     });
     this.queue = result.catch(() => undefined);
@@ -71,5 +88,31 @@ export class TestStorage implements ObjectStorage {
   }
   async setAlarm(time: number): Promise<void> {
     this.alarm = time;
+  }
+  async delete(key: string | string[]): Promise<void> {
+    for (const entry of typeof key === 'string' ? [key] : key) {
+      this.remember(entry);
+      this.values.delete(entry);
+    }
+  }
+  async list<T>({
+    prefix,
+    limit,
+    startAfter,
+  }: {
+    prefix: string;
+    limit: number;
+    startAfter?: string;
+  }): Promise<Map<string, T>> {
+    return new Map(
+      [...this.values]
+        .filter(
+          ([key]) =>
+            key.startsWith(prefix) && (!startAfter || key > startAfter),
+        )
+        .sort(([a], [b]) => a.localeCompare(b))
+        .slice(0, limit)
+        .map(([key, value]) => [key, structuredClone(value) as T]),
+    );
   }
 }

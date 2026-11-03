@@ -11,6 +11,7 @@ export {
   installRequestRetention,
   initializeUsageLog,
   purgeUsageLog,
+  configureUsageBurst,
   clearAnalytics,
   initializeAnalytics,
   refreshAnalytics,

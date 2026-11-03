@@ -2,6 +2,7 @@ import { PublishedCatalogVersionError } from '../src/library/read';
 import { z } from 'zod';
 import {
   RECOMMENDATION_DEADLINE_MS,
+  QUEUED_RECOMMENDATION_DEADLINE_MS,
   RECOMMENDATION_PROMPT_VERSION,
   RecommendationIdsSchema,
   RecommendationReasonsSchema,
@@ -22,6 +23,7 @@ import { boundedJson } from './bounded-json';
 import {
   defaultCatalogCache,
   readCatalogSnapshot,
+  readSharedCatalogSnapshot,
   type CatalogCache,
 } from './catalog-cache';
 import { type Budget } from './budget';
@@ -36,6 +38,7 @@ import { scoringBody, catalogScoringProvider } from './full-catalog-provider';
 export interface WorkerEnv extends Variables {
   ASSETS?: { fetch(request: Request): Promise<Response> };
   RECOMMENDATION_BUDGET?: BudgetNamespace;
+  USAGE_BUFFER?: BudgetNamespace;
 }
 export interface Diagnostic extends Partial<ProviderValidation> {
   requestId: string;
@@ -80,7 +83,11 @@ function testExpired(env: WorkerEnv): boolean {
   return !expiry.success || Date.parse(expiry.data) <= Date.now();
 }
 
-async function clientKey(request: Request, secret: string): Promise<string> {
+async function clientKey(
+  request: Request,
+  secret: string,
+  page?: string,
+): Promise<string> {
   const ip = request.headers.get('CF-Connecting-IP');
   if (!ip) throw new Error('Missing client identifier');
   const minute = Math.floor(Date.now() / 60_000);
@@ -94,7 +101,7 @@ async function clientKey(request: Request, secret: string): Promise<string> {
   const hash = await crypto.subtle.sign(
     'HMAC',
     key,
-    new TextEncoder().encode(`${minute}:${ip}`),
+    new TextEncoder().encode(`${minute}:${ip}${page ? `:${page}` : ''}`),
   );
   return Array.from(new Uint8Array(hash), (byte) =>
     byte.toString(16).padStart(2, '0'),
@@ -108,15 +115,22 @@ export async function recommend(
 ): Promise<Response> {
   const started = Date.now();
   const fullScoring = env.LLM_MODEL === CATALOG_SCORING_MODEL;
-  const serverDeadline = fullScoring
+  const queued = fullScoring && env.LLM_QUEUE_ENABLED === 'true';
+  const providerDeadline = fullScoring
     ? SCORING_SERVER_DEADLINE_MS
     : SERVER_DEADLINE_MS;
+  const serverDeadline = queued
+    ? QUEUED_RECOMMENDATION_DEADLINE_MS - 500
+    : providerDeadline;
   const deadline = started + serverDeadline;
   const promptVersion = fullScoring
     ? CATALOG_SCORING_PROMPT
     : RECOMMENDATION_PROMPT_VERSION;
   const requestId = crypto.randomUUID();
   const abort = new AbortController();
+  const onDisconnect = () => abort.abort();
+  request.signal.addEventListener('abort', onDisconnect, { once: true });
+  if (request.signal.aborted) abort.abort();
   const diagnostic: Diagnostic = {
     requestId,
     environment:
@@ -191,7 +205,9 @@ export async function recommend(
         : fetch);
     let catalog;
     try {
-      catalog = await readCatalogSnapshot({
+      catalog = await (
+        queued ? readSharedCatalogSnapshot : readCatalogSnapshot
+      )({
         origin: new URL(request.url).origin,
         source: `${limits.LIBRARY_ORIGIN}/catalog/current.json`,
         requestedVersion: input.catalogVersion,
@@ -241,16 +257,25 @@ export async function recommend(
     }
     if (catalog.items.length === 0) return fallback('insufficient-results');
     if (fullScoring && !input.goal) return fallback('insufficient-results');
-    const body = fullScoring
-      ? scoringBody(input, catalog)
-      : providerBody(input, catalog, limits);
-    if (body.request.max_tokens > limits.LLM_MAX_OUTPUT_TOKENS)
-      return fallback('unavailable');
-    if (inputTokenBound(body) > limits.LLM_MAX_INPUT_TOKENS)
-      return fallback('catalog-too-large');
+    const buildBody = () =>
+      fullScoring
+        ? scoringBody(input, catalog)
+        : providerBody(input, catalog, limits);
+    // Bound the request before reserving money, then release this temporary
+    // payload. Queued callers retain only their small intake and shared catalog.
+    const validateBody = () => {
+      const body = buildBody();
+      if (body.request.max_tokens > limits.LLM_MAX_OUTPUT_TOKENS)
+        return 'unavailable' as const;
+      if (inputTokenBound(body) > limits.LLM_MAX_INPUT_TOKENS)
+        return 'catalog-too-large' as const;
+      return null;
+    };
+    const invalidBody = validateBody();
+    if (invalidBody) return fallback(invalidBody);
     const budget =
       deps.budget ??
-      durableBudget(env.RECOMMENDATION_BUDGET!, limits.LLM_ENVIRONMENT);
+      durableBudget(env.RECOMMENDATION_BUDGET!, limits.LLM_ENVIRONMENT, queued);
     const provider =
       deps.provider ??
       (fullScoring ? catalogScoringProvider : anthropicProvider)(
@@ -258,19 +283,32 @@ export async function recommend(
         deps.fetch ?? fetch,
       );
     const identifier = await (deps.clientKey?.() ??
-      clientKey(request, env.LLM_RATE_KEY));
+      clientKey(
+        request,
+        env.LLM_RATE_KEY,
+        queued ? input.clientId : undefined,
+      ));
     active();
     const reserved = callCost(
       limits,
       limits.LLM_MAX_INPUT_TOKENS,
       limits.LLM_MAX_OUTPUT_TOKENS,
     );
-    const permission = await budget.reserve(
-      requestId,
-      identifier,
-      reserved,
-      deadline,
-    );
+    const cancelWaiting = () => {
+      void budget.cancel?.(requestId).catch(() => undefined);
+    };
+    abort.signal.addEventListener('abort', cancelWaiting, { once: true });
+    let permission;
+    try {
+      permission = await budget.reserve(
+        requestId,
+        identifier,
+        reserved,
+        queued ? deadline - providerDeadline : deadline,
+      );
+    } finally {
+      abort.signal.removeEventListener('abort', cancelWaiting);
+    }
     if (!permission.ok) return fallback(permission.reason);
     diagnostic.reservedMicrodollars = reserved;
     let actual: number | null = 0;
@@ -278,8 +316,31 @@ export async function recommend(
       active();
       // Recheck after asynchronous catalog/budget work before any paid dispatch.
       if (testExpired(env)) return fallback('disabled');
+      const body = buildBody();
       actual = null; // Dispatch can be billed even when the connection fails or is aborted.
-      const result = await provider(body, abort.signal);
+      const callAbort = new AbortController();
+      const cancelCall = () => callAbort.abort();
+      abort.signal.addEventListener('abort', cancelCall, { once: true });
+      let callTimer: ReturnType<typeof setTimeout> | undefined;
+      let result;
+      try {
+        const timedOut = new Promise<never>((_, reject) => {
+          callTimer = setTimeout(() => {
+            callAbort.abort();
+            reject(new Error('Provider deadline'));
+          }, providerDeadline);
+        });
+        result = await Promise.race([
+          provider(body, callAbort.signal),
+          timedOut,
+        ]);
+      } catch (error) {
+        if (callAbort.signal.aborted) return fallback('timeout');
+        throw error;
+      } finally {
+        clearTimeout(callTimer);
+        abort.signal.removeEventListener('abort', cancelCall);
+      }
       if (
         !Number.isSafeInteger(result.inputTokens) ||
         result.inputTokens < 0 ||
@@ -356,6 +417,7 @@ export async function recommend(
     timeout,
   ]);
   clearTimeout(timer);
+  request.signal.removeEventListener('abort', onDisconnect);
   diagnostic.outcome = result.outcome === 'success' ? 'success' : result.reason;
   diagnostic.latencyMs = Date.now() - started;
   (

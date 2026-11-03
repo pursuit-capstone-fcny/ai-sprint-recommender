@@ -174,6 +174,45 @@ function setup() {
 }
 
 describe('usage Apps Script adapter', () => {
+  it('appends an authenticated batch with one lock/write/flush and deduplicates a lost receipt', () => {
+    const { properties, send, usage, operations, flush, log } = setup();
+    const key = 'fixture-only-batch-auth-'.repeat(2);
+    properties.USAGE_BATCH_SECRET = key;
+    const events = Array.from({ length: 3 }, () => ({
+      ...searchEvent,
+      eventId: crypto.randomUUID(),
+    }));
+    const batch = { batchVersion: 1, key, events };
+    flush.mockImplementationOnce(() => {
+      throw new Error('Uncertain acknowledgment');
+    });
+    expect(send(batch)).toEqual({ error: { code: 'USAGE_UNAVAILABLE' } });
+    expect(usage.Usage).toHaveLength(4);
+    const retry = send(batch);
+    expect(retry.receipts.map((row: { status: string }) => row.status)).toEqual(
+      ['duplicate', 'duplicate', 'duplicate'],
+    );
+    expect(operations.filter((value) => value === 'write:Usage')).toHaveLength(
+      1,
+    );
+    expect(operations.filter((value) => value === 'lock')).toHaveLength(2);
+    expect(flush).toHaveBeenCalledTimes(1);
+    expect(JSON.stringify(log.mock.calls)).not.toContain(key);
+    expect(JSON.stringify(log.mock.calls)).not.toContain(events[0].eventId);
+  });
+
+  it('rejects unauthenticated batches before lock or Sheet access', () => {
+    const { properties, send, operations } = setup();
+    properties.USAGE_BATCH_SECRET = 'fixture-only-accepted-key-'.repeat(2);
+    expect(
+      send({
+        batchVersion: 1,
+        key: 'fixture-only-wrong-key-'.repeat(2),
+        events: [searchEvent],
+      }),
+    ).toEqual({ error: { code: 'USAGE_INVALID_EVENT' } });
+    expect(operations).toEqual([]);
+  });
   it('AC-16.9: returns the cooldown but keeps collector logs limited to fixed outcomes', () => {
     const { properties, send, log, usage } = setup();
     properties.USAGE_MAX_PER_MINUTE = '1';
