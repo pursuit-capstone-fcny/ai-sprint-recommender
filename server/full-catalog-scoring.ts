@@ -78,8 +78,8 @@ export function prepareCatalogScoring(
 ) {
   const input = RecommendationRequestSchema.parse(inputValue);
   const catalog = parsePublicCatalog(catalogValue);
-  if (catalog.items.length !== 89)
-    throw new Error('Expected all 89 catalog items');
+  if (catalog.items.length === 0)
+    throw new Error('Expected a nonempty catalog');
   if (!input.goal) throw new Error('Scoring requires a nonblank work request');
   if (input.catalogVersion !== catalog.catalogVersion)
     throw new Error('Catalog version mismatch');
