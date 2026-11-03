@@ -163,6 +163,21 @@ describe('catalog pick protocol', () => {
     expect(result.eligibleIds).toEqual(ids([5, 7, 9]));
   });
 
+  it('ignores single quotes around words in the quote or the description', () => {
+    const catalog = catalogFixture();
+    catalog.items[4].description =
+      'Staff learn to ‘check records before drafting’.';
+    const result = prepareCatalogScoring(inputFixture(), catalog).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [
+        pick(4, 3, 'check records before drafting'),
+        pick(6, 2, "'Check records before drafting'"),
+      ],
+    });
+    expect(result.eligibleIds).toEqual(ids([4, 6]));
+  });
+
   it('treats an answer with only grade 1 picks as no confident match', () => {
     const result = prepareCatalogScoring(
       inputFixture(),

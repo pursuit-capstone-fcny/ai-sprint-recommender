@@ -58,7 +58,7 @@ function quoteWords(text: string): string[] {
       .normalize('NFKC')
       .toLowerCase()
       .replace(/[‘’]/g, "'")
-      .match(/[a-z0-9']+/g)
+      .match(/[a-z0-9]+(?:'[a-z0-9]+)*/g)
       ?.filter((word) => word.length > 2) ?? []
   );
 }
