@@ -66,6 +66,15 @@ describe('catalog pick protocol', () => {
     expect(plan.request.system).toContain(
       'Leave out any video you cannot support with a non-empty exact quote and a non-empty rationale; an empty quote or rationale is invalid.',
     );
+    // Wording written for the intake placeholder hurt other role goals.
+    for (const generic of [
+      "For broad role goals, a relevant component of that role's work can be useful without covering the whole role.",
+      'Introductory or example phrasing does not negate the learning goal.',
+      'Preserve the named audience and activity; a shared setting or audience alone does not make a substantial component.',
+    ])
+      expect(plan.request.system).toContain(generic);
+    for (const specific of ['volunteer orientation', 'volunteer outreach'])
+      expect(plan.request.system).not.toContain(specific);
   });
 
   it('returns verified picks with no minimum count', () => {
@@ -77,7 +86,7 @@ describe('catalog pick protocol', () => {
     expect(result.response).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v7',
+      promptVersion: 'catalog-pick-evidence-v8',
     });
   });
 
@@ -118,7 +127,7 @@ describe('catalog pick protocol', () => {
     });
   });
 
-  it('drops a pick whose quote is not in that description and a repeated pick', () => {
+  it('drops a pick whose quote is not supported by that video and a repeated pick', () => {
     const result = prepareCatalogScoring(
       inputFixture(),
       catalogFixture(),
@@ -126,7 +135,7 @@ describe('catalog pick protocol', () => {
       noWork: false,
       goalType: 'task',
       picks: [
-        pick(3, 3, 'fictional operation 5.'),
+        pick(3, 3, 'Translate grant letters into Spanish'),
         pick(6, 3, ''),
         pick(8, 2),
         pick(8, 3),
@@ -134,6 +143,37 @@ describe('catalog pick protocol', () => {
       ],
     });
     expect(result.eligibleIds).toEqual(ids([8, 12]));
+  });
+
+  it('accepts title quotes, formatting differences and close paraphrases of that video, but not junk', () => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [
+        pick(5, 3, 'Fixture video 5'),
+        pick(7, 3, '“Check Records Before Drafting…”'),
+        pick(9, 2, 'check records before drafting the report'),
+        pick(11, 2, 'x'),
+        pick(13, 2, 'Record a podcast with student volunteers'),
+      ],
+    });
+    expect(result.eligibleIds).toEqual(ids([5, 7, 9]));
+  });
+
+  it('treats an answer with only grade 1 picks as no confident match', () => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [pick(4, 1), pick(6, 1)],
+    });
+    expect(result.eligibleIds).toEqual([]);
+    expect(result.state.status).toBe('abstained');
   });
 
   it.each([
