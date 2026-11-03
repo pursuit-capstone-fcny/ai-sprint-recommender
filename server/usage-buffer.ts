@@ -223,8 +223,16 @@ export class UsageBuffer {
     const storage = this.state.storage;
     const config = upstreamConfig(this.env);
     if (this.env.USAGE_BUFFER_ENABLED !== 'true' || !config) {
-      const all = await storage.list<Entry>({ prefix: 'event:', limit: LIMIT });
-      await storage.delete([...all.keys()]);
+      // The asynchronous storage API accepts at most 128 keys per delete.
+      // Page the disabled purge too, so a full shard can always be erased.
+      for (let offset = 0; offset < LIMIT; offset += 128) {
+        const page = await storage.list<Entry>({
+          prefix: 'event:',
+          limit: 128,
+        });
+        if (!page.size) break;
+        await storage.delete([...page.keys()]);
+      }
       await storage.put('meta', { count: 0, failures: 0, nextAlarm: 0 });
       return;
     }

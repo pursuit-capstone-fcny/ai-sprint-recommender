@@ -248,6 +248,46 @@ it('purges every expired event after an outage, beyond one delivery page', async
     expect((await store.list({ prefix: 'event:', limit: 4000 })).size).toBe(0);
 });
 
+it.each(['disabled', 'invalid-config'])(
+  'erases a full shard with bounded storage deletes when %s',
+  async (stop) => {
+    const test = setup();
+    for (let batch = 0; batch < 400; batch++) {
+      const events = test.eventsFor().map((event) => ({
+        ...event,
+        sessionId: '00000000-0000-4000-8000-000000000001',
+      }));
+      expect((await test.enqueue(events)).ok).toBe(true);
+    }
+    expect(test.storage.size).toBe(1);
+    const store = [...test.storage.values()][0];
+    expect((await store.get<{ count: number }>('meta'))?.count).toBe(4000);
+    const remove = store.delete.bind(store);
+    const deletes = vi
+      .spyOn(store, 'delete')
+      .mockImplementation(async (keys) => {
+        if (Array.isArray(keys) && keys.length > 128)
+          throw new Error('Platform delete limit exceeded');
+        return remove(keys);
+      });
+    if (stop === 'disabled') test.env.USAGE_BUFFER_ENABLED = 'false';
+    else test.env.USAGE_UPSTREAM_URL = '';
+    for (const object of test.objects.values()) await object.alarm();
+    expect(test.upstream).not.toHaveBeenCalled();
+    expect((await store.list({ prefix: 'event:', limit: 4000 })).size).toBe(0);
+    expect(await store.get('meta')).toEqual({
+      count: 0,
+      failures: 0,
+      nextAlarm: 0,
+    });
+    expect(
+      deletes.mock.calls.every(
+        ([keys]) => !Array.isArray(keys) || keys.length <= 128,
+      ),
+    ).toBe(true);
+  },
+);
+
 it('does not forward the batch secret through an untrusted redirect', async () => {
   const test = setup();
   await test.enqueue(test.eventsFor());
