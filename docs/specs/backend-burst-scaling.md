@@ -1,7 +1,7 @@
 # Spec: Backend scaling for 1,000 simultaneous users
 
 - **Issue:** User request, November 3, 2026
-- **PR:** pending
+- **PR:** #134
 - **Status:** in review
 
 The target is 1,000 simultaneous learner submissions on either engine. Preserve
