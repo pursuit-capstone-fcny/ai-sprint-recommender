@@ -80,6 +80,33 @@ tracker mode is explicitly selected. Setup is not a periodic synchronization job
 If setup is interrupted, inspect and reconcile the partial metadata before
 retrying; the initializer deliberately refuses to overwrite it.
 
+## Test on a private copy
+
+Copy the complete original workbook and keep sharing Restricted. Run the same
+initializer and publisher in that copy. Deploy its collector from the workbook
+owner's Google account, with the approved test retention and limits. Configure
+both the collector and test app to use the copy's published catalog origin.
+
+For a separate catalog preview, set `LIBRARY_ENVIRONMENT=test`,
+`LIBRARY_PREVIEW_NAME=<name>`, and
+`LIBRARY_DATA_BRANCH=library-data-test-<name>`. Names use 1–32 lowercase letters,
+digits or hyphens, starting with a letter or digit. Set
+`LIBRARY_PUBLIC_ORIGIN` to that named preview and `LIBRARY_WORKFLOW_REF` to the
+tested application ref. Seed its data branch from the baseline before migration.
+The publisher rejects mismatched names/branches and production preview overrides.
+This protects the shared test catalog while exercising real content publication.
+
+An operator can manually dispatch `publish-library.yml` with the same preview
+name/data branch and an `app_collector_url` to build an isolated app that records
+activity in the copy. This option accepts only an Apps Script `/exec` endpoint,
+requires a named test preview, and disables paid LLM calls, requests and feedback.
+Normal Sheet publication never sends this input and only deploys catalog assets.
+
+Use a repository-scoped Contents/Actions write credential in Script Properties.
+Keep credentials out of source, logs and screenshots, and remove temporary test
+credentials when verification finishes. New videos need only reviewed tracker
+metadata and publication; neither the app nor its test preview needs rebuilding.
+
 ## Repeatable parity check
 
 Export only the ten recognized tracker fields as `{row, cells}` objects. Keep
