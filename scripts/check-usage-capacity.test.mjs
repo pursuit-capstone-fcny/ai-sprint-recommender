@@ -43,8 +43,8 @@ it('fails readiness for 1,000 simultaneous learners and AI requests without paid
       requests: 1000,
       admitted: 2,
       rejected: { 'rate-limited': 998 },
-      reservationCeilingMicrodollars: 9000,
-      fullBurstCeilingMicrodollars: 9_000_000,
+      reservationCeilingMicrodollars: 16_192,
+      fullBurstCeilingMicrodollars: 16_192_000,
     },
   });
 });
@@ -87,6 +87,28 @@ it('fails a missing collector pair even if AI admission and rules telemetry succ
     passed: false,
     dropped: 0,
     aiBurst: { admitted: 1, collectorVersionPermitted: false },
+  });
+});
+
+it('uses the production reservation ceiling even when the prompt asks for fewer output tokens', async () => {
+  expect(
+    await check([action()], {
+      policy: eventScenario.policy,
+      ai: {
+        requests: 1,
+        limits: {
+          ...eventScenario.ai.limits,
+          LLM_DAILY_MICRODOLLARS: 10_000,
+        },
+      },
+    }),
+  ).toMatchObject({
+    passed: false,
+    aiBurst: {
+      admitted: 0,
+      rejected: { 'budget-exhausted': 1 },
+      reservationCeilingMicrodollars: 16_192,
+    },
   });
 });
 

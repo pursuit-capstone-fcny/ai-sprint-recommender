@@ -28,7 +28,7 @@ export { createTopicUsage } from './src/usage/topicUsage';
 export { toCatalogItem } from './src/contracts/catalogItem';
 export { buildAnalyticsReport } from './src/analytics/report';
 export { catalogFixture } from './server/scoring-test-helpers';
-export { CATALOG_SCORING_MODEL, CATALOG_SCORING_PROMPT, CATALOG_SCORING_MAX_OUTPUT } from './server/full-catalog-scoring';
+export { CATALOG_SCORING_MODEL, CATALOG_SCORING_PROMPT } from './server/full-catalog-scoring';
 export { readLimits, callCost } from './server/config';
 export { emptyLedger, reserve } from './server/budget';`,
     },
@@ -110,7 +110,7 @@ export async function checkUsageCapacity(input, app) {
     const reservationCeiling = app.callCost(
       limits,
       limits.LLM_MAX_INPUT_TOKENS,
-      Math.min(limits.LLM_MAX_OUTPUT_TOKENS, app.CATALOG_SCORING_MAX_OUTPUT),
+      limits.LLM_MAX_OUTPUT_TOKENS,
     );
     const ledger = app.emptyLedger();
     const rejected = {};

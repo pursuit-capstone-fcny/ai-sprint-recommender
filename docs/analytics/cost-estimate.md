@@ -56,7 +56,7 @@ and authorizes no additional calls. Finance should approve an operating ceiling
 and an over-budget policy before the 1,000-user rollout.
 
 The [capacity preflight](capacity.md) separately reports a conservative configured
-reservation ceiling of up to $9 for 1,000 full-catalog calls. Reservations protect
+reservation ceiling of up to $16.192 for 1,000 full-catalog calls. Reservations protect
 the spending cap before calls finish; actual usage is reconciled afterward.
 The forecast tables use the reported measured average of $0.55 per 1,000 calls.
 The existing backend still fails the 1,000-user readiness check.

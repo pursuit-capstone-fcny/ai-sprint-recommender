@@ -34,7 +34,10 @@ The second case independently checks 1,000 AI admissions with all calls held
 in flight. The recorded concurrency of two admits two and rejects 998.
 The configured 10 global requests/minute is another bottleneck. No inference
 is performed. At the supplied input/output token ceilings and configured prices,
-the reservation ceiling is $0.009 per full-catalog call, or $9 for 1,000 calls.
+the reservation ceiling is $0.016192 per full-catalog call, or $16.192 for 1,000
+calls. This matches the production handler's configured input and output limits,
+including its 16,384-token output reservation even though the prompt requests
+at most 2,000 output tokens.
 This is conservative reservation arithmetic, not measured provider usage or
 a new spending authorization. Existing approved caps are $1/day and $5/month.
 Those caps reflect the owner's existing allowance, not a client operating budget.
