@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v8` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with a quote from that video and a short rationale. A repeated pick keeps its first occurrence, a pick whose quote is not supported by that video's title or description (at least 80% of its words longer than two characters) is dropped, an answer whose supported picks are all grade 1 is treated as no confident match, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
+  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v8` to assess every complete public catalog item in the validated snapshot, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with a quote from that video and a short rationale. A repeated pick keeps its first occurrence, a pick whose quote is not supported by that video's title or description (at least 80% of its words longer than two characters) is dropped, an answer whose supported picks are all grade 1 is treated as no confident match, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response
@@ -54,10 +54,17 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When Haiku classifies it with `goalType=task` or `goalType=discovery`
   - Then a task lists every grade 3 or 2 pick first and adds the most relevant grade 1 components until there are eight, returning fewer only when nothing further is at least weakly related. A broad tool or role inquiry is discovery: tool discovery requires the tool in the video's own tags or description, role discovery requires instruction for the role's work or a substantial useful component, and only grade 3 or 2 picks are kept, with no minimum count and no weak or generic filler. Every pick needs a non-empty quote and rationale; titles, punctuation and letter case may differ from the description. The server rejects a missing classification and discards grade 1 discovery picks before returning IDs. Task interpretation remains independent of the deterministic engine
 
+- AC-63.8 Catalog additions and retirements
+  - Given a valid nonempty published catalog with 1, 88, 89, 90 or another number of active items
+  - When a nonblank request fits the existing complete-request input bound and configured input/output limits
+  - Then assess the complete snapshot without truncation or shortlisting. Provider positions and returned IDs refer only to that snapshot; adding or retiring a video does not disable AI merely by changing the item count.
+  - Given an empty, invalid, version-mismatched or oversized catalog, or insufficient configured token limits
+  - When preparing a recommendation
+  - Then return fallback before budget reservation or provider dispatch. Preserve the 80,000 conservative input-token bound, 2,000-token requested output maximum, all configured limits and the eight-result cap. This change increases or enables no budget.
+
 ### Open questions
 
 - [ ] Approve the Worker proposal, provider/model, retention terms and concrete rate, token and spend limits. Include the cost of the live evaluation in #19.
-- [ ] The engine requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 2,000-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.
 
 ### Evidence required
 
