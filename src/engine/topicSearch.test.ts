@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { topicCatalog } from '../../fixtures/topic-catalog';
+import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { searchTopics, topicKeywords, type TopicQuery } from './topicSearch';
 const blank: TopicQuery = { topic: '', functionAreas: [], tools: [] };
 const search = (topic: string, filters: Partial<TopicQuery> = {}) =>
@@ -71,6 +72,51 @@ describe('staff topic search', () => {
     expect(search('fund')).toEqual([]);
     expect(search('!!!')).toEqual([]);
   });
+  it.each(['giving', 'giving guidance'])(
+    'preserves every category mapping for %s regardless of synonym row order',
+    (alias) => {
+      const catalog = parsePublicCatalog({
+        ...topicCatalog,
+        synonyms: [
+          { alias, category: 'functionArea', target: 'Fundraising' },
+          { alias, category: 'task', target: 'budget planning' },
+          { alias, category: 'tool', target: 'Claude' },
+        ],
+        items: topicCatalog.items.slice(0, 4).map((item, index) => ({
+          ...item,
+          title: `Session ${index + 1}`,
+          description: 'Fictional demonstration.',
+          functionAreas: index === 0 ? ['Fundraising'] : [],
+          tasks: index === 1 ? ['budget planning'] : [],
+          tools: index === 2 ? ['Claude'] : [],
+        })),
+      });
+      const expectedIds = catalog.items
+        .slice(0, 3)
+        .map((item) => item.youtubeId);
+      for (const synonyms of [
+        catalog.synonyms,
+        [...catalog.synonyms].reverse(),
+      ]) {
+        const reordered = { ...catalog, synonyms };
+        expect(
+          searchTopics(reordered, { ...blank, topic: alias }).map(
+            (row) => row.item.youtubeId,
+          ),
+        ).toEqual(expectedIds);
+        expect(
+          searchTopics(reordered, { ...blank, topic: `${alias} unrelated` }),
+        ).toEqual([]);
+        expect(topicKeywords(reordered, alias, 'functionArea')).toEqual([
+          'Fundraising',
+        ]);
+        expect(topicKeywords(reordered, alias, 'task')).toEqual([
+          'budget planning',
+        ]);
+        expect(topicKeywords(reordered, alias, 'tool')).toEqual(['Claude']);
+      }
+    },
+  );
   it('requires all topic concepts and matches descriptions and tags as well as titles', () => {
     expect(search('fundraising presentation')).toHaveLength(14);
     expect(search('fundraising unrelated')).toEqual([]);

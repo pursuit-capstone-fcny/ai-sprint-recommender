@@ -16,8 +16,7 @@ export interface TopicQuery {
 }
 interface Concept {
   words: string[];
-  category?: TagCategory;
-  target?: string;
+  mappings?: { category: TagCategory; target: string }[];
 }
 const ordinal = (a: string, b: string) => (a === b ? 0 : a < b ? -1 : 1);
 const contains = (words: string[], phrase: string[]) =>
@@ -54,11 +53,17 @@ function concepts(catalog: PublicCatalog, topic: string): Concept[] {
     );
   const result: Concept[] = [];
   for (let i = 0; i < words.length;) {
-    const alias = aliases.find((row) =>
+    const matching = aliases.filter((row) =>
       row.words.every((word, j) => words[i + j] === word),
     );
+    const alias = matching[0];
     if (alias) {
-      result.push(alias);
+      result.push({
+        words: alias.words,
+        mappings: matching
+          .filter((row) => row.words.length === alias.words.length)
+          .map(({ category, target }) => ({ category, target })),
+      });
       i += alias.words.length;
     } else {
       result.push({ words: [words[i]] });
@@ -79,9 +84,9 @@ function score(item: PublicCatalogItem, concept: Concept): number {
   if (exact >= 0)
     return exact === 0 ? 12 : exact === fields.length - 1 ? 6 : 10;
   if (
-    concept.category &&
-    concept.target &&
-    item[categoryKeys[concept.category]].includes(concept.target)
+    concept.mappings?.some(({ category, target }) =>
+      item[categoryKeys[category]].includes(target),
+    )
   )
     return 5;
   if (
@@ -152,8 +157,9 @@ export function topicKeywords(
 ) {
   const words = languageTokens(topic);
   const aliases = concepts(catalog, topic)
-    .filter((term) => term.category === category)
-    .map((term) => term.target);
+    .flatMap((term) => term.mappings ?? [])
+    .filter((mapping) => mapping.category === category)
+    .map((mapping) => mapping.target);
   return catalog[categoryKeys[category]]
     .filter(
       (tag) => aliases.includes(tag) || contains(words, languageTokens(tag)),
