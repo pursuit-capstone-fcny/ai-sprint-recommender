@@ -225,7 +225,7 @@ describe('V1 endpoint integration', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v6',
+      promptVersion: 'catalog-pick-evidence-v7',
     });
     expect(s.budget.reserve).toHaveBeenCalledWith(
       expect.any(String),

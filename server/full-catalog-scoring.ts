@@ -11,7 +11,7 @@ import {
   type RecommendationState,
 } from '../src/recommendations/selectRecommendationState';
 
-export const CATALOG_SCORING_PROMPT = 'catalog-pick-evidence-v6';
+export const CATALOG_SCORING_PROMPT = 'catalog-pick-evidence-v7';
 export const CATALOG_SCORING_MODEL = 'claude-haiku-5-5';
 export const CATALOG_SCORING_MAX_OUTPUT = 2_000;
 export const CATALOG_SCORING_MAX_INPUT = 80_000;
@@ -23,8 +23,8 @@ Broad discovery: A tool-only inquiry is a valid discovery goal, not no-work. Ret
 Set goalType to discovery for tool exploration or broad role/topic inquiries, and task for a concrete requested operation. Preserve the named audience and activity: coordinating volunteer outreach does not imply teaching staff to learn AI. Shared group-coordination context alone does not make a substantial component. The validator discards grade 1 picks for discovery.
 Use only input and public catalog metadata. Do not use outside knowledge about a video, evaluation labels, synonyms or rules rankings. Selected functionArea and tools are preferences; explicit restrictions in the goal are hard constraints.
 Include only work the request calls for, not generic prerequisites invented to fill slots.
-Return at most eight picks: first videos graded 3 or 2, most useful first. Only for a specific task may relevant grade 1 components follow; broad discovery excludes grade 1 and has no minimum count. grade 3 = direct instruction for the requested work or an actual demonstrated use of a tool the visitor wants to explore; 2 = a substantial useful component or transferable method with compatible inputs and output, including relevant workflows for a broad role or topic; 1 = weak or contextual. Never include unrelated or contradictory videos, and never add a weak pick to reach a target count. For a specific task, shared topics, tool names or audiences alone do not establish usefulness. These are provisional judgments, not human labels.
-For each pick, quote a non-empty exact contiguous passage of at most 15 words from THAT video's description supporting the taught method. In at most 20 words, explain in rationale how that method performs the requested step.
+Return at most eight picks: first videos graded 3 or 2, most useful first. For a specific task, after every grade 3 or 2 pick, add the most relevant grade 1 components until there are eight; return fewer only when no further video is at least weakly related. Broad discovery excludes grade 1 and has no minimum count. grade 3 = direct instruction for the requested work or an actual demonstrated use of a tool the visitor wants to explore; 2 = a substantial useful component or transferable method with compatible inputs and output, including relevant workflows for a broad role or topic; 1 = weak or contextual. Never include unrelated or contradictory videos, and never add a weak pick to a broad discovery list. For a specific task, shared topics, tool names or audiences alone do not establish usefulness. These are provisional judgments, not human labels.
+For each pick, quote a non-empty exact contiguous passage of at most 15 words from THAT video's description supporting the taught method. In at most 20 words, explain in rationale how that method performs the requested step. Leave out any video you cannot support with a non-empty exact quote and a non-empty rationale; an empty quote or rationale is invalid.
 Output format: set noWork first, then goalType. If noWork is true, return an empty picks array.`;
 
 const picksSchema = z.strictObject({
