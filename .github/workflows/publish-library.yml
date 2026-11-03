@@ -14,6 +14,18 @@ on:
         type: choice
         options: [test, production]
         required: true
+      preview_name:
+        description: Optional isolated test preview name
+        type: string
+        default: ''
+      data_branch:
+        description: Optional isolated test data branch
+        type: string
+        default: ''
+      app_collector_url:
+        description: Optional collector URL for a manually requested isolated app preview
+        type: string
+        default: ''
 permissions:
   contents: read
 concurrency:
@@ -29,18 +41,31 @@ jobs:
           REQUEST_ID: ${{ inputs.request_id }}
           CONTENT_COMMIT: ${{ inputs.catalog_commit }}
           TARGET: ${{ inputs.environment }}
+          PREVIEW_NAME: ${{ inputs.preview_name }}
+          DATA_BRANCH: ${{ inputs.data_branch || (inputs.environment == 'production' && 'library-data' || 'library-data-test') }}
+          APP_COLLECTOR_URL: ${{ inputs.app_collector_url }}
         run: |
           [[ "$REQUEST_ID" =~ ^[a-f0-9-]{36}$ ]]
           [[ "$CONTENT_COMMIT" =~ ^[a-f0-9]{40}$ ]]
           [[ "$TARGET" == test || "$TARGET" == production ]]
           if [[ "$TARGET" == production ]]; then
             [[ "$GITHUB_REF" == refs/heads/main ]]
+            [[ -z "$PREVIEW_NAME" && "$DATA_BRANCH" == library-data ]]
+          elif [[ -n "$PREVIEW_NAME" ]]; then
+            [[ "$PREVIEW_NAME" =~ ^[a-z0-9][a-z0-9-]{0,31}$ ]]
+            [[ "$DATA_BRANCH" == "library-data-test-$PREVIEW_NAME" ]]
+          else
+            [[ "$DATA_BRANCH" == library-data-test ]]
+          fi
+          if [[ -n "$APP_COLLECTOR_URL" ]]; then
+            [[ "$TARGET" == test && -n "$PREVIEW_NAME" ]]
+            [[ "$APP_COLLECTOR_URL" =~ ^https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec$ ]]
           fi
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
       # Keep the newest archive even when an older manifest is selected for rollback.
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.environment == 'production' && 'library-data' || 'library-data-test' }}
+          ref: ${{ inputs.data_branch || (inputs.environment == 'production' && 'library-data' || 'library-data-test') }}
           path: library-archive
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -51,12 +76,13 @@ jobs:
         env:
           CONTENT_COMMIT: ${{ inputs.catalog_commit }}
           TARGET: ${{ inputs.environment }}
+          DATA_BRANCH: ${{ inputs.data_branch || (inputs.environment == 'production' && 'library-data' || 'library-data-test') }}
         working-directory: library-input
         run: |
           if [[ "$TARGET" == production ]]; then
             git merge-base --is-ancestor "$CONTENT_COMMIT" origin/library-data
           else
-            git merge-base --is-ancestor "$CONTENT_COMMIT" origin/library-data-test
+            git merge-base --is-ancestor "$CONTENT_COMMIT" "origin/$DATA_BRANCH"
           fi
       - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
@@ -68,12 +94,19 @@ jobs:
           pnpm install --frozen-lockfile
           node scripts/build-library-assets.mjs library-input/catalog build/library-assets library-archive/catalog
       - name: Deploy test catalog
-        if: inputs.environment == 'test'
+        if: inputs.environment == 'test' && inputs.preview_name == ''
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --config library/wrangler.jsonc --name ai-sprint-library-test
+      - name: Deploy isolated test catalog preview
+        if: inputs.environment == 'test' && inputs.preview_name != ''
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: preview --name ${{ inputs.preview_name }} --worker-name ai-sprint-library-test --config library/wrangler.jsonc --ignore-base-config
       - name: Deploy production catalog
         if: inputs.environment == 'production'
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
@@ -81,3 +114,30 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: deploy --config library/wrangler.jsonc
+      # Only explicit test dispatches build this app. The Sheet publisher never
+      # supplies app_collector_url, so ordinary content publication stays catalog-only.
+      - name: Build isolated workflow-test app
+        if: inputs.app_collector_url != ''
+        env:
+          PREVIEW_NAME: ${{ inputs.preview_name }}
+          TEST_ORIGIN: ${{ vars.LIBRARY_TEST_ORIGIN }}
+          VITE_USAGE_TEST_URL: ${{ inputs.app_collector_url }}
+          VITE_USAGE_ENVIRONMENT: test
+          VITE_USAGE_ENABLED: 'true'
+          VITE_CATALOG_SOURCE: static
+          VITE_LIBRARY_DEMO: 'false'
+          VITE_LLM_ENABLED: 'false'
+          VITE_REQUESTS_ENABLED: 'false'
+          VITE_FEEDBACK_ENABLED: 'false'
+        run: |
+          [[ "$TEST_ORIGIN" =~ ^https://ai-sprint-library-test\.[a-zA-Z0-9-]+\.workers\.dev$ ]]
+          export VITE_LIBRARY_ORIGIN="https://$PREVIEW_NAME-${TEST_ORIGIN#https://}"
+          pnpm build
+          node scripts/configure-library-app.mjs
+      - name: Deploy isolated workflow-test app
+        if: inputs.app_collector_url != ''
+        uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: preview --name ${{ inputs.preview_name }} --config wrangler.library.jsonc --ignore-base-config

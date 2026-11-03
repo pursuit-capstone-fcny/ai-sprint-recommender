@@ -83,6 +83,32 @@ function setup() {
   };
 }
 describe('Sheet publication', () => {
+  it('isolates workflow dispatch and data writes for a private-copy test preview', () => {
+    const s = setup();
+    s.properties.LIBRARY_PREVIEW_NAME = 'tracker-private-test';
+    s.properties.LIBRARY_DATA_BRANCH = 'library-data-test-tracker-private-test';
+    expect(publishLibrary()).toMatchObject({ ok: true, status: 'queued' });
+    const dispatch = s.requests.find((r) =>
+      r.path.endsWith('/dispatches'),
+    )!.body;
+    expect(dispatch.inputs).toMatchObject({
+      environment: 'test',
+      preview_name: 'tracker-private-test',
+      data_branch: 'library-data-test-tracker-private-test',
+    });
+    expect(s.requests.find((r) => r.path.endsWith('/git/refs'))!.body.ref).toBe(
+      'refs/heads/library-data-test-tracker-private-test',
+    );
+  });
+  it('rejects mismatched isolated branches and all production preview overrides', () => {
+    const s = setup();
+    s.properties.LIBRARY_PREVIEW_NAME = 'tracker-private-test';
+    expect(publishLibrary()).toMatchObject({ ok: false });
+    s.properties.LIBRARY_DATA_BRANCH = 'library-data-test-tracker-private-test';
+    s.properties.LIBRARY_ENVIRONMENT = 'production';
+    expect(publishLibrary()).toMatchObject({ ok: false });
+    expect(s.fetch).not.toHaveBeenCalled();
+  });
   it('requires a fresh tracker review and publishes a new row without code changes', () => {
     const s = setup();
     const { baseline, grid } = trackerFixture();

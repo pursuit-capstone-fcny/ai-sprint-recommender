@@ -88,6 +88,16 @@ Airtable integration is deferred; it can later produce the same catalog contract
 
 ## Verification
 
+### AC-TRACKER-8: Private-copy end-to-end isolation
+
+- **Given** a Restricted copy of the original workbook and a test publisher
+- **When** the owner configures an isolated preview name
+- **Then** require its dedicated `library-data-test-<preview_name>` branch and
+  deploy only that named catalog preview. The test must not replace the shared
+  test catalog used by production. Reject preview overrides in production and
+  mismatched branch/name pairs. Exercise migration, publication, a new video,
+  and real collector receipts in the same private copy.
+
 Use fictional fixtures for checked-in tests. Live baseline comparisons operate
 on temporary public-only exports and save counts/hash evidence, never private
 tracker fields. Source-sheet migration and Apps Script deployment are separate

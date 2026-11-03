@@ -31,19 +31,26 @@ function config() {
   const branch = get('LIBRARY_DATA_BRANCH');
   const ref = get('LIBRARY_WORKFLOW_REF');
   const environment = get('LIBRARY_ENVIRONMENT');
+  const previewName = get('LIBRARY_PREVIEW_NAME');
+  const isolatedTest =
+    environment === 'test' &&
+    /^[a-z0-9][a-z0-9-]{0,31}$/.test(previewName) &&
+    branch === `library-data-test-${previewName}`;
   const origin = get('LIBRARY_PUBLIC_ORIGIN');
   const sheetId = parseSheetLink(get('LIBRARY_SOURCE_SHEET_URL'));
   if (
     !/^[A-Za-z0-9_.-]+\/[A-Za-z0-9_.-]+$/.test(repo) ||
     !token ||
-    !['library-data', 'library-data-test'].includes(branch) ||
+    (!['library-data', 'library-data-test'].includes(branch) &&
+      !isolatedTest) ||
+    (previewName !== '' && !isolatedTest) ||
     !/^[A-Za-z0-9_./-]{1,120}$/.test(ref) ||
     !['test', 'production'].includes(environment) ||
     !/^https:\/\/[a-z0-9][a-z0-9.-]+\.[a-z]{2,}\/?$/.test(origin) ||
     !sheetId ||
     (environment === 'production' &&
       (ref !== 'main' || branch !== 'library-data')) ||
-    (environment === 'test' && branch !== 'library-data-test')
+    (environment === 'test' && branch !== 'library-data-test' && !isolatedTest)
   )
     throw new Error('Publisher setup required');
   if (SpreadsheetApp.getActiveSpreadsheet()?.getId() !== sheetId)
@@ -58,6 +65,7 @@ function config() {
     origin: origin.replace(/\/$/, ''),
     sheetId,
     tracker: get('LIBRARY_SOURCE_FORMAT') === 'tracker',
+    previewName,
   };
 }
 
@@ -290,6 +298,9 @@ export function publishLibrary(reviewToken?: unknown) {
           request_id: requestId,
           catalog_commit: commitId,
           environment: c.environment,
+          ...(c.previewName
+            ? { preview_name: c.previewName, data_branch: c.branch }
+            : {}),
         },
       });
     } catch (error) {
