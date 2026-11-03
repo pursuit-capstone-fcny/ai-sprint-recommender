@@ -12,6 +12,13 @@ afterEach(() => {
 
 it.each([
   ['Copilot', 'Fictional feedback analysis with Copilot'],
+  ['Help me with Copilot.', 'Fictional feedback analysis with Copilot'],
+  ['Help me learn Copilot', 'Fictional feedback analysis with Copilot'],
+  ['I need help using Copilot', 'Fictional feedback analysis with Copilot'],
+  [
+    'Please help us get started with Microsoft Copilot.',
+    'Fictional feedback analysis with Copilot',
+  ],
   [
     'What can I create with Copilot?',
     'Fictional feedback analysis with Copilot',
