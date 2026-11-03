@@ -232,5 +232,119 @@
       "Firefox multiple-account Apps Script redirect returned Page Not Found; the private dashboard connection worked in Brave with the already-shared editor account."
     ],
     "productionCutover": false
+  },
+  "receiptRecoveryVerification": {
+    "date": "2026-11-03",
+    "sourceCommit": "033d6606eeccadb947a9b9744ce45dc62753ab2a",
+    "scope": "Existing Restricted private-copy workbook and named preview only; original workbook and production unchanged",
+    "diagnosis": {
+      "historicalFailure": "An eight-card abstention retained its search and only seven impressions; another fallback lost its search.",
+      "nativeFailureReproduced": true,
+      "nativeFixedOutcome": "USAGE_UNAVAILABLE",
+      "confirmedStage": "UrlFetchApp.fetch threw while requesting the published catalog manifest, before the activity append.",
+      "instrumentedServerDurationMs": 2755,
+      "nativeRequestDurationMs": 5131,
+      "oldSenderBehavior": "Only USAGE_BUSY retried; USAGE_UNAVAILABLE and network/deadline failures resolved as dropped while later events continued.",
+      "diagnosticData": "Fixed stage, outcome and duration only; no payloads, tags, IDs, exception messages or credentials.",
+      "temporaryInstrumentationRemoved": true,
+      "cleanCollectorDeploymentVersion": 4
+    },
+    "fix": {
+      "transientRetryAttempts": 1,
+      "samePayloadAndEventId": true,
+      "lostAcknowledgmentDeduplicatesCommittedWrite": true,
+      "maxQueueEvents": 32,
+      "queueLifetimeMs": 60000,
+      "perAttemptDeadlineMs": 10000,
+      "configuredCapsUnchanged": true,
+      "persistentReplayAdded": false,
+      "policyAndValidationRejectionsRetried": false
+    },
+    "regression": {
+      "command": "pnpm exec vitest run src/usage/usageRecovery.test.ts src/usage/sendUsage.test.ts src/usage/usageRateLimit.test.ts",
+      "before": "Both transient-collector and lost-acknowledgment integration cases failed: search dropped while its impression arrived.",
+      "after": "36 targeted tests passed; 1285 full-suite tests, typecheck, lint and build passed.",
+      "ciRun": 41719021330,
+      "previewRun": 41719021247,
+      "isolatedLiveDeploymentRun": 41719010639
+    },
+    "nativeRetest": {
+      "expectedNewUsageReceipts": 33,
+      "recordedNewUsageReceipts": 33,
+      "uniqueNewEventIds": 33,
+      "missingReceipts": 0,
+      "defaultPageAndWhitespaceSubmissionAddedRows": 0,
+      "defaultPlayback": {
+        "directImpressions": 1,
+        "directEmbedClicks": 1,
+        "recommendationAppearances": 0,
+        "recommendationClicks": 0
+      },
+      "feedback": {
+        "rawRevisions": 2,
+        "effectiveResponsesAdded": 1,
+        "latestHelpful": false,
+        "refreshedPrivateReportVerified": true
+      },
+      "addedVideo": {
+        "searches": 1,
+        "strongImpressions": 1,
+        "codeChangesForVideo": false
+      },
+      "deterministicFallback": {
+        "searches": 1,
+        "impressions": 8,
+        "ranks": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "liveHaiku": {
+        "paidCalls": 2,
+        "model": "claude-haiku-5-5",
+        "prompt": "catalog-pick-evidence-v9",
+        "unchangedDailyAndMonthlyBudgetMicrodollars": 50000,
+        "successfulSearches": 1,
+        "semanticImpressions": 7,
+        "orderedVisibleIdsMatchReceipts": true,
+        "embedClicks": 1
+      },
+      "haikuAbstention": {
+        "searches": 1,
+        "impressions": 8,
+        "ranks": [1, 2, 3, 4, 5, 6, 7, 8],
+        "reason": "insufficient-results",
+        "strongMatchCount": 0,
+        "modelAndPromptRetained": true
+      },
+      "requests": {
+        "topicAdded": 1,
+        "consentedDemoAdded": 1,
+        "privateReviewRowsAdded": 2,
+        "newStatusVerified": true,
+        "contactOrRequestTextInUsage": false
+      },
+      "analytics": {
+        "nativePrivateDashboardVerified": true,
+        "recommendationAppearances": 14,
+        "recommendationEmbedClicks": 1,
+        "recommendationYoutubeClicks": 0,
+        "directViews": 2,
+        "directEmbedClicks": 2,
+        "directYoutubeClicks": 0,
+        "defaultVideoRecommendationCountsAllZero": true,
+        "finalAbstentionDidNotChangeRecommendationTotals": true,
+        "effectiveFeedbackResponses": 2,
+        "helpful": 0,
+        "notHelpful": 2
+      }
+    },
+    "deliveryGuarantee": "Bounded best effort; persistent outages, exhausted caps, closing the page and expired queues can still lose events. Historical gaps are preserved, not fabricated or replayed.",
+    "paidTestShutdown": {
+      "deploymentRun": 41720265813,
+      "verified": true,
+      "apiOutcome": {
+        "outcome": "fallback",
+        "reason": "disabled"
+      },
+      "temporaryProviderAndRateCredentialValuesCleared": true
+    }
   }
 }

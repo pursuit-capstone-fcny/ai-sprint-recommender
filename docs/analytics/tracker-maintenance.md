@@ -162,9 +162,25 @@ browsing and create no search or appearance. Direct playback and feedback do
 not inflate recommendation metrics. Labelled fallback cards remain excluded
 from real-match appearance and click totals.
 
-Native Apps Script delivery remains best effort. The first fallback search
-receipt and one impression from the final Haiku abstention were absent on
-readback. The final successful Haiku search and all five semantic impressions
-were present. The verification record preserves these gaps; a green unit test
-suite does not establish lossless native throughput. The added video remains
-a synthetic metadata fixture, and its media playback is not verified.
+The original native run had two receipt gaps. Investigation reproduced
+`USAGE_UNAVAILABLE` when Apps Script's URL-fetch call failed while loading the
+published catalog manifest, before appending activity. The sender now retries
+transient failures once with the identical payload and event ID. A lost
+acknowledgment after a committed write yields a duplicate receipt rather than a
+second row. Validation failures and policy stops are not retried; queue bounds,
+deadlines, retention and configured write caps are unchanged.
+
+The November 3 recovery retest saved all 33 expected receipts with 33 unique
+IDs: direct playback, feedback revisions, the added video, an eight-card
+deterministic fallback, seven live Haiku recommendations plus playback, and an
+eight-card Haiku abstention. Both fallback runs saved every rank. Requests and a
+consented demo reached the private review workbook, and the refreshed feedback
+report retained only the latest vote per response. The private dashboard
+reconciled to 14 real recommendation appearances, one recommendation embed
+click, and two direct views/embed clicks. Default cards and the final fallback
+added no real recommendation counts.
+
+Delivery remains bounded and best effort during persistent failures, exhausted
+caps, page closure or queue expiry. Historical gaps remain in the verification
+record; no activity was fabricated to fill them. The added video remains a
+synthetic metadata fixture, and its media playback is not verified.
