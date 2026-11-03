@@ -62,6 +62,9 @@ function requirement(
     const form = instructions.get(JSON.stringify([item.youtubeId, task]));
     return (
       !options.instructions ||
+      // Browsing uses catalog tags without claiming a demonstrated workflow.
+      // A known review still applies; missing reviews only block specific tasks.
+      (!form && intent.operation?.id === 'catalog-discovery') ||
       (form &&
         strength[form] >=
           (rule.minimumStrength ??

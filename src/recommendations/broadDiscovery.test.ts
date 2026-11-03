@@ -1,6 +1,7 @@
 import { expect, it } from 'vitest';
 import { discoveryCatalog } from '../../fixtures/discoveryCatalog';
 import { deterministicSelection } from './deterministicSelection';
+import { instructions } from '../engine/promptConfig/instructions';
 
 function select(goal: string, catalog = discoveryCatalog) {
   return deterministicSelection(catalog, goal, {
@@ -9,6 +10,45 @@ function select(goal: string, catalog = discoveryCatalog) {
     goalWords: goal.split(/\s+/),
   });
 }
+
+it.each(['Perplexity', 'perplexity', 'Help me learn Perplexity'])(
+  'AC-12.23: %s discovers an unreviewed tool video in a partially reviewed catalog',
+  (goal) => {
+    // Include one configured review so the real caller enables instruction checks.
+    const reviewed = instructions[0];
+    const catalog = {
+      ...discoveryCatalog,
+      tasks: ['policy research', reviewed.task],
+      tools: ['Perplexity'],
+      synonyms: [],
+      items: [
+        {
+          ...discoveryCatalog.items[0],
+          youtubeId: 'fictionpp01',
+          title: 'Fictional policy research with Perplexity',
+          description: 'Find fictional policy documents with Perplexity.',
+          tasks: ['policy research'],
+          tools: ['Perplexity'],
+        },
+        {
+          ...discoveryCatalog.items[2],
+          youtubeId: reviewed.youtubeId,
+          tasks: [reviewed.task],
+          tools: [],
+        },
+      ],
+    };
+    expect(
+      select(goal, catalog).results.map((row) => row.item.youtubeId),
+    ).toEqual(['fictionpp01']);
+    expect(select(goal, catalog).results[0].reason).toBe(
+      'Browse videos tagged Perplexity.',
+    );
+    expect(
+      select(goal, { ...catalog, items: [...catalog.items].reverse() }),
+    ).toEqual(select(goal, catalog));
+  },
+);
 
 it.each([
   'Copilot',
