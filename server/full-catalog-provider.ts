@@ -77,6 +77,12 @@ export function catalogScoringProvider(
     const result = body.complete(decoded);
     if (result.response.outcome !== 'success')
       return { ...usage, value: null, validationFailure: 'schema' };
-    return { ...usage, value: { youtubeIds: result.response.youtubeIds } };
+    return {
+      ...usage,
+      value: {
+        youtubeIds: result.response.youtubeIds,
+        reasons: result.response.reasons,
+      },
+    };
   };
 }

@@ -387,6 +387,27 @@ describe('recommendation endpoint', () => {
     const response = await recommend(request(), environment, deps);
     expect((await response.json()).reason).toBe('invalid-response');
   });
+  it('AC-REASON-3: passes matching reasons through and rejects mismatched ones', async () => {
+    const { deps, provider } = setup();
+    const youtubeIds = [catalog.items[1].youtubeId];
+    provider.mockResolvedValueOnce({
+      value: { youtubeIds, reasons: ['Shows the budget cleanup.'] },
+      inputTokens: 100,
+      outputTokens: 20,
+    });
+    expect(
+      (await (await recommend(request(), environment, deps)).json()).reasons,
+    ).toEqual(['Shows the budget cleanup.']);
+    provider.mockResolvedValueOnce({
+      value: { youtubeIds, reasons: [] },
+      inputTokens: 100,
+      outputTokens: 20,
+    });
+    expect(
+      await (await recommend(request(), environment, deps)).json(),
+    ).toMatchObject({ outcome: 'fallback', reason: 'invalid-response' });
+  });
+
   it('keeps an empty relevant list distinct from malformed output', async () => {
     const { deps, provider } = setup();
     provider.mockResolvedValueOnce({

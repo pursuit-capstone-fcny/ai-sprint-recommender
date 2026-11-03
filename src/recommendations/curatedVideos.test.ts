@@ -119,6 +119,48 @@ describe('curated browsing collections', () => {
     expect(fallbacks[7].item.youtubeId).toBe('spareVideo2');
   });
 
+  it.each([
+    [
+      ['copy drafting', 'AI basics', 'editing'],
+      ['CoPilot', 'Word', 'Teams'],
+      'Beginner pick: shows CoPilot and Word for copy drafting and AI basics.',
+      'Another direction: covers copy drafting and AI basics with CoPilot and Word.',
+    ],
+    [
+      // 95 characters with two tasks, so the fallback reason keeps one.
+      ['grant opportunity review', 'grant application drafting'],
+      ['ChatGPT'],
+      'Beginner pick: shows ChatGPT for grant opportunity review and grant application drafting.',
+      'Another direction: covers grant opportunity review with ChatGPT.',
+    ],
+    [
+      ['AI basics'],
+      [],
+      'Beginner pick for AI basics.',
+      'Another direction: covers AI basics.',
+    ],
+    [
+      [],
+      ['ChatGPT'],
+      'Beginner pick: shows ChatGPT.',
+      'Another direction: uses ChatGPT.',
+    ],
+  ])(
+    'AC-REASON-4: builds reasons from tags %j %j',
+    (tasks, tools, defaultReason, fallbackReason) => {
+      const tagged = catalog.map((row) => ({ ...row, tasks, tools }));
+      expect(defaultVideos(tagged)[0].reason).toBe(defaultReason);
+      expect(fallbackVideos(tagged)[0].reason).toBe(fallbackReason);
+    },
+  );
+
+  it('AC-REASON-5: keeps the general text for untagged videos', () => {
+    const flagged = catalog.map((row) => ({ ...row, isStartHere: true }));
+    expect(defaultVideos(flagged)[0].reason).toBe(
+      'Marked Start here by the library.',
+    );
+  });
+
   it('borrows only when needed in a small catalog, without inventing metadata', () => {
     const shared = item(DEFAULT_VIDEO_IDS[0], {
       title: 'Updated public title',

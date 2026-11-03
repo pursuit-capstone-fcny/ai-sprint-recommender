@@ -294,6 +294,7 @@ export function interpretOperation(
   return {
     operation,
     interpretation,
+    scoped,
     positive,
     requiredTool,
     language: operation?.id === 'language-practice' ? language : undefined,

@@ -32,10 +32,43 @@ function compareText(a: string, b: string): number {
   return a < b ? -1 : a > b ? 1 : 0;
 }
 
+type Collection = 'default' | 'fallback';
+
+// Two task tags fit most reasons; longer sentences keep only the first tag.
+const MAX_COLLECTION_REASON_LENGTH = 90;
+
+function tagSentence(
+  tasks: string[],
+  tools: string[],
+  collection: Collection,
+): string {
+  const task = tasks.join(' and ');
+  const tool = tools.join(' and ');
+  if (collection === 'default')
+    return `Beginner pick${tool ? `: shows ${tool}` : ''}${task ? ` for ${task}` : ''}.`;
+  return task
+    ? `Another direction: covers ${task}${tool ? ` with ${tool}` : ''}.`
+    : `Another direction: uses ${tool}.`;
+}
+
+// Built from public tags so replacement videos get an accurate reason too.
+function collectionReason(item: CatalogItem, collection: Collection): string {
+  if (!item.tasks.length && !item.tools.length)
+    return item.isStartHere
+      ? 'Marked Start here by the library.'
+      : 'A general suggestion for exploring the library.';
+  const tools = item.tools.slice(0, 2);
+  const twoTasks = tagSentence(item.tasks.slice(0, 2), tools, collection);
+  return twoTasks.length <= MAX_COLLECTION_REASON_LENGTH
+    ? twoTasks
+    : tagSentence(item.tasks.slice(0, 1), tools, collection);
+}
+
 function collectionVideos(
   catalog: CatalogItem[],
   preferredIds: readonly string[],
   otherCollectionIds: readonly string[],
+  collection: Collection,
 ): RankedMatch[] {
   const order = new Map(preferredIds.map((id, index) => [id, index]));
   const reserved = new Set(otherCollectionIds);
@@ -56,14 +89,17 @@ function collectionVideos(
     .map((item) => ({
       item,
       matchType: 'fallback',
-      reason: item.isStartHere
-        ? 'Marked Start here by the library.'
-        : 'A general suggestion for exploring the library.',
+      reason: collectionReason(item, collection),
     }));
 }
 
 export function defaultVideos(catalog: CatalogItem[]): RankedMatch[] {
-  return collectionVideos(catalog, DEFAULT_VIDEO_IDS, FALLBACK_VIDEO_IDS);
+  return collectionVideos(
+    catalog,
+    DEFAULT_VIDEO_IDS,
+    FALLBACK_VIDEO_IDS,
+    'default',
+  );
 }
 
 export function fallbackVideos(catalog: CatalogItem[]): RankedMatch[] {
@@ -73,5 +109,6 @@ export function fallbackVideos(catalog: CatalogItem[]): RankedMatch[] {
     catalog,
     FALLBACK_VIDEO_IDS,
     defaultVideos(catalog).map(({ item }) => item.youtubeId),
+    'fallback',
   );
 }

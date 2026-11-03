@@ -10,7 +10,7 @@ const MAX_BYTES = 16_384;
 const QUEUE_LIFETIME_MS = 60_000;
 
 type Outcome = 'accepted' | 'duplicate' | 'dropped';
-type Attempt = Outcome | 'busy' | 'stopped' | 'rate-limited';
+type Attempt = Outcome | 'busy' | 'stopped' | { rateLimitedUntil: number };
 type Pending = {
   body: string;
   queuedAt: number;
@@ -49,7 +49,19 @@ async function post(url: string, body: string): Promise<Attempt> {
         const error = value.error;
         if ('code' in error) {
           if (error.code === 'USAGE_BUSY') return 'busy';
-          if (error.code === 'USAGE_RATE_LIMITED') return 'rate-limited';
+          if (error.code === 'USAGE_RATE_LIMITED') {
+            const delay =
+              'retryAfterMs' in error ? error.retryAfterMs : undefined;
+            return {
+              rateLimitedUntil:
+                typeof delay === 'number' &&
+                Number.isSafeInteger(delay) &&
+                delay >= 1 &&
+                delay <= 86_400_000
+                  ? Date.now() + delay
+                  : Infinity,
+            };
+          }
           if (['USAGE_DISABLED', 'USAGE_FULL'].includes(String(error.code)))
             return 'stopped';
         }
@@ -73,7 +85,7 @@ export function createUsageSender(
   const queue: Pending[] = [];
   let running = false;
   let stopped = false;
-  let rateLimited = false;
+  let rateLimitedUntil = 0;
 
   async function drain() {
     if (running) return;
@@ -84,14 +96,20 @@ export function createUsageSender(
         let outcome: Attempt = 'dropped';
         if (
           !stopped &&
-          (!rateLimited || next.explicitFeedback) &&
+          (next.explicitFeedback ||
+            (Date.now() >= rateLimitedUntil &&
+              next.queuedAt >= rateLimitedUntil)) &&
           Date.now() - next.queuedAt < QUEUE_LIFETIME_MS
         ) {
           outcome = await post(url, next.body);
           // Only an explicit lock-contention response gets one retry, same ID.
           if (outcome === 'busy') outcome = await post(url, next.body);
           if (outcome === 'stopped') stopped = true;
-          if (outcome === 'rate-limited') rateLimited = true;
+          if (typeof outcome === 'object')
+            rateLimitedUntil = Math.max(
+              rateLimitedUntil,
+              outcome.rateLimitedUntil,
+            );
         }
         next.resolve(
           outcome === 'accepted' || outcome === 'duplicate'
@@ -112,7 +130,7 @@ export function createUsageSender(
     ): Promise<Outcome> {
       const parsed = UsageEventSchema.safeParse(value);
       // Only a learner action may try feedback again after a temporary limit.
-      // Automatic usage stays suppressed, and disabled/full collectors stay stopped.
+      // Automatic usage waits for a valid cooldown; disabled/full stay stopped.
       const explicitFeedback =
         options?.explicitFeedback === true &&
         parsed.success &&
@@ -120,9 +138,11 @@ export function createUsageSender(
       if (
         (!automaticUsageEnabled && !explicitFeedback) ||
         stopped ||
-        (rateLimited && !explicitFeedback) ||
+        (Date.now() < rateLimitedUntil && !explicitFeedback) ||
         queue.length >= USAGE_QUEUE_LIMIT ||
         !parsed.success ||
+        (!explicitFeedback &&
+          Date.parse(parsed.data.time) < rateLimitedUntil) ||
         !hasUsageCatalogReferences(parsed.data, catalog)
       )
         return Promise.resolve('dropped');

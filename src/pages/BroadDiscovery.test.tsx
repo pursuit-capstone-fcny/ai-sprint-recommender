@@ -16,6 +16,18 @@ it.each([
   ['Help me learn Copilot', 'Fictional feedback analysis with Copilot'],
   ['I need help using Copilot', 'Fictional feedback analysis with Copilot'],
   [
+    "I don't want to use ChatGPT. Help me with Copilot.",
+    'Fictional feedback analysis with Copilot',
+  ],
+  [
+    'Do not use ChatGPT. Help me with Copilot.',
+    'Fictional feedback analysis with Copilot',
+  ],
+  [
+    'Help me with Copilot. I do not want to use ChatGPT.',
+    'Fictional feedback analysis with Copilot',
+  ],
+  [
     'Please help us get started with Microsoft Copilot.',
     'Fictional feedback analysis with Copilot',
   ],

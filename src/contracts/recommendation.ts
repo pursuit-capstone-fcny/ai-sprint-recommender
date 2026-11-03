@@ -37,13 +37,26 @@ export const RecommendationIdsSchema = z
   .max(10)
   .refine((ids) => new Set(ids).size === ids.length);
 
+// One display reason per pick, in youtubeIds order. Never logged.
+export const MAX_REASON_LENGTH = 215;
+export const RecommendationReasonsSchema = z
+  .array(z.string().min(1).max(MAX_REASON_LENGTH))
+  .max(10);
+export const reasonsMatchIds = (value: {
+  youtubeIds: string[];
+  reasons?: string[];
+}) => !value.reasons || value.reasons.length === value.youtubeIds.length;
+
 export const RecommendationResponseSchema = z.discriminatedUnion('outcome', [
-  z.strictObject({
-    outcome: z.literal('success'),
-    youtubeIds: RecommendationIdsSchema,
-    catalogVersion,
-    ...RecommendationVersionSchema.shape,
-  }),
+  z
+    .strictObject({
+      outcome: z.literal('success'),
+      youtubeIds: RecommendationIdsSchema,
+      reasons: RecommendationReasonsSchema.optional(),
+      catalogVersion,
+      ...RecommendationVersionSchema.shape,
+    })
+    .refine(reasonsMatchIds),
   z
     .strictObject({
       outcome: z.literal('fallback'),

@@ -108,22 +108,53 @@ it.each(['NotebookLM', 'Claude', 'Fixture assistant'])(
     }
   },
 );
-it('AC-12.23: help queries retain tool exclusions when selecting discovery videos', () => {
-  const item = discoveryCatalog.items[0];
-  const catalog = {
-    ...discoveryCatalog,
-    items: [
-      { ...item, tools: ['CoPilot', 'ChatGPT'] },
-      { ...item, youtubeId: 'fictioncp02' },
-      ...discoveryCatalog.items.slice(1),
-    ],
-  };
-  expect(
-    select('Help me with Copilot without ChatGPT', catalog).results.map(
-      (row) => row.item.youtubeId,
-    ),
-  ).toEqual(['fictioncp02']);
-});
+it.each([
+  'Help me with Copilot without ChatGPT',
+  "I don't want to use ChatGPT. Help me with Copilot.",
+  'Do not use ChatGPT. Help me with Copilot.',
+  'Help me with Copilot. I do not want to use ChatGPT.',
+])(
+  'AC-12.23: help queries retain tool exclusions when selecting discovery videos: %s',
+  (goal) => {
+    const item = discoveryCatalog.items[0];
+    const catalog = {
+      ...discoveryCatalog,
+      items: [
+        { ...item, tools: ['CoPilot', 'ChatGPT'] },
+        { ...item, youtubeId: 'fictioncp02' },
+        {
+          ...item,
+          youtubeId: 'fictioncp03',
+          description:
+            'Use CoPilot with ChatGPT to analyze fictional feedback.',
+        },
+        ...discoveryCatalog.items.slice(1),
+      ],
+    };
+    expect(
+      select(goal, catalog).results.map((row) => row.item.youtubeId),
+    ).toEqual(['fictioncp02']);
+    expect(
+      select(goal, { ...catalog, items: [...catalog.items].reverse() }),
+    ).toEqual(select(goal, catalog));
+  },
+);
+
+it.each([
+  "I don't want to use ChatGPT. Help me with Copilot.",
+  'Do not use ChatGPT. Help me with Copilot.',
+  'Help me with Copilot. I do not want to use ChatGPT.',
+  'We do not use ChatGPT. Help me learn Microsoft Copilot.',
+  'Please avoid ChatGPT; help me with Copilot.',
+  'Please do not use ChatGPT. Help me with Copilot.',
+])(
+  'AC-12.23: separate excluded-tool sentences preserve a supported inquiry: %s',
+  (goal) => {
+    expect(select(goal).results.map((row) => row.item.youtubeId)).toEqual([
+      'fictioncp01',
+    ]);
+  },
+);
 it('AC-12.23: discovers the placeholder topic without unrelated filler and is stable under catalog reordering', () => {
   const goal =
     'For example, I coordinate volunteers and need help planning outreach.';
@@ -137,6 +168,22 @@ it('AC-12.23: discovers the placeholder topic without unrelated filler and is st
       items: [...discoveryCatalog.items].reverse(),
     }),
   ).toEqual(result);
+});
+
+it('AC-12.23: separate excluded-tool clauses use published aliases', () => {
+  const catalog = {
+    ...discoveryCatalog,
+    synonyms: [
+      ...discoveryCatalog.synonyms,
+      { alias: 'Chat helper', category: 'tool' as const, target: 'ChatGPT' },
+    ],
+  };
+  expect(
+    select(
+      'I do not want to use Chat helper. Help me learn Microsoft Copilot.',
+      catalog,
+    ).results.map((row) => row.item.youtubeId),
+  ).toEqual(['fictioncp01']);
 });
 it.each([
   'Copilot offline only',
@@ -159,6 +206,17 @@ it.each([
   'Help me with Copilot to create a slide deck image',
   'Help me with Copilot using my uploaded spreadsheet',
   'I do not want help with Copilot',
+  'Do not use ChatGPT. Help me with Copilot. Delete volunteer records.',
+  'Help me with Copilot. Do not use ChatGPT. Repair a bicycle.',
+  'Delete volunteer records. Do not use ChatGPT. Help me with Copilot.',
+  'I do. Help me with Copilot. Do not use ChatGPT.',
+  'Do. Do not use ChatGPT. Help me with Copilot.',
+  'Help me with Copilot. I do not have internet. Do not use ChatGPT.',
+  'Help me with Copilot. I do not want to use ChatGPT offline only.',
+  'Help me with Copilot. Do not use ChatGPT to delete volunteer records.',
+  'Help me with Copilot. I do not want to use Copilot.',
+  'Do not use ChatGPT. Help me with Copilot using only Copilot.',
+  'Do not use ChatGPT. Help me with Copilot using my uploaded spreadsheet.',
 ])(
   'AC-12.23: discovery does not bypass constraints or invent task support: %s',
   (goal) => {

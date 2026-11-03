@@ -11,7 +11,7 @@ import {
   type RecommendationState,
 } from '../src/recommendations/selectRecommendationState';
 
-export const CATALOG_SCORING_PROMPT = 'catalog-pick-evidence-v8';
+export const CATALOG_SCORING_PROMPT = 'catalog-pick-evidence-v9';
 export const CATALOG_SCORING_MODEL = 'claude-haiku-5-5';
 export const CATALOG_SCORING_MAX_OUTPUT = 2_000;
 export const CATALOG_SCORING_MAX_INPUT = 80_000;
@@ -24,7 +24,7 @@ Set goalType to discovery for tool exploration or broad role/topic inquiries, an
 Use only input and public catalog metadata. Do not use outside knowledge about a video, evaluation labels, synonyms or rules rankings. Selected functionArea and tools are preferences; explicit restrictions in the goal are hard constraints.
 Include only work the request calls for, not generic prerequisites invented to fill slots.
 Return at most eight picks: first videos graded 3 or 2, most useful first. For a specific task, after every grade 3 or 2 pick, add the most relevant grade 1 components until there are eight; return fewer only when no further video is at least weakly related. Broad discovery excludes grade 1 and has no minimum count. grade 3 = direct instruction for the requested work or an actual demonstrated use of a tool the visitor wants to explore; 2 = a substantial useful component or transferable method with compatible inputs and output, including relevant workflows for a broad role or topic; 1 = weak or contextual. Never include unrelated or contradictory videos, and never add a weak pick to a broad discovery list. For a specific task, shared topics, tool names or audiences alone do not establish usefulness. These are provisional judgments, not human labels.
-For each pick, quote a non-empty exact contiguous passage of at most 15 words from THAT video's description supporting the taught method. In at most 20 words, explain in rationale how that method performs the requested step. Leave out any video you cannot support with a non-empty exact quote and a non-empty rationale; an empty quote or rationale is invalid.
+For each pick, quote a non-empty exact contiguous passage of at most 15 words from THAT video's description supporting the taught method. In at most 15 words, write rationale as a note to the visitor: in plain, everyday language, say what the video shows them how to do and how that helps their work. If it covers only part of their work, name the part it covers. Use your own words rather than the visitor's, and do not mention grades or this assessment. Leave out any video you cannot support with a non-empty exact quote and a non-empty rationale; an empty quote or rationale is invalid.
 Output format: set noWork first, then goalType. If noWork is true, return an empty picks array.`;
 
 const picksSchema = z.strictObject({
@@ -52,15 +52,17 @@ export interface CatalogScoringResult {
 // Haiku often quotes a video's title or changes punctuation or case, which an
 // exact match rejected. Require at least 80% of the quote's words (longer than
 // two characters) to appear in that video's own title or description.
-function quoteWords(text: string): string[] {
+function words(text: string): string[] {
   return (
     text
       .normalize('NFKC')
       .toLowerCase()
       .replace(/[‘’]/g, "'")
-      .match(/[a-z0-9]+(?:'[a-z0-9]+)*/g)
-      ?.filter((word) => word.length > 2) ?? []
+      .match(/[a-z0-9]+(?:'[a-z0-9]+)*/g) ?? []
   );
+}
+function quoteWords(text: string): string[] {
+  return words(text).filter((word) => word.length > 2);
 }
 function quoteSupported(
   quote: string,
@@ -70,6 +72,35 @@ function quoteSupported(
   if (!words.length) return false;
   const source = new Set(quoteWords(`${row.title} ${row.description}`));
   return words.filter((word) => source.has(word)).length / words.length >= 0.8;
+}
+
+const NEUTRAL_REASON = 'Suggested for your goal';
+const PARTIAL_NEUTRAL_REASON = 'A partial match for your goal';
+const MAX_RATIONALE_LENGTH = 200;
+// A rationale repeating this many consecutive goal words echoes the goal.
+const GOAL_ECHO_WORDS = 8;
+
+function wordRuns(text: string): Set<string> {
+  const all = words(text);
+  return new Set(
+    all
+      .slice(0, Math.max(all.length - GOAL_ECHO_WORDS + 1, 0))
+      .map((_, index) => all.slice(index, index + GOAL_ECHO_WORDS).join(' ')),
+  );
+}
+
+function pickReason(rationale: string, grade: number, goal: string): string {
+  let text = rationale.trim().replace(/\s+/g, ' ');
+  const goalRuns = wordRuns(goal);
+  if (!text || [...wordRuns(text)].some((run) => goalRuns.has(run)))
+    return grade === 1 ? PARTIAL_NEUTRAL_REASON : NEUTRAL_REASON;
+  if (text.length > MAX_RATIONALE_LENGTH) {
+    // Cut at the last whole word; a single overlong word is cut where it is.
+    const cut = text.slice(0, MAX_RATIONALE_LENGTH - 1);
+    const space = cut.lastIndexOf(' ');
+    text = `${(space > 0 ? cut.slice(0, space) : cut).replace(/[\s,;:]+$/, '')}…`;
+  }
+  return grade === 1 ? `Partial match: ${text}` : text;
 }
 
 export function prepareCatalogScoring(
@@ -223,9 +254,16 @@ export function prepareCatalogScoring(
     )
       .slice(0, 8)
       .map(({ item }) => item.youtubeId);
+    const reasonById = new Map(
+      supported.map((pick) => [
+        catalog.items[pick.position].youtubeId,
+        pickReason(pick.rationale, pick.grade, input.goal),
+      ]),
+    );
     const response: RecommendationResponse = {
       outcome: 'success',
       youtubeIds,
+      reasons: youtubeIds.map((id) => reasonById.get(id)!),
       catalogVersion: catalog.catalogVersion,
       modelVersion: CATALOG_SCORING_MODEL,
       promptVersion: CATALOG_SCORING_PROMPT,
