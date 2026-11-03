@@ -75,6 +75,7 @@ export const UsageEventSchema = z
       ...common,
       type: z.literal('search'),
       functionArea: tag.nullable(),
+      functionAreas: tags.optional(),
       tools: tags,
       tasks: tags,
       resultCount: z.number().int().min(0).max(1000),
@@ -126,6 +127,13 @@ export const UsageEventSchema = z
       invalid();
     }
     if (event.type === 'search') {
+      if (
+        event.functionAreas !== undefined &&
+        (event.mode !== 'topic' ||
+          event.functionArea !==
+            (event.functionAreas.length === 1 ? event.functionAreas[0] : null))
+      )
+        invalid();
       if (event.mode === 'direct' || event.strongMatchCount > event.resultCount)
         invalid();
     } else if (
@@ -148,6 +156,9 @@ export function hasUsageCatalogReferences(
   if (event.type !== 'search')
     return catalog.items.some((item) => item.youtubeId === event.youtubeId);
   return (
+    (event.functionAreas ?? []).every((value) =>
+      catalog.functionAreas.includes(value),
+    ) &&
     (event.functionArea === null ||
       catalog.functionAreas.includes(event.functionArea)) &&
     event.tools.every((value) => catalog.tools.includes(value)) &&

@@ -204,3 +204,26 @@ exposes position/duration for an instrumented embed, but that ratio does not
 measure actual watched segments. Seeking, replays and external YouTube opens need
 separate semantics and collection approval. This dashboard displays unavailable;
 it does not infer watches from clicks or introduce new tracking.
+
+## Staff topic search
+
+The Topic search view finds videos in the same published catalog used for
+analytics. Blank input browses all active videos. Searches match titles,
+descriptions and canonical tags, using the published synonym table and bounded
+long-word typos. All topic concepts must match. Function-area and tool groups
+combine with AND, with OR within a group. These filters are independent of
+report dates/activity. Every match is accessible immediately, without task
+deduplication, recommendation caps or fallback padding. Staff can play, open or
+copy each video.
+
+Rebuild and redeploy the private admin app to supply its catalog metadata. Older
+responses without catalog metadata show search unavailable. Reload and access
+failures clear search results. The public preview uses fictional metadata only.
+
+Collection is disabled by default. After #8 approval, set TOPIC_USAGE_ENABLED,
+TOPIC_USAGE_URL and TOPIC_USAGE_RETENTION_DAYS on the admin project as described
+in spec #21. Use an approved existing collector, redeployed with topic-mode
+functionAreas support. Staff traffic is src=team and excluded by default.
+Original topic wording is never included in events or URLs. Usage delivery
+remains best effort under existing limits. This feature does not change any
+deployment property, source data, sharing or collection consent.

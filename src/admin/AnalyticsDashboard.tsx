@@ -17,6 +17,7 @@ import {
   connectPrivateSheet,
   disconnectPrivateSheet,
 } from './transport';
+import { TopicSearch } from './TopicSearch';
 import { parseSheetLink } from './sheetLink';
 import '../pages/global.css';
 import './dashboard.css';
@@ -124,6 +125,7 @@ export function AnalyticsDashboard({
     [loading, setLoading] = useState(true),
     [error, setError] = useState(''),
     [reload, setReload] = useState(0);
+  const [topicView, setTopicView] = useState(false);
   const [showDirect, setShowDirect] = useState(false);
   const [view, setView] = useState<DashboardView>('video');
   const [draft, setDraft] = useState<DashboardFilters | null>(null),
@@ -436,7 +438,7 @@ export function AnalyticsDashboard({
             stateCopy.stale}
         </div>
       )}
-      {snapshot && ready && (
+      {snapshot && ready && !topicView && (
         <>
           <div className="analytics-context">
             <p>
@@ -483,8 +485,10 @@ export function AnalyticsDashboard({
           )}
         </>
       )}
-      <div className="analytics-layout">
-        <details className="analytics-filters" open>
+      <div
+        className={`analytics-layout${topicView ? ' topic-search-layout' : ''}`}
+      >
+        <details className="analytics-filters" open hidden={topicView}>
           <summary>Filters</summary>
           {draft && (
             <form
@@ -707,199 +711,236 @@ export function AnalyticsDashboard({
             {views.map((v) => (
               <button
                 key={v.id}
-                aria-current={view === v.id ? 'page' : undefined}
-                onClick={() => changeView(v.id)}
+                aria-current={!topicView && view === v.id ? 'page' : undefined}
+                onClick={() => {
+                  setTopicView(false);
+                  changeView(v.id);
+                }}
               >
                 {v.label}
               </button>
             ))}
-          </nav>
-          <div className="analytics-table-heading">
-            <div>
-              <h2>{current.label}</h2>
-              <p>{current.description}</p>
-            </div>
-            <p role="status" aria-live="polite">
-              {ready
-                ? `${number(rows.length)} ${noun}${rows.length === 1 ? '' : 's'}`
-                : 'Report unavailable'}
-            </p>
-          </div>
-          {view === 'video' && (
             <button
-              className="analytics-reset analytics-direct-toggle"
-              aria-pressed={showDirect}
-              onClick={() => setShowDirect((value) => !value)}
+              aria-current={topicView ? 'page' : undefined}
+              onClick={() => setTopicView(true)}
             >
-              {showDirect
-                ? 'Hide direct-view metrics'
-                : 'Show direct-view metrics'}
+              Topic search
             </button>
-          )}
-          {loading ? (
-            <div className="analytics-loading" role="status">
-              Loading restricted analytics…
-              <div />
-              <div />
-              <div />
-            </div>
-          ) : !ready ? (
-            <div className="analytics-empty">
-              <h3>
-                {error ? 'Report access unavailable' : 'No report to display'}
-              </h3>
-              <p>
-                Use Reload data after access or reporting health has been
-                restored. Counts are hidden while the report is unavailable.
-              </p>
-            </div>
+          </nav>
+          {topicView ? (
+            loading ? (
+              <p role="status">Loading library…</p>
+            ) : ready && snapshot?.catalog ? (
+              <TopicSearch
+                key={snapshot.catalog.catalogVersion}
+                catalog={snapshot.catalog}
+                collection={demo ? undefined : snapshot.topicUsage}
+              />
+            ) : (
+              <div className="analytics-empty">
+                <h2>Topic search unavailable</h2>
+                <p>
+                  Reload data to load the published library. The private
+                  dashboard must include current catalog metadata.
+                </p>
+              </div>
+            )
           ) : (
             <>
-              {snapshot &&
-                filters &&
-                ((snapshot.startDate &&
-                  filters.startDate < snapshot.startDate) ||
-                  (snapshot.endDate && filters.endDate > snapshot.endDate)) && (
-                  <div className="analytics-notice" role="note">
-                    This selection extends beyond reporting coverage. Only
-                    retained data is included.
-                  </div>
-                )}
-              <div
-                className="analytics-table-scroll"
-                role="region"
-                aria-label={`${current.label} results`}
-                tabIndex={0}
-              >
-                <table>
-                  <caption className="sr-only">
-                    Recorded activity from {filters?.startDate} through{' '}
-                    {filters?.endDate}. Clicks do not prove watches.
-                  </caption>
-                  <thead>
-                    <tr>
-                      {visibleFields.map((f) => (
-                        <th
-                          key={f.key}
-                          scope="col"
-                          aria-sort={
-                            sort.key === f.key
-                              ? sort.desc
-                                ? 'descending'
-                                : 'ascending'
-                              : 'none'
-                          }
-                        >
-                          <button
-                            onClick={() =>
-                              setSort((s) => ({
-                                key: f.key,
-                                desc:
-                                  s.key === f.key
-                                    ? !s.desc
-                                    : typeof rows[0]?.[f.key] === 'number',
-                              }))
-                            }
-                          >
-                            {f.label}
-                            {sort.key === f.key ? (
-                              <span aria-hidden="true">
-                                {sort.desc ? ' ↓' : ' ↑'}
-                              </span>
-                            ) : null}
-                          </button>
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {sorted.slice(page * 25, (page + 1) * 25).map((row) => (
-                      <tr key={row.key}>
-                        {visibleFields.map((f) => (
-                          <td
-                            key={f.key}
-                            className={
-                              typeof row[f.key] === 'number'
-                                ? 'analytics-number'
-                                : ''
-                            }
-                          >
-                            {f.key === 'title' ? (
-                              <>
-                                <strong>{row.title}</strong>
-                                <small>
-                                  {row.youtubeId}
-                                  {!row.active ? ' · Historical' : ''}
-                                </small>
-                                {view === 'video' && (
-                                  <button
-                                    className="analytics-row-link"
-                                    onClick={() => showKeywords(row.youtubeId)}
-                                  >
-                                    View keywords
-                                  </button>
-                                )}
-                              </>
-                            ) : f.key === 'category' ? (
-                              categoryName(row.category)
-                            ) : typeof row[f.key] === 'number' ? (
-                              snapshot?.collectionAvailable === false ? (
-                                'Unavailable'
-                              ) : (
-                                number(row[f.key] as number)
-                              )
-                            ) : (
-                              String(row[f.key])
-                            )}
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+              <div className="analytics-table-heading">
+                <div>
+                  <h2>{current.label}</h2>
+                  <p>{current.description}</p>
+                </div>
+                <p role="status" aria-live="polite">
+                  {ready
+                    ? `${number(rows.length)} ${noun}${rows.length === 1 ? '' : 's'}`
+                    : 'Report unavailable'}
+                </p>
               </div>
-              {rows.length === 0 && (
+              {view === 'video' && (
+                <button
+                  className="analytics-reset analytics-direct-toggle"
+                  aria-pressed={showDirect}
+                  onClick={() => setShowDirect((value) => !value)}
+                >
+                  {showDirect
+                    ? 'Hide direct-view metrics'
+                    : 'Show direct-view metrics'}
+                </button>
+              )}
+              {loading ? (
+                <div className="analytics-loading" role="status">
+                  Loading restricted analytics…
+                  <div />
+                  <div />
+                  <div />
+                </div>
+              ) : !ready ? (
                 <div className="analytics-empty">
-                  <h3>No items match these filters</h3>
+                  <h3>
+                    {error
+                      ? 'Report access unavailable'
+                      : 'No report to display'}
+                  </h3>
                   <p>
-                    Try a wider date range, another source, or reset the
-                    filters. A zero means no recorded activity in this period,
-                    not never used.
+                    Use Reload data after access or reporting health has been
+                    restored. Counts are hidden while the report is unavailable.
                   </p>
                 </div>
+              ) : (
+                <>
+                  {snapshot &&
+                    filters &&
+                    ((snapshot.startDate &&
+                      filters.startDate < snapshot.startDate) ||
+                      (snapshot.endDate &&
+                        filters.endDate > snapshot.endDate)) && (
+                      <div className="analytics-notice" role="note">
+                        This selection extends beyond reporting coverage. Only
+                        retained data is included.
+                      </div>
+                    )}
+                  <div
+                    className="analytics-table-scroll"
+                    role="region"
+                    aria-label={`${current.label} results`}
+                    tabIndex={0}
+                  >
+                    <table>
+                      <caption className="sr-only">
+                        Recorded activity from {filters?.startDate} through{' '}
+                        {filters?.endDate}. Clicks do not prove watches.
+                      </caption>
+                      <thead>
+                        <tr>
+                          {visibleFields.map((f) => (
+                            <th
+                              key={f.key}
+                              scope="col"
+                              aria-sort={
+                                sort.key === f.key
+                                  ? sort.desc
+                                    ? 'descending'
+                                    : 'ascending'
+                                  : 'none'
+                              }
+                            >
+                              <button
+                                onClick={() =>
+                                  setSort((s) => ({
+                                    key: f.key,
+                                    desc:
+                                      s.key === f.key
+                                        ? !s.desc
+                                        : typeof rows[0]?.[f.key] === 'number',
+                                  }))
+                                }
+                              >
+                                {f.label}
+                                {sort.key === f.key ? (
+                                  <span aria-hidden="true">
+                                    {sort.desc ? ' ↓' : ' ↑'}
+                                  </span>
+                                ) : null}
+                              </button>
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {sorted.slice(page * 25, (page + 1) * 25).map((row) => (
+                          <tr key={row.key}>
+                            {visibleFields.map((f) => (
+                              <td
+                                key={f.key}
+                                className={
+                                  typeof row[f.key] === 'number'
+                                    ? 'analytics-number'
+                                    : ''
+                                }
+                              >
+                                {f.key === 'title' ? (
+                                  <>
+                                    <strong>{row.title}</strong>
+                                    <small>
+                                      {row.youtubeId}
+                                      {!row.active ? ' · Historical' : ''}
+                                    </small>
+                                    {view === 'video' && (
+                                      <button
+                                        className="analytics-row-link"
+                                        onClick={() =>
+                                          showKeywords(row.youtubeId)
+                                        }
+                                      >
+                                        View keywords
+                                      </button>
+                                    )}
+                                  </>
+                                ) : f.key === 'category' ? (
+                                  categoryName(row.category)
+                                ) : typeof row[f.key] === 'number' ? (
+                                  snapshot?.collectionAvailable === false ? (
+                                    'Unavailable'
+                                  ) : (
+                                    number(row[f.key] as number)
+                                  )
+                                ) : (
+                                  String(row[f.key])
+                                )}
+                              </td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  {rows.length === 0 && (
+                    <div className="analytics-empty">
+                      <h3>No items match these filters</h3>
+                      <p>
+                        Try a wider date range, another source, or reset the
+                        filters. A zero means no recorded activity in this
+                        period, not never used.
+                      </p>
+                    </div>
+                  )}
+                  <div className="analytics-pagination">
+                    <span>
+                      {rows.length
+                        ? `${page * 25 + 1}–${Math.min((page + 1) * 25, rows.length)} of ${number(rows.length)}`
+                        : '0 results'}
+                    </span>
+                    <div>
+                      <button
+                        className="analytics-button"
+                        disabled={page === 0}
+                        onClick={() => setPage((p) => p - 1)}
+                      >
+                        Previous
+                      </button>
+                      <button
+                        className="analytics-button"
+                        disabled={(page + 1) * 25 >= rows.length}
+                        onClick={() => setPage((p) => p + 1)}
+                      >
+                        Next
+                      </button>
+                    </div>
+                  </div>
+                </>
               )}
-              <div className="analytics-pagination">
-                <span>
-                  {rows.length
-                    ? `${page * 25 + 1}–${Math.min((page + 1) * 25, rows.length)} of ${number(rows.length)}`
-                    : '0 results'}
-                </span>
-                <div>
-                  <button
-                    className="analytics-button"
-                    disabled={page === 0}
-                    onClick={() => setPage((p) => p - 1)}
-                  >
-                    Previous
-                  </button>
-                  <button
-                    className="analytics-button"
-                    disabled={(page + 1) * 25 >= rows.length}
-                    onClick={() => setPage((p) => p + 1)}
-                  >
-                    Next
-                  </button>
-                </div>
-              </div>
+              <footer className="analytics-footnote">
+                Canonical keywords only; original search wording is not
+                retained.{' '}
+                {snapshot?.retainedFrom
+                  ? `Retained receipts: ${dateLabel(snapshot.retainedFrom)} to ${dateLabel(snapshot.retainedThrough)}.`
+                  : ''}{' '}
+                Anonymous delivery is best effort, so counts are estimates.
+              </footer>
             </>
           )}
-          <footer className="analytics-footnote">
-            Canonical keywords only; original search wording is not retained.{' '}
-            {snapshot?.retainedFrom
-              ? `Retained receipts: ${dateLabel(snapshot.retainedFrom)} to ${dateLabel(snapshot.retainedThrough)}.`
-              : ''}{' '}
-            Anonymous delivery is best effort, so counts are estimates.
-          </footer>
         </main>
       </div>
     </div>

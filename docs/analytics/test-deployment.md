@@ -1,5 +1,48 @@
 # Analytics end-to-end test deployment
 
+## Staff topic search on November 2, 2026
+
+Updated the same private Google dashboard to version 6 with staff Topic search.
+The deployment retains User accessing the web app, Anyone with Google account,
+the existing OAuth scopes, STACKDRIVER logging and the saved per-user Sheet
+connection. No sharing, collection property or retention setting was changed.
+
+Native verification used the published 89-video test snapshot
+`sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d`.
+The rendered video IDs and their ordering were compared against the search engine
+run over that exact snapshot, rather than checking only the displayed counts.
+
+| Live case                                                             | Expected and rendered matches |
+| --------------------------------------------------------------------- | ----------------------------: |
+| Browse all                                                            |                            89 |
+| AI                                                                    |                            51 |
+| Spreadsheet                                                           |                            12 |
+| Newsletter                                                            |                             2 |
+| Unsupported marine biology topic                                      |                             0 |
+| AI AND Operations AND ChatGPT                                         |                             5 |
+| AI AND Operations/Leadership AND ChatGPT/Claude, OR within each group |                             8 |
+
+Clearing filters restored the submitted AI topic's 51 results. Browse all
+restored all 89. The two-video and empty cases had no fallback padding.
+A signed-out browser was redirected to Google sign-in, without report data.
+
+Version 4 initially rendered the interface but failed browser-side response
+validation. An editor-only server read returned all 89 items. A sanitized browser
+probe isolated invalid types on absent nullable `addedAt`/`lengthSeconds` fields
+inside the returned catalog rows. The transport now restores only those known
+nullable fields before strict validation. A regression test failed before the
+fix and passes afterward; malformed supplied metadata is still rejected.
+Version 5 verified all IDs and filter cases. Version 6 also supplies the private
+bundle's missing screen-reader-only helper style, keeping accessible button
+labels out of the visual layout. Temporary server/client diagnostics were removed
+before the final deployment and are absent from the committed source/build.
+
+Typecheck, lint and all 1,058 tests pass, along with the application, collector
+and private-admin builds. Native verification covers the signed-in test owner;
+it does not claim that every intended staff account has been provisioned.
+For rollback, version 3 is the prior dashboard without topic search; do not use
+version 4, which lacked the RPC compatibility fix.
+
 ## Static catalog cutover on October 30, 2026
 
 The existing test collector is now version 4, built from `8f5e4a6`. Its GET
