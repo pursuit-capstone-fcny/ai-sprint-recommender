@@ -55,6 +55,42 @@ that searches, impressions and clicks send no usage requests.
 Typecheck, lint, 1,051 tests across 73 files, all production builds, formatting
 of changed files and `git diff --check` pass.
 
+## Deployment evidence
+
+- App source: `d40931e`, branch `feat/live-feedback-requests`.
+- [CI passed](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41527729875).
+- [Cloudflare preview](https://pr-118-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team),
+  [successful preview workflow](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41527729889).
+- [Successful production rollout](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41528144658).
+- Collector deployment updated successfully to version 5, preserving its URL,
+  owner execution, anonymous POST access and existing OAuth scopes.
+- The trigger table showed `purgeUsageLog`, `purgeRequests` and
+  `refreshFeedbackReport`; the two new triggers use Hour timer / Every hour.
+- A labeled backend topic test returned `accepted`, then `duplicate` on an
+  identical retry. The deployed preview acknowledged a keyboard helpful vote,
+  a changed not-helpful vote, a topic suggestion and a consented demo offer.
+- Production displayed six usefulness controls and one request form. It
+  acknowledged a helpful vote and a topic suggestion. Test votes used
+  `src=team`, so they are excluded from the public-visitor feedback aggregate.
+- Browser submissions used clearly labeled synthetic topics and a fictional
+  `.invalid` demo email. No email was sent. Test request rows remain in the
+  private queue and expire under the approved retention policy.
+- Production screenshots are saved under
+  `artifacts/live-feedback-2026-11-02/` in the surrounding workspace.
+
+The private count-only `verifyFeedbackCollection` helper is available in the
+editor source. Its live readback was interrupted by native browser timeouts;
+stored delivery is evidenced here by the collector's accepted/duplicate
+acknowledgements. A dedicated mobile viewport check could not be completed
+because the browser override retained its desktop width. Mobile, 200% zoom and
+screen-reader release checks remain follow-ups.
+
+[PR #118](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/pull/118)
+was merged during verification at 4:29 PM EST, in commit `893c7b0`. The subsequent
+[main-branch production deployment](https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41528755204)
+succeeded. The workflow settings are therefore preserved on the normal release
+path. The agent did not merge or approve the PR.
+
 ## Rollback
 
 Disable both production feature variables and rebuild to hide the controls.

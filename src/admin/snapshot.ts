@@ -1,4 +1,13 @@
 import { z } from 'zod';
+import { PublicCatalogSchema } from '../contracts/publicCatalog';
+
+export const TopicUsageConfigSchema = z.strictObject({
+  url: z
+    .string()
+    .regex(/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/),
+  retentionDays: z.number().int().min(1).max(365),
+});
+export type TopicUsageConfig = z.infer<typeof TopicUsageConfigSchema>;
 const count = z.number().int().min(0).max(Number.MAX_SAFE_INTEGER);
 export const factFields = [
   'activeInventory',
@@ -93,6 +102,8 @@ export const DashboardFactSchema = z
 export type DashboardFact = z.infer<typeof DashboardFactSchema>;
 export const DashboardSnapshotSchema = z
   .strictObject({
+    catalog: PublicCatalogSchema.optional(),
+    topicUsage: TopicUsageConfigSchema.optional(),
     collectionAvailable: z.boolean().default(true),
     pendingTagReviews: z.number().int().min(0).default(0),
     conservativeWindow: z.boolean().default(false),

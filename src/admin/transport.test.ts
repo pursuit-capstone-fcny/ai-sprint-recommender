@@ -1,4 +1,5 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
+import fixture from '../../fixtures/public-catalog.json';
 import { dashboardDemo } from '../../fixtures/dashboard-demo';
 import {
   loadPrivateDashboard,
@@ -93,4 +94,47 @@ describe('private dashboard RPC', () => {
     expect(await request).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
     expect(vi.getTimerCount()).toBe(0);
   });
+});
+
+it('accepts optional video metadata omitted by Apps Script RPC and still rejects malformed metadata', async () => {
+  let success: (v: unknown) => void = () => {};
+  const runner = {
+    withSuccessHandler: (handler: (v: unknown) => void) => {
+      success = handler;
+      return runner;
+    },
+    withFailureHandler: () => runner,
+    readDashboard: () => {},
+  };
+  window.google = { script: { run: runner } };
+  const catalog = {
+    ...fixture,
+    items: fixture.items.map((item) => ({
+      ...item,
+      addedAt: undefined,
+      lengthSeconds: undefined,
+    })),
+  };
+  const request = loadPrivateDashboard();
+  success({ ok: true, snapshot: { ...dashboardDemo, catalog } });
+  const result = await request;
+  expect(result.ok).toBe(true);
+  if (!result.ok) throw new Error('Expected catalog');
+  expect(result.snapshot.catalog?.items).toHaveLength(fixture.items.length);
+  expect(result.snapshot.catalog?.items[0]).toMatchObject({
+    addedAt: null,
+    lengthSeconds: null,
+  });
+  const invalid = loadPrivateDashboard();
+  success({
+    ok: true,
+    snapshot: {
+      ...dashboardDemo,
+      catalog: {
+        ...catalog,
+        items: [{ ...catalog.items[0], lengthSeconds: 'unknown' }],
+      },
+    },
+  });
+  expect(await invalid).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
 });

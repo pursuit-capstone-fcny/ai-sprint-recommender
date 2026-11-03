@@ -59,3 +59,49 @@ function activateFeedbackCollection() {
     'Feedback and requests enabled. Verify hourly editor triggers separately.',
   );
 }
+
+// Counts only. Do not log submitted text, contact details or usage identifiers.
+function verifyFeedbackCollection() {
+  const p = PropertiesService.getScriptProperties();
+  const usage = SpreadsheetApp.openById(
+    p.getProperty('USAGE_SPREADSHEET_ID'),
+  ).getSheetByName('Usage');
+  const events =
+    usage.getLastRow() > 1
+      ? usage
+          .getRange(2, 3, usage.getLastRow() - 1, 1)
+          .getValues()
+          .map((row) => JSON.parse(row[0]))
+      : [];
+  const votes = events.filter((event) => event.type === 'feedback');
+  const requests = SpreadsheetApp.openById(
+    p.getProperty('REQUESTS_SPREADSHEET_ID'),
+  ).getSheetByName('Requests');
+  const rows =
+    requests.getLastRow() > 1
+      ? requests.getRange(2, 1, requests.getLastRow() - 1, 7).getValues()
+      : [];
+  refreshFeedbackReport();
+  console.log(
+    JSON.stringify({
+      feedbackEnabled: p.getProperty('FEEDBACK_ENABLED'),
+      requestsEnabled: p.getProperty('REQUESTS_ENABLED'),
+      feedbackRevisions: votes.map((event) => ({
+        helpful: event.helpful,
+        revision: event.voteRevision,
+        team: event.src === 'team',
+      })),
+      topicCount: rows.filter((row) => row[3] === 'topic').length,
+      demoCount: rows.filter((row) => row[3] === 'demo').length,
+      topicsHaveNoEmail: rows
+        .filter((row) => row[3] === 'topic')
+        .every((row) => !row[5]),
+      demosHaveEmail: rows
+        .filter((row) => row[3] === 'demo')
+        .every((row) => !!row[5]),
+      allPolicyVersionsMatch: rows.every(
+        (row) => row[6] === 'jason-2026-11-02-v1',
+      ),
+    }),
+  );
+}

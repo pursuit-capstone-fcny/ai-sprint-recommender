@@ -467,3 +467,16 @@
     flex-direction: column;
   }
 }
+
+/* The private Apps Script bundle does not load the learner page's helpers. */
+.analytics-app .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

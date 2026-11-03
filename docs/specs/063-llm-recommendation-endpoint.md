@@ -35,7 +35,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-63.3 Catalog-grounded ranking
   - Given valid active catalog items
   - When the model receives the request
-  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v6` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with an exact description quote and a short rationale. A repeated pick keeps its first occurrence, a quote absent from that description drops the pick, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
+  - Then Haiku 5.5 low with thinking disabled uses `catalog-pick-evidence-v7` to assess all 89 complete public catalog items, cached as one prefix ahead of the request. It sets noWork first, then returns at most eight picks graded 3, 2 or 1, each with an exact description quote and a short rationale. A repeated pick keeps its first occurrence, a quote absent from that description drops the pick, and an out-of-range position or malformed output rejects the response. Order grade 3, then 2, then 1, each in emitted order; task tags only reorder picks within the first three. noWork or an empty list abstains; no provider tools, prefiltering or filler are used
 - AC-63.4 Response validation
   - Given model output and the catalog snapshot used for the call
   - When the service builds its response
@@ -49,17 +49,12 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When diagnostics are recorded
   - Then they contain outcome, latency, token/cost totals and catalog/model/prompt versions, never raw goals or prompt/response bodies. App session IDs and source tags are not sent to the provider; rate-limit identifiers are short-lived and excluded from analytics
 
-### Open questions
+- AC-63.7 Task and discovery picks
+  - Given a nonblank goal
+  - When Haiku classifies it with `goalType=task` or `goalType=discovery`
+  - Then a task lists every grade 3 or 2 pick first and adds the most relevant grade 1 components until there are eight, returning fewer only when nothing further is at least weakly related. A broad tool or role inquiry is discovery: tool discovery requires the tool in the video's own tags or description, role discovery requires instruction for the role's work or a substantial useful component, and only grade 3 or 2 picks are kept, with no minimum count and no weak or generic filler. Every pick needs a non-empty exact quote and rationale. The server rejects a missing classification and discards grade 1 discovery picks before returning IDs. Task interpretation remains independent of the deterministic engine
 
-Broad tool and role inquiries are valid discovery goals. Tool discovery requires
-the requested tool in the video's own tags or description; broad role discovery
-requires instruction for the role's work or a substantial useful component.
-These inquiries admit only grade 3 or 2 picks and have no minimum count. They
-must not be filled with weak contextual picks or generic nonprofit/AI material.
-The model classifies its response with `goalType=discovery` or `goalType=task`.
-The server rejects a missing classification and discards grade 1 discovery picks
-before returning IDs. Task interpretation remains independent of the
-deterministic engine.
+### Open questions
 
 - [ ] Approve the Worker proposal, provider/model, retention terms and concrete rate, token and spend limits. Include the cost of the live evaluation in #19.
 - [ ] The engine requires all 89 catalog rows without truncation and explicit input/output limits sufficient for the prepared request, including its 2,000-token output maximum. Wrong catalog size or insufficient limits returns unavailable before dispatch. No budget is increased or enabled by this integration.

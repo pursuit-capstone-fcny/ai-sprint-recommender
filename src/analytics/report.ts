@@ -115,9 +115,9 @@ function videoTags(item: PublicCatalogItem): Tag[] {
 }
 function searchTags(e: Extract<UsageEvent, { type: 'search' }>): Tag[] {
   return [
-    ...(e.functionArea
-      ? [{ category: 'functionArea' as const, tag: e.functionArea }]
-      : []),
+    ...(e.functionAreas ?? (e.functionArea ? [e.functionArea] : [])).map(
+      (tag) => ({ category: 'functionArea' as const, tag }),
+    ),
     ...e.tools.map((tag) => ({ category: 'tool' as const, tag })),
     ...e.tasks.map((tag) => ({ category: 'task' as const, tag })),
   ];

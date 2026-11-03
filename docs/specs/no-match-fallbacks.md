@@ -8,6 +8,10 @@ The user requested fallback videos when either engine has no matches and selecte
 up to six videos. This supersedes the no-replacement behavior in #43's demo
 engine selection. Engine ranking and provider validation remain independent.
 
+The later approved [curated collections](curated-video-collections.md) supersede
+the six-video limit and sorting policy in AC-FALLBACK-1 with an ordered collection
+of up to eight videos and replacement handling. The other criteria still apply.
+
 ## Acceptance criteria
 
 ### AC-FALLBACK-1: No-match results for either engine

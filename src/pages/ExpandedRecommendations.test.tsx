@@ -89,7 +89,7 @@ it('shows only the model picks without filling short lists', async () => {
 it.each(['rules', 'llm'] as const)(
   'AC-83.4/5: %s counts the displayed set once and resets playback on resubmission',
   async (engine) => {
-    const displayedCount = engine === 'llm' ? 8 : 6;
+    const displayedCount = 8;
     vi.stubEnv('VITE_LLM_ENABLED', engine === 'llm' ? 'true' : 'false');
     const send = vi.fn(async (event: unknown) => {
       UsageEventSchema.parse(event);
