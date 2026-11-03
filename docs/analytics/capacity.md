@@ -4,6 +4,9 @@ Jason confirmed on November 3, 2026 that 1,000 simultaneous users are likely
 and both Deterministic and Haiku AI must be available. This supersedes treating
 1,000 as only a potential audience. The acceptable AI wait and event spending
 ceiling still need confirmation. Existing production approvals remain in force.
+The client has no approved operating budget. The [finance estimate](cost-estimate.md)
+uses Jason's reported measured average of $0.55 per 1,000 calls for daily,
+monthly and event projections.
 
 The offline preflight below addresses the reproducibility gap in the client
 review's capacity action item. It does **not** make the current backend support
@@ -34,6 +37,8 @@ is performed. At the supplied input/output token ceilings and configured prices,
 the reservation ceiling is $0.009 per full-catalog call, or $9 for 1,000 calls.
 This is conservative reservation arithmetic, not measured provider usage or
 a new spending authorization. Existing approved caps are $1/day and $5/month.
+Those caps reflect the owner's existing allowance, not a client operating budget.
+Use the reported measured average in the finance estimate for usage forecasts.
 
 Telemetry assumes every search renders eight matches and one click, independently
 of the AI admission result. This tests the desired successful workload, not a
