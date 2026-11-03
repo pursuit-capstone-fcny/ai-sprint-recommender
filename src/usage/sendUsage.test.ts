@@ -302,7 +302,6 @@ describe('usage delivery', () => {
   });
   it.each([
     opaque,
-    new Response(null, { status: 503 }),
     ack({ ok: true }),
     ack({ error: { code: 'USAGE_INVALID_EVENT' } }),
   ])(
@@ -316,11 +315,41 @@ describe('usage delivery', () => {
     },
   );
 
-  it('catches offline failures without retrying', async () => {
+  it('bounds offline recovery to two attempts', async () => {
     vi.mocked(fetch).mockRejectedValue(new TypeError('offline'));
     expect(await createUsageSender(url).send(event(), catalog)).toBe('dropped');
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
   });
+
+  it.each([408, 500, 502, 503, 504])(
+    'retries transient HTTP %s once with an identical body',
+    async (status) => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(new Response(null, { status }))
+        .mockResolvedValueOnce(ack());
+      expect(await createUsageSender(url).send(event(), catalog)).toBe(
+        'accepted',
+      );
+      expect(fetch).toHaveBeenCalledTimes(2);
+      expect(vi.mocked(fetch).mock.calls[0][1]?.body).toBe(
+        vi.mocked(fetch).mock.calls[1][1]?.body,
+      );
+    },
+  );
+
+  it.each(['USAGE_UNAVAILABLE', 'USAGE_BUSY'])(
+    'bounds repeated %s to two attempts without stopping later events',
+    async (code) => {
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(ack({ error: { code } }))
+        .mockResolvedValueOnce(ack({ error: { code } }))
+        .mockResolvedValueOnce(ack());
+      const sender = createUsageSender(url);
+      expect(await sender.send(event(), catalog)).toBe('dropped');
+      expect(await sender.send(event(), catalog)).toBe('accepted');
+      expect(fetch).toHaveBeenCalledTimes(3);
+    },
+  );
 
   it('bounds even stalled response-body reads and aborts the request', async () => {
     vi.useFakeTimers();
@@ -328,10 +357,11 @@ describe('usage delivery', () => {
     vi.spyOn(response, 'json').mockImplementation(() => new Promise(() => {}));
     vi.mocked(fetch).mockResolvedValue(response);
     const pending = createUsageSender(url).send(event(), catalog);
-    await vi.advanceTimersByTimeAsync(USAGE_TIMEOUT_MS);
+    await vi.advanceTimersByTimeAsync(USAGE_TIMEOUT_MS * 2);
     expect(await pending).toBe('dropped');
     expect(vi.mocked(fetch).mock.calls[0][1]?.signal?.aborted).toBe(true);
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(fetch).mock.calls[1][1]?.signal?.aborted).toBe(true);
   });
 
   it('bounds queued events and drops stale ones without sending', async () => {

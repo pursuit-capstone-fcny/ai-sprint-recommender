@@ -24,9 +24,22 @@ function optionsForCatalog(catalog: PublicCatalog): PromptOptions {
   const dictionaryCompatible = language.tasks.every((rule) =>
     catalog.tasks.includes(rule.task),
   );
-  const reviewedInstructions = instructions.filter((row) =>
-    items.get(row.youtubeId)?.tasks.includes(row.task),
-  );
+  const reviewedInstructions = [
+    ...instructions.filter(
+      (row) =>
+        !items.get(row.youtubeId)?.instructionForm &&
+        items.get(row.youtubeId)?.tasks.includes(row.task),
+    ),
+    ...catalog.items.flatMap((item) =>
+      item.instructionForm
+        ? item.tasks.map((task) => ({
+            youtubeId: item.youtubeId,
+            task,
+            form: item.instructionForm!,
+          }))
+        : [],
+    ),
+  ];
   return {
     language: dictionaryCompatible ? language : undefined,
     workflows: dictionaryCompatible

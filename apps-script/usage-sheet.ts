@@ -5,6 +5,7 @@ import { contributionPost } from './contributions-sheet';
 import { type PublicCatalog } from '../src/contracts/publicCatalog';
 import { captureAnalyticsCatalog } from './analytics-snapshots';
 import { publishedCatalog } from './published-library';
+import { requirePrivateLibraryWorkbook } from './source-workbook';
 import {
   expiredUsageRows,
   MAX_USAGE_ROWS,
@@ -28,6 +29,8 @@ function propertyNumber(properties: Properties, name: string): number {
 function usageBook(properties: Properties) {
   const id = properties.getProperty('USAGE_SPREADSHEET_ID');
   if (!id) throw new Error('Missing usage configuration');
+  if (properties.getProperty('LIBRARY_SOURCE_FORMAT') === 'tracker')
+    requirePrivateLibraryWorkbook(id);
   return SpreadsheetApp.openById(id);
 }
 

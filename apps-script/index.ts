@@ -38,9 +38,12 @@ export function doGet() {
 }
 
 export {
+  previewLibrary,
   publishLibrary,
   libraryPublishStatus,
   showLibraryMenu,
   openLibraryPublisher,
   installLibraryPublisher,
 } from './library-publisher';
+
+export { initializeTrackerFromPublished } from './tracker-sheet';

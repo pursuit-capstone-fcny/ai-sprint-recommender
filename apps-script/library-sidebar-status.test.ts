@@ -4,7 +4,14 @@ import { expect, it } from 'vitest';
 
 it('updates the visible publication message when the host has a DOMString window.status', () => {
   const message = { textContent: 'Ready to check publication status.' };
-  const nodes = { publish: {}, check: {}, status: message, run: {} };
+  const nodes = {
+    publish: {},
+    check: {},
+    status: message,
+    run: {},
+    review: {},
+    changes: {},
+  };
   const rpc = {
     withSuccessHandler: (handler: (value: unknown) => void) => {
       rpc.success = handler;

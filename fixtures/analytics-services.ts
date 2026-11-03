@@ -79,6 +79,7 @@ export function analyticsServices() {
         maxColumns += count;
       },
       setFrozenRows: () => api,
+      setColumnWidth: () => api,
       clearContents: () => {
         ops.push(`clear:${identity}`);
         data[book][name] = [];
@@ -89,6 +90,10 @@ export function analyticsServices() {
       }),
       getRange: (row: number, col: number, height: number, width: number) => {
         const range = {
+          getDataValidation: () => null,
+          setFontWeight: () => range,
+          setWrap: () => range,
+          setDataValidation: () => range,
           getValues: () =>
             Array.from({ length: height }, (_, n) =>
               Array.from(
@@ -144,7 +149,18 @@ export function analyticsServices() {
   const flush = vi.fn(() => {
     ops.push('flush');
   });
-  vi.stubGlobal('SpreadsheetApp', { openById, flush });
+  vi.stubGlobal('SpreadsheetApp', {
+    openById,
+    flush,
+    newDataValidation: () => {
+      const rule = {
+        requireValueInList: () => rule,
+        setAllowInvalid: () => rule,
+        build: () => ({}),
+      };
+      return rule;
+    },
+  });
   vi.stubGlobal('LockService', {
     getScriptLock: () => ({
       tryLock: () => {

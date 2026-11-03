@@ -129,12 +129,9 @@ it.each(['rules', 'llm'] as const)(
         name: engine === 'llm' ? 'Haiku AI' : 'Deterministic',
       }),
     );
-    if (engine === 'llm') {
-      fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
-      fireEvent.change(screen.getByLabelText('Your goal'), {
-        target: { value: 'A fictional request' },
-      });
-    }
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'A fictional request' },
+    });
     send.mockClear();
     const submit = () =>
       fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));

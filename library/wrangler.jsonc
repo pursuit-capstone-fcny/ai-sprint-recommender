@@ -1,5 +1,6 @@
 {
   "name": "ai-sprint-library",
   "compatibility_date": "2026-10-01",
+  "previews": {},
   "assets": { "directory": "../build/library-assets" },
 }
