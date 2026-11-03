@@ -101,6 +101,7 @@ export function prepareCatalogScoring(
     lengthSeconds: item.lengthSeconds,
     addedAt: item.addedAt,
     startHere: item.startHere,
+    ...(item.instructionForm ? { instructionForm: item.instructionForm } : {}),
   }));
   const request = {
     model: CATALOG_SCORING_MODEL,

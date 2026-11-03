@@ -1,4 +1,6 @@
 export {
+  previewLibrary,
+  initializeTrackerFromPublished,
   publishLibrary,
   libraryPublishStatus,
   showLibraryMenu,

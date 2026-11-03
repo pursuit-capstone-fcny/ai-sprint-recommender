@@ -3,6 +3,9 @@ import { parseSheetLink } from '../src/admin/sheetLink';
 import { buildPublicCatalog } from './catalog';
 import { catalogVersion } from './catalog-sheet';
 import { libraryCatalog } from './library-source';
+import { publishedCatalog } from './published-library';
+import { readTracker, TrackerSourceError } from './tracker-sheet';
+import { buildTrackerCatalog, trackerChanges } from './tracker-catalog';
 import {
   canonicalJson,
   catalogDataJson,
@@ -54,7 +57,54 @@ function config() {
     environment,
     origin: origin.replace(/\/$/, ''),
     sheetId,
+    tracker: get('LIBRARY_SOURCE_FORMAT') === 'tracker',
   };
+}
+
+function trackerCandidate(c: ReturnType<typeof config>) {
+  const baseline = publishedCatalog();
+  const { rows } = readTracker(SpreadsheetApp.getActiveSpreadsheet());
+  const { catalog, problems } = buildTrackerCatalog(rows, baseline);
+  return {
+    baseline,
+    catalog,
+    problems,
+    reviewToken: catalog
+      ? catalogVersion(
+          c.sheetId + baseline.catalogVersion + catalogDataJson(catalog),
+        )
+      : null,
+  };
+}
+
+export function previewLibrary() {
+  try {
+    const c = config();
+    if (!c.tracker) return { ok: true, tracker: false };
+    const candidate = trackerCandidate(c);
+    if (!candidate.catalog)
+      return {
+        ok: false,
+        problems: candidate.problems,
+        message:
+          'Fix the listed Video Tracker rows, then review changes again.',
+      };
+    return {
+      ok: true,
+      tracker: true,
+      reviewToken: candidate.reviewToken,
+      videoCount: candidate.catalog.items.length,
+      changes: trackerChanges(candidate.baseline, candidate.catalog),
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message:
+        error instanceof TrackerSourceError
+          ? error.message
+          : 'Cannot review the library. Check tracker headers and the published catalog configuration.',
+    };
+  }
 }
 function api(
   c: ReturnType<typeof config>,
@@ -143,7 +193,7 @@ function update(c: ReturnType<typeof config>, state: State): State {
   c.p.setProperty(STATE, JSON.stringify(state));
   return state;
 }
-export function publishLibrary() {
+export function publishLibrary(reviewToken?: unknown) {
   const lock = LockService.getScriptLock();
   if (!lock.tryLock(1500))
     return {
@@ -155,13 +205,27 @@ export function publishLibrary() {
     const prior = saved(c);
     if (prior && !['succeeded', 'failed'].includes(prior.status))
       return { ok: true, ...publicState(update(c, prior)) };
-    const { catalog, problems } = buildPublicCatalog(
-      libraryCatalog(SpreadsheetApp.getActiveSpreadsheet()).workbook,
-      catalogVersion,
-    );
+    const candidate = c.tracker ? trackerCandidate(c) : null;
+    if (
+      candidate &&
+      (typeof reviewToken !== 'string' || reviewToken !== candidate.reviewToken)
+    )
+      return {
+        ok: false,
+        problems: candidate.problems,
+        message:
+          'The tracker or published catalog changed. Review changes again before publishing.',
+      };
+    const { catalog, problems } =
+      candidate ??
+      buildPublicCatalog(
+        libraryCatalog(SpreadsheetApp.getActiveSpreadsheet()).workbook,
+        catalogVersion,
+      );
     if (!catalog || problems.length)
       return {
         ok: false,
+        problems,
         message:
           'The library has validation errors. Fix the catalog and dictionary before publishing. The live version is unchanged.',
       };

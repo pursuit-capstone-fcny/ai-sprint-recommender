@@ -13,7 +13,7 @@ it('keeps publish disabled while queued and exposes only a validated GitHub job 
       onclick?: () => void;
     }
   > = Object.fromEntries(
-    ['publish', 'check', 'status', 'run'].map((id) => [
+    ['publish', 'check', 'status', 'run', 'review', 'changes'].map((id) => [
       id,
       { disabled: false, hidden: false, textContent: '', href: '' },
     ]),
@@ -32,6 +32,9 @@ it('keeps publish disabled while queued and exposes only a validated GitHub job 
     publishLibrary: () => {
       requests++;
     },
+    previewLibrary: () => {
+      requests++;
+    },
   };
   const html = readFileSync('apps-script/LibraryPublisher.html', 'utf8');
   const script = html.match(/<script>([\s\S]*?)<\/script>/)![1];
@@ -41,6 +44,23 @@ it('keeps publish disabled while queued and exposes only a validated GitHub job 
   });
   expect(requests).toBe(1);
   success({ ok: true, status: 'idle' });
+  expect(elements.publish.disabled).toBe(true);
+  elements.review.onclick!();
+  success({
+    ok: true,
+    tracker: true,
+    reviewToken: 'reviewed-hash',
+    videoCount: 4,
+    changes: {
+      added: [{ title: '<script>untrusted title</script>' }],
+      edited: [],
+      retired: [],
+    },
+  });
+  expect(elements.changes.textContent).toContain(
+    '<script>untrusted title</script>',
+  );
+  expect(elements.publish.disabled).toBe(false);
   elements.publish.onclick!();
   expect(elements.publish.disabled).toBe(true);
   success({ ok: true, status: 'queued', runUrl: 'javascript:alert(1)' });
