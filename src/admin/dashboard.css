@@ -273,9 +273,10 @@
   font-size: 12px;
   margin-top: 3px;
 }
-.analytics-number {
+/* Numeric headings and their numbers share one centered column axis. */
+.analytics-table-scroll .analytics-number {
   font-variant-numeric: tabular-nums;
-  text-align: right;
+  text-align: center;
 }
 .analytics-table-scroll tr:hover td {
   background: #f7fafc;
@@ -400,6 +401,17 @@
 .analytics-direct-toggle {
   margin: 0 0 12px;
   font-size: 13px;
+}
+.analytics-export {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+  margin: 0 0 12px;
+  font-size: 13px;
+}
+.analytics-export span {
+  color: var(--muted);
 }
 .analytics-pending {
   margin: 0;

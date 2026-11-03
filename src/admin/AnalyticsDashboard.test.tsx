@@ -189,4 +189,65 @@ describe('admin analytics UI', () => {
     ).toBeGreaterThan(0);
     expect(document.querySelector('script')).toBeNull();
   });
+
+  it('centers numeric headings and their cells with one shared class', async () => {
+    render(<AnalyticsDashboard load={loader} clock={clock} />);
+    await screen.findByText('38 videos');
+    const headers = screen.getAllByRole('columnheader');
+    const labels = headers.map((th) =>
+      th.textContent?.replace(/[↑↓]/g, '').trim(),
+    );
+    const firstRow = screen.getAllByRole('row')[1];
+    const cells = [...firstRow.querySelectorAll('td')];
+    headers.forEach((th, index) => {
+      const numeric = labels[index] !== 'Video';
+      expect(th.classList.contains('analytics-number')).toBe(numeric);
+      expect(cells[index].classList.contains('analytics-number')).toBe(numeric);
+    });
+    expect(labels).toEqual([
+      'Video',
+      'Appearances',
+      'Embed clicks',
+      'YouTube clicks',
+    ]);
+  });
+  it('downloads and copies the filtered table as CSV', async () => {
+    const createObjectURL = vi.fn((blob: Blob) => {
+      void blob;
+      return 'blob:csv';
+    });
+    vi.stubGlobal(
+      'URL',
+      Object.assign(URL, { createObjectURL, revokeObjectURL: vi.fn() }),
+    );
+    const click = vi
+      .spyOn(HTMLAnchorElement.prototype, 'click')
+      .mockImplementation(() => {});
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    Object.defineProperty(navigator, 'clipboard', {
+      value: { writeText },
+      configurable: true,
+    });
+    render(<AnalyticsDashboard load={loader} clock={clock} />);
+    await screen.findByText('38 videos');
+    fireEvent.click(screen.getByRole('button', { name: 'Download CSV' }));
+    expect(click).toHaveBeenCalledTimes(1);
+    const anchor = click.mock.contexts[0] as HTMLAnchorElement;
+    expect(anchor.download).toBe(
+      'library-analytics-video-2026-10-01-to-2026-10-29.csv',
+    );
+    const blob = createObjectURL.mock.calls[0][0];
+    expect(blob.type).toBe('text/csv;charset=utf-8');
+    fireEvent.click(screen.getByRole('button', { name: 'Copy as CSV' }));
+    await screen.findByText('CSV copied. Paste it into a spreadsheet.');
+    const csv = writeText.mock.calls[0][0] as string;
+    const lines = csv.split('\r\n');
+    expect(lines[0]).toBe(
+      '"Video","Appearances","Embed clicks","YouTube clicks"',
+    );
+    // Every filtered row is exported, not only the visible page of 25.
+    expect(lines).toHaveLength(39);
+    click.mockRestore();
+    vi.unstubAllGlobals();
+  });
 });
