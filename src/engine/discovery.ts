@@ -6,13 +6,60 @@ import { compatibleCandidates } from './taskCompatibility';
 
 type Intent = ReturnType<typeof interpretOperation>;
 
+function markTools(words: string[], names: string[][]): string {
+  const marked = [...words];
+  for (const name of [...names].sort((a, b) => b.length - a.length)) {
+    for (let i = 0; i < marked.length; i++) {
+      if (name.every((word, offset) => marked[i + offset] === word))
+        marked.splice(i, name.length, '@tool');
+    }
+  }
+  return marked.join(' ');
+}
+
+function discoveryWords(catalog: PublicCatalog, intent: Intent): string[] {
+  const excludedNames = intent.interpretation.excludedTools
+    .flatMap((tool) => [
+      tool,
+      ...catalog.synonyms
+        .filter((row) => row.category === 'tool' && row.target === tool)
+        .map((row) => row.alias),
+    ])
+    .map(languageTokens);
+  const words: string[] = [];
+  for (let start = 0, end = 0; end <= intent.scoped.length; end++) {
+    if (
+      end < intent.scoped.length &&
+      !['\u0000', '\u0001'].includes(intent.scoped[end])
+    )
+      continue;
+    const clause = markTools(
+      languageTokens(intent.scoped.slice(start, end).join(' ')),
+      excludedNames,
+    );
+    // Remove only complete excluded-tool clauses, never arbitrary negated work.
+    const toolExclusion =
+      /^(?:please )?(?:(?:i|we) )?(?:(?:do|will|would|should|must|can|could) )?(?:not (?:(?:want|need) (?:to )?)?(?:(?:use|using|install|with|switch to|switching to|work with) )?|(?:avoid|exclude|excluding|without|never|no) (?:(?:use|using) )?)@tool(?: (?:and|or) @tool)*(?: please)?$/.test(
+        clause,
+      );
+    if (!toolExclusion)
+      words.push(
+        ...intent.positive
+          .slice(start, end)
+          .filter((word) => /^[a-z0-9-]+$/.test(word)),
+      );
+    start = end + 1;
+  }
+  return words;
+}
+
 // Recognize broad inquiries positively. An unknown verb is not evidence that a
 // specific operation can safely fall back to topic browsing.
 function discoveryTopics(
   catalog: PublicCatalog,
   intent: Intent,
 ): string[] | null {
-  const words = intent.positive.filter((word) => /^[a-z0-9-]+$/.test(word));
+  const words = discoveryWords(catalog, intent);
   const phrases = [
     ...catalog.tasks,
     ...catalog.functionAreas,
@@ -42,16 +89,8 @@ function discoveryTopics(
         .filter((row) => row.category === 'tool' && row.target === tool)
         .map((row) => row.alias),
     ])
-    .map(languageTokens)
-    .sort((a, b) => b.length - a.length);
-  const marked = [...words];
-  for (const name of names) {
-    for (let i = 0; i < marked.length; i++) {
-      if (name.every((word, offset) => marked[i + offset] === word))
-        marked.splice(i, name.length, '@tool');
-    }
-  }
-  const toolQuery = marked.join(' ');
+    .map(languageTokens);
+  const toolQuery = markTools(words, names);
   if (
     names.length &&
     (/^(?:please )?(?:(?:tell|show) (?:me|us) (?:more |a bit )?about |(?:i|we) (?:want|need|would like) to (?:learn|know|understand|explore) (?:more )?(?:about )?|(?:learn|learning|explore|understand|introduction to|about) )?@tool(?: (?:tutorial|example|overview|help|introduction|idea|use|use case))?$/.test(
