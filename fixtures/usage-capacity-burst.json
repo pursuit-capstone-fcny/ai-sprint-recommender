@@ -1,0 +1,14 @@
+{
+  "policy": {
+    "retentionDays": 1,
+    "maxPerMinute": 20,
+    "maxPerDay": 1000,
+    "maxRows": 1000,
+    "recommendationVersions": []
+  },
+  "actions": [
+    { "atMs": 0, "client": 0, "mode": "rules", "cards": 8 },
+    { "atMs": 0, "client": 0, "mode": "rules", "cards": 8 },
+    { "atMs": 0, "client": 0, "mode": "rules", "cards": 8 }
+  ]
+}

@@ -18,7 +18,12 @@ type Pending = {
   resolve: (outcome: Outcome) => void;
 };
 
-async function post(url: string, body: string): Promise<Attempt> {
+async function post(
+  url: string,
+  body: string,
+  fetcher: typeof fetch,
+  now: () => number,
+): Promise<Attempt> {
   const controller = new AbortController();
   let timer: ReturnType<typeof setTimeout> | undefined;
   try {
@@ -29,7 +34,7 @@ async function post(url: string, body: string): Promise<Attempt> {
       }, USAGE_TIMEOUT_MS);
     });
     const request = async (): Promise<Attempt> => {
-      const response = await fetch(url, {
+      const response = await fetcher(url, {
         method: 'POST',
         body,
         credentials: 'omit',
@@ -58,7 +63,7 @@ async function post(url: string, body: string): Promise<Attempt> {
                 Number.isSafeInteger(delay) &&
                 delay >= 1 &&
                 delay <= 86_400_000
-                  ? Date.now() + delay
+                  ? now() + delay
                   : Infinity,
             };
           }
@@ -80,7 +85,15 @@ async function post(url: string, body: string): Promise<Attempt> {
 // Nothing is persisted, and a missing acknowledgment is never called delivered.
 export function createUsageSender(
   url: string,
-  { automaticUsageEnabled = true }: { automaticUsageEnabled?: boolean } = {},
+  {
+    automaticUsageEnabled = true,
+    fetcher = (...args) => fetch(...args),
+    now = () => Date.now(),
+  }: {
+    automaticUsageEnabled?: boolean;
+    fetcher?: typeof fetch;
+    now?: () => number;
+  } = {},
 ) {
   const queue: Pending[] = [];
   let running = false;
@@ -97,13 +110,13 @@ export function createUsageSender(
         if (
           !stopped &&
           (next.explicitFeedback ||
-            (Date.now() >= rateLimitedUntil &&
-              next.queuedAt >= rateLimitedUntil)) &&
-          Date.now() - next.queuedAt < QUEUE_LIFETIME_MS
+            (now() >= rateLimitedUntil && next.queuedAt >= rateLimitedUntil)) &&
+          now() - next.queuedAt < QUEUE_LIFETIME_MS
         ) {
-          outcome = await post(url, next.body);
+          outcome = await post(url, next.body, fetcher, now);
           // Only an explicit lock-contention response gets one retry, same ID.
-          if (outcome === 'busy') outcome = await post(url, next.body);
+          if (outcome === 'busy')
+            outcome = await post(url, next.body, fetcher, now);
           if (outcome === 'stopped') stopped = true;
           if (typeof outcome === 'object')
             rateLimitedUntil = Math.max(
@@ -138,7 +151,7 @@ export function createUsageSender(
       if (
         (!automaticUsageEnabled && !explicitFeedback) ||
         stopped ||
-        (Date.now() < rateLimitedUntil && !explicitFeedback) ||
+        (now() < rateLimitedUntil && !explicitFeedback) ||
         queue.length >= USAGE_QUEUE_LIMIT ||
         !parsed.success ||
         (!explicitFeedback &&
@@ -150,7 +163,7 @@ export function createUsageSender(
       if (new TextEncoder().encode(body).byteLength > MAX_BYTES)
         return Promise.resolve('dropped');
       return new Promise((resolve) => {
-        queue.push({ body, queuedAt: Date.now(), explicitFeedback, resolve });
+        queue.push({ body, queuedAt: now(), explicitFeedback, resolve });
         void drain();
       });
     },
