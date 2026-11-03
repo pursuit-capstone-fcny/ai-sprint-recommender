@@ -112,6 +112,21 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When a submission creates a keyword event
   - Then store only matched original published task values, deduplicate and bound them, and never infer requested keywords from returned cards. Analytics still joins historical events to their own catalog snapshots without rewriting prior tags or events.
 
+### Real-match counting and export
+
+- AC-24.19 Count only real matches after a search
+  - Given recommendation-mode impressions and clicks, including default picks shown before any search, cards shown after Clear and labeled fallback cards
+  - When the report aggregates appearances and clicks
+  - Then count an impression or click only when a search event exists for its sessionId, searchId and catalogVersion and its matchType is `strong` or `semantic`. Default picks with no search, and `weak`, `start-here` or `cross-area` cards, count in no video, tag, association or fact total and are not reported as unattributed. Keyword searches still count. Direct and topic modes are unchanged. The rule uses existing version 1 fields, so it also applies to previously retained events. A real match whose search event was lost in delivery is also excluded, so totals stay conservative.
+- AC-24.20 Aligned numeric columns
+  - Given any analytics table
+  - When it renders numeric columns
+  - Then each numeric heading, including its sort control, and its cells share one centered class, while video, tag and category text stays left-aligned.
+- AC-24.21 Spreadsheet export without new permissions
+  - Given a loaded report with filters applied
+  - When a staff member chooses Download CSV or Copy as CSV
+  - Then the export contains every filtered row in the current sort and only the visible columns, named `library-analytics-<view>-<start>-to-<end>.csv`. Text cells beginning with `=`, `+`, `-`, `@`, tab or carriage return are prefixed with `'`. Export runs in the browser, adds no server function or OAuth scope, and never writes to a Sheet.
+
 ### Open questions
 
 - [ ] Name the authorized admin viewers and FCNY owner for aggregate refresh, retention, access and recovery; confirm reporting coverage and retention under #8. Dashboard inclusion in MVP is already confirmed.

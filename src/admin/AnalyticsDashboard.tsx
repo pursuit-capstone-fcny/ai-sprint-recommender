@@ -19,6 +19,7 @@ import {
 } from './transport';
 import { TopicSearch } from './TopicSearch';
 import { parseSheetLink } from './sheetLink';
+import { csvFilename, downloadCsv, toCsv } from './csv';
 import '../pages/global.css';
 import './dashboard.css';
 
@@ -81,6 +82,9 @@ const dateLabel = (value: string | null) =>
       }).format(new Date(value))
     : 'Unavailable';
 const number = (value: number) => value.toLocaleString('en-US');
+const textFields: (keyof DashboardRow)[] = ['title', 'tag', 'category'];
+const numberClass = (key: keyof DashboardRow) =>
+  textFields.includes(key) ? undefined : 'analytics-number';
 const stateCopy = {
   error:
     'The reporting refresh failed. Ask the reporting owner to repair it, then reload.',
@@ -271,6 +275,41 @@ export function AnalyticsDashboard({
       setFilters((f) =>
         f?.activity === 'zero-searches' ? { ...f, activity: 'all' } : f,
       );
+    }
+  };
+  const [exportStatus, setExportStatus] = useState('');
+  // Exports every filtered row in the current sort, with the visible columns.
+  const tableCsv = () =>
+    toCsv(
+      visibleFields.map((f) => f.label),
+      sorted.map((row) =>
+        visibleFields.map((f) => {
+          const value = row[f.key];
+          if (f.key === 'category') return categoryName(row.category);
+          if (typeof value === 'number')
+            return snapshot?.collectionAvailable === false
+              ? 'Unavailable'
+              : value;
+          return String(value);
+        }),
+      ),
+    );
+  const downloadTable = () => {
+    if (!filters) return;
+    downloadCsv(
+      csvFilename(view, filters.startDate, filters.endDate),
+      tableCsv(),
+    );
+    setExportStatus(
+      'CSV download started. If nothing downloaded, use Copy as CSV.',
+    );
+  };
+  const copyTable = async () => {
+    try {
+      await navigator.clipboard.writeText(tableCsv());
+      setExportStatus('CSV copied. Paste it into a spreadsheet.');
+    } catch {
+      setExportStatus('Copying is blocked in this window.');
     }
   };
   const showKeywords = (id: string) => {
@@ -801,6 +840,25 @@ export function AnalyticsDashboard({
                         retained data is included.
                       </div>
                     )}
+                  <div className="analytics-export">
+                    <button
+                      className="analytics-reset"
+                      disabled={rows.length === 0}
+                      onClick={downloadTable}
+                    >
+                      Download CSV
+                    </button>
+                    <button
+                      className="analytics-reset"
+                      disabled={rows.length === 0}
+                      onClick={copyTable}
+                    >
+                      Copy as CSV
+                    </button>
+                    <span role="status" aria-live="polite">
+                      {exportStatus}
+                    </span>
+                  </div>
                   <div
                     className="analytics-table-scroll"
                     role="region"
@@ -818,6 +876,7 @@ export function AnalyticsDashboard({
                             <th
                               key={f.key}
                               scope="col"
+                              className={numberClass(f.key)}
                               aria-sort={
                                 sort.key === f.key
                                   ? sort.desc
@@ -852,14 +911,7 @@ export function AnalyticsDashboard({
                         {sorted.slice(page * 25, (page + 1) * 25).map((row) => (
                           <tr key={row.key}>
                             {visibleFields.map((f) => (
-                              <td
-                                key={f.key}
-                                className={
-                                  typeof row[f.key] === 'number'
-                                    ? 'analytics-number'
-                                    : ''
-                                }
-                              >
+                              <td key={f.key} className={numberClass(f.key)}>
                                 {f.key === 'title' ? (
                                   <>
                                     <strong>{row.title}</strong>

@@ -107,7 +107,12 @@ describe('MVP analytics aggregation', () => {
   });
   it('keeps daily/source/mode facts additive and preserves zero inventory for Looker parameter controls', () => {
     const report = run(
-      [search(), record(2), record(3, { src: 'team', searchId: uuid(67) })],
+      [
+        search(),
+        record(2),
+        search(4, { src: 'team', searchId: uuid(67) }),
+        record(3, { src: 'team', searchId: uuid(67) }),
+      ],
       { ...window, includeTeam: true },
     );
     const facts = report.facts.filter(
@@ -133,7 +138,7 @@ describe('MVP analytics aggregation', () => {
       report.facts
         .filter((row) => row.entity === 'tag')
         .reduce((sum, row) => sum + row.searches, 0),
-    ).toBe(3);
+    ).toBe(6);
   });
 
   it('retains cross-tool keyword associations when the video has different catalog tags', () => {
@@ -157,6 +162,7 @@ describe('MVP analytics aggregation', () => {
       catalogVersion: `sha256:${'2'.repeat(64)}`,
     };
     const report = run([
+      search(3, { catalogVersion: patch.catalogVersion }),
       record(1, patch),
       record(2, { ...patch, type: 'click', target: 'youtube' }),
     ]);
@@ -167,7 +173,7 @@ describe('MVP analytics aggregation', () => {
       appearances: 1,
       youtubeClicks: 1,
     });
-    expect(report.diagnostics.unmappedEvents).toBe(2);
+    expect(report.diagnostics.unmappedEvents).toBe(3);
     expect(report.tags.every((row) => row.appearances === 0)).toBe(true);
   });
 
@@ -247,6 +253,7 @@ describe('MVP analytics aggregation', () => {
     const records = [
       search(),
       record(2),
+      search(5, { searchId: uuid(33), src: 'team' }),
       record(3, { searchId: uuid(33), src: 'team' }),
       record(4, {
         searchId: uuid(44),
@@ -291,10 +298,11 @@ describe('MVP analytics aggregation', () => {
     expect(newYorkDate('2026-11-01T06:30:00Z')).toBe('2026-11-01');
     const original = record(1, {}, '2026-10-21T03:59:59Z');
     const rerender = record(2, {}, '2026-10-21T04:00:00Z');
-    expect(video(run([rerender, original])).appearances).toBe(1);
+    const submitted = search(3, {}, '2026-10-21T03:59:59Z');
+    expect(video(run([submitted, rerender, original])).appearances).toBe(1);
     expect(
       video(
-        run([rerender, original], {
+        run([submitted, rerender, original], {
           startDate: '2026-10-21',
           endDate: '2026-10-21',
         }),
@@ -311,7 +319,10 @@ describe('MVP analytics aggregation', () => {
         index ? item : { ...item, tasks: ['budget tracking'] },
       ),
     });
-    const events = [record(1, { catalogVersion: oldVersion })];
+    const events = [
+      search(2, { catalogVersion: oldVersion }),
+      record(1, { catalogVersion: oldVersion }),
+    ];
     const mapped = buildAnalyticsReport({
       records: events,
       current: catalog,
@@ -323,7 +334,7 @@ describe('MVP analytics aggregation', () => {
     const missing = run(events);
     expect(video(missing).appearances).toBe(1);
     expect(task(missing).appearances).toBe(0);
-    expect(missing.diagnostics.unmappedEvents).toBe(1);
+    expect(missing.diagnostics.unmappedEvents).toBe(2);
     expect(missing.associations).toEqual([]);
     const filtered = buildAnalyticsReport({
       records: events,
@@ -347,14 +358,15 @@ describe('MVP analytics aggregation', () => {
       record(2, { ...direct }),
       record(3, { ...direct, type: 'click', target: 'youtube' }),
     ]);
+    // record(1) is a default pick with no search, so it counts nowhere.
     expect(video(report)).toMatchObject({
-      appearances: 1,
+      appearances: 0,
       directViews: 1,
       directYoutubeClicks: 1,
       youtubeClicks: 0,
     });
     expect(report.associations).toEqual([]);
-    expect(report.diagnostics.unattributedEvents).toBe(3);
+    expect(report.diagnostics.unattributedEvents).toBe(2);
     expect(JSON.stringify(report)).not.toContain('percentWatched');
   });
 
@@ -400,6 +412,70 @@ describe('MVP analytics aggregation', () => {
       run([], { startDate: '2026-10-22', endDate: '2026-10-20' }),
     ).toThrow();
     expect(() => run([], { ...window, tag: 'ChatGPT' })).toThrow();
+  });
+
+  it('counts default picks shown before any search nowhere', () => {
+    const report = run([
+      record(1),
+      record(2, { type: 'click', target: 'embed' }),
+      record(3, { type: 'click', target: 'youtube' }),
+    ]);
+    expect(video(report)).toMatchObject({
+      appearances: 0,
+      embedClicks: 0,
+      youtubeClicks: 0,
+    });
+    expect(report.tags.every((row) => row.appearances === 0)).toBe(true);
+    expect(report.associations).toEqual([]);
+    expect(report.diagnostics.unattributedEvents).toBe(0);
+  });
+
+  it('excludes labeled fallback cards after a search but keeps real matches and the search', () => {
+    const report = run([
+      search(),
+      record(2, { matchType: 'weak' }),
+      record(3, { matchType: 'weak', type: 'click', target: 'embed' }),
+      record(4, {
+        matchType: 'start-here',
+        youtubeId: catalog.items[1].youtubeId,
+      }),
+      record(5, {
+        matchType: 'strong',
+        youtubeId: catalog.items[2].youtubeId,
+      }),
+      record(6, {
+        matchType: 'strong',
+        youtubeId: catalog.items[2].youtubeId,
+        type: 'click',
+        target: 'youtube',
+      }),
+    ]);
+    expect(video(report)).toMatchObject({ appearances: 0, embedClicks: 0 });
+    expect(video(report, 1).appearances).toBe(0);
+    expect(video(report, 2)).toMatchObject({
+      appearances: 1,
+      youtubeClicks: 1,
+    });
+    expect(task(report).searches).toBe(1);
+    expect(
+      report.associations.every(
+        (row) => row.youtubeId === catalog.items[2].youtubeId,
+      ),
+    ).toBe(true);
+  });
+
+  it('counts semantic Haiku picks after a search as real matches', () => {
+    const llm = {
+      recommendationEngine: 'llm',
+      llmFallbackReason: 'none',
+      modelVersion: 'claude-haiku-5-5',
+      promptVersion: 'catalog-pick-evidence-v6',
+    };
+    const report = run([
+      search(1, llm),
+      record(2, { ...llm, matchType: 'semantic' }),
+    ]);
+    expect(video(report).appearances).toBe(1);
   });
 });
 

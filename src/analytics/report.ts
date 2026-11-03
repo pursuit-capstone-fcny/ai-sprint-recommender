@@ -194,11 +194,13 @@ export function buildAnalyticsReport(
     Exclude<UsageEvent, { type: 'search' }>
   >();
   const seenSearches = new Set<string>();
+  const searchedContexts = new Set<string>();
   for (const { event } of records) {
     const snapshot = catalogs.get(event.catalogVersion);
     if (snapshot && !hasUsageCatalogReferences(event, snapshot))
       throw new Error('Invalid event catalog reference');
     if (event.type === 'search') {
+      searchedContexts.add(contextKey(event));
       const existing = searches.get(contextKey(event));
       // A search context is immutable. Ignore retries with a new event ID only if semantically identical.
       if (
@@ -328,6 +330,15 @@ export function buildAnalyticsReport(
       if (seenSearches.has(contextKey(e))) continue;
       seenSearches.add(contextKey(e));
     }
+    // Recommendation stats count only real matches shown after a search. Default
+    // picks (no search) and labeled fallback cards (weak/start-here) count nowhere.
+    if (
+      e.type !== 'search' &&
+      e.mode === 'recommendations' &&
+      (!searchedContexts.has(contextKey(e)) ||
+        (e.matchType !== 'strong' && e.matchType !== 'semantic'))
+    )
+      continue;
     const day = receivedDate(record.receivedAt);
     if (
       day < filter.startDate ||
