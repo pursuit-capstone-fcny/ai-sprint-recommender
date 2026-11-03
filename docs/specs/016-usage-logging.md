@@ -76,6 +76,14 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the operator runs `pnpm check:usage-capacity <scenario.json>`
   - Then exercise the real event producers, bounded sender, collector and learner report in memory, report generated/accepted/dropped events by type and fixed collector error codes, and exit 1 for any delivery loss. AI burst admission uses the real budget gate and current source model/prompt, with a separately labeled configured token-cost ceiling. Missing permitted version pairs and rejected AI admissions fail the check. Invalid or oversized scenarios exit 2 without echoing supplied values. No provider calls, live requests, Sheet writes or policy changes occur; passing does not establish native throughput or production configuration.
 
+- AC-16.11 Bounded transient recovery
+  - Given a network/response-read failure, request timeout, HTTP 408/500/502/503/504, or `USAGE_BUSY`/`USAGE_UNAVAILABLE`
+  - When an unexpired queued event receives that outcome
+  - Then retry at most once with the identical payload and event ID. A committed write with a lost acknowledgment becomes a duplicate receipt rather than another row. Repeated failures resolve as dropped; subsequent events can continue.
+  - Given a policy or validation rejection, an opaque response, or an event whose queue lifetime has elapsed
+  - When delivery runs
+  - Then do not retry it. The 32-event queue, 60-second lifetime, 10-second per-attempt deadline, in-memory-only storage, configured caps, cooldown handling and disabled/full stops remain unchanged.
+
 ### Open questions
 
 - [ ] Ali to approve logging, retention and Option A at #8. Until then, production logging stays off; Option B needs a separate privacy design and revised anonymity claims.
