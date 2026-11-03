@@ -99,7 +99,8 @@ This protects the shared test catalog while exercising real content publication.
 An operator can manually dispatch `publish-library.yml` with the same preview
 name/data branch and an `app_collector_url` to build an isolated app that records
 activity in the copy. This option accepts only an Apps Script `/exec` endpoint,
-requires a named test preview, and disables paid LLM calls, requests and feedback.
+requires a named test preview, and keeps paid LLM calls, requests and feedback
+off by default.
 Normal Sheet publication never sends this input and only deploys catalog assets.
 
 Use a repository-scoped Contents/Actions write credential in Script Properties.
@@ -150,3 +151,20 @@ and two requests per minute. The test namespace retains that budget across
 redeployments. Dispatch again with `app_live_haiku=false` after testing to disable
 paid calls and overwrite both temporary credential values with empty strings.
 The runner deletes its temporary secrets file even if deployment fails.
+
+The full private-copy workflow was checked on November 3 with feedback, topic
+requests, consented demo offers, an authenticated analytics connection, and four
+paid Haiku calls under the separate five-cent test budget. The final deployment
+has paid calls disabled and its temporary provider/rate credentials cleared.
+Feedback revisions produced one effective response; contact details stayed in
+the separate review workbook. Blank deterministic submissions now remain passive
+browsing and create no search or appearance. Direct playback and feedback do
+not inflate recommendation metrics. Labelled fallback cards remain excluded
+from real-match appearance and click totals.
+
+Native Apps Script delivery remains best effort. The first fallback search
+receipt and one impression from the final Haiku abstention were absent on
+readback. The final successful Haiku search and all five semantic impressions
+were present. The verification record preserves these gaps; a green unit test
+suite does not establish lossless native throughput. The added video remains
+a synthetic metadata fixture, and its media playback is not verified.
