@@ -174,6 +174,20 @@ function setup() {
 }
 
 describe('usage Apps Script adapter', () => {
+  it('AC-16.9: returns the cooldown but keeps collector logs limited to fixed outcomes', () => {
+    const { properties, send, log, usage } = setup();
+    properties.USAGE_MAX_PER_MINUTE = '1';
+    expect(send()).toHaveProperty('status', 'accepted');
+    expect(send(impressionEvent)).toEqual({
+      error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 60_000 },
+    });
+    expect(log).toHaveBeenLastCalledWith(
+      'usage-post',
+      JSON.stringify({ error: { code: 'USAGE_RATE_LIMITED' } }),
+    );
+    expect(usage.Usage).toHaveLength(2);
+  });
+
   it('AC-16.3: writes literal JSON to the configured usage book and flushes under lock', () => {
     const { send, usage, operations, openById } = setup();
     expect(send()).toEqual({ ok: true, status: 'accepted' });

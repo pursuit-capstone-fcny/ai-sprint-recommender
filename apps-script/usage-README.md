@@ -39,10 +39,14 @@ events expire after 60 seconds. Each attempt has a ten-second deadline covering
 both fetch and response parsing. Requests use `keepalive`, omit credentials and
 referrers, and set no custom headers. Only `USAGE_BUSY` gets one immediate retry
 with the identical payload. Network, opaque and invalid responses are dropped;
-disabled/full/rate-limit responses stop automatic delivery for the rest of the
-visit. Spec #29 allows a new explicit learner action to retry feedback after a
-temporary rate limit, reusing the event ID and context. Disabled/full collectors
-remain stopped, and automatic search/impression/click traffic never resumes.
+disabled/full responses stop automatic delivery for the rest of the visit.
+A rate-limit response with a valid `retryAfterMs` suppresses automatic traffic
+until that cooldown expires. Only fresh actions after expiry may send; blocked
+and previously queued automatic events are dropped, with no scheduled retry or
+replay. Missing or invalid cooldown metadata retains the legacy stop until
+reload. Spec #29 still allows a new explicit learner action to retry feedback
+during a temporary rate limit, reusing its event ID and context. Shorter later
+hints never shorten an existing cooldown. Disabled/full collectors stay stopped.
 Navigation may lose queued events, and an acknowledgment is required to count
 delivery as confirmed. Counts remain estimates.
 
@@ -111,6 +115,24 @@ ContentService returns JSON envelopes, not custom HTTP status codes:
 - `{"ok":true,"status":"duplicate"}` for an existing ID.
 - `{"error":{"code":"USAGE_…"}}` for disabled, invalid, busy, full,
   rate-limited or unavailable requests. Responses never echo submitted values.
+- Rate limits add integer `retryAfterMs` from 1 through 86,400,000. The delay
+  covers the latest required expiry of the currently exceeded rolling-minute
+  and UTC-day caps. It is a cooldown, not a delivery promise: other traffic may
+  consume capacity before the next action. All configured caps still apply.
+
+### Cooldown rollout
+
+Deploy the rebuilt collector bundle through the existing Apps Script release
+process before the browser build. Older browsers ignore the additional receipt
+field and keep their previous suppression behavior. New browsers talking to an
+older collector also retain that behavior until reload; no cap is inferred or
+increased. Existing open pages keep their loaded sender until reload.
+
+Use isolated synthetic events to verify rolling-minute expiry, UTC midnight,
+duplicate acknowledgments and retained-row stops before production rollout.
+The sender/collector tests exercise these rules in memory; they do not establish
+live deployment or Sheet reconciliation. Keep existing collection enablement,
+retention, sharing, and traffic settings.
 
 With logging enabled, execution logs record only these fixed `usage-post`
 outcomes. Count error outcomes for server-observed drops; browser/network losses

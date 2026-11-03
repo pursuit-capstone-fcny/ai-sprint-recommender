@@ -214,7 +214,7 @@ describe('usage ingestion', () => {
     expect(send()).toHaveProperty('status', 'accepted');
     expect(send(impressionEvent)).toHaveProperty('status', 'accepted');
     expect(send({ ...impressionEvent, eventId: searchEvent.searchId })).toEqual(
-      { error: { code: 'USAGE_RATE_LIMITED' } },
+      { error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 60_000 } },
     );
     expect(send()).toHaveProperty('status', 'duplicate');
     expect(records).toHaveLength(2);
@@ -228,8 +228,30 @@ describe('usage ingestion', () => {
         receivedAt: '2026-10-20T08:00:00Z',
       });
     }
-    expect(send()).toEqual({ error: { code: 'USAGE_RATE_LIMITED' } });
+    expect(send()).toEqual({
+      error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 12 * 60 * 60 * 1000 },
+    });
     records[0].receivedAt = '2026-10-19T23:59:59Z';
+    expect(send()).toHaveProperty('status', 'accepted');
+  });
+
+  it('AC-16.9: waits for enough rolling receipts to expire when a cap was lowered', () => {
+    const { send, records, ports, policy } = setup();
+    policy.maxPerDay = 10;
+    policy.maxRows = 10;
+    for (const seconds of [10, 20, 30])
+      records.push({
+        eventId: `prior-${seconds}`,
+        receivedAt: `2026-10-20T11:59:${seconds}.000Z`,
+      });
+    expect(send()).toEqual({
+      error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 20_000 },
+    });
+    ports.now = () => new Date('2026-10-20T12:00:19.999Z');
+    expect(send()).toEqual({
+      error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 1 },
+    });
+    ports.now = () => new Date('2026-10-20T12:00:20.000Z');
     expect(send()).toHaveProperty('status', 'accepted');
   });
 

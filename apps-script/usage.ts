@@ -93,13 +93,29 @@ export function receiveUsage(
       return JSON.stringify({ ok: true, status: 'duplicate' });
     if (records.length >= policy.maxRows) return usageError('USAGE_FULL');
     const today = now.toISOString().slice(0, 10);
+    let retryAt = 0;
     if (
       records.filter((record) => record.receivedAt.startsWith(today)).length >=
-        policy.maxPerDay ||
-      records.filter((record) => Date.parse(record.receivedAt) > nowMs - 60_000)
-        .length >= policy.maxPerMinute
-    ) {
-      return usageError('USAGE_RATE_LIMITED');
+      policy.maxPerDay
+    )
+      retryAt = Date.parse(`${today}T00:00:00.000Z`) + DAY_MS;
+    const recent = records
+      .map((record) => Date.parse(record.receivedAt))
+      .filter((time) => time > nowMs - 60_000)
+      .sort((a, b) => a - b);
+    // Enough receipts must expire to leave fewer than the current cap.
+    if (recent.length >= policy.maxPerMinute)
+      retryAt = Math.max(
+        retryAt,
+        recent[recent.length - policy.maxPerMinute] + 60_000,
+      );
+    if (retryAt) {
+      return JSON.stringify({
+        error: {
+          code: 'USAGE_RATE_LIMITED',
+          retryAfterMs: Math.min(DAY_MS, Math.max(1, retryAt - nowMs)),
+        },
+      });
     }
     if (
       event.modelVersion &&

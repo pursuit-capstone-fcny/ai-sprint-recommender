@@ -42,6 +42,124 @@ afterEach(() => {
 });
 
 describe('usage delivery', () => {
+  it('AC-16.9: drops old events handed over by a producer after cooldown expiry', async () => {
+    vi.useFakeTimers();
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(
+        ack({ error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 10 } }),
+      )
+      .mockResolvedValue(ack());
+    const sender = createUsageSender(url);
+    const delayed = event();
+    await sender.send(event(), catalog);
+    await vi.advanceTimersByTimeAsync(10);
+    expect(await sender.send(delayed, catalog)).toBe('dropped');
+    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(await sender.send(event(), catalog)).toBe('accepted');
+    expect(fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it.each([undefined, null, 0, -1, 1.5, 86_400_001, '1000'])(
+    'AC-16.9: unsupported cooldown %s retains the legacy stop',
+    async (retryAfterMs) => {
+      vi.useFakeTimers();
+      vi.mocked(fetch)
+        .mockResolvedValueOnce(
+          ack({ error: { code: 'USAGE_RATE_LIMITED', retryAfterMs } }),
+        )
+        .mockResolvedValue(ack());
+      const sender = createUsageSender(url);
+      expect(await sender.send(event(), catalog)).toBe('dropped');
+      await vi.advanceTimersByTimeAsync(86_400_000);
+      expect(await sender.send(event(), catalog)).toBe('dropped');
+      expect(fetch).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  it('AC-16.9: explicit feedback cannot shorten the automatic cooldown', async () => {
+    vi.useFakeTimers();
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(
+        ack({ error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 1000 } }),
+      )
+      .mockResolvedValueOnce(
+        ack({ error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 100 } }),
+      )
+      .mockResolvedValue(ack());
+    const sender = createUsageSender(url);
+    await sender.send(event(), catalog);
+    await vi.advanceTimersByTimeAsync(500);
+    const feedback = {
+      ...impressionEvent,
+      schemaVersion: 2,
+      type: 'feedback',
+      helpful: true,
+      voteRevision: 1,
+    };
+    expect(
+      await sender.send(feedback, catalog, { explicitFeedback: true }),
+    ).toBe('dropped');
+    await vi.advanceTimersByTimeAsync(499);
+    expect(await sender.send(event(), catalog)).toBe('dropped');
+    expect(fetch).toHaveBeenCalledTimes(2);
+    await vi.advanceTimersByTimeAsync(1);
+    expect(await sender.send(event(), catalog)).toBe('accepted');
+    expect(fetch).toHaveBeenCalledTimes(3);
+  });
+
+  it('AC-16.9: does not replay queued automatic events after feedback outlasts the cooldown', async () => {
+    vi.useFakeTimers();
+    let releaseLimit: (response: Response) => void = () => {};
+    let releaseFeedback: (response: Response) => void = () => {};
+    vi.mocked(fetch)
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            releaseLimit = resolve;
+          }),
+      )
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            releaseFeedback = resolve;
+          }),
+      )
+      .mockResolvedValue(ack());
+    const sender = createUsageSender(url);
+    const limited = sender.send(event(), catalog);
+    const feedback = sender.send(
+      {
+        ...impressionEvent,
+        schemaVersion: 2,
+        type: 'feedback',
+        helpful: true,
+        voteRevision: 1,
+      },
+      catalog,
+      { explicitFeedback: true },
+    );
+    const old = event();
+    const queued = sender.send(old, catalog);
+    releaseLimit(
+      ack({ error: { code: 'USAGE_RATE_LIMITED', retryAfterMs: 10 } }),
+    );
+    expect(await limited).toBe('dropped');
+    await vi.advanceTimersByTimeAsync(20);
+    const fresh = sender.send(event(), catalog);
+    releaseFeedback(ack());
+    expect(await feedback).toBe('accepted');
+    expect(await queued).toBe('dropped');
+    expect(await fresh).toBe('accepted');
+    expect(fetch).toHaveBeenCalledTimes(3);
+    expect(
+      vi
+        .mocked(fetch)
+        .mock.calls.some(
+          ([, init]) => JSON.parse(String(init?.body)).eventId === old.eventId,
+        ),
+    ).toBe(false);
+  });
+
   it('sends validated text without headers, cookies or a referrer, and waits for a real acknowledgment', async () => {
     const value = event();
     expect(await createUsageSender(url).send(value, catalog)).toBe('accepted');
