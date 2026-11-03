@@ -339,18 +339,13 @@
 .catalog-notice:empty {
   display: none;
 }
-.demo-notice,
-.library-status {
+.demo-notice {
   border-radius: 7px;
   padding: 5px 10px;
 }
 .demo-notice {
   background: var(--amber);
   color: var(--amber-ink);
-}
-.library-status {
-  background: var(--teal-tint);
-  color: var(--navy-2);
 }
 .results-head {
   display: flex;

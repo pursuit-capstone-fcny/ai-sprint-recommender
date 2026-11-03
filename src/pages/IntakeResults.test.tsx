@@ -5,7 +5,7 @@ import {
   screen,
   within,
 } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
 import {
@@ -16,6 +16,7 @@ import {
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.unstubAllEnvs();
 });
 
 const catalog: CatalogItem[] = [
@@ -93,7 +94,10 @@ const publicCatalog = {
   })),
 };
 
+beforeEach(() => vi.stubEnv('VITE_LLM_ENABLED', 'false'));
+
 function submitDiscovery() {
+  fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
 
@@ -136,7 +140,7 @@ describe('IntakeResults', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
     expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
     fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
     fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
     expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
     expect(fetcher).not.toHaveBeenCalled();
@@ -207,10 +211,14 @@ describe('IntakeResults', () => {
 
     const firstCardAfter = screen.getAllByRole('listitem')[0];
     expect(firstCardAfter.textContent).toContain('Gizmo Onboarding Guide');
+    expect(
+      screen.getByRole('heading', { name: 'Recommended Videos' }),
+    ).toBeTruthy();
   });
 
   it('does not add unrelated fallback cards to a task request', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+    fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
     fireEvent.change(screen.getByLabelText(/your goal/i), {
       target: { value: 'gizmo onboarding' },
     });
@@ -261,7 +269,7 @@ describe('IntakeResults', () => {
     expect(firstItem).toBeTruthy();
     expect(within(cards[0]).getByText('More to explore')).toBeTruthy();
 
-    fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
+    submitDiscovery();
     expect(screen.getAllByText('More to explore')).toHaveLength(5);
   });
 });

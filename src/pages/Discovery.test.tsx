@@ -92,7 +92,7 @@ describe('text-first discovery', () => {
       });
       expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
       expect(document.activeElement).toBe(
-        screen.getByRole('heading', { name: 'Videos to start with' }),
+        screen.getByRole('heading', { name: 'Recommended Videos' }),
       );
       expect(screen.getByText('AI suggestions')).toBeTruthy();
     },

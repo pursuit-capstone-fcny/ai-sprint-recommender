@@ -75,12 +75,7 @@ export function IntakeResultsPage() {
               catalogNotice={
                 catalog.source === 'fixture' ? (
                   <p className="catalog-notice demo-notice">Demo catalog</p>
-                ) : (
-                  <p className="catalog-notice library-status">
-                    {catalog.items.length}{' '}
-                    {catalog.items.length === 1 ? 'video' : 'videos'} loaded
-                  </p>
-                )
+                ) : null
               }
               usage={
                 usageSession

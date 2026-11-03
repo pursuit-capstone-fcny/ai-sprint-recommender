@@ -27,7 +27,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-43.1 Existing form
   - Given #82's plain-language description and optional function area and tool refinements
   - When someone submits Find videos
-  - Then Deterministic is selected initially. Changing the toggle makes no request. A deterministic task submission runs #102 locally; a Haiku submission makes at most one server request with an accessible loading state. Haiku requires a nonblank description. Blank deterministic input retains catalog browsing
+  - Then Haiku AI is selected initially and appears before Deterministic. The starter collection remains visible before submission and after Clear. Changing the toggle makes no request. A deterministic task submission runs #102 locally; a Haiku submission makes at most one server request with an accessible loading state. Haiku requires a nonblank description. Blank deterministic input retains catalog browsing
 - AC-43.2 Ranked results
   - Given a valid response from #63
   - When results render

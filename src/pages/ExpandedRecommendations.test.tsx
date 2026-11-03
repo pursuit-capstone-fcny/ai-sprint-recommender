@@ -124,6 +124,11 @@ it.each(['rules', 'llm'] as const)(
         />
       </StrictMode>,
     );
+    fireEvent.click(
+      screen.getByRole('radio', {
+        name: engine === 'llm' ? 'Haiku AI' : 'Deterministic',
+      }),
+    );
     if (engine === 'llm') {
       fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
       fireEvent.change(screen.getByLabelText('Your goal'), {
