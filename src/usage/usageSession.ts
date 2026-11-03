@@ -1,5 +1,6 @@
 import type { UsageEvent } from '../contracts/usageEvent';
 import { createUsageSender, type UsageSender } from './sendUsage';
+import { feedbackQuestion } from '../feedback/vote';
 
 export interface UsageSession {
   sessionId: string;
@@ -22,12 +23,17 @@ export function usageSource(search: string): UsageEvent['src'] {
   }
 }
 
-export function testUsageEndpoint(source: 'remote' | 'fixture'): string | null {
-  const url = import.meta.env.VITE_USAGE_TEST_URL?.trim();
+export function usageEndpoint(source: 'remote' | 'fixture'): string | null {
+  const environment = import.meta.env.VITE_USAGE_ENVIRONMENT;
+  const url = (
+    environment === 'production'
+      ? import.meta.env.VITE_USAGE_PRODUCTION_URL
+      : import.meta.env.VITE_USAGE_TEST_URL
+  )?.trim();
   if (
     source !== 'remote' ||
-    import.meta.env.VITE_USAGE_ENABLED !== 'true' ||
-    import.meta.env.VITE_USAGE_ENVIRONMENT !== 'test' ||
+    (import.meta.env.VITE_USAGE_ENABLED !== 'true' && !feedbackQuestion()) ||
+    (environment !== 'test' && environment !== 'production') ||
     !url ||
     !/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(
       url,
@@ -44,14 +50,16 @@ let endpoint: string | undefined;
 export function getUsageSession(
   source: 'remote' | 'fixture',
 ): UsageSession | null {
-  const url = testUsageEndpoint(source);
+  const url = usageEndpoint(source);
   if (!url || typeof crypto.randomUUID !== 'function') return null;
   if (!session || endpoint !== url) {
     endpoint = url;
     session = {
       sessionId: crypto.randomUUID(),
       src: usageSource(window.location.search),
-      sender: createUsageSender(url),
+      sender: createUsageSender(url, {
+        automaticUsageEnabled: import.meta.env.VITE_USAGE_ENABLED === 'true',
+      }),
     };
   }
   return session;

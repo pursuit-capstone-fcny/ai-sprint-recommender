@@ -35,25 +35,14 @@ export function inputFixture(): RecommendationRequest {
 }
 
 export function assessmentFixture(): CatalogAssessment {
-  const catalog = catalogFixture();
   return {
-    catalogVersion: catalog.catalogVersion,
-    goalStatus: 'work',
-    workSteps: [
-      { id: 'w1', requestQuote: 'Check the records', label: 'Check records' },
-    ],
-    hardConstraints: [],
-    assessments: catalog.items.map((item, index) => ({
-      youtubeId: item.youtubeId,
-      grade: index < 2 ? 3 : 0,
-      stepId: index < 2 ? 'w1' : null,
-      quote: index < 2 ? 'Check records before drafting a report.' : '',
-      rationale:
-        index < 2
-          ? 'Teaches checking the records before writing.'
-          : 'Does not teach this requested operation.',
-      constraintChecks: [],
+    noWork: false,
+    goalType: 'task',
+    picks: [0, 1].map((position) => ({
+      position,
+      rationale: 'Teaches checking the records before writing.',
+      grade: 3,
+      quote: 'Check records before drafting a report.',
     })),
-    priorityOrder: ['scoring0000', 'scoring0001'],
   };
 }

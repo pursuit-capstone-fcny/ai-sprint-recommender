@@ -14,7 +14,17 @@ import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { UsageEventSchema } from '../contracts/usageEvent';
 import { IntakeResults } from './IntakeResults';
 
-const publicCatalog = parsePublicCatalog(fixture);
+const publicCatalog = parsePublicCatalog({
+  ...fixture,
+  items: [
+    ...fixture.items,
+    ...['fx10Extra01', 'fx11Extra02'].map((youtubeId) => ({
+      ...fixture.items[3],
+      youtubeId,
+      title: `[Fixture] General introduction ${youtubeId}`,
+    })),
+  ],
+});
 const props = {
   catalog: publicCatalog.items.map(toCatalogItem),
   publicCatalog,
@@ -38,7 +48,7 @@ function choose(name: 'Deterministic' | 'Haiku AI') {
 function submit() {
   fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 }
-function setup(ai = true) {
+function setup(ai = true, catalog = props.catalog) {
   const send = vi.fn(async (event: unknown) => {
     UsageEventSchema.parse(event);
     return 'accepted' as const;
@@ -47,6 +57,7 @@ function setup(ai = true) {
     <StrictMode>
       <IntakeResults
         {...props}
+        catalog={catalog}
         usage={{
           catalog: publicCatalog,
           session: {
@@ -114,7 +125,7 @@ describe('independent recommendation engines', () => {
     expect(JSON.stringify(events)).not.toContain('private-fictional-goal');
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
   });
-  it('preserves a valid abstention and requires an explicit engine choice for local matching', async () => {
+  it('preserves abstention, shows six labeled general videos, and logs actual local fallback activity', async () => {
     vi.mocked(fetch).mockResolvedValue(
       Response.json({ ...success, youtubeIds: [] }),
     );
@@ -122,7 +133,14 @@ describe('independent recommendation engines', () => {
     goal('Draft a grant report');
     submit();
     await screen.findByText('No confident AI matches found.');
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(
+      screen.getByRole('heading', { name: 'Fallback videos' }),
+    ).toBeTruthy();
+    expect(screen.getAllByText('Fallback video')).toHaveLength(6);
+    expect(
+      screen.getByText(/These are general library suggestions/),
+    ).toBeTruthy();
+    expect(screen.queryByText('Suggested for your goal')).toBeNull();
     await waitFor(() =>
       expect(
         send.mock.calls.filter(
@@ -130,29 +148,92 @@ describe('independent recommendation engines', () => {
         ),
       ).toHaveLength(1),
     );
+    fireEvent.click(screen.getAllByRole('button', { name: /Play / })[0]);
+    expect(document.querySelectorAll('iframe')).toHaveLength(1);
+    goal('an unsubmitted private-fictional-goal');
+    const events = send.mock.calls.map(([e]) => UsageEventSchema.parse(e));
+    expect(events.filter((e) => e.type === 'impression')).toHaveLength(6);
+    expect(events.filter((e) => e.type === 'click')).toHaveLength(1);
+    expect(
+      events.every(
+        (e) =>
+          e.recommendationEngine === 'rules' &&
+          e.llmFallbackReason === 'insufficient-results' &&
+          e.modelVersion === 'fixture-model' &&
+          e.promptVersion === 'fixture-prompt',
+      ),
+    ).toBe(true);
+    expect(events.find((e) => e.type === 'search')).toMatchObject({
+      resultCount: 6,
+      strongMatchCount: 0,
+    });
+    expect(
+      events
+        .filter((e) => e.type === 'impression' || e.type === 'click')
+        .every((e) => e.matchType === 'weak' || e.matchType === 'start-here'),
+    ).toBe(true);
+    expect(JSON.stringify(events)).not.toContain('private-fictional-goal');
     choose('Deterministic');
     submit();
     expect(fetch).toHaveBeenCalledTimes(1);
     expect(screen.queryByText('No confident AI matches found.')).toBeNull();
   });
+  it('shows a single valid AI pick without fallback cards', async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({ ...success, youtubeIds: ['fx01GrntRpt'] }),
+    );
+    setup();
+    goal();
+    submit();
+    await waitFor(() =>
+      expect(screen.getAllByRole('listitem')).toHaveLength(1),
+    );
+    expect(screen.getByText('Suggested for your goal')).toBeTruthy();
+    expect(screen.queryByText('Fallback video')).toBeNull();
+    expect(screen.queryByText(/AI recommendations are unavailable/)).toBeNull();
+  });
   it.each([
-    { ...success, youtubeIds: ['fx01GrntRpt'] },
-    { ...success, youtubeIds: ['fx04BdgtSht', 'fx04BdgtSht'] },
-    { ...success, youtubeIds: ['unknown0000', 'fx01GrntRpt'] },
-    { ...success, catalogVersion: `sha256:${'0'.repeat(64)}` },
-    { outcome: 'fallback', reason: 'budget-exhausted' },
-    { outcome: 'fallback', reason: 'rate-limited' },
-    { outcome: 'fallback', reason: 'disabled' },
+    [
+      { ...success, youtubeIds: ['fx04BdgtSht', 'fx04BdgtSht'] },
+      'invalid-response',
+    ],
+    [
+      { ...success, youtubeIds: ['unknown0000', 'fx01GrntRpt'] },
+      'invalid-response',
+    ],
+    [
+      { ...success, catalogVersion: `sha256:${'0'.repeat(64)}` },
+      'catalog-mismatch',
+    ],
+    [{ outcome: 'fallback', reason: 'budget-exhausted' }, 'budget-exhausted'],
+    [{ outcome: 'fallback', reason: 'rate-limited' }, 'rate-limited'],
+    [{ outcome: 'fallback', reason: 'disabled' }, 'disabled'],
   ])(
-    'shows unavailable without substitute cards or phantom usage for rejected responses',
-    async (response) => {
+    'shows labeled local fallback cards and preserves the reason for rejected responses: %j',
+    async (response, reason) => {
       vi.mocked(fetch).mockResolvedValue(Response.json(response));
       const { send } = setup();
       goal();
       submit();
       await screen.findByText(/AI recommendations are unavailable/);
-      expect(screen.queryAllByRole('listitem')).toHaveLength(0);
-      expect(send).not.toHaveBeenCalled();
+      expect(screen.getAllByRole('listitem')).toHaveLength(6);
+      expect(screen.getAllByText('Fallback video')).toHaveLength(6);
+      // Delivery starts in an effect after the fallback cards render.
+      await waitFor(() => expect(send).toHaveBeenCalledTimes(7));
+      const events = send.mock.calls.map(([e]) => UsageEventSchema.parse(e));
+      expect(events.filter((e) => e.type === 'search')).toHaveLength(1);
+      expect(events.filter((e) => e.type === 'impression')).toHaveLength(6);
+      expect(
+        events.every(
+          (e) =>
+            e.recommendationEngine === 'rules' &&
+            e.llmFallbackReason === reason,
+        ),
+      ).toBe(true);
+      expect(events.find((e) => e.type === 'search')).toMatchObject({
+        resultCount: 6,
+        strongMatchCount: 0,
+      });
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(screen.getByRole('radio', { name: 'Haiku AI' })).toHaveProperty(
         'checked',
@@ -160,15 +241,33 @@ describe('independent recommendation engines', () => {
       );
     },
   );
+  it('creates no fallback cards or phantom usage when the eligible catalog is empty', async () => {
+    vi.mocked(fetch).mockResolvedValue(
+      Response.json({ outcome: 'fallback', reason: 'disabled' }),
+    );
+    const { send } = setup(true, []);
+    goal();
+    submit();
+    await screen.findByText(/AI recommendations are unavailable/);
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(
+      screen.queryByRole('heading', { name: 'Fallback videos' }),
+    ).toBeNull();
+    expect(send).not.toHaveBeenCalled();
+  });
   it('never dispatches an empty goal or a disabled AI selection', () => {
     setup();
     submit();
     expect(screen.getByText(/Enter a task description/)).toBeTruthy();
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
     expect(fetch).not.toHaveBeenCalled();
     vi.stubEnv('VITE_LLM_ENABLED', 'false');
+    submit();
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
     goal();
     submit();
     expect(screen.getByText(/AI recommendations are unavailable/)).toBeTruthy();
+    expect(screen.getAllByText('Fallback video')).toHaveLength(6);
     expect(fetch).not.toHaveBeenCalled();
   });
   it('does not let a pending AI response cross an engine switch', async () => {
@@ -237,12 +336,24 @@ describe('independent recommendation engines', () => {
       await vi.advanceTimersByTimeAsync(35_000);
     });
     expect(screen.getByText(/AI recommendations are unavailable/)).toBeTruthy();
+    const fallbacks = screen.getAllByRole('listitem').map((x) => x.textContent);
+    expect(screen.getAllByText('Fallback video')).toHaveLength(6);
     await act(async () => {
       resolve(Response.json(success));
       await Promise.resolve();
     });
-    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    expect(screen.getAllByRole('listitem').map((x) => x.textContent)).toEqual(
+      fallbacks,
+    );
     expect(fetch).toHaveBeenCalledTimes(1);
-    expect(send).not.toHaveBeenCalled();
+    const events = send.mock.calls.map(([e]) => UsageEventSchema.parse(e));
+    expect(events.filter((e) => e.type === 'impression')).toHaveLength(6);
+    expect(
+      events.every(
+        (e) =>
+          e.recommendationEngine === 'rules' &&
+          e.llmFallbackReason === 'timeout',
+      ),
+    ).toBe(true);
   });
 });

@@ -5,11 +5,14 @@ import {
   screen,
   within,
 } from '@testing-library/react';
-import { afterEach, describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
 
 const catalog: CatalogItem[] = [
   {
@@ -91,6 +94,40 @@ function submitDiscovery() {
 }
 
 describe('IntakeResults', () => {
+  it('shows honest fallback videos for an unsupported deterministic task without calling either provider', async () => {
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    const writeText = vi.fn().mockResolvedValue(undefined);
+    vi.stubGlobal('navigator', { clipboard: { writeText } });
+    render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'Observe lunar craters through a telescope.' },
+    });
+    submitDiscovery();
+    expect(screen.getByText('No compatible videos found.')).toBeTruthy();
+    expect(screen.getAllByText('Fallback video')).toHaveLength(5);
+    expect(screen.getByRole('heading', { name: 'Fallback videos' })).toBe(
+      document.activeElement,
+    );
+    expect(
+      screen.getByText(/These are general library suggestions/),
+    ).toBeTruthy();
+    expect(screen.queryByText('Closest match')).toBeNull();
+    fireEvent.click(screen.getAllByRole('button', { name: /Play / })[0]);
+    expect(document.querySelector('iframe')?.src).toContain('widgetVid01');
+    fireEvent.click(screen.getAllByRole('button', { name: 'Copy link' })[0]);
+    await screen.findByRole('button', { name: 'Copied' });
+    expect(writeText).toHaveBeenCalledWith(
+      'https://www.youtube.com/watch?v=widgetVid01',
+    );
+    expect(fetcher).not.toHaveBeenCalled();
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    expect(
+      screen.queryByRole('heading', { name: 'Fallback videos' }),
+    ).toBeNull();
+    expect(document.querySelectorAll('iframe')).toHaveLength(0);
+  });
+
   it('shows the available matches and labeled fallback when the catalog has fewer than six', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     submitDiscovery();
@@ -133,6 +170,8 @@ describe('IntakeResults', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
 
     expect(screen.queryAllByText('Closest match')).toHaveLength(0);
+    expect(screen.queryAllByText('Fallback video')).toHaveLength(0);
+    expect(screen.queryAllByRole('listitem')).toHaveLength(1);
     expect(screen.queryByRole('button', { name: /show more/i })).toBeNull();
   });
 

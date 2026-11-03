@@ -120,6 +120,7 @@ export async function recommend(
     latencyMs: 0,
   };
   let status = 200;
+  let catalogTrace = 'not-started';
   const fallback = (
     reason: RecommendationFallbackReason,
   ): RecommendationResponse => ({
@@ -188,11 +189,29 @@ export async function recommend(
         source: `${limits.LIBRARY_ORIGIN}/catalog/current.json`,
         requestedVersion: input.catalogVersion,
         signal: abort.signal,
-        fetcher: catalogFetcher,
+        fetcher: async (input, init) => {
+          const resource = String(input).endsWith('/current.json')
+            ? 'manifest'
+            : 'snapshot';
+          catalogTrace = `${resource}-fetch`;
+          const response = await catalogFetcher(input, init);
+          catalogTrace = `${resource}-${response.status}`;
+          return response;
+        },
         cache: deps.catalogCache ?? defaultCatalogCache(),
         waitUntil: deps.waitUntil,
       });
     } catch (error) {
+      const known = new Map([
+        ['Illegal invocation', 'illegal-invocation'],
+        ['signal.throwIfAborted is not a function', 'abort-signal'],
+        ['Catalog digest mismatch', 'digest'],
+        ['Unexpected public catalog fields', 'fields'],
+        ['Invalid published library source', 'source'],
+      ]);
+      const code =
+        error instanceof Error ? known.get(error.message) : undefined;
+      if (code) catalogTrace += `-${code}`;
       return fallback(
         error instanceof PublishedCatalogVersionError
           ? 'catalog-mismatch'
@@ -343,6 +362,10 @@ export async function recommend(
   });
   return new Response(JSON.stringify(result), {
     status,
-    headers: { ...headers, 'x-recommendation-request-id': requestId },
+    headers: {
+      ...headers,
+      'x-recommendation-request-id': requestId,
+      'x-recommendation-catalog-status': catalogTrace,
+    },
   });
 }

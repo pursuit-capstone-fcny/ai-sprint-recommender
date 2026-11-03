@@ -72,6 +72,55 @@ afterEach(() => {
 });
 
 describe('browser usage events', () => {
+  it('collects explicit production feedback while automatic usage stays disabled', async () => {
+    vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
+    vi.stubEnv('VITE_CATALOG_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+    vi.stubEnv('VITE_USAGE_ENABLED', 'false');
+    vi.stubEnv('VITE_FEEDBACK_ENABLED', 'true');
+    vi.stubEnv('VITE_FEEDBACK_QUESTION', 'Was this helpful?');
+    vi.mocked(fetch).mockImplementation(async (_url, init) =>
+      init?.method === 'POST'
+        ? Response.json({ ok: true, status: 'accepted' })
+        : Response.json(publicCatalog),
+    );
+    render(<IntakeResultsPage />);
+    await screen.findByRole('button', { name: 'Find videos' });
+    expect(logged()).toHaveLength(0);
+    submit();
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Play Fixture video 0' }),
+    );
+    expect(logged()).toHaveLength(0);
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Helpful: Fixture video 0',
+      }),
+    );
+    await screen.findByText('Saved as helpful. You can change your response.');
+    expect(logged()).toHaveLength(1);
+    expect(logged()[0]).toMatchObject({
+      type: 'feedback',
+      helpful: true,
+      voteRevision: 1,
+    });
+    fireEvent.click(
+      screen.getByRole('button', {
+        name: 'Not helpful: Fixture video 0',
+      }),
+    );
+    await screen.findByText(
+      'Saved as not helpful. You can change your response.',
+    );
+    expect(logged()).toHaveLength(2);
+    expect(logged()[1]).toMatchObject({
+      type: 'feedback',
+      helpful: false,
+      voteRevision: 2,
+    });
+  });
+
   it('logs one submitted search, each displayed card once and both clicks, even in StrictMode', async () => {
     const usage = { session: session(), catalog: publicCatalog };
     const view = (
@@ -202,5 +251,33 @@ describe('browser usage events', () => {
     expect(logged()).toHaveLength(0);
     expect(screen.queryByText(/Your typed goal is not logged/)).toBeNull();
     expect(fetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('logs production searches and impressions only to the production collector', async () => {
+    const production = 'https://script.google.com/macros/s/production/exec';
+    vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
+    vi.stubEnv('VITE_CATALOG_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_TEST_URL', endpoint);
+    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', production);
+    vi.stubEnv('VITE_USAGE_ENABLED', 'true');
+    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+    vi.mocked(fetch).mockImplementation(async (_url, init) =>
+      init?.method === 'POST'
+        ? Response.json({ ok: true, status: 'accepted' })
+        : Response.json(publicCatalog),
+    );
+    render(<IntakeResultsPage />);
+    await screen.findByRole('button', { name: 'Find videos' });
+    submit();
+    await waitFor(() =>
+      expect(logged().filter((event) => event.type === 'search')).toHaveLength(
+        1,
+      ),
+    );
+    await waitFor(() => expect(logged()).toHaveLength(9));
+    const posts = vi
+      .mocked(fetch)
+      .mock.calls.filter(([, init]) => init?.method === 'POST');
+    expect(posts.every(([url]) => url === production)).toBe(true);
   });
 });

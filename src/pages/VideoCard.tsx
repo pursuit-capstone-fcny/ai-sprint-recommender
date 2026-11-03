@@ -16,6 +16,7 @@ interface VideoCardProps {
   onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
   showClosestMatch?: boolean;
+  fallbackLabel?: string;
   feedback?: { binding: FeedbackBinding; question: string };
 }
 
@@ -25,6 +26,7 @@ export function VideoCard({
   onPlay,
   onWatch,
   showClosestMatch = true,
+  fallbackLabel,
   feedback,
 }: VideoCardProps) {
   const { item, reason, matchType } = match;
@@ -109,11 +111,12 @@ export function VideoCard({
           <span className="tag tag-fallback">From another area</span>
         ) : matchType === 'fallback' ? (
           <span className="tag tag-fallback">
-            {item.isStartHere
-              ? 'Start here'
-              : showClosestMatch
-                ? 'Closest match'
-                : 'More to explore'}
+            {fallbackLabel ??
+              (item.isStartHere
+                ? 'Start here'
+                : showClosestMatch
+                  ? 'Closest match'
+                  : 'More to explore')}
           </span>
         ) : (
           firstTool && <span className="tag">{firstTool}</span>

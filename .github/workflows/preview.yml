@@ -4,8 +4,9 @@ on:
   pull_request:
 
 concurrency:
-  group: preview-${{ github.ref }}
-  cancel-in-progress: true
+  # Keep preview and production updates serialized for the same parent Worker.
+  group: deploy-production
+  cancel-in-progress: false
 
 jobs:
   preview:
@@ -30,17 +31,22 @@ jobs:
           # Opt in only after deploying and verifying the matching collector.
           VITE_USAGE_ENABLED: ${{ vars.LIBRARY_TEST_COLLECTION_READY == 'true' && vars.LIBRARY_TEST_ORIGIN && vars.CATALOG_TEST_URL && 'true' || 'false' }}
           VITE_USAGE_TEST_URL: ${{ vars.CATALOG_TEST_URL }}
+          VITE_FEEDBACK_ENABLED: ${{ vars.FEEDBACK_PREVIEW_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_FEEDBACK_QUESTION: ${{ vars.FEEDBACK_QUESTION }}
+          VITE_REQUESTS_ENABLED: ${{ vars.REQUESTS_PREVIEW_ENABLED == 'true' && 'true' || 'false' }}
+          VITE_REQUESTS_CONFIG: ${{ vars.REQUESTS_CONFIG }}
         run: |
           pnpm install --frozen-lockfile
           if [[ -z "$VITE_LIBRARY_ORIGIN" ]]; then node scripts/seed-library-demo.mjs; fi
           pnpm build
           node scripts/configure-library-app.mjs
 
-      # Uploads a preview version and prints its preview URL in the run log.
-      # Production is untouched until the PR merges and deploy.yml runs.
-      - name: Upload Cloudflare preview version
+      # Version URLs are unavailable for Workers that export Durable Objects.
+      # Named Previews provide an isolated URL without changing production or
+      # inheriting its preview base configuration. Paid calls remain disabled.
+      - name: Deploy isolated Cloudflare preview
         uses: cloudflare/wrangler-action@953926a2e2182532811c01a25e53647d93bf07c0 # v4.1.3
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: versions upload --config wrangler.library.jsonc
+          command: preview --name pr-${{ github.event.number }} --config wrangler.library.jsonc --ignore-base-config
