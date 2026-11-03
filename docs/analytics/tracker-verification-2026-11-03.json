@@ -75,16 +75,46 @@
       "newVideoReturned": true,
       "fallbackSuggestions": 0,
       "liveLlmCalls": 0,
-      "usageEnabled": false
+      "usageEnabled": true,
+      "appPreview": "https://tracker-private-20261103-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team",
+      "deploymentRun": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41701412464"
     },
     "sameWorkbookActivity": {
-      "syntheticEvents": 1,
-      "actualDoPostReceipt": "accepted",
-      "sameWorkbook": true,
+      "syntheticEvents": 5,
+      "editorSmokeEvents": 1,
+      "signedOutHttpSmokeEvents": 1,
+      "browserEvents": 3,
+      "browserEventTypes": {
+        "search": 1,
+        "impression": 1,
+        "click": 1
+      },
+      "sameSession": true,
+      "sameSearch": true,
+      "sameCatalog": true,
+      "sourceTeam": true,
+      "newVideoForImpressionAndClick": true,
+      "newTaskRecorded": true,
+      "clickTarget": "embed",
+      "uniqueEventIds": true,
       "rawGoalStored": false,
-      "invocation": "Apps Script editor; HTTP/browser delivery not yet verified"
+      "sameWorkbook": true,
+      "invocation": "Real deployed app browser search, impression and embedded-video-open action; receipts read back from the same private workbook"
     },
-    "collectorDeployment": "Prepared in workbook owner Firefox session; awaiting approval for endpoint access and Google scopes",
-    "temporaryPublisherCredential": "Removed from Script Properties and temporary local file after publication verification"
+    "collectorDeployment": {
+      "status": "deployed",
+      "version": 1,
+      "executeAs": "workbook owner",
+      "endpointAccess": "Anyone",
+      "workbookSharing": "Restricted; two named accounts only",
+      "retentionDays": 1,
+      "hourlyCleanupInstalled": true,
+      "signedOutGetVideos": 90,
+      "signedOutHttpPostAccepted": true
+    },
+    "temporaryPublisherCredential": "Removed from Script Properties and temporary local file after publication verification",
+    "futurePublishing": "Requires a replacement repository-scoped Contents/Actions write credential; the temporary credential was removed",
+    "playback": "Synthetic metadata fixture; video playback was not verified",
+    "browserVerifiedAt": "2026-11-03T19:23:28Z"
   }
 }

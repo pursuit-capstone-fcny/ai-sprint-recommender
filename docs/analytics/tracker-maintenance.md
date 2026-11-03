@@ -107,6 +107,14 @@ Keep credentials out of source, logs and screenshots, and remove temporary test
 credentials when verification finishes. New videos need only reviewed tracker
 metadata and publication; neither the app nor its test preview needs rebuilding.
 
+The November 3 private-copy check completed migration, real publication and
+browser-to-Usage delivery. Its [aggregate verification record](tracker-verification-2026-11-03.json)
+contains the preview and deployment job links. The added video is a labeled
+synthetic metadata fixture; playback was not part of this check. Future
+publication from that copy requires a replacement scoped credential after the
+temporary test credential was removed. The test app and its collector continue
+to use the last published catalog without a GitHub credential.
+
 ## Repeatable parity check
 
 Export only the ten recognized tracker fields as `{row, cells}` objects. Keep
