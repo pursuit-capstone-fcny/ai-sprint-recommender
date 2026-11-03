@@ -12,6 +12,7 @@ import { toCatalogItem } from '../contracts/catalogItem';
 import { parsePublicCatalog } from '../contracts/publicCatalog';
 import { UsageEventSchema } from '../contracts/usageEvent';
 import { createUsageSender } from '../usage/sendUsage';
+import { buildAnalyticsReport } from '../analytics/report';
 import { IntakeResults } from './IntakeResults';
 import { IntakeResultsPage } from './IntakeResultsPage';
 
@@ -72,54 +73,163 @@ afterEach(() => {
 });
 
 describe('browser usage events', () => {
-  it('collects explicit production feedback while automatic usage stays disabled', async () => {
-    vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
-    vi.stubEnv('VITE_CATALOG_URL', endpoint);
-    vi.stubEnv('VITE_USAGE_PRODUCTION_URL', endpoint);
-    vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
-    vi.stubEnv('VITE_USAGE_ENABLED', 'false');
-    vi.stubEnv('VITE_FEEDBACK_ENABLED', 'true');
-    vi.stubEnv('VITE_FEEDBACK_QUESTION', 'Was this helpful?');
-    vi.mocked(fetch).mockImplementation(async (_url, init) =>
-      init?.method === 'POST'
-        ? Response.json({ ok: true, status: 'accepted' })
-        : Response.json(publicCatalog),
+  it('AC-16.7/24.19: passive browsing sends nothing; actual browsing actions count only as direct use', async () => {
+    const usage = { session: session(), catalog: publicCatalog };
+    const view = (
+      <StrictMode>
+        <IntakeResults catalog={catalog} usage={usage} />
+      </StrictMode>
     );
-    render(<IntakeResultsPage />);
-    await screen.findByRole('button', { name: 'Find videos' });
+    const { rerender } = render(view);
     expect(logged()).toHaveLength(0);
-    submit();
+    rerender(view);
+    expect(logged()).toHaveLength(0);
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
     );
-    expect(logged()).toHaveLength(0);
     fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Helpful: Fixture video 0',
-      }),
+      screen.getAllByRole('link', { name: /Watch on YouTube/ })[0],
     );
-    await screen.findByText('Saved as helpful. You can change your response.');
-    expect(logged()).toHaveLength(1);
-    expect(logged()[0]).toMatchObject({
-      type: 'feedback',
-      helpful: true,
-      voteRevision: 1,
+    await waitFor(() => expect(logged()).toHaveLength(3));
+    expect(logged().map((event) => event.type)).toEqual([
+      'impression',
+      'click',
+      'click',
+    ]);
+    expect(
+      logged().every(
+        (event) =>
+          event.mode === 'direct' &&
+          event.type !== 'search' &&
+          event.matchType === 'direct',
+      ),
+    ).toBe(true);
+    expect(
+      logged().every(
+        (event) =>
+          event.recommendationEngine === undefined &&
+          event.llmFallbackReason === undefined &&
+          event.modelVersion === undefined &&
+          event.promptVersion === undefined,
+      ),
+    ).toBe(true);
+    const report = buildAnalyticsReport({
+      current: publicCatalog,
+      filter: { startDate: '2026-11-03', endDate: '2026-11-03' },
+      records: logged().map((event) => ({
+        event,
+        receivedAt: '2026-11-03T16:00:00.000Z',
+      })),
     });
-    fireEvent.click(
-      screen.getByRole('button', {
-        name: 'Not helpful: Fixture video 0',
-      }),
-    );
-    await screen.findByText(
-      'Saved as not helpful. You can change your response.',
-    );
-    expect(logged()).toHaveLength(2);
-    expect(logged()[1]).toMatchObject({
-      type: 'feedback',
-      helpful: false,
-      voteRevision: 2,
+    expect(
+      report.videos.find((row) => row.youtubeId === 'fixture0000'),
+    ).toMatchObject({
+      appearances: 0,
+      embedClicks: 0,
+      youtubeClicks: 0,
+      directViews: 1,
+      directEmbedClicks: 1,
+      directYoutubeClicks: 1,
     });
+    expect(
+      report.tags.every((row) => row.appearances === 0 && row.searches === 0),
+    ).toBe(true);
+    expect(report.associations).toEqual([]);
   });
+
+  it('AC-16.7: Clear sends no impressions and creates a new direct browsing context', async () => {
+    render(
+      <IntakeResults
+        catalog={catalog}
+        usage={{ session: session(), catalog: publicCatalog }}
+      />,
+    );
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'report writing' },
+    });
+    submit();
+    await waitFor(() =>
+      expect(logged().some((event) => event.type === 'search')).toBe(true),
+    );
+    const search = logged().find((event) => event.type === 'search')!;
+    await waitFor(() =>
+      expect(
+        logged().filter((event) => event.searchId === search.searchId),
+      ).toHaveLength(5),
+    );
+    const beforeClear = logged().length;
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    expect(logged()).toHaveLength(beforeClear);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Play Fixture video 0' }),
+    );
+    await waitFor(() => expect(logged()).toHaveLength(beforeClear + 2));
+    expect(
+      logged()
+        .slice(beforeClear)
+        .every(
+          (event) =>
+            event.mode === 'direct' && event.searchId !== search.searchId,
+        ),
+    ).toBe(true);
+  });
+
+  it.each([false, true])(
+    'collects explicit production feedback while automatic usage stays disabled; submitted=%s',
+    async (submitted) => {
+      const feedbackEndpoint = `https://script.google.com/macros/s/feedback-${submitted}/exec`;
+      vi.stubEnv('VITE_CATALOG_SOURCE', 'remote');
+      vi.stubEnv('VITE_CATALOG_URL', endpoint);
+      vi.stubEnv('VITE_USAGE_PRODUCTION_URL', feedbackEndpoint);
+      vi.stubEnv('VITE_USAGE_ENVIRONMENT', 'production');
+      vi.stubEnv('VITE_USAGE_ENABLED', 'false');
+      vi.stubEnv('VITE_FEEDBACK_ENABLED', 'true');
+      vi.stubEnv('VITE_FEEDBACK_QUESTION', 'Was this helpful?');
+      vi.mocked(fetch).mockImplementation(async (_url, init) =>
+        init?.method === 'POST'
+          ? Response.json({ ok: true, status: 'accepted' })
+          : Response.json(publicCatalog),
+      );
+      render(<IntakeResultsPage />);
+      await screen.findByRole('button', { name: 'Find videos' });
+      expect(logged()).toHaveLength(0);
+      if (submitted) submit();
+      fireEvent.click(
+        screen.getByRole('button', { name: 'Play Fixture video 0' }),
+      );
+      expect(logged()).toHaveLength(0);
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Helpful: Fixture video 0',
+        }),
+      );
+      await screen.findByText(
+        'Saved as helpful. You can change your response.',
+      );
+      expect(logged()).toHaveLength(1);
+      expect(logged()[0]).toMatchObject({
+        type: 'feedback',
+        helpful: true,
+        voteRevision: 1,
+        mode: submitted ? 'recommendations' : 'direct',
+        matchType: submitted ? 'weak' : 'direct',
+      });
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Not helpful: Fixture video 0',
+        }),
+      );
+      await screen.findByText(
+        'Saved as not helpful. You can change your response.',
+      );
+      expect(logged()).toHaveLength(2);
+      expect(logged()[1]).toMatchObject({
+        type: 'feedback',
+        helpful: false,
+        voteRevision: 2,
+      });
+    },
+  );
 
   it('logs one submitted search, each displayed card once and both clicks, even in StrictMode', async () => {
     const usage = { session: session(), catalog: publicCatalog };
@@ -133,15 +243,14 @@ describe('browser usage events', () => {
       </StrictMode>
     );
     const { rerender } = render(view);
-    await waitFor(() => expect(logged()).toHaveLength(4));
-    expect(logged().every((event) => event.type === 'impression')).toBe(true);
+    expect(logged()).toHaveLength(0);
     expect(screen.queryByText(/Test preview: we log/)).toBeNull();
     fireEvent.change(screen.getByLabelText('Your goal'), {
       target: { value: 'report writing plus private fixture words' },
     });
-    expect(logged()).toHaveLength(4);
+    expect(logged()).toHaveLength(0);
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(9));
+    await waitFor(() => expect(logged()).toHaveLength(5));
     const search = logged().find((event) => event.type === 'search');
     expect(search).toMatchObject({
       type: 'search',
@@ -158,11 +267,9 @@ describe('browser usage events', () => {
     expect(new Set(logged().map((event) => event.sessionId))).toEqual(
       new Set([usage.session.sessionId]),
     );
-    expect(
-      logged()
-        .slice(4)
-        .every((event) => event.searchId === search?.searchId),
-    ).toBe(true);
+    expect(logged().every((event) => event.searchId === search?.searchId)).toBe(
+      true,
+    );
     expect(screen.queryByRole('button', { name: 'Show more' })).toBeNull();
     rerender(view);
     fireEvent.change(screen.getByLabelText('Your goal'), {
@@ -171,8 +278,8 @@ describe('browser usage events', () => {
     fireEvent.click(
       screen.getByRole('button', { name: 'Play Fixture video 0' }),
     );
-    await waitFor(() => expect(logged()).toHaveLength(10));
-    expect(logged()[9]).toMatchObject({
+    await waitFor(() => expect(logged()).toHaveLength(6));
+    expect(logged()[5]).toMatchObject({
       type: 'click',
       target: 'embed',
       youtubeId: 'fixture0000',
@@ -182,8 +289,8 @@ describe('browser usage events', () => {
     expect(screen.getByTitle('Fixture video 0').tagName).toBe('IFRAME');
     const link = screen.getAllByRole('link', { name: /Watch on YouTube/ })[0];
     fireEvent.click(link);
-    await waitFor(() => expect(logged()).toHaveLength(11));
-    expect(logged()[10]).toMatchObject({
+    await waitFor(() => expect(logged()).toHaveLength(7));
+    expect(logged()[6]).toMatchObject({
       type: 'click',
       target: 'youtube',
       rank: 1,
@@ -191,22 +298,22 @@ describe('browser usage events', () => {
     });
     expect(link.getAttribute('target')).toBe('_blank');
     expect(logged().filter((event) => event.type === 'search')).toHaveLength(1);
-    expect(new Set(logged().map((event) => event.eventId)).size).toBe(11);
+    expect(new Set(logged().map((event) => event.eventId)).size).toBe(7);
   });
 
   it('creates a new search context even for an identical second submission; Clear is not a search', async () => {
     const usage = { session: session(), catalog: publicCatalog };
     render(<IntakeResults catalog={catalog} usage={usage} />);
-    await waitFor(() => expect(logged()).toHaveLength(4));
+    expect(logged()).toHaveLength(0);
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(9));
+    await waitFor(() => expect(logged()).toHaveLength(5));
     submit();
-    await waitFor(() => expect(logged()).toHaveLength(14));
+    await waitFor(() => expect(logged()).toHaveLength(10));
     const searches = logged().filter((event) => event.type === 'search');
     expect(searches).toHaveLength(2);
     expect(searches[0].searchId).not.toBe(searches[1].searchId);
     fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
-    await waitFor(() => expect(logged()).toHaveLength(18));
+    expect(logged()).toHaveLength(10);
     expect(logged().filter((event) => event.type === 'search')).toHaveLength(2);
   });
 
@@ -274,7 +381,7 @@ describe('browser usage events', () => {
         1,
       ),
     );
-    await waitFor(() => expect(logged()).toHaveLength(9));
+    await waitFor(() => expect(logged()).toHaveLength(5));
     const posts = vi
       .mocked(fetch)
       .mock.calls.filter(([, init]) => init?.method === 'POST');
