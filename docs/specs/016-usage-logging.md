@@ -60,6 +60,16 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given the anonymous endpoint and retention policy
   - When events accumulate or requests spike
   - Then only FCNY staff can read logs; an FCNY-owned purge enforces retention, payload/rate caps bound writes, and a server switch can stop logging. Public clients can forge events, so counts are estimates
+- AC-16.9 Bounded rate-limit recovery
+  - Given a rolling-minute or UTC-day write cap is reached
+  - When the collector rejects an event
+  - Then return `USAGE_RATE_LIMITED` with an integer `retryAfterMs` from 1 through 86,400,000, long enough for every currently exceeded rate window to clear. Retained-row and disabled stops remain unchanged; no configured cap increases.
+  - Given a valid cooldown response
+  - When the browser receives new automatic events before its expiry
+  - Then drop those events and pending automatic events from before expiry. After expiry, permit only fresh actions, with no timer-driven retries or replay. Existing queue size, lifetime, request deadline and explicit-feedback retry rules remain in force.
+  - Given missing or invalid cooldown metadata from an older or incompatible collector
+  - When a rate-limit response arrives
+  - Then retain the existing stop for automatic traffic until reload. A valid hint never enables disabled collection, and shorter later hints never shorten an existing cooldown.
 
 ### Open questions
 

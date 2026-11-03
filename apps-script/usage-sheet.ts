@@ -129,7 +129,13 @@ export function doPost(event?: { postData?: UsageRequest }) {
     body = usageError('USAGE_UNAVAILABLE');
   }
   // Fixed outcomes only, never request bodies, IDs, tags or exception text.
-  if (enabled) console.info('usage-post', body);
+  if (enabled) {
+    const receipt: { error?: { code: string } } = JSON.parse(body);
+    console.info(
+      'usage-post',
+      receipt.error ? usageError(receipt.error.code) : body,
+    );
+  }
   return ContentService.createTextOutput(body).setMimeType(
     ContentService.MimeType.JSON,
   );
