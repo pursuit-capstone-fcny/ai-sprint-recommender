@@ -40,6 +40,7 @@ describe('general fallback videos', () => {
       'newer000002',
       'older000001',
       'unknown0001',
+      'unknown0002',
     ]);
     expect(catalog).toEqual(before);
     expect(results.every((r) => r.matchType === 'fallback')).toBe(true);

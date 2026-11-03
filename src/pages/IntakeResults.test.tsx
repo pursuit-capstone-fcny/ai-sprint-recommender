@@ -8,6 +8,10 @@ import {
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
+import {
+  DEFAULT_VIDEO_IDS,
+  FALLBACK_VIDEO_IDS,
+} from '../recommendations/curatedVideos';
 
 afterEach(() => {
   cleanup();
@@ -94,6 +98,50 @@ function submitDiscovery() {
 }
 
 describe('IntakeResults', () => {
+  it('shows eight curated defaults on load, blank submission, Clear and returning from AI, with a distinct no-match collection', () => {
+    const allIds = [...DEFAULT_VIDEO_IDS, ...FALLBACK_VIDEO_IDS];
+    const curatedCatalog = [...allIds].reverse().map((youtubeId) => ({
+      ...catalog[0],
+      youtubeId,
+      title: `Fixture lesson ${youtubeId}`,
+      tasks: [],
+      tools: [],
+    }));
+    const snapshot = {
+      ...publicCatalog,
+      items: curatedCatalog.map(
+        ({ isStartHere, durationSeconds, ...fields }) => ({
+          ...fields,
+          startHere: isStartHere,
+          lengthSeconds: durationSeconds ?? null,
+        }),
+      ),
+    };
+    const fetcher = vi.fn();
+    vi.stubGlobal('fetch', fetcher);
+    render(<IntakeResults catalog={curatedCatalog} publicCatalog={snapshot} />);
+    const displayedIds = () =>
+      screen
+        .getAllByRole('heading', { level: 3 })
+        .map((heading) => heading.textContent?.replace('Fixture lesson ', ''));
+    expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
+    submitDiscovery();
+    expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
+    fireEvent.change(screen.getByLabelText('Your goal'), {
+      target: { value: 'Observe lunar craters through a telescope.' },
+    });
+    submitDiscovery();
+    expect(displayedIds()).toEqual(FALLBACK_VIDEO_IDS);
+    expect(screen.getAllByText('Fallback video')).toHaveLength(8);
+    fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+    expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
+    fireEvent.click(screen.getByRole('radio', { name: 'Haiku AI' }));
+    expect(screen.queryAllByRole('listitem')).toHaveLength(0);
+    fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
+    expect(displayedIds()).toEqual(DEFAULT_VIDEO_IDS);
+    expect(fetcher).not.toHaveBeenCalled();
+  });
+
   it('shows honest fallback videos for an unsupported deterministic task without calling either provider', async () => {
     const fetcher = vi.fn();
     vi.stubGlobal('fetch', fetcher);
