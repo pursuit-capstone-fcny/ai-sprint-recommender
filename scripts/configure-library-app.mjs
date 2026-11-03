@@ -1,3 +1,5 @@
+import { privateTestHaiku } from './private-test-haiku.mjs';
+import { haikuModelVars } from './haiku-model.mjs';
 import ts from 'typescript';
 import { readFile, writeFile } from 'node:fs/promises';
 import { projectLibraryOrigin } from '../library/project.ts';
@@ -38,7 +40,7 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
     LLM_ENABLED: process.env.VITE_LLM_ENABLED === 'true' ? 'true' : 'false',
     LLM_APPROVALS_RECORDED: 'true',
     LLM_ENVIRONMENT: 'production',
-    LLM_MODEL: 'claude-haiku-5-5',
+    ...haikuModelVars,
     LLM_MAX_INPUT_TOKENS: '80000',
     LLM_MAX_OUTPUT_TOKENS: '16384',
     LLM_QUEUE_ENABLED: 'true',
@@ -47,8 +49,6 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
     LLM_MAX_CONCURRENCY: '32',
     LLM_DAILY_MICRODOLLARS: '1000000',
     LLM_MONTHLY_MICRODOLLARS: '5000000',
-    LLM_INPUT_MICRODOLLARS_PER_MILLION: '100000',
-    LLM_OUTPUT_MICRODOLLARS_PER_MILLION: '500000',
     LLM_DIAGNOSTICS_ENABLED: 'true',
     USAGE_BUFFER_ENABLED:
       process.env.VITE_USAGE_BUFFER_ENABLED === 'true' &&
@@ -81,6 +81,15 @@ if (process.env.VITE_USAGE_ENVIRONMENT === 'production') {
     { tag: 'usage-buffer-v1', new_sqlite_classes: ['UsageBuffer'] },
   ];
   config.previews = { vars: { ...config.vars, LLM_ENABLED: 'false' } };
+  const testLimits = privateTestHaiku(process.env, configured);
+  if (testLimits) {
+    config.previews.durable_objects = {
+      bindings: [
+        { name: 'RECOMMENDATION_BUDGET', class_name: 'RecommendationBudget' },
+      ],
+    };
+    Object.assign(config.previews.vars, testLimits);
+  }
 }
 await writeFile(
   'wrangler.library.jsonc',

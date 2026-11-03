@@ -118,13 +118,16 @@ describe('text-first discovery', () => {
   });
 
   it.each(['', '   '])(
-    'AC-82.3 blank description "%s" uses fallback without a provider request',
+    'AC-82.3 blank description "%s" keeps defaults without analytics or a provider request',
     (value) => {
       const { goal, fetchMock, searches } = setup();
       fireEvent.click(screen.getByRole('radio', { name: 'Deterministic' }));
       fireEvent.change(goal, { target: { value } });
       fireEvent.click(screen.getByRole('button', { name: 'Find videos' }));
-      expect(searches()).toHaveLength(1);
+      expect(searches()).toHaveLength(0);
+      expect(
+        screen.getByRole('heading', { name: 'Videos to start with' }),
+      ).toBeTruthy();
       expect(fetchMock).not.toHaveBeenCalled();
       expect(screen.getAllByRole('listitem').length).toBeGreaterThan(0);
     },

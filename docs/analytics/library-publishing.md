@@ -77,6 +77,12 @@ production logging is enabled just to change catalog transport.
 
 ## Publisher installation
 
+For the original Video Tracker layout, see [tracker maintenance](tracker-maintenance.md).
+Tracker mode generates its dictionary and catalog without normalized setup tabs,
+requires a fresh change review before publication, and keeps Usage in the source
+workbook. New reviewed instruction evidence travels with public metadata so a new
+video does not need an edit to a per-video application-code table.
+
 Copy `library/config.example.json` to ignored `library/config.local.json` as the
 one-time project configuration. Vite and `scripts/configure-library-app.mjs` read its catalog origin. Alternatively set `VITE_LIBRARY_ORIGIN` in the local environment. Conflicting origins fail the build. Only the public catalog origin enters browser assets; the Sheet link stays in build-time configuration. Do not put credentials in that file. Configure the
 Sheet-bound collector project's server-side properties:

@@ -1,6 +1,13 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { analyticsServices } from '../fixtures/analytics-services';
-import { publishLibrary, libraryPublishStatus } from './library-publisher';
+import {
+  publishLibrary,
+  libraryPublishStatus,
+  previewLibrary,
+} from './library-publisher';
+import { trackerFixture } from '../fixtures/tracker';
+import { publishFixture } from '../fixtures/mock-published-library';
+import { headers } from './catalog';
 import { LibraryManifestSchema } from '../src/library/catalog';
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -76,6 +83,95 @@ function setup() {
   };
 }
 describe('Sheet publication', () => {
+  it('isolates workflow dispatch and data writes for a private-copy test preview', () => {
+    const s = setup();
+    s.properties.LIBRARY_PREVIEW_NAME = 'tracker-private-test';
+    s.properties.LIBRARY_DATA_BRANCH = 'library-data-test-tracker-private-test';
+    expect(publishLibrary()).toMatchObject({ ok: true, status: 'queued' });
+    const dispatch = s.requests.find((r) =>
+      r.path.endsWith('/dispatches'),
+    )!.body;
+    expect(dispatch.inputs).toMatchObject({
+      environment: 'test',
+      preview_name: 'tracker-private-test',
+      data_branch: 'library-data-test-tracker-private-test',
+    });
+    expect(s.requests.find((r) => r.path.endsWith('/git/refs'))!.body.ref).toBe(
+      'refs/heads/library-data-test-tracker-private-test',
+    );
+  });
+  it('rejects mismatched isolated branches and all production preview overrides', () => {
+    const s = setup();
+    s.properties.LIBRARY_PREVIEW_NAME = 'tracker-private-test';
+    expect(publishLibrary()).toMatchObject({ ok: false });
+    s.properties.LIBRARY_DATA_BRANCH = 'library-data-test-tracker-private-test';
+    s.properties.LIBRARY_ENVIRONMENT = 'production';
+    expect(publishLibrary()).toMatchObject({ ok: false });
+    expect(s.fetch).not.toHaveBeenCalled();
+  });
+  it('requires a fresh tracker review and publishes a new row without code changes', () => {
+    const s = setup();
+    const { baseline, grid } = trackerFixture();
+    const workbook = s.data['fixture-catalog'];
+    workbook.Catalog = [
+      [...headers.Catalog],
+      ...baseline.items.map((item) =>
+        headers.Catalog.map((key) =>
+          Array.isArray(item[key]) ? item[key].join(', ') : item[key],
+        ),
+      ),
+    ];
+    publishFixture(workbook as unknown as import('./catalog').Workbook);
+    // Tracker input works with none of the normalized catalog setup tabs.
+    s.data['fixture-catalog'] = {
+      'Video Tracker': grid,
+      Usage: [['eventId', 'receivedAt', 'eventJson']],
+    };
+    s.properties.LIBRARY_SOURCE_FORMAT = 'tracker';
+    expect(publishLibrary()).toMatchObject({ ok: false });
+    const preview = previewLibrary();
+    expect(preview).toMatchObject({
+      ok: true,
+      tracker: true,
+      videoCount: 3,
+      changes: { added: [], edited: [], retired: [] },
+    });
+    const token = 'reviewToken' in preview ? preview.reviewToken : null;
+    grid.push([
+      'New fictional video',
+      'Fictional volunteer scheduling walkthrough.',
+      'https://youtu.be/newVideo001',
+      'Operations',
+      '',
+      'ChatGPT',
+      'Live on YouTube',
+      'volunteer scheduling',
+      'Ready',
+      'walkthrough',
+    ]);
+    expect(publishLibrary(token)).toMatchObject({ ok: false });
+    expect(s.fetch).not.toHaveBeenCalled();
+    const updated = previewLibrary();
+    expect(updated).toMatchObject({
+      ok: true,
+      videoCount: 4,
+      changes: {
+        added: [{ youtubeId: 'newVideo001', title: 'New fictional video' }],
+      },
+    });
+    expect(
+      publishLibrary('reviewToken' in updated ? updated.reviewToken : null),
+    ).toMatchObject({ ok: true, status: 'queued' });
+    const tree = s.requests.find((r) => r.path.endsWith('/git/trees'))!.body
+      .tree as { content: string }[];
+    const published = JSON.parse(tree[0].content);
+    expect(published.items).toHaveLength(4);
+    expect(published.tasks).toContain('volunteer scheduling');
+    expect(JSON.stringify(tree)).not.toMatch(
+      /Metadata status|eventJson|fixture-catalog/,
+    );
+    expect(s.ops.filter((op) => op.startsWith('write:'))).toEqual([]);
+  });
   it('freezes approved public data, writes an atomic data commit and dispatches bounded identifiers', () => {
     const s = setup();
     const result = publishLibrary();

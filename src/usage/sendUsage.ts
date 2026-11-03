@@ -10,7 +10,7 @@ const MAX_BYTES = 16_384;
 const QUEUE_LIFETIME_MS = 60_000;
 
 type Outcome = 'accepted' | 'duplicate' | 'dropped' | 'queued';
-type Attempt = Outcome | 'busy' | 'stopped' | { rateLimitedUntil: number };
+type Attempt = Outcome | 'retryable' | 'stopped' | { rateLimitedUntil: number };
 type Pending = {
   body: string;
   queuedAt: number;
@@ -43,7 +43,10 @@ async function post(
         keepalive: true,
         signal: controller.signal,
       });
-      if (!response.ok || response.type === 'opaque') return 'dropped';
+      if (response.type === 'opaque') return 'dropped';
+      if ([408, 500, 502, 503, 504].includes(response.status))
+        return 'retryable';
+      if (!response.ok) return 'dropped';
       const value: unknown = await response.json();
       if (!value || typeof value !== 'object') return 'dropped';
       if ('ok' in value && value.ok === true && 'status' in value) {
@@ -53,7 +56,8 @@ async function post(
       if ('error' in value && value.error && typeof value.error === 'object') {
         const error = value.error;
         if ('code' in error) {
-          if (error.code === 'USAGE_BUSY') return 'busy';
+          if (['USAGE_BUSY', 'USAGE_UNAVAILABLE'].includes(String(error.code)))
+            return 'retryable';
           if (error.code === 'USAGE_RATE_LIMITED') {
             const delay =
               'retryAfterMs' in error ? error.retryAfterMs : undefined;
@@ -75,7 +79,7 @@ async function post(
     };
     return await Promise.race([request(), deadline]);
   } catch {
-    return 'dropped';
+    return 'retryable';
   } finally {
     clearTimeout(timer);
   }
@@ -114,8 +118,13 @@ export function createUsageSender(
           now() - next.queuedAt < QUEUE_LIFETIME_MS
         ) {
           outcome = await post(url, next.body, fetcher, now);
-          // Only an explicit lock-contention response gets one retry, same ID.
-          if (outcome === 'busy')
+          // A transient failure may happen before or after the write. Retry
+          // once with the identical ID; the collector deduplicates committed
+          // writes. Never retry policy/validation rejections or stale events.
+          if (
+            outcome === 'retryable' &&
+            now() - next.queuedAt < QUEUE_LIFETIME_MS
+          )
             outcome = await post(url, next.body, fetcher, now);
           if (outcome === 'stopped') stopped = true;
           if (typeof outcome === 'object')

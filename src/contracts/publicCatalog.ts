@@ -3,6 +3,12 @@ import { z } from 'zod';
 const text = z.string().trim().min(1);
 const tag = text.refine((value) => !value.includes(','));
 const tags = z.array(tag);
+export const InstructionFormSchema = z.enum([
+  'demonstrated',
+  'walkthrough',
+  'explained',
+  'mentioned',
+]);
 
 export const PublicCatalogItemSchema = z.object({
   youtubeId: z.string().regex(/^[A-Za-z0-9_-]{11}$/),
@@ -15,6 +21,7 @@ export const PublicCatalogItemSchema = z.object({
   lengthSeconds: z.number().int().positive().nullable(),
   status: z.enum(['active', 'retired']),
   startHere: z.boolean(),
+  instructionForm: InstructionFormSchema.optional(),
 });
 
 export const categoryKeys = {

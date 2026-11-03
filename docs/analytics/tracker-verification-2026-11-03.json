@@ -1,0 +1,350 @@
+{
+  "verifiedAt": "2026-11-03T16:50:21.652Z",
+  "baselineVersion": "sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d",
+  "videos": 89,
+  "exactCatalogEquality": true,
+  "reorderedCatalogEquality": true,
+  "deterministicChecks": 1512,
+  "llmInputChecks": 126,
+  "liveLlmCalls": 0,
+  "addedVideoWithoutCodeChanges": true,
+  "expandedVideos": 90,
+  "incompleteVideoBlocksPublication": true,
+  "migrationChanges": {
+    "Video Title": 11,
+    "Description": 9,
+    "YouTube Link": 3,
+    "Primary Category (Web)": 9,
+    "Category 2": 5,
+    "Tool": 0,
+    "Status": 0,
+    "Task keywords": 89,
+    "Metadata status": 89,
+    "Instruction format": 0
+  },
+  "applicationBaseCommit": "851823fce3bc02934def798d84654e3411913b73",
+  "verifiedCodeCommit": "46d33a8c8c4a742376183b939b60a895c3e77801",
+  "localTestsPassed": 1241,
+  "workbookMigration": "not applied: Google Sheets API denied edits; browser confirmed view-only access",
+  "workbookPrivacy": "Anyone with the link; owner must set Restricted before same-workbook usage",
+  "liveCutover": "not performed",
+  "privateCopyVerification": {
+    "actualSheetParity": {
+      "verifiedAt": "2026-11-03T17:30:04.981Z",
+      "baselineVersion": "sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d",
+      "videos": 89,
+      "exactCatalogEquality": true,
+      "reorderedCatalogEquality": true,
+      "deterministicChecks": 1512,
+      "llmInputChecks": 126,
+      "liveLlmCalls": 0,
+      "addedVideoWithoutCodeChanges": true,
+      "expandedVideos": 90,
+      "incompleteVideoBlocksPublication": true,
+      "migrationChanges": {
+        "Video Title": 0,
+        "Description": 0,
+        "YouTube Link": 0,
+        "Primary Category (Web)": 0,
+        "Category 2": 0,
+        "Tool": 0,
+        "Status": 0,
+        "Task keywords": 0,
+        "Metadata status": 0,
+        "Instruction format": 0
+      }
+    },
+    "sharing": "Restricted; two named accounts only",
+    "nativeAppsScriptMigration": {
+      "updatedCells": 215,
+      "catalogVersion": "sha256:fcc3f9c7a1b7a18566fdd5132c0d79663b1945a057b4e99c8e317b596c04336d"
+    },
+    "realPublication": {
+      "previewName": "tracker-private-20261103",
+      "catalogVersion": "sha256:6858e8c97308e4372db70c8646273552d9fb7c40adecdc54163a825239a995ac",
+      "videos": 90,
+      "existing89ExactlyUnchanged": true,
+      "generatedNewTaskPresent": true,
+      "draftRejectedByAppsScript": true,
+      "sidebarVerifiedSuccess": true,
+      "workflowRun": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41687199133",
+      "sharedLiveCatalogUnchanged": true
+    },
+    "browserRecommendation": {
+      "catalogVideos": 90,
+      "newVideoReturned": true,
+      "fallbackSuggestions": 0,
+      "liveLlmCalls": 0,
+      "usageEnabled": true,
+      "appPreview": "https://tracker-private-20261103-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team",
+      "deploymentRun": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41701412464"
+    },
+    "sameWorkbookActivity": {
+      "syntheticEvents": 5,
+      "editorSmokeEvents": 1,
+      "signedOutHttpSmokeEvents": 1,
+      "browserEvents": 3,
+      "browserEventTypes": {
+        "search": 1,
+        "impression": 1,
+        "click": 1
+      },
+      "sameSession": true,
+      "sameSearch": true,
+      "sameCatalog": true,
+      "sourceTeam": true,
+      "newVideoForImpressionAndClick": true,
+      "newTaskRecorded": true,
+      "clickTarget": "embed",
+      "uniqueEventIds": true,
+      "rawGoalStored": false,
+      "sameWorkbook": true,
+      "invocation": "Real deployed app browser search, impression and embedded-video-open action; receipts read back from the same private workbook"
+    },
+    "collectorDeployment": {
+      "status": "deployed",
+      "version": 1,
+      "executeAs": "workbook owner",
+      "endpointAccess": "Anyone",
+      "workbookSharing": "Restricted; two named accounts only",
+      "retentionDays": 1,
+      "hourlyCleanupInstalled": true,
+      "signedOutGetVideos": 90,
+      "signedOutHttpPostAccepted": true
+    },
+    "temporaryPublisherCredential": "Removed from Script Properties and temporary local file after publication verification",
+    "futurePublishing": "Requires a replacement repository-scoped Contents/Actions write credential; the temporary credential was removed",
+    "playback": "Synthetic metadata fixture; video playback was not verified",
+    "browserVerifiedAt": "2026-11-03T19:23:28Z"
+  },
+  "fullWorkflowVerification": {
+    "verifiedAt": "2026-11-03T20:32:39.147352Z",
+    "codeCommit": "e853d982df59053c02c7c32583a763423956b66e",
+    "localTestsPassed": 1277,
+    "typecheckPassed": true,
+    "lintPassed": true,
+    "buildPassed": true,
+    "ci": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41711544971",
+    "preview": "https://tracker-private-20261103-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team",
+    "liveDeploy": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41711558387",
+    "paidOffDeploy": "https://github.com/pursuit-capstone-fcny/ai-sprint-recommender/actions/runs/41712440659",
+    "sourceWorkbook": "Restricted private copy; source tracker and Usage in the same workbook; client original unchanged",
+    "requestsWorkbook": "Separate Restricted owner-only workbook",
+    "feedbackReportWorkbook": "Separate Restricted owner-only workbook",
+    "defaults": {
+      "passiveBrowsingAddedEvents": 0,
+      "blankAndWhitespaceRulesSubmissionsAddedEvents": 0,
+      "clearAddedEvents": 0,
+      "blankSubmissionRegressionFixed": true,
+      "explicitDefaultPlay": {
+        "recommendationAppearances": 0,
+        "recommendationEmbedClicks": 0,
+        "directViews": 1,
+        "directEmbedClicks": 1,
+        "verifiedInNativeDashboard": true
+      }
+    },
+    "feedback": {
+      "browserRevisionsSaved": 2,
+      "effectiveResponses": 1,
+      "helpful": 0,
+      "notHelpful": 1,
+      "rawEventsInSourceUsage": true,
+      "nativeAggregateReadBack": true,
+      "automaticSearchOrImpressionCreated": false
+    },
+    "contributions": {
+      "browserTopicRequestsSaved": 1,
+      "browserDemoOffersSaved": 1,
+      "diagnosticTopicRequestsSaved": 1,
+      "unconsentedDemoBlockedBeforeSubmission": true,
+      "failedSubmissionPreservedText": true,
+      "manualRetrySavedSingleRow": true,
+      "reviewStatus": "new",
+      "policyVersion": "private-workflow-2026-11-03-v1",
+      "contactAndFreeTextAbsentFromUsage": true,
+      "publishedAutomatically": false
+    },
+    "recommendations": {
+      "sheetAddedVideoFound": true,
+      "fallbackThenMatchedResultUpdated": true,
+      "clearRestoredDefaults": true,
+      "curatedFallbackIds": [
+        "6d2bKhdmqqA",
+        "rjaMvND2IRU",
+        "Xlvo2_eUBLo",
+        "cwCVpchJHB4",
+        "maR3ZerQIJU",
+        "nBAaIIz9QFg",
+        "Kv0C743lCUw",
+        "C7wclvAF0Mc"
+      ],
+      "fallbacksExcludedFromRecommendationMetrics": true
+    },
+    "haiku": {
+      "paidBrowserCalls": 4,
+      "model": "claude-haiku-5-5",
+      "prompt": "catalog-pick-evidence-v9",
+      "dailyBudgetMicrodollars": 50000,
+      "monthlyBudgetMicrodollars": 50000,
+      "maxConcurrency": 1,
+      "requestsPerMinute": 2,
+      "expiryMinutes": 15,
+      "namespace": "Named preview only; independent of production",
+      "successResultCount": 5,
+      "successVisibleIdsMatchRecordedImpressions": true,
+      "finalSuccessSearchesSaved": 1,
+      "finalSuccessSemanticImpressionsSaved": 5,
+      "abstentionDisplayedFallbackCount": 8,
+      "abstentionSearchesSaved": 1,
+      "abstentionImpressionsSaved": 7,
+      "abstentionFallbackReason": "insufficient-results",
+      "abstentionStrongMatchCount": 0,
+      "modelAndPromptInAcceptedEvents": true,
+      "finalApiOutcome": {
+        "outcome": "fallback",
+        "reason": "disabled"
+      },
+      "paidCallsFinallyEnabled": false,
+      "temporaryProviderAndRateCredentialValuesCleared": true
+    },
+    "analytics": {
+      "privateDashboardDeployed": true,
+      "executeAs": "Signed-in visitor",
+      "restrictedSourceMembershipRequired": true,
+      "nativeConnectionVerified": true,
+      "previewFooterUsesPrivateDashboard": true,
+      "signedOutReadDenied": true,
+      "retentionWindowHours": 24,
+      "sourcePolicyMode": "Conservative default; no reporting-policy metadata added",
+      "recordedRealMatchAppearances": 6,
+      "recordedRecommendationClicks": 0,
+      "recordedDirectViews": 1,
+      "recordedDirectEmbedClicks": 1,
+      "feedbackDoesNotCountAsClick": true,
+      "fallbacksDoNotCountAsRealMatches": true,
+      "dashboardUrl": "https://script.google.com/macros/s/AKfycbwGYdh-mRcXEsKMjyw-xo9yub_jy8-XOlfiU2ON2bBJd60hmdV6OUiXt8Y9cX67B6qc/exec"
+    },
+    "observedLimitations": [
+      "Apps Script delivery is bounded and best effort. The initial deterministic fallback search receipt was absent while its eight impressions arrived; the final Haiku abstention recorded seven of eight impressions. No receipts were fabricated or replayed to hide this gap.",
+      "A browser topic submission initially could not be confirmed; its same-ID manual retry saved exactly one review row.",
+      "Embedded player opening was verified. The added video is a synthetic metadata fixture, so its media playback remains unverified.",
+      "Firefox multiple-account Apps Script redirect returned Page Not Found; the private dashboard connection worked in Brave with the already-shared editor account."
+    ],
+    "productionCutover": false
+  },
+  "receiptRecoveryVerification": {
+    "date": "2026-11-03",
+    "sourceCommit": "033d6606eeccadb947a9b9744ce45dc62753ab2a",
+    "scope": "Existing Restricted private-copy workbook and named preview only; original workbook and production unchanged",
+    "diagnosis": {
+      "historicalFailure": "An eight-card abstention retained its search and only seven impressions; another fallback lost its search.",
+      "nativeFailureReproduced": true,
+      "nativeFixedOutcome": "USAGE_UNAVAILABLE",
+      "confirmedStage": "UrlFetchApp.fetch threw while requesting the published catalog manifest, before the activity append.",
+      "instrumentedServerDurationMs": 2755,
+      "nativeRequestDurationMs": 5131,
+      "oldSenderBehavior": "Only USAGE_BUSY retried; USAGE_UNAVAILABLE and network/deadline failures resolved as dropped while later events continued.",
+      "diagnosticData": "Fixed stage, outcome and duration only; no payloads, tags, IDs, exception messages or credentials.",
+      "temporaryInstrumentationRemoved": true,
+      "cleanCollectorDeploymentVersion": 4
+    },
+    "fix": {
+      "transientRetryAttempts": 1,
+      "samePayloadAndEventId": true,
+      "lostAcknowledgmentDeduplicatesCommittedWrite": true,
+      "maxQueueEvents": 32,
+      "queueLifetimeMs": 60000,
+      "perAttemptDeadlineMs": 10000,
+      "configuredCapsUnchanged": true,
+      "persistentReplayAdded": false,
+      "policyAndValidationRejectionsRetried": false
+    },
+    "regression": {
+      "command": "pnpm exec vitest run src/usage/usageRecovery.test.ts src/usage/sendUsage.test.ts src/usage/usageRateLimit.test.ts",
+      "before": "Both transient-collector and lost-acknowledgment integration cases failed: search dropped while its impression arrived.",
+      "after": "36 targeted tests passed; 1285 full-suite tests, typecheck, lint and build passed.",
+      "ciRun": 41719021330,
+      "previewRun": 41719021247,
+      "isolatedLiveDeploymentRun": 41719010639
+    },
+    "nativeRetest": {
+      "expectedNewUsageReceipts": 33,
+      "recordedNewUsageReceipts": 33,
+      "uniqueNewEventIds": 33,
+      "missingReceipts": 0,
+      "defaultPageAndWhitespaceSubmissionAddedRows": 0,
+      "defaultPlayback": {
+        "directImpressions": 1,
+        "directEmbedClicks": 1,
+        "recommendationAppearances": 0,
+        "recommendationClicks": 0
+      },
+      "feedback": {
+        "rawRevisions": 2,
+        "effectiveResponsesAdded": 1,
+        "latestHelpful": false,
+        "refreshedPrivateReportVerified": true
+      },
+      "addedVideo": {
+        "searches": 1,
+        "strongImpressions": 1,
+        "codeChangesForVideo": false
+      },
+      "deterministicFallback": {
+        "searches": 1,
+        "impressions": 8,
+        "ranks": [1, 2, 3, 4, 5, 6, 7, 8]
+      },
+      "liveHaiku": {
+        "paidCalls": 2,
+        "model": "claude-haiku-5-5",
+        "prompt": "catalog-pick-evidence-v9",
+        "unchangedDailyAndMonthlyBudgetMicrodollars": 50000,
+        "successfulSearches": 1,
+        "semanticImpressions": 7,
+        "orderedVisibleIdsMatchReceipts": true,
+        "embedClicks": 1
+      },
+      "haikuAbstention": {
+        "searches": 1,
+        "impressions": 8,
+        "ranks": [1, 2, 3, 4, 5, 6, 7, 8],
+        "reason": "insufficient-results",
+        "strongMatchCount": 0,
+        "modelAndPromptRetained": true
+      },
+      "requests": {
+        "topicAdded": 1,
+        "consentedDemoAdded": 1,
+        "privateReviewRowsAdded": 2,
+        "newStatusVerified": true,
+        "contactOrRequestTextInUsage": false
+      },
+      "analytics": {
+        "nativePrivateDashboardVerified": true,
+        "recommendationAppearances": 14,
+        "recommendationEmbedClicks": 1,
+        "recommendationYoutubeClicks": 0,
+        "directViews": 2,
+        "directEmbedClicks": 2,
+        "directYoutubeClicks": 0,
+        "defaultVideoRecommendationCountsAllZero": true,
+        "finalAbstentionDidNotChangeRecommendationTotals": true,
+        "effectiveFeedbackResponses": 2,
+        "helpful": 0,
+        "notHelpful": 2
+      }
+    },
+    "deliveryGuarantee": "Bounded best effort; persistent outages, exhausted caps, closing the page and expired queues can still lose events. Historical gaps are preserved, not fabricated or replayed.",
+    "paidTestShutdown": {
+      "deploymentRun": 41720265813,
+      "verified": true,
+      "apiOutcome": {
+        "outcome": "fallback",
+        "reason": "disabled"
+      },
+      "temporaryProviderAndRateCredentialValuesCleared": true
+    }
+  }
+}

@@ -166,13 +166,17 @@ export function IntakeResults({
       tools: [],
     };
     const blank = !goalText.trim();
+    if (engine === 'rules' && blank) {
+      setCompleted(null);
+      setPlayingId(null);
+      setBrowsingProfile({ ...EMPTY_PROFILE });
+      return;
+    }
     if (engine === 'rules') {
       const snapshot = publicCatalog ?? recommendationCatalog ?? usageCatalog;
-      const selected = goalText.trim()
-        ? snapshot
-          ? deterministicSelection(snapshot, goalText, nextProfile)
-          : null
-        : defaultSelection(catalog);
+      const selected = snapshot
+        ? deterministicSelection(snapshot, goalText, nextProfile)
+        : null;
       setCompleted({
         profile: nextProfile,
         state: selected

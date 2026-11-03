@@ -11,6 +11,8 @@ const entryPoints = testBuild
   ? ['apps-script/test-entry.ts']
   : ['apps-script/index.ts'];
 const exportedFunctions = [
+  'previewLibrary',
+  'initializeTrackerFromPublished',
   'publishLibrary',
   'libraryPublishStatus',
   'showLibraryMenu',

@@ -53,7 +53,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given a submitted search
   - When the UI renders or expands its results
   - Then one search event is sent per submission and one impression per displayed video per `searchId`; rerenders do not resend them. Submitted fallback cards retain their actual fallback match types.
-  - Given default cards before a submission or after Clear
+  - Given default cards before a nonblank submission, after Clear, or after a blank/whitespace-only deterministic submission
   - When the UI displays or rerenders them
   - Then send no automatic search or impression events. A play or YouTube action sends a direct impression once per video in that browsing context and a direct click per action, using `mode=direct`, `matchType=direct`, and no recommendation-engine metadata. Clear starts a new browsing context; submitted results retain their search context during unsubmitted edits. Explicit feedback remains available and uses the displayed card's context.
 - AC-16.8 Operations
@@ -76,10 +76,18 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When the operator runs `pnpm check:usage-capacity <scenario.json>`
   - Then exercise the real event producers, bounded sender, collector and learner report in memory, report generated/accepted/dropped events by type and fixed collector error codes, and exit 1 for any delivery loss. AI burst admission uses the real budget gate and current source model/prompt, with a separately labeled configured token-cost ceiling. Missing permitted version pairs and rejected AI admissions fail the check. Invalid or oversized scenarios exit 2 without echoing supplied values. No provider calls, live requests, Sheet writes or policy changes occur; passing does not establish native throughput or production configuration.
 
-- AC-16.11 Buffered burst collection
+- AC-16.11 Bounded transient recovery
+  - Given a network/response-read failure, request timeout, HTTP 408/500/502/503/504, or `USAGE_BUSY`/`USAGE_UNAVAILABLE`
+  - When an unexpired queued event receives that outcome
+  - Then retry at most once with the identical payload and event ID. A committed write with a lost acknowledgment becomes a duplicate receipt rather than another row. Repeated failures resolve as dropped; subsequent events can continue.
+  - Given a policy or validation rejection, an opaque response, or an event whose queue lifetime has elapsed
+  - When delivery runs
+  - Then do not retry it. The 32-event queue, 60-second lifetime, 10-second per-attempt deadline, in-memory-only storage, configured caps, cooldown handling and disabled/full stops remain unchanged.
+
+- AC-16.12 Buffered burst collection
   - Given the later [1,000-user scaling request](backend-burst-scaling.md) and an enabled matching collector
   - When automatic events use the same-origin Worker endpoint
-  - Then batch at most 20 events/16 KB per browser POST, with one bounded retry of identical event IDs after an uncertain receipt. A `queued` receipt means durable enqueue, not accepted Sheet delivery. Eight bounded SQLite shards forward at most 50 events/64 KB per authenticated server POST and retry temporary failures within the existing one-hour event expiry. The collector takes one lock and writes accepted rows once per batch, returning individual receipts. This buffer-specific recovery supersedes the direct sender's no-replay rule in AC-16.9; legacy direct clients retain that rule. Explicit feedback continues through the direct path and requires an accepted/duplicate collector receipt. No raw goals, IPs or new event fields enter storage. Preserve one-day retention and private reporting. Technical ceilings are 20,000 events/minute, 100,000/day and 100,000 retained rows only after editor configuration; defaults stay unchanged.
+  - Then batch at most 20 events/16 KB per browser POST, with one bounded retry of identical event IDs after an uncertain receipt. A `queued` receipt means durable enqueue, not accepted Sheet delivery. Eight bounded SQLite shards forward at most 50 events/64 KB per authenticated server POST and retry temporary failures within the existing one-hour event expiry. The collector takes one lock and writes accepted rows once per batch, returning individual receipts. Durable buffer recovery supersedes the direct sender's no-replay rule in AC-16.9; legacy direct clients retain AC-16.9 cooldowns and AC-16.11 bounded retries. Explicit feedback continues through the direct path and requires an accepted/duplicate collector receipt. No raw goals, IPs or new event fields enter storage. Preserve one-day retention and private reporting. Technical ceilings are 20,000 events/minute, 100,000/day and 100,000 retained rows only after editor configuration; defaults stay unchanged.
 
 ### Open questions
 
