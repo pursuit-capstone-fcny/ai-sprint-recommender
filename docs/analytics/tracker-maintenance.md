@@ -13,7 +13,7 @@ the same contract without changing those consumers.
 2. Fill **Task keywords** with comma-separated tasks actually covered. Use
    equivalent existing vocabulary where appropriate. New task/tool/category
    values need no code change; update existing dropdown choices if necessary.
-3. For a new video, choose **Instruction format**: `demonstrated`, `walkthrough`,
+3. For a new video or newly added task tags, choose **Instruction format**: `demonstrated`, `walkthrough`,
    `explained`, or `mentioned`. This is a staff review of the tagged tasks,
    not automatic inference. Use the weakest applicable form or narrow the tags.
    A mere mention does not qualify as a taught procedure. Existing migrated

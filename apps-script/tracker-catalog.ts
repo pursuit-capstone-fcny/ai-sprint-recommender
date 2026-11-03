@@ -116,6 +116,7 @@ export function buildTrackerCatalog(
     if (cells.Tool != null && typeof cells.Tool !== 'string')
       problem('Tool', 'Expected comma-separated tool names');
     const previous = id ? byId.get(id) : undefined;
+    const tasks = list(cells['Task keywords']);
     const form = cells['Instruction format'];
     if (form) {
       const parsed = InstructionFormSchema.safeParse(form);
@@ -125,10 +126,14 @@ export function buildTrackerCatalog(
           'Choose demonstrated, walkthrough, explained or mentioned',
         );
       else if (id) instructionForms.set(id, parsed.data);
-    } else if (!previous || previous.instructionForm) {
+    } else if (
+      !previous ||
+      previous.instructionForm ||
+      tasks.some((task) => !previous.tasks.includes(task))
+    ) {
       problem(
         'Instruction format',
-        'Review the instructional evidence for this new video',
+        'Review the instructional evidence for this new or retagged video',
       );
     }
     const entry = [
@@ -138,7 +143,7 @@ export function buildTrackerCatalog(
       trackerAreas(cells['Primary Category (Web)'], cells['Category 2']).join(
         ', ',
       ),
-      list(cells['Task keywords']).join(', '),
+      tasks.join(', '),
       list(cells.Tool).join(', '),
       previous?.addedAt ?? '',
       previous?.lengthSeconds ?? '',

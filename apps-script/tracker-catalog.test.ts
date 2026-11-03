@@ -111,7 +111,8 @@ describe('tracker publication', () => {
     ).toContainEqual({
       row: 8,
       field: 'Instruction format',
-      reason: 'Review the instructional evidence for this new video',
+      reason:
+        'Review the instructional evidence for this new or retagged video',
     });
     added.cells['Instruction format'] = 'mentioned';
     const catalog = buildTrackerCatalog([...rows, added], baseline).catalog!;
@@ -122,6 +123,22 @@ describe('tracker publication', () => {
     });
     expect(result.results.map((r) => r.item.youtubeId)).not.toContain(
       'newVideo001',
+    );
+  });
+  it('accepts newly taught tasks on an existing video through reviewed metadata rather than a code-table edit', () => {
+    analyticsServices();
+    const { baseline, rows } = trackerFixture();
+    rows[0].cells['Task keywords'] = 'volunteer scheduling';
+    expect(buildTrackerCatalog(rows, baseline).catalog).toBeNull();
+    rows[0].cells['Instruction format'] = 'walkthrough';
+    const catalog = buildTrackerCatalog(rows, baseline).catalog!;
+    const result = deterministicSelection(catalog, 'volunteer scheduling', {
+      functionArea: null,
+      tools: [],
+      goalWords: [],
+    });
+    expect(result.results.map((r) => r.item.youtubeId)).toContain(
+      'fx01GrntRpt',
     );
   });
   it('retires videos without losing event-time metadata or dictionary vocabulary', () => {
