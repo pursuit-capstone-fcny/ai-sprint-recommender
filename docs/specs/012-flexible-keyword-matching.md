@@ -138,6 +138,8 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - When no specific task or source/output workflow is recognized
   - Then discover active distinct catalog items through canonical tool tags or meaningful title/task topic anchors, retain instruction and exclusion checks, and explain the result as browsing or a related topic. Never rescue a rejected specific operation, exclusive-tool request or unsupported capability through broad discovery, and never fill a nonempty set with unrelated items.
   - Recognize broad questions such as "What can I create with Copilot?" and "Tell me more about Copilot" through affirmative inquiry structure. An unknown action such as deleting volunteer records or booking volunteer travel is not evidence of a broad discovery request.
+  - Given ordinary tool-help or learning requests such as "Help me with Copilot", "Help me learn NotebookLM" or "I need help using Claude", recognize the same broad discovery intent through canonical tools and published aliases, including polite wording, case and punctuation. Require the complete affirmative request to remain a tool inquiry; extra task instructions, exclusive-tool requests, unsupported capabilities and tool exclusions retain their existing checks.
+  - Given a tool-tagged video without reviewed task instruction metadata in a partially reviewed catalog, a broad inquiry such as "Perplexity" may discover it from its catalog tags. Missing reviews must not suppress broad browsing when another video has reviewed metadata. Explicit reviews below the discovery instruction threshold still exclude the video, and specific operations retain their existing evidence requirements.
 
 ### Open questions
 

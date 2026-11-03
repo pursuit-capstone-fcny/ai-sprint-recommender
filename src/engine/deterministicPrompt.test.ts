@@ -54,6 +54,89 @@ const ids = (result: ReturnType<typeof recommendVideos>) =>
   result.recommendations.map((row) => row.item.youtubeId);
 
 describe('deterministic free-text recommendations', () => {
+  it('AC-12.23: a specific operation still requires reviewed instruction evidence', () => {
+    const cleaning = lesson(
+      1,
+      ['Data cleaning'],
+      'Clean duplicate spreadsheet rows.',
+      ['Perplexity'],
+    );
+    const other = lesson(2, ['Other work'], 'Fictional unrelated lesson.');
+    const { catalog, options } = fixture([cleaning, other]);
+    const partial = {
+      ...options,
+      instructions: options.instructions!.filter(
+        (row) => row.youtubeId === other.youtubeId,
+      ),
+    };
+    expect(
+      ids(
+        recommendVideos(
+          catalog,
+          { prompt: 'Clean duplicate spreadsheet rows with Perplexity' },
+          partial,
+        ),
+      ),
+    ).toEqual([]);
+  });
+
+  it('AC-12.23: discovery permits missing reviews but retains explicit instruction checks', () => {
+    const research = lesson(
+      1,
+      ['policy research'],
+      'Research with Perplexity.',
+      ['Perplexity'],
+    );
+    const other = lesson(2, ['Other work'], 'Fictional unrelated lesson.');
+    const { catalog, options } = fixture([research, other]);
+    const partial = {
+      ...options,
+      instructions: options.instructions!.filter(
+        (row) => row.youtubeId === other.youtubeId,
+      ),
+    };
+    expect(
+      ids(recommendVideos(catalog, { prompt: 'Perplexity' }, partial)),
+    ).toEqual([research.youtubeId]);
+    expect(
+      ids(
+        recommendVideos(
+          catalog,
+          { prompt: 'Perplexity' },
+          {
+            ...partial,
+            instructions: [
+              ...partial.instructions,
+              {
+                youtubeId: research.youtubeId,
+                task: 'policy research',
+                form: 'mentioned',
+              },
+            ],
+          },
+        ),
+      ),
+    ).toEqual([]);
+    expect(
+      ids(
+        recommendVideos(
+          catalog,
+          { prompt: 'Perplexity offline only' },
+          partial,
+        ),
+      ),
+    ).toEqual([]);
+    expect(
+      ids(
+        recommendVideos(
+          catalog,
+          { prompt: 'Delete volunteer records with Perplexity' },
+          partial,
+        ),
+      ),
+    ).toEqual([]);
+  });
+
   it.each([
     'Clean duplicate spreadsheet rows, a lecture will not help.',
     'Clean duplicate spreadsheet rows, a presentation is not our goal.',
