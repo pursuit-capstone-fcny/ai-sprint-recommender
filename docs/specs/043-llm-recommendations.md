@@ -113,3 +113,12 @@ sentences above. The no-match fallback update is unchanged.
   - Then task tags may move a different-task pick into the first three but
     never reject the answer. One pick or picks sharing one task still show as
     AI results; zero picks or noWork follow the no-match fallback update
+
+### November 3 card reason update
+
+This supersedes the "LLM-written descriptions or explanations" non-goal and
+the reason sentence in AC-43.3. Haiku cards show that pick's rationale, with
+the neutral text "Suggested for your goal" as the fallback. Titles,
+links and descriptions still come from the catalog. `catalog-pick-evidence-v9`
+replaces v8 in AC-43.7 and changes only the rationale instruction. See
+[acceptance criteria](why-this-video-reasons.md).

@@ -59,8 +59,32 @@ describe('browser recommendation outcomes', () => {
     ]);
     expect(state.selection.recommendationEngine).toBe('llm');
   });
+  it('AC-REASON-1: shows each pick its own reason, or the neutral text without reasons', () => {
+    const reasons = ['Budget sheet reason.', 'Excel reason.', 'Grant reason.'];
+    const withReasons = select({ ...success, reasons });
+    const without = select(success);
+    if (
+      withReasons.status === 'unavailable' ||
+      without.status === 'unavailable'
+    )
+      throw new Error('Expected ready results');
+    expect(withReasons.selection.results.map((r) => r.reason)).toEqual(reasons);
+    expect(without.selection.results.map((r) => r.reason)).toEqual(
+      Array(3).fill('Suggested for your goal'),
+    );
+  });
   it.each([
     ['missing response', undefined, 'invalid-response'],
+    [
+      'reasons that do not match the picks',
+      { ...success, reasons: ['Only one reason.'] },
+      'invalid-response',
+    ],
+    [
+      'an overlong reason',
+      { ...success, reasons: Array(3).fill('x'.repeat(216)) },
+      'invalid-response',
+    ],
     [
       'unknown ID',
       { ...success, youtubeIds: ['unknown0000', 'fx01GrntRpt'] },

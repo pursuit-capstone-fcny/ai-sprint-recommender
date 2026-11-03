@@ -56,6 +56,13 @@ describe('catalog pick protocol', () => {
     expect('cache_control' in intake).toBe(false);
     expect(JSON.stringify(plan.request)).not.toContain('scoring0000');
     expect(plan.request.max_tokens).toBe(2_000);
+    // v8 rationales read like grading notes once shown on cards.
+    expect(plan.request.system).toContain(
+      'In at most 15 words, write rationale as a note to the visitor',
+    );
+    expect(plan.request.system).not.toContain(
+      'explain in rationale how that method performs the requested step',
+    );
     // v6 left task lists short and could return picks with empty quotes.
     expect(plan.request.system).toContain(
       'For a specific task, after every grade 3 or 2 pick, add the most relevant grade 1 components until there are eight',
@@ -86,7 +93,89 @@ describe('catalog pick protocol', () => {
     expect(result.response).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v8',
+      promptVersion: 'catalog-pick-evidence-v9',
+    });
+  });
+
+  it('AC-REASON-1: sends each pick its own rationale, following dedupe and grade order, with a partial-match prefix for grade 1', () => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [
+        { ...pick(4, 1), rationale: 'Shows a related review step.' },
+        { ...pick(6, 3), rationale: '  Walks   through the record check. ' },
+        { ...pick(8, 2), rationale: 'x'.repeat(240) },
+      ],
+    });
+    expect(result.response).toMatchObject({
+      youtubeIds: ids([6, 8, 4]),
+      reasons: [
+        'Walks through the record check.',
+        `${'x'.repeat(199)}…`,
+        'Partial match: Shows a related review step.',
+      ],
+    });
+    expect(result.state.status).toBe('ready');
+    if (result.state.status === 'unavailable')
+      throw new Error('Expected ready');
+    expect(result.state.selection.results.map((r) => r.reason)).toEqual(
+      (result.response as { reasons: string[] }).reasons,
+    );
+  });
+
+  it.each([
+    ['an empty rationale', '   ', 'Suggested for your goal'],
+    [
+      'eight consecutive goal words',
+      'It shows how to check the records and draft a report using templates.',
+      'Suggested for your goal',
+    ],
+    [
+      'seven consecutive goal words',
+      'It shows how to check the records and draft a report.',
+      'It shows how to check the records and draft a report.',
+    ],
+  ])('AC-REASON-2: handles %s', (_, rationale, reason) => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [{ ...pick(2, 3), rationale }],
+    });
+    expect(result.response).toMatchObject({ reasons: [reason] });
+  });
+
+  it('AC-REASON-2: keeps a grade 1 pick marked as partial when its rationale is replaced', () => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [pick(2, 3), { ...pick(4, 1), rationale: '' }],
+    });
+    expect(result.response).toMatchObject({
+      reasons: ['Fixture rationale.', 'A partial match for your goal'],
+    });
+  });
+
+  it('AC-REASON-1: cuts an overlong rationale at the last whole word', () => {
+    const result = prepareCatalogScoring(
+      inputFixture(),
+      catalogFixture(),
+    ).complete({
+      noWork: false,
+      goalType: 'task',
+      picks: [{ ...pick(2, 3), rationale: 'alpha, '.repeat(40) }],
+    });
+    // 199 characters end mid-word; the comma before the last whole word goes too.
+    expect(result.response).toMatchObject({
+      reasons: [`${Array(28).fill('alpha').join(', ')}…`],
     });
   });
 

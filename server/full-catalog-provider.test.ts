@@ -67,6 +67,7 @@ describe('V1 Haiku provider transport', () => {
       );
       expect(result.value).toEqual({
         youtubeIds: ['scoring0000', 'scoring0001'],
+        reasons: Array(2).fill('Teaches checking the records before writing.'),
       });
       expect(fetcher).toHaveBeenCalledTimes(1);
     },
@@ -81,7 +82,10 @@ describe('V1 Haiku provider transport', () => {
       new AbortController().signal,
     );
     expect(result).toEqual({
-      value: { youtubeIds: ['scoring0000', 'scoring0001'] },
+      value: {
+        youtubeIds: ['scoring0000', 'scoring0001'],
+        reasons: Array(2).fill('Teaches checking the records before writing.'),
+      },
       inputTokens: 21000,
       outputTokens: 7000,
     });
@@ -157,7 +161,7 @@ describe('V1 Haiku provider transport', () => {
       scoringBody(inputFixture(), catalogFixture()),
       new AbortController().signal,
     );
-    expect(result.value).toEqual({ youtubeIds: [] });
+    expect(result.value).toEqual({ youtubeIds: [], reasons: [] });
   });
   it('does not retry failed HTTP requests', async () => {
     const fetcher = vi.fn(
@@ -225,7 +229,7 @@ describe('V1 endpoint integration', () => {
     expect(await response.json()).toMatchObject({
       outcome: 'success',
       youtubeIds: ['scoring0000', 'scoring0001'],
-      promptVersion: 'catalog-pick-evidence-v8',
+      promptVersion: 'catalog-pick-evidence-v9',
     });
     expect(s.budget.reserve).toHaveBeenCalledWith(
       expect.any(String),

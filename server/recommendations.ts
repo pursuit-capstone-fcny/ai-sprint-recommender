@@ -4,7 +4,9 @@ import {
   RECOMMENDATION_DEADLINE_MS,
   RECOMMENDATION_PROMPT_VERSION,
   RecommendationIdsSchema,
+  RecommendationReasonsSchema,
   RecommendationRequestSchema,
+  reasonsMatchIds,
   type RecommendationFallbackReason,
   type RecommendationResponse,
 } from '../src/contracts/recommendation';
@@ -57,7 +59,12 @@ interface Dependencies {
   diagnostic?: (entry: Diagnostic) => void;
   clientKey?: () => Promise<string>;
 }
-const outputSchema = z.strictObject({ youtubeIds: RecommendationIdsSchema });
+const outputSchema = z
+  .strictObject({
+    youtubeIds: RecommendationIdsSchema,
+    reasons: RecommendationReasonsSchema.optional(),
+  })
+  .refine(reasonsMatchIds);
 const headers = {
   'cache-control': 'no-store',
   'content-type': 'application/json',
@@ -314,6 +321,7 @@ export async function recommend(
       return {
         outcome: 'success',
         youtubeIds: parsed.data.youtubeIds,
+        ...(parsed.data.reasons ? { reasons: parsed.data.reasons } : {}),
         catalogVersion: catalog.catalogVersion,
         modelVersion: limits.LLM_MODEL,
         promptVersion,
