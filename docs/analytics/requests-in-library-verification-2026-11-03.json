@@ -1,0 +1,49 @@
+{
+  "verifiedAt": "2026-11-04T04:42:47Z",
+  "scope": "Existing Restricted original-tracker private test workbook and named app preview",
+  "baseCommit": "ac3452de9702eac65d9476936812e04d85a0f1c7",
+  "workbook": "https://docs.google.com/spreadsheets/d/16vYVynR9aN1NzU0AEI0JHNPrbcth6yG-4t-_mZsj788/edit",
+  "requestTabId": 2017718168,
+  "app": "https://tracker-private-20261103-ai-sprint-recommender.jason-zeng151.workers.dev/?src=team",
+  "collectorVersion": 6,
+  "collectorUrlUnchanged": true,
+  "executeAsAndAccessUnchanged": true,
+  "migration": {
+    "retainedRequestsCopied": 7,
+    "exactRowsAndStatusesPreserved": true,
+    "legacyTestQueuePreservedForRollback": true,
+    "requestsNowUseLibraryWorkbook": true,
+    "requestRetentionDays": 30
+  },
+  "browserVerification": {
+    "newTopicRequestRows": 1,
+    "topicEmailBlank": true,
+    "unconsentedDemoAddedRows": 0,
+    "newConsentedDemoRows": 1,
+    "fictionalDemoEmailMatches": true,
+    "newRequestsHaveNewStatus": true,
+    "policyVersionPreserved": true,
+    "bothBrowserSuccessAcknowledgements": true,
+    "finalRequestRows": 9,
+    "uniqueRequestIds": 9,
+    "legacyQueueRowsRemain": 7,
+    "usageRowsBefore": 121,
+    "usageRowsAfter": 121,
+    "requestTextOrContactInUsage": false,
+    "nativeRequestsTabVisuallyVerified": true
+  },
+  "catalogCheck": {
+    "publicVideos": 91,
+    "catalogVersion": "sha256:ebb860072e1ab016329a634c53bac3d113679e245609ef719e0af4d40e710a2f",
+    "publicContractPassed": true
+  },
+  "localChecks": {
+    "testsPassed": 1328,
+    "testFiles": 91,
+    "typecheck": true,
+    "lint": true,
+    "productionAndAppsScriptBuilds": true,
+    "editorHelperSyntaxChecks": true
+  },
+  "productionCutover": false
+}

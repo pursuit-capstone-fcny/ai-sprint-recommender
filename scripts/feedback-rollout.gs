@@ -1,6 +1,6 @@
 // Editor-only setup for Jason's November 2, 2026 rollout.
 // Add as a separate Apps Script file alongside the built collector.
-// Run prepareFeedbackStorage, verify both workbooks are owner-only and Restricted,
+// Run prepareFeedbackStorage, verify the source and report are Restricted,
 // Add hourly purgeRequests and refreshFeedbackReport triggers in the editor,
 // then run activateFeedbackCollection. No web endpoint dispatches these functions.
 function prepareFeedbackStorage() {
@@ -12,7 +12,6 @@ function prepareFeedbackStorage() {
     throw new Error('Wrong collector project');
   const destinations = {
     FEEDBACK_REPORT_SPREADSHEET_ID: 'FCNY - Private video feedback',
-    REQUESTS_SPREADSHEET_ID: 'FCNY - Private topic suggestions and demo offers',
   };
   for (const key of Object.keys(destinations)) {
     if (!p.getProperty(key)) {
@@ -23,6 +22,13 @@ function prepareFeedbackStorage() {
       key + ': ' + SpreadsheetApp.openById(p.getProperty(key)).getUrl(),
     );
   }
+  // New setups use a Requests tab in the library workbook. Keep an explicit
+  // legacy destination until its retained queue has been migrated by the owner.
+  if (!p.getProperty('REQUESTS_SPREADSHEET_ID'))
+    p.setProperty(
+      'REQUESTS_SPREADSHEET_ID',
+      p.getProperty('CATALOG_SPREADSHEET_ID'),
+    );
   // The live analytics app reads the existing source/usage workbook directly.
   if (!p.getProperty('ANALYTICS_SPREADSHEET_ID'))
     p.setProperty(

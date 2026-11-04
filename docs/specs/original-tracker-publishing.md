@@ -114,7 +114,8 @@ from application code review and do not enable new permissions or paid calls.
 
 - Given a named test app preview and Restricted source copy, when feedback and
   contribution controls are enabled, then feedback stays in the source Usage
-  log and topic/demo submissions go to a separate Restricted review workbook.
+  log and topic/demo submissions go to a separate `Requests` tab in that same
+  Restricted workbook, under the corrected AC-26.2 storage requirement.
 - Given the initial default cards or a blank deterministic submission, when no
   video is opened and no feedback is submitted, then no search or appearance is
   recorded. Explicit card actions retain their direct-browsing context.

@@ -39,7 +39,7 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
 - AC-26.2 Review sheet
   - Given a submission
   - When it arrives
-  - Then it lands in a staff-restricted review Sheet separate from the public catalog and usage log; contact details and free text never pass through `doGet` or usage events
+  - Then it lands in a `Requests` tab in the same Restricted workbook as `Video Tracker` and `Usage`, separate from those tabs. Check Restricted sharing before initialization, each submission and retention cleanup. Contact details and free text never pass through `doGet`, published catalog snapshots or usage events. Existing explicitly configured separate review workbooks remain supported during migration.
 - AC-26.3 Linked from thin results
   - Given a search that ends in a fallback
   - When results show
@@ -89,3 +89,12 @@ prompts, and accepted private review, 30-day retention and weekly ownership.
 See [the rollout record](../live-feedback-requests.md) for configuration,
 restricted review access and delivery verification. This does not assert separate
 Ali/Eliot approval or completion of every original acceptance criterion.
+
+### Request location correction, November 3, 2026
+
+Jason requested the same-workbook `Requests` tab to match Eliot's stated
+preference. This changes storage location only; approved prompts, consent,
+weekly review, status values and 30-day request retention stay in effect.
+Feedback events remain in `Usage`, with their existing separate aggregate report.
+Native deployment and browser-to-Sheet verification are recorded in
+[contribution requests](../contribution-requests.md).
