@@ -1,11 +1,7 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import fixture from '../../fixtures/public-catalog.json';
 import { dashboardDemo } from '../../fixtures/dashboard-demo';
-import {
-  loadPrivateDashboard,
-  connectPrivateSheet,
-  disconnectPrivateSheet,
-} from './transport';
+import { loadPrivateDashboard } from './transport';
 afterEach(() => {
   delete window.google;
   vi.useRealTimers();
@@ -45,7 +41,7 @@ describe('private dashboard RPC', () => {
     fail();
     expect(await failure).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
   });
-  it('routes connection RPCs, preserves safe setup errors, and rejects unsafe connection links', async () => {
+  it('reads the shared source, preserves safe setup errors, and rejects unsafe source links', async () => {
     let success: (v: unknown) => void = () => {};
     const runner = {
       withSuccessHandler: (f: (v: unknown) => void) => {
@@ -53,17 +49,11 @@ describe('private dashboard RPC', () => {
         return runner;
       },
       withFailureHandler: () => runner,
-      readDashboard: () => {},
-      connectSheet: vi.fn(),
-      disconnectSheet: vi.fn(),
+      readDashboard: vi.fn(),
     };
     window.google = { script: { run: runner } };
-    const request = connectPrivateSheet(
-      'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
-    );
-    expect(runner.connectSheet).toHaveBeenCalledWith(
-      'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
-    );
+    const request = loadPrivateDashboard();
+    expect(runner.readDashboard).toHaveBeenCalledWith();
     success({ ok: false, error: 'SHARING_TOO_BROAD' });
     expect(await request).toEqual({ ok: false, error: 'SHARING_TOO_BROAD' });
     const invalid = loadPrivateDashboard();
@@ -77,9 +67,12 @@ describe('private dashboard RPC', () => {
       },
     });
     expect(await invalid).toEqual({ ok: false, error: 'REPORT_UNAVAILABLE' });
-    const disconnected = disconnectPrivateSheet();
-    success({ ok: true });
-    expect(await disconnected).toBe(true);
+    const unconfigured = loadPrivateDashboard();
+    success({ ok: false, error: 'SOURCE_NOT_CONFIGURED' });
+    expect(await unconfigured).toEqual({
+      ok: false,
+      error: 'SOURCE_NOT_CONFIGURED',
+    });
   });
   it('bounds an RPC that never returns', async () => {
     vi.useFakeTimers();

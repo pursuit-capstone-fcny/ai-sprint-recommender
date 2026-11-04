@@ -1,6 +1,10 @@
 import { afterEach, describe, it, expect, vi } from 'vitest';
 import { analyticsServices } from '../fixtures/analytics-services';
-import { doGet, readDashboard, connectSheet, disconnectSheet } from './index';
+import { doGet, readDashboard } from './index';
+import * as publishedLibrary from '../apps-script/published-library';
+const { configuredLibrarySheet } = await vi.importActual<
+  typeof publishedLibrary
+>('../apps-script/published-library');
 
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -9,6 +13,11 @@ afterEach(() => {
 });
 function setup() {
   const s = analyticsServices();
+  s.properties.LIBRARY_SOURCE_SHEET_URL =
+    'https://docs.google.com/spreadsheets/d/fixture-catalog/edit';
+  vi.spyOn(publishedLibrary, 'configuredLibrarySheet').mockImplementation(
+    configuredLibrarySheet,
+  );
   const bindings: Record<string, Record<string, string>> = {
     'admin@example.test': { ANALYTICS_CONNECTED_SHEET: 'fixture-catalog' },
   };
@@ -72,10 +81,9 @@ describe('private admin deployment', () => {
     expect(JSON.stringify(result)).not.toContain('ANALYTICS_ADMIN_EMAILS');
     expect(JSON.stringify(result)).not.toContain('eventJson');
     s.identity('other@example.test');
-    expect(readDashboard()).toEqual({
-      ok: false,
-      error: 'SHEET_NOT_CONNECTED',
-    });
+    const other = readDashboard();
+    expect(other.ok && other.connection).toEqual(result.connection);
+    expect(other.ok && other.snapshot.facts).toEqual(result.snapshot.facts);
     expect(doGet()).toEqual({ kind: 'dashboard' });
   });
   it('denies missing identity, owner-executed deployment, disabled access and a missing file ACL', () => {
@@ -93,75 +101,73 @@ describe('private admin deployment', () => {
     });
     expect(readDashboard()).toEqual({ ok: false, error: 'ACCESS_DENIED' });
   });
-  it('connects using only a link, isolates users, and disconnects without file writes', () => {
+  it('loads the configured source for first-time and existing users without reading or writing personal connections', () => {
     const s = setup();
-    s.identity('eliot@example.test');
     const before = [...s.ops];
-    expect(
-      connectSheet(
-        'https://docs.google.com/spreadsheets/d/fixture-catalog/edit#gid=0',
-      ).ok,
-    ).toBe(true);
-    expect(readDashboard().ok).toBe(true);
-    expect(s.bindings['eliot@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
-      'fixture-catalog',
-    );
-    expect(disconnectSheet()).toEqual({ ok: true });
-    expect(readDashboard()).toEqual({
-      ok: false,
-      error: 'SHEET_NOT_CONNECTED',
-    });
-    s.identity('admin@example.test');
-    expect(readDashboard().ok).toBe(true);
+    const personalProperties = vi.spyOn(PropertiesService, 'getUserProperties');
+    for (const email of ['eliot@example.test', 'admin@example.test']) {
+      s.identity(email);
+      s.bindings[email] = { ANALYTICS_CONNECTED_SHEET: 'obsolete-sheet' };
+      const result = readDashboard();
+      expect(result.ok && result.connection?.url).toBe(
+        'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
+      );
+    }
+    expect(personalProperties).not.toHaveBeenCalled();
     expect(s.ops).toEqual(before);
   });
-  it('rejects invalid, broadly shared and inaccessible links without replacing a working connection', () => {
+  it('rechecks file permission on reload after a successful read', () => {
     const s = setup();
-    for (const link of [
-      'fixture-catalog',
-      'https://evil.test/spreadsheets/d/fixture-report',
-      'https://docs.google.com.evil.test/spreadsheets/d/fixture-report',
+    expect(readDashboard().ok).toBe(true);
+    s.openById.mockImplementation(() => {
+      throw new Error('Revoked file permission');
+    });
+    expect(readDashboard()).toEqual({ ok: false, error: 'ACCESS_DENIED' });
+  });
+  it('rejects broadly shared source Sheets', () => {
+    const s = setup();
+    for (const sharing of [
+      'ANYONE',
+      'ANYONE_WITH_LINK',
+      'DOMAIN',
+      'DOMAIN_WITH_LINK',
     ]) {
-      expect(connectSheet(link)).toEqual({
+      s.sharing(sharing);
+      expect(readDashboard()).toEqual({
         ok: false,
-        error: 'INVALID_SHEET_LINK',
+        error: 'SHARING_TOO_BROAD',
       });
     }
-    s.sharing('ANYONE_WITH_LINK');
-    expect(
-      connectSheet(
-        'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
-      ),
-    ).toEqual({ ok: false, error: 'SHARING_TOO_BROAD' });
-    expect(readDashboard()).toEqual({ ok: false, error: 'ACCESS_DENIED' });
-    s.sharing('PRIVATE');
-    expect(
-      connectSheet(
-        'https://docs.google.com/spreadsheets/d/missing-fixture/edit',
-      ),
-    ).toEqual({ ok: false, error: 'ACCESS_DENIED' });
-    expect(s.bindings['admin@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
-      'fixture-catalog',
-    );
   });
-  it('rejects unrelated private Sheets even if the user can open them', () => {
+  it('reports missing or invalid shared configuration without using a saved personal connection', () => {
     const s = setup();
-    s.data['unrelated-private-sheet'] = s.data['fixture-catalog'];
-    expect(
-      connectSheet(
-        'https://docs.google.com/spreadsheets/d/unrelated-private-sheet/edit',
-      ),
-    ).toEqual({ ok: false, error: 'ACCESS_DENIED' });
-    expect(s.bindings['admin@example.test'].ANALYTICS_CONNECTED_SHEET).toBe(
-      'fixture-catalog',
-    );
+    for (const source of [
+      '',
+      'https://evil.test/spreadsheets/d/fixture-catalog',
+    ]) {
+      s.properties.LIBRARY_SOURCE_SHEET_URL = source;
+      expect(readDashboard()).toEqual({
+        ok: false,
+        error: 'SOURCE_NOT_CONFIGURED',
+      });
+    }
   });
-  it('connects a catalog directly without reporting config and distinguishes missing usage from zero usage', () => {
+  it('follows a changed shared source instead of an old personal binding', () => {
+    const s = setup();
+    s.data['new-source'] = s.data['fixture-catalog'];
+    s.properties.LIBRARY_SOURCE_SHEET_URL =
+      'https://docs.google.com/spreadsheets/d/new-source/edit';
+    const result = readDashboard();
+    expect(result.ok && result.connection?.url).toBe(
+      'https://docs.google.com/spreadsheets/d/new-source/edit',
+    );
+    expect(s.openById).toHaveBeenCalledWith('new-source');
+    expect(s.openById).not.toHaveBeenCalledWith('fixture-catalog');
+  });
+  it('loads the shared catalog without reporting config and distinguishes missing usage from zero usage', () => {
     const s = setup();
     const before = [...s.ops];
-    const result = connectSheet(
-      'https://docs.google.com/spreadsheets/u/0/d/fixture-catalog/edit',
-    );
+    const result = readDashboard();
     expect(result.ok).toBe(true);
     if (!result.ok) throw new Error('Expected library snapshot');
     expect(result.connection?.kind).toBe('library');

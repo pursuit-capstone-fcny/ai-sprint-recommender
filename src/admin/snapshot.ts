@@ -172,8 +172,6 @@ export type DashboardResponse =
       error:
         | 'ACCESS_DENIED'
         | 'REPORT_UNAVAILABLE'
-        | 'SHEET_NOT_CONNECTED'
-        | 'INVALID_SHEET_LINK'
-        | 'UNSUPPORTED_SHEET'
+        | 'SOURCE_NOT_CONFIGURED'
         | 'SHARING_TOO_BROAD';
     };

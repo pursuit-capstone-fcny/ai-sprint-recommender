@@ -5,8 +5,6 @@ type Runner = {
   withSuccessHandler: (handler: (value: unknown) => void) => Runner;
   withFailureHandler: (handler: () => void) => Runner;
   readDashboard: () => void;
-  connectSheet?: (link: string) => void;
-  disconnectSheet?: () => void;
 };
 declare global {
   interface Window {
@@ -25,34 +23,6 @@ const connectionSchema = z.strictObject({
   }),
   kind: z.enum(['report', 'library']),
 });
-export const loadPrivateDashboard = () => request('readDashboard');
-export const connectPrivateSheet = (link: string) =>
-  request('connectSheet', link);
-export function disconnectPrivateSheet(): Promise<boolean> {
-  return new Promise((resolve) => {
-    const timer = setTimeout(() => resolve(false), 30_000);
-    const finish = (ok: boolean) => {
-      clearTimeout(timer);
-      resolve(ok);
-    };
-    const runner = window.google?.script?.run;
-    if (!runner?.disconnectSheet) {
-      finish(false);
-      return;
-    }
-    runner
-      .withSuccessHandler((value) =>
-        finish(
-          typeof value === 'object' &&
-            value !== null &&
-            'ok' in value &&
-            value.ok === true,
-        ),
-      )
-      .withFailureHandler(() => finish(false))
-      .disconnectSheet?.();
-  });
-}
 // Apps Script RPC can omit null-valued properties inside nested catalog rows.
 // Restore only the contract's two nullable metadata fields before validation.
 function rpcSnapshot(value: unknown): unknown {
@@ -82,10 +52,7 @@ function rpcSnapshot(value: unknown): unknown {
     },
   };
 }
-function request(
-  method: 'readDashboard' | 'connectSheet',
-  link = '',
-): Promise<DashboardResponse> {
+export function loadPrivateDashboard(): Promise<DashboardResponse> {
   return new Promise((resolve) => {
     const timer = setTimeout(
       () => resolve({ ok: false, error: 'REPORT_UNAVAILABLE' }),
@@ -96,11 +63,11 @@ function request(
       resolve(value);
     };
     const runner = window.google?.script?.run;
-    if (!runner || !runner[method]) {
+    if (!runner?.readDashboard) {
       finish({ ok: false, error: 'ACCESS_DENIED' });
       return;
     }
-    const call = runner
+    runner
       .withSuccessHandler((value) => {
         if (typeof value === 'object' && value !== null && 'ok' in value) {
           if (value.ok === true && 'snapshot' in value) {
@@ -129,9 +96,7 @@ function request(
             'error' in value &&
             [
               'ACCESS_DENIED',
-              'SHEET_NOT_CONNECTED',
-              'INVALID_SHEET_LINK',
-              'UNSUPPORTED_SHEET',
+              'SOURCE_NOT_CONFIGURED',
               'SHARING_TOO_BROAD',
             ].includes(String(value.error))
           ) {
@@ -149,8 +114,7 @@ function request(
       })
       .withFailureHandler(() =>
         finish({ ok: false, error: 'REPORT_UNAVAILABLE' }),
-      );
-    if (method === 'connectSheet') call.connectSheet?.(link);
-    else call.readDashboard();
+      )
+      .readDashboard();
   });
 }
