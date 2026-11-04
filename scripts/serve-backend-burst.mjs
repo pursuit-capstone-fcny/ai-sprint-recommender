@@ -3,6 +3,7 @@ import { mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import { dirname, resolve } from 'node:path';
 import { spawn } from 'node:child_process';
+import ts from 'typescript';
 
 // Run the pinned native engine directly, without Wrangler's local proxy/loopback.
 // All dependencies are synthetic, and the runtime's internet service is denied.
@@ -18,9 +19,12 @@ await build({
   outfile: `${directory}/worker.mjs`,
   define: { 'import.meta.env': '{}' },
 });
-const config = JSON.parse(
+const parsed = ts.parseConfigFileTextToJson(
+  'wrangler.scaling-test.jsonc',
   await readFile('wrangler.scaling-test.jsonc', 'utf8'),
 );
+if (parsed.error) throw new Error('Invalid native backend test config');
+const config = parsed.config;
 const bindings = [
   ...Object.entries(config.vars).map(
     ([name, text]) =>
