@@ -346,5 +346,121 @@
       },
       "temporaryProviderAndRateCredentialValuesCleared": true
     }
+  },
+  "postMergeVerification": {
+    "verifiedAt": "2026-11-04T01:17:32.120870+00:00",
+    "applicationCommit": "1926549d3b7cf46ac2a1a5343a602b37e2e7acc9",
+    "runnerFixCommit": "c9da489",
+    "runnerFixPr": 135,
+    "scope": "Restricted private-copy workbook and named preview; client original unchanged",
+    "checks": {
+      "testsPassed": 1322,
+      "typecheck": true,
+      "lint": true,
+      "build": true,
+      "ciRun": 41729506739,
+      "previewRun": 41729506814
+    },
+    "nativeCollector": {
+      "deploymentVersion": 5,
+      "expectedNewReceipts": 36,
+      "recordedNewReceipts": 36,
+      "uniqueNewEventIds": 36,
+      "missingReceipts": 0,
+      "totalRetainedReceipts": 121,
+      "sameSourceWorkbook": true
+    },
+    "defaults": {
+      "passiveAndBlankSubmissionsAddedEvents": 0,
+      "explicitPlaybackAddedDirectImpression": 1,
+      "explicitPlaybackAddedDirectEmbedClick": 1,
+      "nativeDashboardRecommendationCountsAllZero": true
+    },
+    "feedback": {
+      "newRawRevisions": 2,
+      "newEffectiveResponses": 1,
+      "effectiveResponses": 3,
+      "helpful": 0,
+      "notHelpful": 3,
+      "privateAggregateRefreshedAndReadBack": true
+    },
+    "requests": {
+      "newTopicReviewRows": 1,
+      "newConsentedDemoReviewRows": 1,
+      "unconsentedDemoBlocked": true,
+      "totalReviewRows": 7,
+      "requestTextOrContactDetailsInUsage": false
+    },
+    "recommendations": {
+      "existingAddedVideoMatched": true,
+      "deterministicFallbackSearches": 1,
+      "deterministicFallbackImpressions": 8,
+      "liveHaikuBrowserPicks": 8,
+      "liveHaikuBrowserEmbedClicks": 1,
+      "liveHaikuAbstentionSearches": 1,
+      "liveHaikuAbstentionImpressions": 8,
+      "abstentionReason": "insufficient-results",
+      "abstentionStrongMatchCount": 0,
+      "visibleOrderMatchesRecordedRanks": true,
+      "fallbacksExcludedFromRecommendationMetrics": true
+    },
+    "publication": {
+      "draftRejectedInNativeAppsScript": true,
+      "readyReviewAdded": 1,
+      "readyReviewEdited": 0,
+      "readyReviewRetired": 0,
+      "videos": 91,
+      "catalogVersion": "sha256:ebb860072e1ab016329a634c53bac3d113679e245609ef719e0af4d40e710a2f",
+      "allPrior90VideoRecordsExactlyUnchanged": true,
+      "workflowRef": "main",
+      "workflowRun": 41752263421,
+      "workflowSucceeded": true,
+      "appFoundNewVideoWithoutCodeChangesOrAppRedeployment": true,
+      "newSearchAndImpressionReadBack": true,
+      "newVideoNativeDashboardAppearances": 1,
+      "newVideoPlayback": "Synthetic metadata fixture; media playback not verified"
+    },
+    "analytics": {
+      "nativePrivateDashboardVerified": true,
+      "historicalCatalogSnapshotsMapped": true,
+      "totals": {
+        "appearances": 24,
+        "embedClicks": 2,
+        "youtubeClicks": 0,
+        "directViews": 3,
+        "directEmbedClicks": 3,
+        "directYoutubeClicks": 0
+      },
+      "effectiveFeedbackResponses": 3,
+      "defaultAndFallbackRecommendationCountsZero": true
+    },
+    "localWorkerd": {
+      "actualNativeWorker": true,
+      "overlappingClientRequests": 1000,
+      "aiSuccesses": 1000,
+      "peakProviderConcurrency": 32,
+      "acceptedEvents": 20000,
+      "searches": 2000,
+      "appearances": 16000,
+      "clicks": 2000,
+      "paidCalls": 0,
+      "realSheetWrites": 0,
+      "provider": "Synthetic adapter"
+    },
+    "cleanup": {
+      "dailyReceiptLimitRestored": 100,
+      "perMinuteLimit": 20,
+      "maxRetainedRows": 1000,
+      "retentionDays": 1,
+      "paidCallsEnabled": false,
+      "disabledApiOutcomeVerified": true,
+      "paidShutdownRun": 41740637384,
+      "originalFormattingMacroPreserved": true
+    },
+    "limits": [
+      "Anonymous activity delivery remains bounded best effort; historical receipt gaps were preserved.",
+      "The private dashboard uses its conservative 24-hour reporting window because no approved reporting-policy metadata is installed.",
+      "Firefox multiple-account Apps Script redirect still returns Page Not Found; native dashboard verification used the signed-in editor account in Brave."
+    ]
   }
 }
