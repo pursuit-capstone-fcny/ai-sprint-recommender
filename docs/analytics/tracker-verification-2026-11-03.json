@@ -359,7 +359,13 @@
       "lint": true,
       "build": true,
       "ciRun": 41729506739,
-      "previewRun": 41729506814
+      "previewRun": 41729506814,
+      "burstReportingDateRegression": {
+        "ciFailureRun": 41753112410,
+        "cause": "Burst test used the UTC calendar date while analytics filters receipts by America/New_York.",
+        "regression": "Pin the clock to 01:00 UTC and assert full burst totals on the previous New York calendar date.",
+        "productionCodeChanged": false
+      }
     },
     "nativeCollector": {
       "deploymentVersion": 5,

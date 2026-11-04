@@ -19,7 +19,10 @@ import {
 } from '../src/analytics/report';
 import { receiveUsageBatch, type UsageRecord } from '../apps-script/usage';
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.useRealTimers();
+});
 function setup() {
   vi.spyOn(console, 'info').mockImplementation(() => {});
   const catalog = catalogFixture(8);
@@ -174,6 +177,9 @@ function setup() {
 it.each(['rules', 'llm'])(
   'durably drains 1,000 simultaneous %s searches to 10,000 accepted events and reconciled reporting',
   async (engine) => {
+    // Exercise the UTC/New York date boundary without depending on the CI clock.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-11-04T01:00:00Z'));
     const test = setup();
     const responses = await Promise.all(
       Array.from({ length: 1000 }, () =>
@@ -201,7 +207,7 @@ it.each(['rules', 'llm'])(
       10_000,
     );
     expect(test.appendBatch.mock.calls.length).toBeLessThanOrEqual(208);
-    const day = new Date().toISOString().slice(0, 10);
+    const day = '2026-11-03'; // Receipts are reported in America/New_York.
     const report = buildAnalyticsReport({
       current: test.catalog,
       records: test.accepted,
