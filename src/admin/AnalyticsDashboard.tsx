@@ -12,13 +12,8 @@ import type {
   DashboardSnapshot,
   SheetConnection,
 } from './snapshot';
-import {
-  loadPrivateDashboard,
-  connectPrivateSheet,
-  disconnectPrivateSheet,
-} from './transport';
+import { loadPrivateDashboard } from './transport';
 import { TopicSearch } from './TopicSearch';
-import { parseSheetLink } from './sheetLink';
 import { csvFilename, downloadCsv, toCsv } from './csv';
 import '../pages/global.css';
 import './dashboard.css';
@@ -28,13 +23,10 @@ const connectionErrors = {
     'Google access required. Sign in with an account that can read the private Sheet.',
   REPORT_UNAVAILABLE:
     'The Sheet could not be loaded. Reload data to try again.',
-  SHEET_NOT_CONNECTED: '',
-  INVALID_SHEET_LINK:
-    'Paste a Google Sheets link beginning with https://docs.google.com/spreadsheets/d/.',
-  UNSUPPORTED_SHEET:
-    'This Sheet does not contain a supported library or analytics report. Check the link with the library owner.',
+  SOURCE_NOT_CONFIGURED:
+    'The library Sheet has not been configured. Contact the library owner.',
   SHARING_TOO_BROAD:
-    'The Sheet must use Restricted sharing with named people. Ask its owner to update sharing, then reconnect.',
+    'The library Sheet must use Restricted sharing with named people. Ask its owner to update sharing, then reload.',
 };
 const realClock = () => Date.now();
 const views: { id: DashboardView; label: string; description: string }[] = [
@@ -96,34 +88,25 @@ const stateCopy = {
 };
 export function AnalyticsDashboard({
   load = loadPrivateDashboard,
-  connect = connectPrivateSheet,
-  disconnect = disconnectPrivateSheet,
   clock = realClock,
   demo = false,
 }: {
   load?: () => Promise<DashboardResponse>;
-  connect?: (link: string) => Promise<DashboardResponse>;
-  disconnect?: () => Promise<boolean>;
   clock?: () => number;
   demo?: boolean;
 }) {
   const [connection, setConnection] = useState<SheetConnection | null>(null);
-  const [sheetUrl, setSheetUrl] = useState('');
-  const [editingConnection, setEditingConnection] = useState(false);
-  const acceptResponse = (response: DashboardResponse, reset = false) => {
+  const acceptResponse = (response: DashboardResponse) => {
     if (!response.ok) {
       setError(connectionErrors[response.error]);
-      setEditingConnection(true);
       return;
     }
     const next = response.snapshot;
     setSnapshot(next);
     setConnection(response.connection ?? null);
-    setEditingConnection(false);
-    setSheetUrl('');
     setPage(0);
-    setDraft((current) => (reset || !current ? defaults(next) : current));
-    setFilters((current) => (reset || !current ? defaults(next) : current));
+    setDraft((current) => current ?? defaults(next));
+    setFilters((current) => current ?? defaults(next));
   };
   const [snapshot, setSnapshot] = useState<DashboardSnapshot | null>(null),
     [loading, setLoading] = useState(true),
@@ -146,6 +129,7 @@ export function AnalyticsDashboard({
     setLoading(true);
     setError('');
     setSnapshot(null);
+    setConnection(null);
     load()
       .then((response) => {
         if (!active) return;
@@ -358,112 +342,14 @@ export function AnalyticsDashboard({
         <span>Updated {dateLabel(snapshot?.refreshedAt ?? null)}</span>
         <span>Reporting dates use America/New_York</span>
       </div>
-      {!demo && (
-        <section className="analytics-connection" aria-label="Connected Sheet">
-          {connection && (
-            <p>
-              Connected to{' '}
-              <a href={connection.url} target="_blank" rel="noreferrer">
-                {connection.title}
-              </a>
-            </p>
-          )}
-          {!connection || editingConnection ? (
-            <form
-              onSubmit={async (event) => {
-                event.preventDefault();
-                try {
-                  parseSheetLink(sheetUrl);
-                } catch {
-                  setError(connectionErrors.INVALID_SHEET_LINK);
-                  return;
-                }
-                setLoading(true);
-                setError('');
-                setSnapshot(null);
-                try {
-                  acceptResponse(await connect(sheetUrl), true);
-                } catch {
-                  setError(connectionErrors.REPORT_UNAVAILABLE);
-                } finally {
-                  setLoading(false);
-                }
-              }}
-            >
-              <h2>
-                {connection
-                  ? 'Change your Sheet'
-                  : 'Connect your library Sheet'}
-              </h2>
-              <p>
-                Paste its link once. Your Google account must have access to the
-                Sheet. The connection is saved only for you.
-              </p>
-              <label htmlFor="analytics-sheet-link">Google Sheets link</label>
-              <div className="analytics-connection-fields">
-                <input
-                  id="analytics-sheet-link"
-                  type="url"
-                  required
-                  maxLength={2048}
-                  value={sheetUrl}
-                  disabled={loading}
-                  placeholder="https://docs.google.com/spreadsheets/d/…"
-                  onChange={(e) => setSheetUrl(e.target.value)}
-                />
-                <button
-                  className="analytics-button analytics-primary"
-                  disabled={loading}
-                  type="submit"
-                >
-                  {loading ? 'Please wait…' : 'Connect Sheet'}
-                </button>
-              </div>
-              <p className="analytics-connection-hint">
-                Connecting reads the Sheet. It does not edit files, change
-                sharing, or enable visitor tracking.
-              </p>
-            </form>
-          ) : (
-            <div className="analytics-connection-actions">
-              <button
-                className="analytics-reset"
-                disabled={loading}
-                onClick={() => setEditingConnection(true)}
-              >
-                Change Sheet
-              </button>
-              <button
-                className="analytics-reset"
-                disabled={loading}
-                onClick={async () => {
-                  setLoading(true);
-                  setSnapshot(null);
-                  setError('');
-                  try {
-                    if (await disconnect()) {
-                      setConnection(null);
-                      setDraft(null);
-                      setFilters(null);
-                      setSheetUrl('');
-                      setEditingConnection(true);
-                    } else
-                      setError(
-                        'Could not disconnect. Reload data and try again.',
-                      );
-                  } catch {
-                    setError(
-                      'Could not disconnect. Reload data and try again.',
-                    );
-                  } finally {
-                    setLoading(false);
-                  }
-                }}
-              >
-                Disconnect
-              </button>
-            </div>
-          )}
+      {!demo && connection && (
+        <section className="analytics-connection" aria-label="Library Sheet">
+          <p>
+            Library Sheet:{' '}
+            <a href={connection.url} target="_blank" rel="noreferrer">
+              {connection.title}
+            </a>
+          </p>
         </section>
       )}
       {error && (

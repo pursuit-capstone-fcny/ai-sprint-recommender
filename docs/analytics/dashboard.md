@@ -31,7 +31,7 @@ Sheet-link connection and browser-to-dashboard reconciliation.
 ```text
 Public recommender deployment                 Private admin deployment
 catalog GET / usage POST                      Google sign-in, execute as visitor
-no analytics read endpoint                    per-user saved Sheet link
+no analytics read endpoint                    configured shared source Sheet
 synthetic preview only                        visitor's restricted Sheet permission
                                               readDashboard -> aggregates only
 ```
@@ -42,21 +42,22 @@ Build with `pnpm build:admin`, or the normal `pnpm build`. The generated
 folder. Do not upload the admin bundle to the public catalog/usage project or
 serve the HTML through its anonymous `doGet`.
 
-The admin bundle exports `doGet`, `readDashboard`, `connectSheet` and
-`disconnectSheet`. Connection helpers only change the current user's binding in
-Apps Script User Properties. They never edit a Sheet, alter sharing, enable
-collection, install triggers or call producer maintenance operations. Every RPC
-requires a Google identity and matching active/effective users, rejecting an
-owner-executed deployment. File reads execute as the visiting user and require
-actual Google file permission. The reader also rejects public, domain and link
-sharing. Named membership of the private file authorizes its dashboard data.
+The admin bundle exports `doGet` and `readDashboard`. Each read uses the main
+app's source/usage Sheet configured in `LIBRARY_SOURCE_SHEET_URL`, with no
+per-user connection. Legacy saved connections are ignored. Reads never edit a
+Sheet, alter sharing, enable collection, install triggers or call producer
+maintenance operations. Every RPC requires a Google identity and matching
+active/effective users, rejecting an owner-executed deployment. File reads
+execute as the visiting user and require actual Google file permission. The
+reader also rejects public, domain and link sharing. Named membership of the
+private file authorizes its dashboard data.
 
 The manifest pins `executeAs=USER_ACCESSING` and `access=ANYONE`, meaning Google
 account authentication, **not** `ANYONE_ANONYMOUS`. Review both in the deployment
 UI. Google Workspace policy and OAuth consent must allow the intended staff.
 The admin project requests email identity, Spreadsheet service access and Drive read-only access to verify sharing, plus external-request access to the public static catalog; the
 latter is broad at Google's scope level even though this code only reads the
-user-selected file. Each admin must review/authorize those scopes. No
+configured source file. Each admin must review/authorize those scopes. No
 credentials, emails or workbook IDs belong in frontend code or this repository.
 The built app contains no external scripts/fonts, analytics beacons or browser
 storage. Reporting facts exist only in page memory and are not logged.
@@ -112,30 +113,27 @@ validates every returned field, expected headers, row limits, and the generation
 before/after reading facts. In-progress, failed, cleared or stale reports do not
 return fact rows. A mixed-generation read yields a recoverable load error.
 
-## Staff setup: one Sheet link
+## Staff access: open the dashboard
 
-After the technical team deploys the private app, Ali and Eliot each sign in with
-Google, authorize the app, paste their Google Sheets link and choose **Connect
-Sheet**. The app remembers that connection for that Google account. No file ID,
-Script Property, duplicate email allowlist, reporting workbook or refresh trigger
-is required from them. **Change Sheet** validates the new file before replacing
-the saved connection. **Disconnect** forgets only that account's binding.
+After the technical team deploys the private app, staff sign in with Google and
+authorize the app. The dashboard automatically loads the same source/usage Sheet
+configured for the main app. No pasted link or Connect, Change Sheet or Disconnect
+action is required, including for accounts with an old saved connection.
 
-The link must identify the configured private source/usage Sheet. Arbitrary
-catalog or aggregate workbooks are rejected. Inventory comes exclusively from
-the versioned Cloudflare catalog. The publisher validates normalized Catalog
-workbooks or approved integration rows; the dashboard never reads draft catalog
-cells. Connecting cannot grant missing Google access. See
+Staff still need Google permission to the Restricted source Sheet. The dashboard
+does not grant access or change sharing. Missing or invalid source configuration
+asks staff to contact the library owner. Inventory comes exclusively from the
+versioned Cloudflare catalog, never draft catalog cells. See
 [library publishing](library-publishing.md) for the one-time technical setup.
 
-A source workbook can be connected before it has a `Usage` tab. Inventory loads,
+The configured source workbook can be read before it has a `Usage` tab. Inventory loads,
 but usage counts display **Unavailable** and unused-content/date/source/mode
 controls stay disabled. An existing, valid but empty `Usage` table instead means
-zero retained recorded events. Connecting does not create that table or turn on
+zero retained recorded events. Loading does not create that table or turn on
 production logging. The collection owner must still deploy and approve #16's
 event collection. Events must be in the selected source workbook to be read
 there. Legacy multi-file producers retain their owner reconciliation tables,
-but those tables cannot be connected to the dashboard.
+but those tables are not dashboard sources.
 
 Direct source reads aggregate on each reload and expire after 15 minutes. If the
 owner supplies approved reporting policy as workbook developer metadata
@@ -157,10 +155,10 @@ snapshots, never mutable Sheet snapshot cells.
 2. Deploy as **User accessing the web app**, with Google sign-in required. Each
    staff member authorizes Google's scopes. Review Workspace/OAuth policy with
    the FCNY owner. Test missing identity, incorrect owner execution, revoked file
-   access, broadly shared files and per-account binding isolation.
-3. Verify an authorized viewer can connect using only the Sheet URL and can
+   access, broadly shared files and automatic loading for first-time viewers and accounts with legacy bindings.
+3. Verify an authorized viewer can open the dashboard without entering a Sheet URL and can
    inspect aggregates without YouTube channel access. Confirm no raw event
-   records or private review notes reach the browser. Test disconnect/reconnect
+   records or private review notes reach the browser. Test missing source configuration
    and reload after revocation.
 4. Record the private deployment URL, owner and native reconciliation evidence
    in the private deployment record. The public synthetic preview validates UI;

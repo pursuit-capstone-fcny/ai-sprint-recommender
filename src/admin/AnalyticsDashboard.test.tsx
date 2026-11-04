@@ -59,8 +59,8 @@ describe('admin analytics UI', () => {
     );
     expect(screen.queryByText(/26–/)).toBeNull();
   });
-  it('connects from a single Sheet link and hides usage metrics when collection is absent', async () => {
-    const connect = vi.fn().mockResolvedValue({
+  it('automatically loads the shared Sheet without connection controls and hides unavailable usage', async () => {
+    const load = vi.fn().mockResolvedValue({
       ok: true,
       connection: {
         title: 'Fictional library',
@@ -74,27 +74,15 @@ describe('admin analytics UI', () => {
         conservativeWindow: true,
       },
     });
-    const disconnect = vi.fn().mockResolvedValue(true);
-    render(
-      <AnalyticsDashboard
-        clock={clock}
-        load={async () => ({ ok: false, error: 'SHEET_NOT_CONNECTED' })}
-        connect={connect}
-        disconnect={disconnect}
-      />,
-    );
-    const input = await screen.findByLabelText('Google Sheets link');
-    await waitFor(() => expect(input).toHaveProperty('disabled', false));
-    fireEvent.change(input, {
-      target: {
-        value: 'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
-      },
-    });
-    fireEvent.click(screen.getByRole('button', { name: 'Connect Sheet' }));
+    render(<AnalyticsDashboard clock={clock} load={load} />);
     await screen.findByRole('link', { name: 'Fictional library' });
-    expect(connect).toHaveBeenCalledWith(
-      'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
-    );
+    expect(load).toHaveBeenCalledTimes(1);
+    expect(screen.queryByLabelText('Google Sheets link')).toBeNull();
+    expect(
+      screen.queryByRole('button', {
+        name: /Connect Sheet|Change Sheet|Disconnect/,
+      }),
+    ).toBeNull();
     expect(screen.getByLabelText('Recorded activity')).toHaveProperty(
       'disabled',
       true,
@@ -105,8 +93,25 @@ describe('admin analytics UI', () => {
     expect(
       screen.getByText(/10 videos have tags awaiting approval/),
     ).toBeTruthy();
-    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }));
-    await screen.findByRole('heading', { name: 'Connect your library Sheet' });
+    load.mockResolvedValue({ ok: false, error: 'ACCESS_DENIED' });
+    fireEvent.click(screen.getByRole('button', { name: 'Reload data' }));
+    await screen.findByRole('alert');
+    expect(
+      screen.queryByRole('link', { name: 'Fictional library' }),
+    ).toBeNull();
+    expect(screen.queryByRole('table')).toBeNull();
+  });
+  it('directs shared configuration failures to the owner without a personal connection form', async () => {
+    render(
+      <AnalyticsDashboard
+        clock={clock}
+        load={async () => ({ ok: false, error: 'SOURCE_NOT_CONFIGURED' })}
+      />,
+    );
+    expect((await screen.findByRole('alert')).textContent).toContain(
+      'Contact the library owner',
+    );
+    expect(screen.queryByLabelText('Google Sheets link')).toBeNull();
     expect(screen.queryByRole('table')).toBeNull();
   });
   it('shows canonical keyword frequency and navigates from a video to associations', async () => {
