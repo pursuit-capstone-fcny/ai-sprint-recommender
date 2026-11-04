@@ -1,26 +1,36 @@
 # Topic requests and demo offers
 
-Implementation for spec #26. Collection is disabled by default. Eliot's wording,
-contact fields, purpose, staff access, retention and a named weekly reviewer are
-still unapproved through #8. The user confirmed no approvals are available.
-No approval or live delivery is claimed.
+Implementation for spec #26. Collection is disabled by default. The
+[November 2 rollout](live-feedback-requests.md) records Jason's approved prompts,
+consented demo email, private review, 30-day retention and weekly ownership.
+The November 3 location correction uses a tab in the library workbook, as Eliot
+requested and Jason authorized. This does not assert additional client approval.
 
 ## Configuration and isolation
 
-Create a separate FCNY review workbook with general access **Restricted**, only
-the approved reviewers, and no public publication. It must differ from catalog,
-usage, analytics and feedback reporting workbooks. Verify unauthorized/signed-out
-access is denied. Requests have no session/search identifiers and never enter
-usage events, catalog snapshots or analytics. Only fixed acknowledgements leave
-the request collector, and it never logs request bodies or exception contents.
+Use a `Requests` tab in the configured library workbook, alongside `Video Tracker`
+and `Usage`. The entire workbook must have general access **Restricted**, with
+only the named staff who may review requests and demo email addresses. The
+collector checks sharing on setup, submission and cleanup. Verify unauthorized
+and signed-out access is denied. Requests have no session/search identifiers and
+never enter usage events, catalog snapshots or analytics. Only fixed
+acknowledgements leave the request collector, and it never logs request bodies
+or exception contents.
+
+Explicitly configured separate Restricted review workbooks remain supported for
+existing deployments. Other catalog/usage/report destinations are rejected
+unless they are the configured library workbook.
 
 Set collector Script Properties:
 
-- `REQUESTS_SPREADSHEET_ID`: the restricted review workbook.
+- `LIBRARY_SOURCE_SHEET_URL`: the configured Restricted library workbook.
+- `REQUESTS_SPREADSHEET_ID`: set to that workbook's ID. If absent, the configured
+  library workbook is the default. An explicit legacy review destination takes
+  precedence until the owner switches it.
 - `REQUESTS_ACCESS_APPROVED=true`: records completion of the actual sharing check.
 - `REQUESTS_POLICY`: approved policy JSON described below.
 - Existing `CATALOG_SPREADSHEET_ID`, `USAGE_SPREADSHEET_ID` and
-  `ANALYTICS_SPREADSHEET_ID`: used to reject shared destinations.
+  `ANALYTICS_SPREADSHEET_ID`: identify existing data/report destinations.
 - `REQUESTS_ENABLED=true`: set last, after initialization and retention setup.
 
 The policy has `version`, `topicPrompt`, `demoInvitation`, `purpose`, `access`,
@@ -30,6 +40,18 @@ approved wording, purpose, access and review owner. Retention is 1–365 days.
 fields in the form. A demo offer requires only email and explicit consent after
 the notice. Topics cannot carry contact or consent fields. There are no uploads
 or automatic catalog additions.
+
+For an existing separate request queue, deploy the updated collector source,
+then add [requests-in-library.gs](../scripts/requests-in-library.gs) as a separate
+editor-only script file and run `useLibraryRequestsTab`. It verifies the bound
+source/usage IDs and Restricted sharing, copies the retained queue with its
+statuses and validation, checks the copy before switching destinations, and
+keeps the prior workbook for rollback. A conflicting existing `Requests` tab
+stops migration without switching. It runs initialization and the existing
+request-retention installer; it does not change consent, policy or collection
+flags. The previous queue is a private archive; keep its original retention
+deadline and remove it under the approved retention policy after rollback is no
+longer needed. Historical test copies contain fictional submissions only.
 
 Run `initializeRequests` in the editor. It creates the `Requests` table with
 `requestId`, `receivedAt`, `status`, `kind`, `topic`, `email`, `policyVersion`.
@@ -88,10 +110,25 @@ review workbook. If entries go unanswered for two weeks, disable
 
 Record the tested commit, Cloudflare preview, collector version, workbook access
 checks and unresolved failures in spec #26. Verify a contact-free topic and a
-consented demo offer appear only in the review workbook. Verify `doGet` and Usage
+consented demo offer appear only in the source workbook's `Requests` tab. Verify `doGet` and Usage
 never return/store their text, unauthorized workbook access is denied, expired
 contacts are purged and hourly cleanup runs. Check mobile, 200% zoom and
 screen-reader status announcements. Production release still depends on #17.
 
 Rollback by disabling `VITE_REQUESTS_ENABLED` and rebuilding, then disabling
 collector `REQUESTS_ENABLED`. Keep approved cleanup running while data remains.
+
+## Same-workbook verification, November 3, 2026
+
+Collector version 6 on the existing private-copy endpoint now writes to `Requests`
+beside `Video Tracker` and `Usage`. Seven existing fictional requests were copied
+exactly, including IDs and review statuses. The previous test queue remains a
+Restricted rollback copy. A new browser topic request and a consented demo offer
+each produced one `new` row in the source workbook; the unconsented demo attempt
+added none. Both accepted submissions showed the success acknowledgement.
+The queue contains nine unique requests. Usage stayed at 121 rows with no
+request text or contact details, and the public catalog contract still returns
+the unchanged 91-video snapshot. Native Sheet layout was checked at 100% zoom.
+All 1,328 tests, typecheck, lint and application/collector/admin builds pass.
+See the [aggregate verification record](analytics/requests-in-library-verification-2026-11-03.json).
+This verifies the user-designated private test environment, not a production cutover.

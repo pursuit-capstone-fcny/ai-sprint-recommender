@@ -8,6 +8,8 @@ import {
   receiveContribution,
 } from './contributions';
 import type { UsageRequest } from './usage';
+import { configuredLibrarySheet } from './published-library';
+import { requirePrivateLibraryWorkbook } from './source-workbook';
 
 type Sheet = GoogleAppsScript.Spreadsheet.Sheet;
 function configuration(requireEnabled = true) {
@@ -17,7 +19,10 @@ function configuration(requireEnabled = true) {
     p.getProperty('REQUESTS_ACCESS_APPROVED') !== 'true'
   )
     throw new Error('Requests are not configured');
-  const id = p.getProperty('REQUESTS_SPREADSHEET_ID');
+  const sourceId = p.getProperty('LIBRARY_SOURCE_SHEET_URL')
+    ? configuredLibrarySheet()
+    : null;
+  const id = p.getProperty('REQUESTS_SPREADSHEET_ID') || sourceId;
   const catalogId = p.getProperty('CATALOG_SPREADSHEET_ID');
   const usageId = p.getProperty('USAGE_SPREADSHEET_ID');
   const analyticsId = p.getProperty('ANALYTICS_SPREADSHEET_ID');
@@ -28,9 +33,17 @@ function configuration(requireEnabled = true) {
     !catalogId ||
     !usageId ||
     !analyticsId ||
-    [catalogId, usageId, analyticsId, feedbackId, boundId].includes(id)
+    (id !== sourceId &&
+      [catalogId, usageId, analyticsId, feedbackId, boundId].includes(id))
   )
-    throw new Error('Requests require a separate review workbook');
+    throw new Error(
+      'Requests require the configured library or a review workbook',
+    );
+  if (id === sourceId) requirePrivateLibraryWorkbook(id);
+  else if (
+    DriveApp.getFileById(id).getSharingAccess() !== DriveApp.Access.PRIVATE
+  )
+    throw new Error('Set the request workbook sharing to Restricted.');
   const policy = ContributionPolicySchema.parse(
     JSON.parse(p.getProperty('REQUESTS_POLICY') ?? ''),
   );

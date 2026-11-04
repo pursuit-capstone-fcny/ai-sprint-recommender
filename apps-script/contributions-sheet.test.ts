@@ -20,15 +20,21 @@ function setup() {
     REQUESTS_ACCESS_APPROVED: 'true',
     REQUESTS_SPREADSHEET_ID: 'review',
     REQUESTS_POLICY: JSON.stringify(policy),
-    CATALOG_SPREADSHEET_ID: 'catalog',
+    CATALOG_SPREADSHEET_ID: 'fixture-catalog',
     USAGE_SPREADSHEET_ID: 'usage',
     ANALYTICS_SPREADSHEET_ID: 'analytics',
     FEEDBACK_REPORT_SPREADSHEET_ID: 'feedback',
     FEEDBACK_REPORT_ACCESS_APPROVED: 'true',
     USAGE_RETENTION_DAYS: '7',
+    LIBRARY_SOURCE_SHEET_URL:
+      'https://docs.google.com/spreadsheets/d/fixture-catalog/edit',
   };
   const data: Record<string, Record<string, unknown[][]>> = {
     review: {},
+    'fixture-catalog': {
+      'Video Tracker': [['Existing catalog']],
+      Usage: [['Existing usage']],
+    },
     usage: {},
     feedback: {},
   };
@@ -85,9 +91,17 @@ function setup() {
     MimeType: { JSON: 'json' },
     createTextOutput: (body: string) => ({ setMimeType: () => body }),
   });
+  const sharing: Record<string, string> = {
+    'fixture-catalog': 'PRIVATE',
+    review: 'PRIVATE',
+  };
+  vi.stubGlobal('DriveApp', {
+    Access: { PRIVATE: 'PRIVATE' },
+    getFileById: (id: string) => ({ getSharingAccess: () => sharing[id] }),
+  });
   vi.stubGlobal('SpreadsheetApp', {
     openById,
-    getActiveSpreadsheet: () => ({ getId: () => 'catalog' }),
+    getActiveSpreadsheet: () => ({ getId: () => 'fixture-catalog' }),
     flush: vi.fn(),
     newDataValidation: () => ({
       requireValueInList: () => ({
@@ -117,7 +131,7 @@ function setup() {
         }),
       ),
     );
-  return { data, properties, entry, send, openById };
+  return { data, properties, entry, send, openById, sharing };
 }
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -148,9 +162,73 @@ describe('request Sheet adapter', () => {
     expect(purgeRequests()).toEqual({ deleted: 1 });
     expect(data.review.Requests).toEqual([contributionHeaders]);
   });
-  it('rejects any configured catalog/usage/report destination before writing request text', () => {
+  it('AC-26.2: stores topics and consented demos in the source Requests tab without changing catalog or usage', () => {
+    const { data, properties, send } = setup();
+    properties.REQUESTS_SPREADSHEET_ID = 'fixture-catalog';
+    properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+    initializeRequests();
+    expect(
+      send({
+        kind: 'topic',
+        requestId: crypto.randomUUID(),
+        topic: 'Fictional topic request',
+        email: undefined,
+        consent: undefined,
+      }),
+    ).toEqual({ ok: true, status: 'accepted' });
+    expect(send()).toEqual({ ok: true, status: 'accepted' });
+    expect(data['fixture-catalog'].Requests[1].slice(2)).toEqual([
+      'new',
+      'topic',
+      'Fictional topic request',
+      '',
+      'fictional-v1',
+    ]);
+    expect(data['fixture-catalog'].Requests[2][3]).toBe('demo');
+    expect(data['fixture-catalog']['Video Tracker']).toEqual([
+      ['Existing catalog'],
+    ]);
+    expect(data['fixture-catalog'].Usage).toEqual([['Existing usage']]);
+    expect(data.review).toEqual({});
+    expect(send()).toEqual({ ok: true, status: 'duplicate' });
+    expect(data['fixture-catalog'].Requests).toHaveLength(3);
+    vi.setSystemTime(new Date('2026-11-07T12:00:00Z'));
+    expect(purgeRequests()).toEqual({ deleted: 2 });
+    expect(data['fixture-catalog'].Requests).toEqual([contributionHeaders]);
+    expect(data['fixture-catalog'].Usage).toEqual([['Existing usage']]);
+  });
+  it('rejects publicly shared request destinations at initialization, submission and cleanup', () => {
+    const { properties, sharing, send, openById } = setup();
+    for (const id of ['review', 'fixture-catalog']) {
+      properties.REQUESTS_SPREADSHEET_ID = id;
+      sharing[id] = 'ANYONE_WITH_LINK';
+      expect(() => initializeRequests()).toThrow('Restricted');
+      expect(send()).toEqual({ error: { code: 'REQUESTS_UNAVAILABLE' } });
+      expect(() => purgeRequests()).toThrow('Restricted');
+    }
+    expect(openById).not.toHaveBeenCalled();
+  });
+  it('defaults to the configured library and stops writes if its sharing later changes', () => {
+    const { data, properties, sharing, send } = setup();
+    delete properties.REQUESTS_SPREADSHEET_ID;
+    initializeRequests();
+    expect(send({ consent: false })).toEqual({
+      error: { code: 'REQUESTS_INVALID' },
+    });
+    expect(data['fixture-catalog'].Requests).toHaveLength(1);
+    expect(send()).toEqual({ ok: true, status: 'accepted' });
+    sharing['fixture-catalog'] = 'ANYONE_WITH_LINK';
+    expect(send({ requestId: crypto.randomUUID() })).toEqual({
+      error: { code: 'REQUESTS_UNAVAILABLE' },
+    });
+    expect(() => purgeRequests()).toThrow('Restricted');
+    expect(data['fixture-catalog'].Requests).toHaveLength(2);
+  });
+  it('rejects unrelated catalog/usage/report destinations before writing request text', () => {
     const { properties, send, openById } = setup();
-    for (const id of ['catalog', 'usage', 'analytics', 'feedback']) {
+    properties.LIBRARY_SOURCE_SHEET_URL =
+      'https://docs.google.com/spreadsheets/d/different-source/edit';
+    for (const id of ['fixture-catalog', 'usage', 'analytics', 'feedback']) {
       properties.REQUESTS_SPREADSHEET_ID = id;
       expect(send()).toEqual({ error: { code: 'REQUESTS_UNAVAILABLE' } });
     }
