@@ -1,11 +1,16 @@
 import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
 import type { CatalogItem } from '../contracts/catalogItem';
-import { loadYouTubePlayer, type YouTubePlayer } from './youtubePlayer';
+import {
+  loadYouTubePlayer,
+  YOUTUBE_ENDED_STATE,
+  type PlaybackPosition,
+  type YouTubePlayer,
+} from './youtubePlayer';
 
 interface VideoPlayerDialogProps {
   item: CatalogItem;
   open: boolean;
-  onDismiss: () => void;
+  onDismiss: (position: PlaybackPosition | null) => void;
 }
 
 export function VideoPlayerDialog({
@@ -63,9 +68,19 @@ export function VideoPlayerDialog({
   }, [open]);
 
   function dismiss() {
-    player.current?.pauseVideo();
+    const controller = player.current;
+    const elapsed =
+      controller && controller.getPlayerState() !== YOUTUBE_ENDED_STATE
+        ? controller.getCurrentTime()
+        : 0;
+    const duration = controller?.getDuration() ?? 0;
+    controller?.pauseVideo();
     dialog.current?.close();
-    onDismiss();
+    onDismiss(
+      Number.isFinite(elapsed) && elapsed >= 1
+        ? { elapsedSeconds: elapsed, durationSeconds: duration }
+        : null,
+    );
   }
 
   return (

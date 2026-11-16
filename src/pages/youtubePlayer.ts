@@ -1,7 +1,17 @@
 interface YouTubePlayer {
   playVideo(): void;
   pauseVideo(): void;
+  getCurrentTime(): number;
+  getDuration(): number;
+  getPlayerState(): number;
   destroy(): void;
+}
+
+export const YOUTUBE_ENDED_STATE = 0;
+
+export interface PlaybackPosition {
+  elapsedSeconds: number;
+  durationSeconds: number;
 }
 
 type PlayerConstructor = new (

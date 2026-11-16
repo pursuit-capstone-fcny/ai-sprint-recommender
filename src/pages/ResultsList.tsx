@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
 import { VideoPlayerDialog } from './VideoPlayerDialog';
+import type { PlaybackPosition } from './youtubePlayer';
 import type { FeedbackBinding } from '../feedback/vote';
 
 export const RESULTS_HEADING_ID = 'results-heading';
@@ -38,6 +39,9 @@ export function ResultsList({
 }: ResultsListProps) {
   const playButton = useRef<HTMLButtonElement | null>(null);
   const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [pausedPosition, setPausedPosition] = useState<PlaybackPosition | null>(
+    null,
+  );
   const video = results.find(
     (match) => match.item.youtubeId === selectedVideoId,
   )?.item;
@@ -74,6 +78,9 @@ export function ResultsList({
           <VideoCard
             key={match.item.youtubeId}
             match={match}
+            pausedPosition={
+              match.item.youtubeId === selectedVideoId ? pausedPosition : null
+            }
             fallbackLabel={fallbackOnly ? 'Fallback video' : undefined}
             showClosestMatch={showClosestMatch}
             feedback={
@@ -86,6 +93,7 @@ export function ResultsList({
             }
             onPlay={(button) => {
               playButton.current = button;
+              setPausedPosition(null);
               setSelectedVideoId(match.item.youtubeId);
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');
@@ -99,7 +107,8 @@ export function ResultsList({
           key={video.youtubeId}
           item={video}
           open={video.youtubeId === playingId}
-          onDismiss={() => {
+          onDismiss={(position) => {
+            setPausedPosition(position);
             onPlay(null);
             playButton.current?.focus({ preventScroll: true });
           }}

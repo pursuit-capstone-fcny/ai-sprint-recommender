@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { FeedbackControls } from '../feedback/FeedbackControls';
 import type { FeedbackBinding } from '../feedback/vote';
+import type { PlaybackPosition } from './youtubePlayer';
 
 const COPIED_RESET_MS = 2000;
 
@@ -9,8 +10,19 @@ function formatDuration(durationSeconds: number): string {
   return `${Math.round(durationSeconds / 60)} min`;
 }
 
+function formatPlaybackTime(elapsed: number): string {
+  elapsed = Math.floor(elapsed);
+  const hours = Math.floor(elapsed / 3600);
+  const minutes = Math.floor(elapsed / 60) % 60;
+  const seconds = String(elapsed % 60).padStart(2, '0');
+  return hours
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+    : `${minutes}:${seconds}`;
+}
+
 interface VideoCardProps {
   match: RankedMatch;
+  pausedPosition?: PlaybackPosition | null;
   onPlay: (button: HTMLButtonElement) => void;
   onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
@@ -21,6 +33,7 @@ interface VideoCardProps {
 
 export function VideoCard({
   match,
+  pausedPosition,
   onPlay,
   onWatch,
   showClosestMatch = true,
@@ -44,6 +57,23 @@ export function VideoCard({
 
   const watchUrl = `https://www.youtube.com/watch?v=${item.youtubeId}`;
   const firstTool = item.tools[0];
+  const resumeLabel = pausedPosition
+    ? `Resume at ${formatPlaybackTime(pausedPosition.elapsedSeconds)}`
+    : null;
+  const duration = pausedPosition?.durationSeconds ?? 0;
+  const progress =
+    pausedPosition && Number.isFinite(duration) && duration > 0
+      ? Math.min(100, (pausedPosition.elapsedSeconds / duration) * 100)
+      : null;
+  const playLabel = resumeLabel
+    ? [
+        resumeLabel,
+        item.title,
+        progress === null ? null : `${Math.round(progress)}% through`,
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : `Play ${item.title}`;
 
   async function handleCopyLink() {
     try {
@@ -62,7 +92,7 @@ export function VideoCard({
           className={
             thumbnailFailed ? 'thumbnail thumbnail-placeholder' : 'thumbnail'
           }
-          aria-label={`Play ${item.title}`}
+          aria-label={playLabel}
           aria-haspopup="dialog"
           onClick={(event) => onPlay(event.currentTarget)}
         >
@@ -74,8 +104,18 @@ export function VideoCard({
             />
           )}
           <span className="play-icon" aria-hidden="true" />
+          {resumeLabel && (
+            <span className="duration-badge resume-badge" aria-hidden="true">
+              {resumeLabel}
+            </span>
+          )}
+          {progress !== null && (
+            <span className="video-progress-track" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </span>
+          )}
         </button>
-        {item.durationSeconds !== undefined && (
+        {!resumeLabel && item.durationSeconds !== undefined && (
           <span className="duration-badge">
             {formatDuration(item.durationSeconds)}
           </span>

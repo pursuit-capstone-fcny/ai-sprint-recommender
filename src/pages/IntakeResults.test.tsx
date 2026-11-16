@@ -294,6 +294,9 @@ describe('IntakeResults', () => {
     const pauseVideo = vi.fn();
     const playVideo = vi.fn();
     const destroy = vi.fn();
+    const getCurrentTime = vi.fn().mockReturnValue(75);
+    const getDuration = vi.fn().mockReturnValue(300);
+    const getPlayerState = vi.fn().mockReturnValue(1);
     type ReadyHandler = {
       events: {
         onReady: (event: { target: youtubePlayer.YouTubePlayer }) => void;
@@ -304,6 +307,9 @@ describe('IntakeResults', () => {
         pauseVideo = pauseVideo;
         playVideo = playVideo;
         destroy = destroy;
+        getCurrentTime = getCurrentTime;
+        getDuration = getDuration;
+        getPlayerState = getPlayerState;
 
         constructor(_frame: HTMLIFrameElement, options: ReadyHandler) {
           options.events.onReady({ target: this });
@@ -325,11 +331,34 @@ describe('IntakeResults', () => {
       expect(screen.queryByRole('dialog')).toBeNull();
       expect(frame.isConnected).toBe(true);
       expect(document.activeElement).toBe(play);
-      fireEvent.click(play);
+      const resume = screen.getByRole('button', {
+        name: 'Resume at 1:15, Gizmo Onboarding Guide, 25% through',
+      });
+      expect(resume).toBe(play);
+      expect(within(resume).getByText('Resume at 1:15')).toBeTruthy();
+      expect(
+        resume.querySelector<HTMLElement>('.video-progress-track > span')?.style
+          .width,
+      ).toBe('25%');
+      fireEvent.click(resume);
       expect(screen.getByTitle('Gizmo Onboarding Guide')).toBe(frame);
+      expect(screen.queryByText('Resume at 1:15')).toBeNull();
       expect(playVideo).toHaveBeenCalledTimes(1);
       expect(load).toHaveBeenCalledTimes(1);
       expect(destroy).not.toHaveBeenCalled();
+
+      getCurrentTime.mockReturnValue(132.9);
+      getDuration.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+      const withoutDuration = screen.getByRole('button', {
+        name: 'Resume at 2:12, Gizmo Onboarding Guide',
+      });
+      expect(withoutDuration.querySelector('.video-progress-track')).toBeNull();
+
+      fireEvent.click(withoutDuration);
+      getPlayerState.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+      expect(screen.queryByText('Resume at 2:12')).toBeNull();
     } finally {
       load.mockRestore();
     }
