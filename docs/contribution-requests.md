@@ -41,17 +41,26 @@ fields in the form. A demo offer requires only email and explicit consent after
 the notice. Topics cannot carry contact or consent fields. There are no uploads
 or automatic catalog additions.
 
-For an existing separate request queue, deploy the updated collector source,
-then add [requests-in-library.gs](../scripts/requests-in-library.gs) as a separate
-editor-only script file and run `useLibraryRequestsTab`. It verifies the bound
-source/usage IDs and Restricted sharing, copies the retained queue with its
-statuses and validation, checks the copy before switching destinations, and
-keeps the prior workbook for rollback. A conflicting existing `Requests` tab
-stops migration without switching. It runs initialization and the existing
-request-retention installer; it does not change consent, policy or collection
-flags. The previous queue is a private archive; keep its original retention
-deadline and remove it under the approved retention policy after rollback is no
-longer needed. Historical test copies contain fictional submissions only.
+For an existing separate request queue, deploy the updated collector, then run
+`migrateRequestsToLibrary` in the bound Apps Script editor as the owner of the
+hourly retention trigger. If the project uses the older
+[`useLibraryRequestsTab` helper](../scripts/requests-in-library.gs), replace it
+with the current wrapper before using that entry point.
+
+The migration checks the workbook IDs and Restricted sharing, copies the queue
+with its review statuses, validates and initializes the new tab, and confirms
+the hourly retention trigger before switching writes. A setup failure keeps the
+previous destination active. Retry after correcting the error. If a
+pre-existing `Requests` tab conflicts with the legacy queue, reconcile the
+private tabs before retrying.
+
+Record the previous workbook ID in the private operations record before
+cutover. After a successful cutover, the hourly cleanup follows the new
+destination. Assign the reviewer to remove expired rows from the legacy copy
+on their original schedule. For a destination rollback, pause submissions,
+reconcile any new rows and review status changes in the Restricted legacy
+queue, restore `REQUESTS_SPREADSHEET_ID` to the legacy ID, and verify delivery
+and cleanup when submissions resume.
 
 Run `initializeRequests` in the editor. It creates the `Requests` table with
 `requestId`, `receivedAt`, `status`, `kind`, `topic`, `email`, `policyVersion`.
@@ -95,6 +104,15 @@ edit an unconfirmed entry before resubmitting after that window. The collector
 limits submissions to 10/minute, 200/day and 5,000 retained entries, under the
 same script lock as usage writes. These are global capacity limits, not identity
 tracking or a guarantee against spam.
+
+In GitHub Actions, production uses `REQUESTS_CONFIG`. To enable the form on a
+PR preview, set `REQUESTS_PREVIEW_CONFIG` to the test policy and collector URL,
+then set `REQUESTS_PREVIEW_ENABLED=true`. Without the separate configuration,
+the preview omits the form. When supplied, the endpoint must match
+`CATALOG_TEST_URL` and differ from the production collector and Requests
+endpoints. Use a separate Restricted test queue. The manually dispatched
+library preview applies the same check to its supplied test collector.
+Redeploy or remove older previews that were built with the shared config.
 
 ## Weekly review
 

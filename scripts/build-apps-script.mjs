@@ -23,6 +23,7 @@ const exportedFunctions = [
   'initializeRequests',
   'purgeRequests',
   'installRequestRetention',
+  'migrateRequestsToLibrary',
   'initializeUsageLog',
   'purgeUsageLog',
   'configureUsageBurst',

@@ -157,15 +157,15 @@ jobs:
           PRIVATE_TEST_LIVE_HAIKU: ${{ inputs.app_live_haiku && 'true' || 'false' }}
           VITE_REQUESTS_ENABLED: ${{ inputs.app_requests_config != '' && 'true' || 'false' }}
           VITE_REQUESTS_CONFIG: ${{ inputs.app_requests_config }}
+          PRODUCTION_REQUESTS_CONFIG: ${{ vars.REQUESTS_CONFIG }}
+          PRODUCTION_COLLECTOR_URL: ${{ vars.CATALOG_PRODUCTION_URL }}
           VITE_FEEDBACK_ENABLED: ${{ inputs.app_feedback_enabled && 'true' || 'false' }}
           VITE_FEEDBACK_QUESTION: ${{ inputs.app_feedback_enabled && 'Was this helpful?' || '' }}
           VITE_ADMIN_ANALYTICS_URL: ${{ inputs.app_analytics_url }}
         run: |
           [[ "$TEST_ORIGIN" =~ ^https://ai-sprint-library-test\.[a-zA-Z0-9-]+\.workers\.dev$ ]]
           export VITE_LIBRARY_ORIGIN="https://$PREVIEW_NAME-${TEST_ORIGIN#https://}"
-          if [[ -n "$VITE_REQUESTS_CONFIG" ]]; then
-            node --input-type=module -e 'import { ContributionConfigSchema } from "./src/contracts/contribution.ts"; const config = ContributionConfigSchema.parse(JSON.parse(process.env.VITE_REQUESTS_CONFIG)); if (config.endpoint !== process.env.VITE_USAGE_TEST_URL) throw new Error("Requests must use the isolated collector");'
-          fi
+          node scripts/check-preview-requests.mjs
           pnpm build
           export LLM_TEST_EXPIRES_AT="$(date -u -d '+15 minutes' +%Y-%m-%dT%H:%M:%SZ)"
           node scripts/configure-library-app.mjs

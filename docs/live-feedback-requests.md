@@ -19,9 +19,11 @@ Production and preview workflows now pass the feedback and request settings to
 Vite. Repository variables `FEEDBACK_PRODUCTION_ENABLED` and
 `REQUESTS_PRODUCTION_ENABLED` enable production; the corresponding
 `FEEDBACK_PREVIEW_ENABLED` and `REQUESTS_PREVIEW_ENABLED` control previews.
-`FEEDBACK_QUESTION` contains the question, and `REQUESTS_CONFIG` contains the
-existing collector endpoint and the approved public policy. Private workbook
-IDs and credentials are never included in browser configuration.
+`FEEDBACK_QUESTION` contains the question. Production uses `REQUESTS_CONFIG`
+for the collector endpoint and approved public policy. PR previews now use
+the separate `REQUESTS_PREVIEW_CONFIG`. Private workbook IDs and credentials
+stay in server-side configuration.
+[Preview setup](contribution-requests.md#configuration-and-isolation)
 
 Feedback can create an ephemeral usage session independently of automatic usage
 logging. With `USAGE_PRODUCTION_ENABLED=false`, searches, impressions and clicks

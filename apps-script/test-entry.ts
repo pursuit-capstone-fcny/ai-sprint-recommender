@@ -11,6 +11,7 @@ export {
   initializeRequests,
   purgeRequests,
   installRequestRetention,
+  migrateRequestsToLibrary,
   initializeUsageLog,
   purgeUsageLog,
   configureUsageBurst,
