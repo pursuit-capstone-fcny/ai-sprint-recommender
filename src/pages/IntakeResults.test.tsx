@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -8,6 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
+import * as youtubePlayer from './youtubePlayer';
 import {
   DEFAULT_VIDEO_IDS,
   FALLBACK_VIDEO_IDS,
@@ -249,6 +251,132 @@ describe('IntakeResults', () => {
     expect(goal).toHaveProperty('value', '');
     expect(document.querySelectorAll('iframe')).toHaveLength(0);
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
+  });
+
+  it.each(['close button', 'backdrop', 'Escape'])(
+    'removes an embed whose controls are unavailable and restores focus after %s',
+    (method) => {
+      render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+      const play = screen.getByRole('button', {
+        name: 'Play Gizmo Onboarding Guide',
+      });
+      fireEvent.click(play);
+      const dialog = screen.getByRole('dialog', {
+        name: 'Gizmo Onboarding Guide',
+      });
+      const close = within(dialog).getByRole('button', { name: 'Close video' });
+      const iframe = within(dialog).getByTitle('Gizmo Onboarding Guide');
+      expect(iframe.getAttribute('src')).toContain(
+        'youtube-nocookie.com/embed/gizmoVid002',
+      );
+      expect(document.activeElement).toBe(close);
+
+      fireEvent.click(within(dialog).getByRole('heading'));
+      expect(dialog).toHaveProperty('open', true);
+
+      if (method === 'Escape') {
+        fireEvent(dialog, new Event('cancel', { cancelable: true }));
+      } else if (method === 'backdrop') {
+        const backdrop = dialog.querySelector('.video-dialog-backdrop');
+        if (!backdrop) throw new Error('Missing click-outside region');
+        fireEvent.click(backdrop);
+      } else {
+        fireEvent.click(close);
+      }
+
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(iframe.isConnected).toBe(false);
+      expect(document.activeElement).toBe(play);
+    },
+  );
+
+  it('resumes the same player after its card leaves and returns to the results', async () => {
+    const pauseVideo = vi.fn();
+    const playVideo = vi.fn();
+    const destroy = vi.fn();
+    const getCurrentTime = vi.fn().mockReturnValue(75);
+    const getDuration = vi.fn().mockReturnValue(300);
+    const getPlayerState = vi.fn().mockReturnValue(1);
+    type ReadyHandler = {
+      events: {
+        onReady: (event: { target: youtubePlayer.YouTubePlayer }) => void;
+      };
+    };
+    const load = vi.spyOn(youtubePlayer, 'loadYouTubePlayer').mockResolvedValue(
+      class {
+        pauseVideo = pauseVideo;
+        playVideo = playVideo;
+        destroy = destroy;
+        getCurrentTime = getCurrentTime;
+        getDuration = getDuration;
+        getPlayerState = getPlayerState;
+
+        constructor(_frame: HTMLIFrameElement, options: ReadyHandler) {
+          options.events.onReady({ target: this });
+        }
+      },
+    );
+    try {
+      render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+      const play = screen.getByRole('button', {
+        name: 'Play Gizmo Onboarding Guide',
+      });
+      await act(async () => {
+        fireEvent.click(play);
+      });
+      const frame = screen.getByTitle('Gizmo Onboarding Guide');
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+
+      expect(pauseVideo).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(frame.isConnected).toBe(true);
+      expect(document.activeElement).toBe(play);
+      const resume = screen.getByRole('button', {
+        name: 'Resume at 1:15, Gizmo Onboarding Guide, 25% through',
+      });
+      expect(resume).toBe(play);
+      expect(within(resume).getByText('Resume at 1:15')).toBeTruthy();
+      expect(
+        resume.querySelector<HTMLElement>('.video-progress-track > span')?.style
+          .width,
+      ).toBe('25%');
+
+      fireEvent.change(screen.getByLabelText('Your goal'), {
+        target: { value: 'widget setup' },
+      });
+      submitDiscovery();
+      expect(
+        screen.queryByRole('button', { name: /Gizmo Onboarding Guide/ }),
+      ).toBeNull();
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(frame.isConnected).toBe(true);
+      fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Resume at 1:15, Gizmo Onboarding Guide, 25% through',
+        }),
+      );
+      expect(screen.getByTitle('Gizmo Onboarding Guide')).toBe(frame);
+      expect(screen.queryByText('Resume at 1:15')).toBeNull();
+      expect(playVideo).toHaveBeenCalledTimes(1);
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(destroy).not.toHaveBeenCalled();
+
+      getCurrentTime.mockReturnValue(132.9);
+      getDuration.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+      const withoutDuration = screen.getByRole('button', {
+        name: 'Resume at 2:12, Gizmo Onboarding Guide',
+      });
+      expect(withoutDuration.querySelector('.video-progress-track')).toBeNull();
+
+      fireEvent.click(withoutDuration);
+      getPlayerState.mockReturnValue(0);
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+      expect(screen.queryByText('Resume at 2:12')).toBeNull();
+    } finally {
+      load.mockRestore();
+    }
   });
 
   it('"Find videos" moves focus to the results heading', () => {

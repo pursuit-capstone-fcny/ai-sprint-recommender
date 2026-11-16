@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
     plugins: [react()],
     test: {
       environment: 'jsdom',
+      setupFiles: ['src/pages/dialog-test-setup.ts'],
     },
   };
 });

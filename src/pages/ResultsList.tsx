@@ -1,5 +1,9 @@
+import { useRef, useState } from 'react';
+import type { CatalogItem } from '../contracts/catalogItem';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
+import { VideoPlayerDialog } from './VideoPlayerDialog';
+import type { PlaybackPosition } from './youtubePlayer';
 import type { FeedbackBinding } from '../feedback/vote';
 
 export const RESULTS_HEADING_ID = 'results-heading';
@@ -10,7 +14,7 @@ interface ResultsListProps {
   fallbackOnly?: boolean;
   hasMatches?: boolean;
   playingId: string | null;
-  onPlay: (youtubeId: string) => void;
+  onPlay: (youtubeId: string | null) => void;
   showClosestMatch?: boolean;
   feedback?: {
     question: string;
@@ -34,6 +38,16 @@ export function ResultsList({
   onVideoClick,
   feedback,
 }: ResultsListProps) {
+  const playButton = useRef<HTMLButtonElement | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<CatalogItem | null>(null);
+  const [pausedPosition, setPausedPosition] = useState<PlaybackPosition | null>(
+    null,
+  );
+  const playerOpen =
+    selectedVideo !== null &&
+    selectedVideo.youtubeId === playingId &&
+    results.some((match) => match.item.youtubeId === playingId);
+
   return (
     <section
       aria-busy={loading}
@@ -66,8 +80,12 @@ export function ResultsList({
           <VideoCard
             key={match.item.youtubeId}
             match={match}
+            pausedPosition={
+              match.item.youtubeId === selectedVideo?.youtubeId
+                ? pausedPosition
+                : null
+            }
             fallbackLabel={fallbackOnly ? 'Fallback video' : undefined}
-            isPlaying={playingId === match.item.youtubeId}
             showClosestMatch={showClosestMatch}
             feedback={
               feedback
@@ -77,7 +95,10 @@ export function ResultsList({
                   }
                 : undefined
             }
-            onPlay={() => {
+            onPlay={(button) => {
+              playButton.current = button;
+              setPausedPosition(null);
+              setSelectedVideo(match.item);
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');
             }}
@@ -85,6 +106,18 @@ export function ResultsList({
           />
         ))}
       </ul>
+      {selectedVideo && (
+        <VideoPlayerDialog
+          key={selectedVideo.youtubeId}
+          item={selectedVideo}
+          open={playerOpen}
+          onDismiss={(position) => {
+            setPausedPosition(position);
+            onPlay(null);
+            playButton.current?.focus({ preventScroll: true });
+          }}
+        />
+      )}
     </section>
   );
 }

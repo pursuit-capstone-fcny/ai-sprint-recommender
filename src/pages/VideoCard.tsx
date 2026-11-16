@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { FeedbackControls } from '../feedback/FeedbackControls';
 import type { FeedbackBinding } from '../feedback/vote';
+import type { PlaybackPosition } from './youtubePlayer';
 
 const COPIED_RESET_MS = 2000;
 
@@ -9,10 +10,20 @@ function formatDuration(durationSeconds: number): string {
   return `${Math.round(durationSeconds / 60)} min`;
 }
 
+function formatPlaybackTime(elapsed: number): string {
+  elapsed = Math.floor(elapsed);
+  const hours = Math.floor(elapsed / 3600);
+  const minutes = Math.floor(elapsed / 60) % 60;
+  const seconds = String(elapsed % 60).padStart(2, '0');
+  return hours
+    ? `${hours}:${String(minutes).padStart(2, '0')}:${seconds}`
+    : `${minutes}:${seconds}`;
+}
+
 interface VideoCardProps {
   match: RankedMatch;
-  isPlaying: boolean;
-  onPlay: () => void;
+  pausedPosition?: PlaybackPosition | null;
+  onPlay: (button: HTMLButtonElement) => void;
   onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
   showClosestMatch?: boolean;
@@ -22,7 +33,7 @@ interface VideoCardProps {
 
 export function VideoCard({
   match,
-  isPlaying,
+  pausedPosition,
   onPlay,
   onWatch,
   showClosestMatch = true,
@@ -34,13 +45,6 @@ export function VideoCard({
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>(
     'idle',
   );
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    if (isPlaying) {
-      iframeRef.current?.focus();
-    }
-  }, [isPlaying]);
 
   useEffect(() => {
     if (copyState === 'idle') return;
@@ -53,6 +57,23 @@ export function VideoCard({
 
   const watchUrl = `https://www.youtube.com/watch?v=${item.youtubeId}`;
   const firstTool = item.tools[0];
+  const resumeLabel = pausedPosition
+    ? `Resume at ${formatPlaybackTime(pausedPosition.elapsedSeconds)}`
+    : null;
+  const duration = pausedPosition?.durationSeconds ?? 0;
+  const progress =
+    pausedPosition && Number.isFinite(duration) && duration > 0
+      ? Math.min(100, (pausedPosition.elapsedSeconds / duration) * 100)
+      : null;
+  const playLabel = resumeLabel
+    ? [
+        resumeLabel,
+        item.title,
+        progress === null ? null : `${Math.round(progress)}% through`,
+      ]
+        .filter(Boolean)
+        .join(', ')
+    : `Play ${item.title}`;
 
   async function handleCopyLink() {
     try {
@@ -66,35 +87,35 @@ export function VideoCard({
   return (
     <li className="video-card">
       <div className="media">
-        {isPlaying ? (
-          <iframe
-            ref={iframeRef}
-            className="video-player"
-            src={`https://www.youtube-nocookie.com/embed/${item.youtubeId}?autoplay=1`}
-            title={item.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          />
-        ) : thumbnailFailed ? (
-          <button
-            type="button"
-            className="thumbnail thumbnail-placeholder"
-            onClick={onPlay}
-            aria-label={`Play ${item.title}`}
-          >
-            <span className="play-icon" aria-hidden="true" />
-          </button>
-        ) : (
-          <button type="button" className="thumbnail" onClick={onPlay}>
+        <button
+          type="button"
+          className={
+            thumbnailFailed ? 'thumbnail thumbnail-placeholder' : 'thumbnail'
+          }
+          aria-label={playLabel}
+          aria-haspopup="dialog"
+          onClick={(event) => onPlay(event.currentTarget)}
+        >
+          {!thumbnailFailed && (
             <img
               src={`https://i.ytimg.com/vi/${item.youtubeId}/hqdefault.jpg`}
               alt=""
               onError={() => setThumbnailFailed(true)}
             />
-            <span className="play-icon" aria-hidden="true" />
-            <span className="sr-only">{`Play ${item.title}`}</span>
-          </button>
-        )}
-        {!isPlaying && item.durationSeconds !== undefined && (
+          )}
+          <span className="play-icon" aria-hidden="true" />
+          {resumeLabel && (
+            <span className="duration-badge resume-badge" aria-hidden="true">
+              {resumeLabel}
+            </span>
+          )}
+          {progress !== null && (
+            <span className="video-progress-track" aria-hidden="true">
+              <span style={{ width: `${progress}%` }} />
+            </span>
+          )}
+        </button>
+        {!resumeLabel && item.durationSeconds !== undefined && (
           <span className="duration-badge">
             {formatDuration(item.durationSeconds)}
           </span>
