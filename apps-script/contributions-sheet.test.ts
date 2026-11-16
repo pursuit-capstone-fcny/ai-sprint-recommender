@@ -42,6 +42,9 @@ function setup() {
   };
   const createTrigger = vi.fn();
   const flush = vi.fn();
+  const setProperty = vi.fn((name: string, value: string) => {
+    properties[name] = value;
+  });
   const openById = vi.fn((id: string) => {
     const book = data[id];
     if (!book) throw new Error('Unexpected workbook');
@@ -105,9 +108,7 @@ function setup() {
   vi.stubGlobal('PropertiesService', {
     getScriptProperties: () => ({
       getProperty: (name: string) => properties[name] ?? null,
-      setProperty: (name: string, value: string) => {
-        properties[name] = value;
-      },
+      setProperty,
     }),
   });
   vi.stubGlobal('LockService', {
@@ -172,6 +173,7 @@ function setup() {
     sharing,
     createTrigger,
     flush,
+    setProperty,
   };
 }
 afterEach(() => {
@@ -195,15 +197,20 @@ describe('request Sheet adapter', () => {
     expect(createTrigger).not.toHaveBeenCalled();
   });
 
-  it.each(['setup', 'retention'])(
+  it.each(['setup', 'retention', 'destination write'] as const)(
     'keeps the legacy inbox writable after %s fails and copies new arrivals on retry',
     (failure) => {
-      const { data, properties, send, createTrigger, flush } = setup();
+      const { data, properties, send, createTrigger, flush, setProperty } =
+        setup();
       properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
       initializeRequests();
       expect(send()).toEqual({ ok: true, status: 'accepted' });
       data.review.Requests[1][2] = 'reviewing';
-      const failingStep = failure === 'setup' ? flush : createTrigger;
+      const failingStep = {
+        setup: flush,
+        retention: createTrigger,
+        'destination write': setProperty,
+      }[failure];
       failingStep.mockImplementationOnce(() => {
         expect(properties.REQUESTS_SPREADSHEET_ID).toBe('review');
         throw new Error('Fictional setup failure');
@@ -239,6 +246,29 @@ describe('request Sheet adapter', () => {
       expect(data.review.Requests).toHaveLength(3);
     },
   );
+  it('preserves the active tab if the destination write commits before reporting an error', () => {
+    const { data, properties, send, setProperty } = setup();
+    properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+    initializeRequests();
+    expect(send()).toEqual({ ok: true, status: 'accepted' });
+    setProperty.mockImplementationOnce((name, value) => {
+      properties[name] = value;
+      throw new Error('Fictional destination acknowledgement failure');
+    });
+
+    expect(collector.migrateRequestsToLibrary()).toEqual({
+      retainedRequests: 1,
+      retentionDays: 7,
+    });
+    expect(properties.REQUESTS_SPREADSHEET_ID).toBe('fixture-catalog');
+    expect(data['fixture-catalog'].Requests).toEqual(data.review.Requests);
+    expect(send({ requestId: crypto.randomUUID() })).toEqual({
+      ok: true,
+      status: 'accepted',
+    });
+    expect(data['fixture-catalog'].Requests).toHaveLength(3);
+    expect(data.review.Requests).toHaveLength(2);
+  });
   it('AC-26.2/4/7: writes requests only to staff review, escapes formulas, preserves statuses and purges contacts', () => {
     const { data, send, openById } = setup();
     initializeRequests();

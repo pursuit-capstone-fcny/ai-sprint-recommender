@@ -39,6 +39,30 @@ are enabled and which approvals apply in the live environment. The
 [November 2 production record](analytics/production-enablement.md) describes
 that rollout. Verify current ownership, flags, and limits in the live settings.
 
+### Transfer Apps Script deployments
+
+Transferring an Apps Script project leaves its existing versioned deployments
+owned by their original deployer. If that account will be retired, use an
+FCNY-controlled account to create and verify replacement deployments first.
+[Google deployment ownership](https://developers.google.com/apps-script/concepts/deployments#versioned_deployments)
+
+1. Confirm the FCNY owner can deploy the collector and the separate private
+   dashboard. Configure the Restricted workbook. Before migrating Requests,
+   confirm every named workbook member is approved to view demo contact details.
+2. Use **Deploy → New deployment** for each service the outgoing account owns.
+   Keep the collector's approved execution and access settings. Configure the
+   dashboard to execute as the signed-in visitor. Under the incoming account,
+   install applicable publisher, retention and reporting triggers. Check the
+   trigger schedules and remove duplicates as part of the cutover.
+3. Update `CATALOG_PRODUCTION_URL` and the endpoint in `REQUESTS_CONFIG` if the
+   collector URL changes. Update `ADMIN_ANALYTICS_PRODUCTION_URL` if the dashboard
+   URL changes. Keep the prior URLs and versions in the private operations record
+   for rollback, then run **Deploy production**.
+4. Confirm the replacement collector delivers approved test submissions to the
+   intended tabs and that cleanup runs. Check dashboard access with an authorized
+   and an unauthorized account. Retire the old deployments or account after the
+   checks pass.
+
 ## Set Haiku AI limits
 
 FCNY decides how many Haiku requests to allow and how much to spend. The
@@ -86,9 +110,10 @@ storage so existing spend remains accounted for.
    registered Durable Object classes and migrations in the rollback build.
    [Runtime recovery](analytics/backend-scaling.md#disable-and-recover)
    Set `ADMIN_ANALYTICS_PRODUCTION_URL` to FCNY's private dashboard deployment.
-   If enabling Requests in PR previews, use `REQUESTS_PREVIEW_CONFIG` with
-   the separate test collector. [Dashboard setup](analytics/dashboard.md#technical-deployment-once)
-   · [Requests setup](contribution-requests.md#configuration-and-isolation)
+   If enabling Requests in PR previews, use `REQUESTS_PREVIEW_CONFIG` with an
+   independent Apps Script project and Restricted test workbook.
+   [Dashboard setup](analytics/dashboard.md#technical-deployment-once)
+   · [Preview Requests setup](contribution-requests.md#enable-requests-in-a-preview)
 2. **Catalog content.** The
    [catalog workflow](../.github/workflows/publish-library.yml) deploys the
    catalog independently. Check `/catalog/current.json` at the catalog origin
@@ -96,9 +121,10 @@ storage so existing spend remains accounted for.
    snapshot through the [catalog workflow](analytics/library-publishing.md#publisher-installation)
    to preserve historical versions.
 3. **Apps Script.** Build the producer with `pnpm build:apps-script` and the
-   private dashboard with `pnpm build:admin`. Update the existing deployment
-   for each project. Keep its deployment ID and record the prior version for
-   rollback. If using buffered usage, follow the
+   private dashboard with `pnpm build:admin`. For routine releases, update each
+   deployment in place and record the prior version for rollback. When ownership
+   changes, follow [the transfer procedure](#transfer-apps-script-deployments).
+   If using buffered usage, follow the
    [collector-first deployment order](analytics/backend-scaling.md#collector-first).
 4. **Verify.** On an isolated preview, load the catalog, submit a fictional goal,
    and open a result. For data-path changes, confirm an accepted test event
