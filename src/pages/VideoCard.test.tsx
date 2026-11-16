@@ -28,28 +28,19 @@ const match: RankedMatch = {
 };
 
 describe('VideoCard', () => {
-  it('shows a thumbnail with no iframe until play is clicked', () => {
+  it('passes the thumbnail button to the player trigger', () => {
     const onPlay = vi.fn();
-    const { rerender } = render(
+    render(
       <ul>
-        <VideoCard match={match} isPlaying={false} onPlay={onPlay} />
+        <VideoCard match={match} onPlay={onPlay} />
       </ul>,
     );
 
     expect(screen.queryByTitle(match.item.title)).toBeNull();
 
-    fireEvent.click(screen.getByRole('button', { name: /play/i }));
-    expect(onPlay).toHaveBeenCalledTimes(1);
-
-    rerender(
-      <ul>
-        <VideoCard match={match} isPlaying onPlay={onPlay} />
-      </ul>,
-    );
-
-    const iframe = screen.getByTitle(match.item.title);
-    expect(iframe.tagName).toBe('IFRAME');
-    expect(iframe.getAttribute('src')).toContain('youtube-nocookie.com');
+    const button = screen.getByRole('button', { name: /play/i });
+    fireEvent.click(button);
+    expect(onPlay).toHaveBeenCalledExactlyOnceWith(button);
   });
 
   it('copies the YouTube link and shows "Copied" for 2 seconds', async () => {
@@ -59,7 +50,7 @@ describe('VideoCard', () => {
     try {
       render(
         <ul>
-          <VideoCard match={match} isPlaying={false} onPlay={vi.fn()} />
+          <VideoCard match={match} onPlay={vi.fn()} />
         </ul>,
       );
 

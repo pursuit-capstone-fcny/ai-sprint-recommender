@@ -1,5 +1,7 @@
+import { useRef } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
+import { VideoPlayerDialog } from './VideoPlayerDialog';
 import type { FeedbackBinding } from '../feedback/vote';
 
 export const RESULTS_HEADING_ID = 'results-heading';
@@ -10,7 +12,7 @@ interface ResultsListProps {
   fallbackOnly?: boolean;
   hasMatches?: boolean;
   playingId: string | null;
-  onPlay: (youtubeId: string) => void;
+  onPlay: (youtubeId: string | null) => void;
   showClosestMatch?: boolean;
   feedback?: {
     question: string;
@@ -34,6 +36,11 @@ export function ResultsList({
   onVideoClick,
   feedback,
 }: ResultsListProps) {
+  const playButton = useRef<HTMLButtonElement | null>(null);
+  const playingVideo = results.find(
+    (match) => match.item.youtubeId === playingId,
+  );
+
   return (
     <section
       aria-busy={loading}
@@ -67,7 +74,6 @@ export function ResultsList({
             key={match.item.youtubeId}
             match={match}
             fallbackLabel={fallbackOnly ? 'Fallback video' : undefined}
-            isPlaying={playingId === match.item.youtubeId}
             showClosestMatch={showClosestMatch}
             feedback={
               feedback
@@ -77,7 +83,8 @@ export function ResultsList({
                   }
                 : undefined
             }
-            onPlay={() => {
+            onPlay={(button) => {
+              playButton.current = button;
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');
             }}
@@ -85,6 +92,15 @@ export function ResultsList({
           />
         ))}
       </ul>
+      {playingVideo && (
+        <VideoPlayerDialog
+          item={playingVideo.item}
+          onDismiss={() => {
+            onPlay(null);
+            playButton.current?.focus({ preventScroll: true });
+          }}
+        />
+      )}
     </section>
   );
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { FeedbackControls } from '../feedback/FeedbackControls';
 import type { FeedbackBinding } from '../feedback/vote';
@@ -11,8 +11,7 @@ function formatDuration(durationSeconds: number): string {
 
 interface VideoCardProps {
   match: RankedMatch;
-  isPlaying: boolean;
-  onPlay: () => void;
+  onPlay: (button: HTMLButtonElement) => void;
   onWatch?: () => void;
   // Off in the "Not sure" state, where every pick is a fallback by design.
   showClosestMatch?: boolean;
@@ -22,7 +21,6 @@ interface VideoCardProps {
 
 export function VideoCard({
   match,
-  isPlaying,
   onPlay,
   onWatch,
   showClosestMatch = true,
@@ -34,13 +32,6 @@ export function VideoCard({
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'failed'>(
     'idle',
   );
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  useEffect(() => {
-    if (isPlaying) {
-      iframeRef.current?.focus();
-    }
-  }, [isPlaying]);
 
   useEffect(() => {
     if (copyState === 'idle') return;
@@ -66,35 +57,25 @@ export function VideoCard({
   return (
     <li className="video-card">
       <div className="media">
-        {isPlaying ? (
-          <iframe
-            ref={iframeRef}
-            className="video-player"
-            src={`https://www.youtube-nocookie.com/embed/${item.youtubeId}?autoplay=1`}
-            title={item.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-          />
-        ) : thumbnailFailed ? (
-          <button
-            type="button"
-            className="thumbnail thumbnail-placeholder"
-            onClick={onPlay}
-            aria-label={`Play ${item.title}`}
-          >
-            <span className="play-icon" aria-hidden="true" />
-          </button>
-        ) : (
-          <button type="button" className="thumbnail" onClick={onPlay}>
+        <button
+          type="button"
+          className={
+            thumbnailFailed ? 'thumbnail thumbnail-placeholder' : 'thumbnail'
+          }
+          aria-label={`Play ${item.title}`}
+          aria-haspopup="dialog"
+          onClick={(event) => onPlay(event.currentTarget)}
+        >
+          {!thumbnailFailed && (
             <img
               src={`https://i.ytimg.com/vi/${item.youtubeId}/hqdefault.jpg`}
               alt=""
               onError={() => setThumbnailFailed(true)}
             />
-            <span className="play-icon" aria-hidden="true" />
-            <span className="sr-only">{`Play ${item.title}`}</span>
-          </button>
-        )}
-        {!isPlaying && item.durationSeconds !== undefined && (
+          )}
+          <span className="play-icon" aria-hidden="true" />
+        </button>
+        {item.durationSeconds !== undefined && (
           <span className="duration-badge">
             {formatDuration(item.durationSeconds)}
           </span>

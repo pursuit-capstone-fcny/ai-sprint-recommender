@@ -251,6 +251,43 @@ describe('IntakeResults', () => {
     expect(screen.getAllByRole('listitem')).toHaveLength(5);
   });
 
+  it.each(['close button', 'backdrop', 'Escape'])(
+    'stops the focused embed and restores its Play button after %s',
+    (method) => {
+      render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+      const play = screen.getByRole('button', {
+        name: 'Play Gizmo Onboarding Guide',
+      });
+      fireEvent.click(play);
+      const dialog = screen.getByRole('dialog', {
+        name: 'Gizmo Onboarding Guide',
+      });
+      const close = within(dialog).getByRole('button', { name: 'Close video' });
+      const iframe = within(dialog).getByTitle('Gizmo Onboarding Guide');
+      expect(iframe.getAttribute('src')).toContain(
+        'youtube-nocookie.com/embed/gizmoVid002',
+      );
+      expect(document.activeElement).toBe(close);
+
+      fireEvent.click(within(dialog).getByRole('heading'));
+      expect(dialog).toHaveProperty('open', true);
+
+      if (method === 'Escape') {
+        fireEvent(dialog, new Event('cancel', { cancelable: true }));
+      } else if (method === 'backdrop') {
+        const backdrop = dialog.querySelector('.video-dialog-backdrop');
+        if (!backdrop) throw new Error('Missing click-outside region');
+        fireEvent.click(backdrop);
+      } else {
+        fireEvent.click(close);
+      }
+
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(iframe.isConnected).toBe(false);
+      expect(document.activeElement).toBe(play);
+    },
+  );
+
   it('"Find videos" moves focus to the results heading', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
     fireEvent.click(screen.getByRole('button', { name: /find videos/i }));
