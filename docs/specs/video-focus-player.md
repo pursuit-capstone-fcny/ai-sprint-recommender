@@ -23,7 +23,7 @@ back to the app to use Escape or activate Close video.
 
 - **Given** a video has loaded its playback controls and the learner closes the dialog
 - **When** the learner selects Play for the same video again without opening a different video or reloading the page
-- **Then** reopen the existing player and resume from its paused position. If playback controls have not connected, remove the embed on close to prevent background playback.
+- **Then** reopen the existing player and resume from its paused position, including after a search temporarily removes the card from the results. If playback controls have not connected, remove the embed on close to prevent background playback.
 
 ### AC-4. Show the paused time on the card
 

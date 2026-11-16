@@ -290,7 +290,7 @@ describe('IntakeResults', () => {
     },
   );
 
-  it('pauses the ready player and reuses its iframe and playback position when reopened', async () => {
+  it('resumes the same player after its card leaves and returns to the results', async () => {
     const pauseVideo = vi.fn();
     const playVideo = vi.fn();
     const destroy = vi.fn();
@@ -340,7 +340,22 @@ describe('IntakeResults', () => {
         resume.querySelector<HTMLElement>('.video-progress-track > span')?.style
           .width,
       ).toBe('25%');
-      fireEvent.click(resume);
+
+      fireEvent.change(screen.getByLabelText('Your goal'), {
+        target: { value: 'widget setup' },
+      });
+      submitDiscovery();
+      expect(
+        screen.queryByRole('button', { name: /Gizmo Onboarding Guide/ }),
+      ).toBeNull();
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(frame.isConnected).toBe(true);
+      fireEvent.click(screen.getByRole('button', { name: 'Clear' }));
+      fireEvent.click(
+        screen.getByRole('button', {
+          name: 'Resume at 1:15, Gizmo Onboarding Guide, 25% through',
+        }),
+      );
       expect(screen.getByTitle('Gizmo Onboarding Guide')).toBe(frame);
       expect(screen.queryByText('Resume at 1:15')).toBeNull();
       expect(playVideo).toHaveBeenCalledTimes(1);

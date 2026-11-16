@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import type { CatalogItem } from '../contracts/catalogItem';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
 import { VideoPlayerDialog } from './VideoPlayerDialog';
@@ -38,13 +39,14 @@ export function ResultsList({
   feedback,
 }: ResultsListProps) {
   const playButton = useRef<HTMLButtonElement | null>(null);
-  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const [selectedVideo, setSelectedVideo] = useState<CatalogItem | null>(null);
   const [pausedPosition, setPausedPosition] = useState<PlaybackPosition | null>(
     null,
   );
-  const video = results.find(
-    (match) => match.item.youtubeId === selectedVideoId,
-  )?.item;
+  const playerOpen =
+    selectedVideo !== null &&
+    selectedVideo.youtubeId === playingId &&
+    results.some((match) => match.item.youtubeId === playingId);
 
   return (
     <section
@@ -79,7 +81,9 @@ export function ResultsList({
             key={match.item.youtubeId}
             match={match}
             pausedPosition={
-              match.item.youtubeId === selectedVideoId ? pausedPosition : null
+              match.item.youtubeId === selectedVideo?.youtubeId
+                ? pausedPosition
+                : null
             }
             fallbackLabel={fallbackOnly ? 'Fallback video' : undefined}
             showClosestMatch={showClosestMatch}
@@ -94,7 +98,7 @@ export function ResultsList({
             onPlay={(button) => {
               playButton.current = button;
               setPausedPosition(null);
-              setSelectedVideoId(match.item.youtubeId);
+              setSelectedVideo(match.item);
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');
             }}
@@ -102,11 +106,11 @@ export function ResultsList({
           />
         ))}
       </ul>
-      {video && (
+      {selectedVideo && (
         <VideoPlayerDialog
-          key={video.youtubeId}
-          item={video}
-          open={video.youtubeId === playingId}
+          key={selectedVideo.youtubeId}
+          item={selectedVideo}
+          open={playerOpen}
           onDismiss={(position) => {
             setPausedPosition(position);
             onPlay(null);
