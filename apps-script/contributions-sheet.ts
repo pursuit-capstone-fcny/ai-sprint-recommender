@@ -122,14 +122,8 @@ export function contributionPost(request?: UsageRequest) {
     ContentService.MimeType.JSON,
   );
 }
-export function initializeRequests() {
-  const c = configuration(false);
-  const lock = LockService.getScriptLock();
-  if (!lock.tryLock(1500)) throw new Error('Requests busy');
+function initializeRequestSheet(sheet: Sheet) {
   try {
-    const book = SpreadsheetApp.openById(c.id);
-    const sheet =
-      book.getSheetByName('Requests') ?? book.insertSheet('Requests');
     if (sheet.getLastRow() === 0)
       sheet
         .getRange(1, 1, 1, contributionHeaders.length)
@@ -150,17 +144,24 @@ export function initializeRequests() {
     throw new Error(
       'Request initialization failed; check configuration and review table',
     );
+  }
+}
+export function initializeRequests() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(1500)) throw new Error('Requests busy');
+  try {
+    const book = SpreadsheetApp.openById(configuration(false).id);
+    initializeRequestSheet(
+      book.getSheetByName('Requests') ?? book.insertSheet('Requests'),
+    );
   } finally {
     lock.releaseLock();
   }
 }
-export function purgeRequests() {
-  const c = configuration(false);
-  const lock = LockService.getScriptLock();
-  if (!lock.tryLock(1500)) throw new Error('Requests busy');
+function purgeRequestSheet(id: string, retentionDays: number) {
   try {
-    const sheet = reviewSheet(c.id);
-    const cutoff = Date.now() - c.policy.retentionDays * 86_400_000;
+    const sheet = reviewSheet(id);
+    const cutoff = Date.now() - retentionDays * 86_400_000;
     const expired = records(sheet)
       .flatMap((r, i) => (Date.parse(r.receivedAt) <= cutoff ? [i + 2] : []))
       .reverse();
@@ -171,17 +172,108 @@ export function purgeRequests() {
     throw new Error(
       'Request cleanup failed; check configuration and review table',
     );
+  }
+}
+export function purgeRequests() {
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(1500)) throw new Error('Requests busy');
+  try {
+    const { id, policy } = configuration(false);
+    return purgeRequestSheet(id, policy.retentionDays);
   } finally {
     lock.releaseLock();
   }
 }
-export function installRequestRetention() {
-  configuration(false);
-  purgeRequests();
+function ensureRequestRetentionTrigger() {
   if (
     !ScriptApp.getProjectTriggers().some(
       (t) => t.getHandlerFunction() === 'purgeRequests',
     )
   )
     ScriptApp.newTrigger('purgeRequests').timeBased().everyHours(1).create();
+}
+export function installRequestRetention() {
+  purgeRequests();
+  ensureRequestRetentionTrigger();
+}
+
+// Editor-only migration. Hold the collector lock until the new queue is ready
+// so submissions and retention both see either the old or the new destination.
+export function migrateRequestsToLibrary() {
+  const properties = PropertiesService.getScriptProperties();
+  const lock = LockService.getScriptLock();
+  if (!lock.tryLock(1500)) throw new Error('Requests busy');
+  try {
+    const sourceId = configuredLibrarySheet();
+    if (
+      properties.getProperty('CATALOG_SPREADSHEET_ID') !== sourceId ||
+      properties.getProperty('USAGE_SPREADSHEET_ID') !== sourceId ||
+      SpreadsheetApp.getActiveSpreadsheet()?.getId() !== sourceId
+    )
+      throw new Error('Verify the bound library and usage workbook first.');
+
+    const { id: previousId, policy } = configuration(false);
+    if (previousId !== sourceId) requirePrivateLibraryWorkbook(sourceId);
+    const book = SpreadsheetApp.openById(sourceId);
+    const previous = previousId === sourceId ? null : reviewSheet(previousId);
+    let target = book.getSheetByName('Requests');
+    let created: Sheet | undefined;
+    let retainedRequests: number;
+    const discardNewCopy = () => {
+      if (!created) return;
+      book.deleteSheet(created);
+      SpreadsheetApp.flush();
+    };
+    try {
+      if (!target) {
+        created = previous
+          ? previous.copyTo(book)
+          : book.insertSheet('Requests');
+        target = created;
+        if (previous) target.setName('Requests');
+      }
+      if (previous) {
+        verify(target);
+        const rows = (sheet: Sheet) =>
+          sheet
+            .getRange(1, 1, sheet.getLastRow(), contributionHeaders.length)
+            .getValues();
+        if (JSON.stringify(rows(target)) !== JSON.stringify(rows(previous)))
+          throw new Error(
+            'Queues differ; reconcile before switching destinations.',
+          );
+      }
+      initializeRequestSheet(target);
+      retainedRequests = records(target).length;
+      target.setColumnWidth(1, 280);
+      target.setColumnWidth(2, 200);
+      target.setColumnWidths(3, 2, 110);
+      target.setColumnWidth(5, 460);
+      target.setColumnWidth(6, 260);
+      target.setColumnWidth(7, 280);
+      target.getRange(1, 1, 1, 7).setFontWeight('bold');
+      target.getRange(2, 5, target.getMaxRows() - 1, 1).setWrap(true);
+      SpreadsheetApp.flush();
+      ensureRequestRetentionTrigger();
+    } catch (error) {
+      // Retry from the latest legacy rows. Leave any pre-existing tab intact.
+      discardNewCopy();
+      throw error;
+    }
+    try {
+      properties.setProperty('REQUESTS_SPREADSHEET_ID', sourceId);
+    } catch (error) {
+      // A failed acknowledgement can follow a successful write. Remove the
+      // copy only after confirming the legacy destination is still active.
+      const activeId =
+        properties.getProperty('REQUESTS_SPREADSHEET_ID') || sourceId;
+      if (activeId !== sourceId) {
+        if (activeId === previousId) discardNewCopy();
+        throw error;
+      }
+    }
+    return { retainedRequests, retentionDays: policy.retentionDays };
+  } finally {
+    lock.releaseLock();
+  }
 }

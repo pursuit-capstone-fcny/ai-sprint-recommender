@@ -83,6 +83,9 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given an admin is on the deployed recommender website
   - When they choose Admin analytics in the Staff navigation in the footer
   - Then open the private Google dashboard in a new tab with an accessible new-tab notice. The link does not grant access or pass credentials; Google sign-in and actual permission to the connected Restricted Sheet remain required. The public synthetic analytics preview is not the live destination.
+  - Given an FCNY-owned private dashboard deployment
+  - When the production workflow builds with `ADMIN_ANALYTICS_PRODUCTION_URL` set to its Apps Script `/exec` URL
+  - Then the learner footer links to that deployment and Google still enforces the viewer's workbook access.
 
 - AC-24.13 Publish the library from its source Sheet
   - Given the technical owner has configured one source Sheet, a private GitHub publisher credential and separate test/production publishing targets

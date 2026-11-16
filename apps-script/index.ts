@@ -24,6 +24,7 @@ export {
   initializeRequests,
   purgeRequests,
   installRequestRetention,
+  migrateRequestsToLibrary,
 } from './contributions-sheet';
 
 export function doGet() {

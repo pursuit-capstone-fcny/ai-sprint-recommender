@@ -160,7 +160,12 @@ snapshots, never mutable Sheet snapshot cells.
    inspect aggregates without YouTube channel access. Confirm no raw event
    records or private review notes reach the browser. Test missing source configuration
    and reload after revocation.
-4. Record the private deployment URL, owner and native reconciliation evidence
+4. Set the GitHub Actions repository variable `ADMIN_ANALYTICS_PRODUCTION_URL`
+   to the FCNY-owned Apps Script `/exec` URL and run **Deploy production**.
+   If the variable is unset, the footer uses the existing default deployment.
+   Verify the link from the deployed learner site with an authorized staff
+   account and a signed-in account without workbook access.
+5. Record the private deployment URL, owner and native reconciliation evidence
    in the private deployment record. The public synthetic preview validates UI;
    it cannot validate Google sign-in or connect a real Sheet. Do not close #24
    until native deployment/consent and live reconciliation have been verified.

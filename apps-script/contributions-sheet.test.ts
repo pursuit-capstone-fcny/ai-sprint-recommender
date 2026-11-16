@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { doGet, doPost, initializeRequests, purgeRequests } from './index';
+import * as collector from './index';
 import { contributionHeaders } from './contributions';
+
+const { doGet, doPost, initializeRequests, purgeRequests } = collector;
 
 function setup() {
   vi.useFakeTimers();
@@ -38,10 +40,29 @@ function setup() {
     usage: {},
     feedback: {},
   };
+  const createTrigger = vi.fn();
+  const flush = vi.fn();
+  const setProperty = vi.fn((name: string, value: string) => {
+    properties[name] = value;
+  });
   const openById = vi.fn((id: string) => {
     const book = data[id];
     if (!book) throw new Error('Unexpected workbook');
     const sheet = (name: string) => ({
+      getName: () => name,
+      copyTo: (target: { insertSheet: (name: string) => unknown }) => {
+        const copy = target.insertSheet('Copy of Requests');
+        const rows = data['fixture-catalog']['Copy of Requests'];
+        rows.push(...book[name].map((row) => [...row]));
+        return copy;
+      },
+      setName: (next: string) => {
+        book[next] = book[name];
+        delete book[name];
+        name = next;
+      },
+      setColumnWidth: vi.fn(),
+      setColumnWidths: vi.fn(),
       getLastRow: () => book[name].length,
       getLastColumn: () => book[name][0]?.length ?? 0,
       getMaxRows: () => 1000,
@@ -67,6 +88,8 @@ function setup() {
           },
           setNumberFormat: () => range,
           setDataValidation: () => range,
+          setFontWeight: () => range,
+          setWrap: () => range,
         };
         return range;
       },
@@ -77,11 +100,15 @@ function setup() {
         book[name] = [];
         return sheet(name);
       },
+      deleteSheet: (sheet: { getName: () => string }) => {
+        delete book[sheet.getName()];
+      },
     };
   });
   vi.stubGlobal('PropertiesService', {
     getScriptProperties: () => ({
       getProperty: (name: string) => properties[name] ?? null,
+      setProperty,
     }),
   });
   vi.stubGlobal('LockService', {
@@ -102,11 +129,17 @@ function setup() {
   vi.stubGlobal('SpreadsheetApp', {
     openById,
     getActiveSpreadsheet: () => ({ getId: () => 'fixture-catalog' }),
-    flush: vi.fn(),
+    flush,
     newDataValidation: () => ({
       requireValueInList: () => ({
         setAllowInvalid: () => ({ build: () => ({}) }),
       }),
+    }),
+  });
+  vi.stubGlobal('ScriptApp', {
+    getProjectTriggers: () => [],
+    newTrigger: () => ({
+      timeBased: () => ({ everyHours: () => ({ create: createTrigger }) }),
     }),
   });
   const entry = {
@@ -131,7 +164,17 @@ function setup() {
         }),
       ),
     );
-  return { data, properties, entry, send, openById, sharing };
+  return {
+    data,
+    properties,
+    entry,
+    send,
+    openById,
+    sharing,
+    createTrigger,
+    flush,
+    setProperty,
+  };
 }
 afterEach(() => {
   vi.unstubAllGlobals();
@@ -139,6 +182,93 @@ afterEach(() => {
 });
 
 describe('request Sheet adapter', () => {
+  it('leaves both queues intact when the library already has different rows', () => {
+    const { data, properties, send, createTrigger } = setup();
+    properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+    initializeRequests();
+    expect(send()).toEqual({ ok: true, status: 'accepted' });
+    const legacy = structuredClone(data.review.Requests);
+    data['fixture-catalog'].Requests = [[...contributionHeaders]];
+
+    expect(() => collector.migrateRequestsToLibrary()).toThrow('Queues differ');
+    expect(properties.REQUESTS_SPREADSHEET_ID).toBe('review');
+    expect(data.review.Requests).toEqual(legacy);
+    expect(data['fixture-catalog'].Requests).toEqual([contributionHeaders]);
+    expect(createTrigger).not.toHaveBeenCalled();
+  });
+
+  it.each(['setup', 'retention', 'destination write'] as const)(
+    'keeps the legacy inbox writable after %s fails and copies new arrivals on retry',
+    (failure) => {
+      const { data, properties, send, createTrigger, flush, setProperty } =
+        setup();
+      properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+      initializeRequests();
+      expect(send()).toEqual({ ok: true, status: 'accepted' });
+      data.review.Requests[1][2] = 'reviewing';
+      const failingStep = {
+        setup: flush,
+        retention: createTrigger,
+        'destination write': setProperty,
+      }[failure];
+      failingStep.mockImplementationOnce(() => {
+        expect(properties.REQUESTS_SPREADSHEET_ID).toBe('review');
+        throw new Error('Fictional setup failure');
+      });
+
+      expect(() => collector.migrateRequestsToLibrary()).toThrow(
+        failure === 'setup'
+          ? 'Request initialization failed'
+          : 'Fictional setup failure',
+      );
+      expect(properties.REQUESTS_SPREADSHEET_ID).toBe('review');
+      expect(data['fixture-catalog'].Requests).toBeUndefined();
+      expect(send({ requestId: crypto.randomUUID() })).toEqual({
+        ok: true,
+        status: 'accepted',
+      });
+
+      createTrigger.mockImplementationOnce(() => {
+        expect(properties.REQUESTS_SPREADSHEET_ID).toBe('review');
+      });
+      expect(collector.migrateRequestsToLibrary()).toEqual({
+        retainedRequests: 2,
+        retentionDays: 7,
+      });
+      expect(properties.REQUESTS_SPREADSHEET_ID).toBe('fixture-catalog');
+      expect(data['fixture-catalog'].Requests).toEqual(data.review.Requests);
+      expect(send()).toEqual({ ok: true, status: 'duplicate' });
+      expect(send({ requestId: crypto.randomUUID() })).toEqual({
+        ok: true,
+        status: 'accepted',
+      });
+      expect(data['fixture-catalog'].Requests).toHaveLength(4);
+      expect(data.review.Requests).toHaveLength(3);
+    },
+  );
+  it('preserves the active tab if the destination write commits before reporting an error', () => {
+    const { data, properties, send, setProperty } = setup();
+    properties.USAGE_SPREADSHEET_ID = 'fixture-catalog';
+    initializeRequests();
+    expect(send()).toEqual({ ok: true, status: 'accepted' });
+    setProperty.mockImplementationOnce((name, value) => {
+      properties[name] = value;
+      throw new Error('Fictional destination acknowledgement failure');
+    });
+
+    expect(collector.migrateRequestsToLibrary()).toEqual({
+      retainedRequests: 1,
+      retentionDays: 7,
+    });
+    expect(properties.REQUESTS_SPREADSHEET_ID).toBe('fixture-catalog');
+    expect(data['fixture-catalog'].Requests).toEqual(data.review.Requests);
+    expect(send({ requestId: crypto.randomUUID() })).toEqual({
+      ok: true,
+      status: 'accepted',
+    });
+    expect(data['fixture-catalog'].Requests).toHaveLength(3);
+    expect(data.review.Requests).toHaveLength(2);
+  });
   it('AC-26.2/4/7: writes requests only to staff review, escapes formulas, preserves statuses and purges contacts', () => {
     const { data, send, openById } = setup();
     initializeRequests();

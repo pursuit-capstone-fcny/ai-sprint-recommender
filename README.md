@@ -322,6 +322,8 @@ Every pull request also gets a Cloudflare preview. On `main`, the **Main audit**
 
 ## Handoff
 
+See the [FCNY handoff guide](docs/handoff.md) for staff workflows, release checks, recovery and Haiku settings.
+
 To take full ownership, FCNY needs admin access to, or a transfer of:
 
 | Asset                              | Why                                                                                            |

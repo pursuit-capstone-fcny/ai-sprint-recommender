@@ -25,6 +25,7 @@ jobs:
       - name: Install and build
         env:
           VITE_LIBRARY_ORIGIN: ${{ vars.LIBRARY_PRODUCTION_ORIGIN }}
+          VITE_ADMIN_ANALYTICS_URL: ${{ vars.ADMIN_ANALYTICS_PRODUCTION_URL }}
           VITE_CATALOG_SOURCE: static
           VITE_LLM_ENABLED: ${{ vars.LLM_PRODUCTION_ENABLED == 'true' && 'true' || 'false' }}
           VITE_LLM_QUEUE_ENABLED: 'true'
@@ -40,6 +41,11 @@ jobs:
           VITE_REQUESTS_CONFIG: ${{ vars.REQUESTS_CONFIG }}
         run: |
           [[ -n "$VITE_LIBRARY_ORIGIN" ]]
+          if [[ -n "$VITE_ADMIN_ANALYTICS_URL" ]]; then
+            [[ "$VITE_ADMIN_ANALYTICS_URL" =~ ^https://script\.google\.com/macros/s/[A-Za-z0-9_-]+/exec$ ]]
+          else
+            unset VITE_ADMIN_ANALYTICS_URL
+          fi
           pnpm install --frozen-lockfile
           pnpm build
           node scripts/configure-library-app.mjs

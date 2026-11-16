@@ -60,6 +60,14 @@ Source: [Spec library](https://fcny-spec-library.jason-zeng94.chatgpt.site/#spec
   - Given Eliot’s approved wording and a learner request or demo offer
   - When the form submits to staff review
   - Then no request or offered contribution publishes automatically; staff must review it before any catalog inclusion.
+- AC-26.8 Request inbox cutover
+  - Given a legacy Restricted queue with retained requests
+  - When the owner moves it to the library workbook
+  - Then switch writes only after the target tab and hourly cleanup are ready. A failed setup leaves the legacy queue active and permits a retry with its latest rows.
+- AC-26.9 Preview requests
+  - Given a preview with Requests enabled
+  - When the workflow builds the preview
+  - Then require the designated test collector and reject production endpoints.
 
 ### Open questions
 
