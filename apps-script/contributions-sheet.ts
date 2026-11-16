@@ -219,6 +219,11 @@ export function migrateRequestsToLibrary() {
     let target = book.getSheetByName('Requests');
     let created: Sheet | undefined;
     let retainedRequests: number;
+    const discardNewCopy = () => {
+      if (!created) return;
+      book.deleteSheet(created);
+      SpreadsheetApp.flush();
+    };
     try {
       if (!target) {
         created = previous
@@ -252,13 +257,21 @@ export function migrateRequestsToLibrary() {
       ensureRequestRetentionTrigger();
     } catch (error) {
       // Retry from the latest legacy rows. Leave any pre-existing tab intact.
-      if (created) {
-        book.deleteSheet(created);
-        SpreadsheetApp.flush();
-      }
+      discardNewCopy();
       throw error;
     }
-    properties.setProperty('REQUESTS_SPREADSHEET_ID', sourceId);
+    try {
+      properties.setProperty('REQUESTS_SPREADSHEET_ID', sourceId);
+    } catch (error) {
+      // A failed acknowledgement can follow a successful write. Remove the
+      // copy only after confirming the legacy destination is still active.
+      const activeId =
+        properties.getProperty('REQUESTS_SPREADSHEET_ID') || sourceId;
+      if (activeId !== sourceId) {
+        if (activeId === previousId) discardNewCopy();
+        throw error;
+      }
+    }
     return { retainedRequests, retentionDays: policy.retentionDays };
   } finally {
     lock.releaseLock();

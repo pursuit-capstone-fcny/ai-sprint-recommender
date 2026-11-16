@@ -50,7 +50,10 @@ with the current wrapper before using that entry point.
 The migration checks the workbook IDs and Restricted sharing, copies the queue
 with its review statuses, validates and initializes the new tab, and confirms
 the hourly retention trigger before switching writes. A setup failure keeps the
-previous destination active. Retry after correcting the error. If a
+previous destination active. If the final destination write reports an error,
+the helper checks which destination is configured before discarding any new
+copy. If that check also fails, check the active destination in Script
+Properties before reconciling or removing a tab. Retry after correcting the error. If a
 pre-existing `Requests` tab conflicts with the legacy queue, reconcile the
 private tabs before retrying.
 
@@ -105,14 +108,22 @@ limits submissions to 10/minute, 200/day and 5,000 retained entries, under the
 same script lock as usage writes. These are global capacity limits, not identity
 tracking or a guarantee against spam.
 
-In GitHub Actions, production uses `REQUESTS_CONFIG`. To enable the form on a
-PR preview, set `REQUESTS_PREVIEW_CONFIG` to the test policy and collector URL,
-then set `REQUESTS_PREVIEW_ENABLED=true`. Without the separate configuration,
-the preview omits the form. When supplied, the endpoint must match
-`CATALOG_TEST_URL` and differ from the production collector and Requests
-endpoints. Use a separate Restricted test queue. The manually dispatched
-library preview applies the same check to its supplied test collector.
-Redeploy or remove older previews that were built with the shared config.
+### Enable Requests in a preview
+
+1. Deploy the collector in a separate Apps Script project with its own
+   Restricted test workbook and `Requests` tab. A second deployment URL from
+   the production project shares that project's Script Properties and can
+   write to the production queue. [Script Properties scope](https://developers.google.com/apps-script/guides/properties#comparison_of_property_stores)
+2. In GitHub Actions, set `CATALOG_TEST_URL` and the endpoint in
+   `REQUESTS_PREVIEW_CONFIG` to that test deployment. Include the test policy and set
+   `REQUESTS_PREVIEW_ENABLED=true`. Production uses `REQUESTS_CONFIG`.
+   A preview without separate configuration hides the form. The workflows
+   compare URLs. Confirm the test project and workbook separately when setting
+   up a PR preview or manually dispatching a library preview.
+3. Submit a fictional request and verify it lands in the test `Requests` tab.
+   Confirm hourly cleanup is scheduled and another account without workbook
+   permission cannot open the queue. Redeploy or remove older previews that
+   used the shared configuration.
 
 ## Weekly review
 
