@@ -1,4 +1,5 @@
 import {
+  act,
   cleanup,
   fireEvent,
   render,
@@ -8,6 +9,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { CatalogItem } from '../contracts/catalogItem';
 import { IntakeResults } from './IntakeResults';
+import * as youtubePlayer from './youtubePlayer';
 import {
   DEFAULT_VIDEO_IDS,
   FALLBACK_VIDEO_IDS,
@@ -252,7 +254,7 @@ describe('IntakeResults', () => {
   });
 
   it.each(['close button', 'backdrop', 'Escape'])(
-    'stops the focused embed and restores its Play button after %s',
+    'removes an embed whose controls are unavailable and restores focus after %s',
     (method) => {
       render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
       const play = screen.getByRole('button', {
@@ -287,6 +289,51 @@ describe('IntakeResults', () => {
       expect(document.activeElement).toBe(play);
     },
   );
+
+  it('pauses the ready player and reuses its iframe and playback position when reopened', async () => {
+    const pauseVideo = vi.fn();
+    const playVideo = vi.fn();
+    const destroy = vi.fn();
+    type ReadyHandler = {
+      events: {
+        onReady: (event: { target: youtubePlayer.YouTubePlayer }) => void;
+      };
+    };
+    const load = vi.spyOn(youtubePlayer, 'loadYouTubePlayer').mockResolvedValue(
+      class {
+        pauseVideo = pauseVideo;
+        playVideo = playVideo;
+        destroy = destroy;
+
+        constructor(_frame: HTMLIFrameElement, options: ReadyHandler) {
+          options.events.onReady({ target: this });
+        }
+      },
+    );
+    try {
+      render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);
+      const play = screen.getByRole('button', {
+        name: 'Play Gizmo Onboarding Guide',
+      });
+      await act(async () => {
+        fireEvent.click(play);
+      });
+      const frame = screen.getByTitle('Gizmo Onboarding Guide');
+      fireEvent.click(screen.getByRole('button', { name: 'Close video' }));
+
+      expect(pauseVideo).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole('dialog')).toBeNull();
+      expect(frame.isConnected).toBe(true);
+      expect(document.activeElement).toBe(play);
+      fireEvent.click(play);
+      expect(screen.getByTitle('Gizmo Onboarding Guide')).toBe(frame);
+      expect(playVideo).toHaveBeenCalledTimes(1);
+      expect(load).toHaveBeenCalledTimes(1);
+      expect(destroy).not.toHaveBeenCalled();
+    } finally {
+      load.mockRestore();
+    }
+  });
 
   it('"Find videos" moves focus to the results heading', () => {
     render(<IntakeResults publicCatalog={publicCatalog} catalog={catalog} />);

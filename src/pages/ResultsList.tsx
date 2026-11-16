@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import type { RankedMatch } from '../contracts/rankedMatch';
 import { VideoCard } from './VideoCard';
 import { VideoPlayerDialog } from './VideoPlayerDialog';
@@ -37,9 +37,10 @@ export function ResultsList({
   feedback,
 }: ResultsListProps) {
   const playButton = useRef<HTMLButtonElement | null>(null);
-  const playingVideo = results.find(
-    (match) => match.item.youtubeId === playingId,
-  );
+  const [selectedVideoId, setSelectedVideoId] = useState<string | null>(null);
+  const video = results.find(
+    (match) => match.item.youtubeId === selectedVideoId,
+  )?.item;
 
   return (
     <section
@@ -85,6 +86,7 @@ export function ResultsList({
             }
             onPlay={(button) => {
               playButton.current = button;
+              setSelectedVideoId(match.item.youtubeId);
               onPlay(match.item.youtubeId);
               onVideoClick?.(match, index, 'embed');
             }}
@@ -92,9 +94,11 @@ export function ResultsList({
           />
         ))}
       </ul>
-      {playingVideo && (
+      {video && (
         <VideoPlayerDialog
-          item={playingVideo.item}
+          key={video.youtubeId}
+          item={video}
+          open={video.youtubeId === playingId}
           onDismiss={() => {
             onPlay(null);
             playButton.current?.focus({ preventScroll: true });
